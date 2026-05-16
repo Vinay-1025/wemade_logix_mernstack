@@ -431,8 +431,8 @@ const AuditLogs = () => {
           .audit-page { padding: 20px; }
           .audit-page .audit-header { flex-direction: column; align-items: flex-start; gap: 20px; }
           .audit-page .search-bar { max-width: none; }
-          .audit-table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-          .audit-table { min-width: 900px; }
+          .audit-table-container { display: block; width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; position: relative; }
+          .audit-table { min-width: 1000px; }
         }
 
         @media (max-width: 768px) {
