@@ -526,6 +526,36 @@ const MainContent = () => {
         .nav-title { font-size: 1.1rem; font-weight: 600; color: var(--app-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color 0.3s; }
         .nav-icon { width: 48px; height: 48px; background: rgba(0, 209, 209, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--primary-cyan); flex-shrink: 0; transition: all 0.3s; z-index: 1; }
         .content-footer { margin-top: var(--space-4); padding: var(--space-4) 0; text-align: center; font-size: 0.8rem; color: var(--text-neutral); border-top: 1px solid var(--app-border); }
+
+        /* Responsive Fixes for Submission Section */
+        @media (max-width: 1024px) {
+          .mission-grid { grid-template-columns: 1fr; gap: 24px; }
+          .mission-control { padding: 24px; }
+          .mission-name { font-size: 1.4rem; }
+        }
+
+        @media (max-width: 768px) {
+          .mission-header { flex-direction: column; gap: 20px; }
+          .mission-stats { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+          .stat-pill { min-width: 0; }
+          .mission-footer { flex-direction: column; gap: 20px; text-align: center; }
+          .submission-info { justify-content: center; }
+          .launch-btn { width: 100%; }
+          .mission-name { font-size: 1.25rem; }
+          .navigation-footer { flex-direction: column; }
+          .nav-btn { max-width: none; }
+        }
+
+        @media (max-width: 480px) {
+          .main-content { padding: 16px; }
+          .mission-control { padding: 16px; border-radius: 16px; }
+          .mission-icon { width: 40px; height: 40px; }
+          .mission-icon svg { width: 20px; height: 20px; }
+          .stat-pill { padding: 4px 8px; }
+          .stat-pill .label { font-size: 0.5rem; }
+          .stat-pill .value { font-size: 0.75rem; }
+          .assignment-editor-container { margin: 0 -16px 24px -16px; border-radius: 0; }
+        }
       `}} />
     </main>
   );

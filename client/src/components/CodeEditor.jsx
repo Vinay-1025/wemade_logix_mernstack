@@ -197,6 +197,11 @@ const CodeEditor = ({ initialCode, onChange, tabs = ['html', 'css', 'js'], readO
           }
           .editor-container { height: 700px; }
         }
+        @media (max-width: 480px) {
+          .editor-container { height: 500px; margin: 0; border-radius: 0; }
+          .tab-btn { padding: 6px 10px; font-size: 0.75rem; }
+          .editor-header { padding: 6px 10px; }
+        }
       `}} />
     </div>
   );
