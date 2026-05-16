@@ -428,9 +428,33 @@ const AuditLogs = () => {
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
         @media (max-width: 1024px) {
-          .audit-header { flex-direction: column; align-items: flex-start; }
-          .search-bar { max-width: none; }
-          .audit-table-container { overflow-x: auto; }
+          .audit-page { padding: 20px; }
+          .audit-page .audit-header { flex-direction: column; align-items: flex-start; gap: 20px; }
+          .audit-page .search-bar { max-width: none; }
+          .audit-table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+          .audit-table { min-width: 900px; }
+        }
+
+        @media (max-width: 768px) {
+          .audit-page .audit-filter-bar { flex-direction: column; align-items: stretch; gap: 16px; padding: 16px; }
+          .audit-page .filter-group { flex-direction: column; align-items: stretch; }
+          .audit-page .filter-group.right { flex-direction: row; justify-content: space-between; }
+          .audit-page .input-with-icon { width: 100%; }
+          .audit-page .filter-separator { text-align: center; display: block; margin: -8px 0; }
+          .audit-page .audit-pagination { flex-direction: column; gap: 20px; text-align: center; }
+          .audit-page .page-navigation { width: 100%; justify-content: center; }
+          .audit-page .header-title h1 { font-size: 1.75rem; }
+        }
+
+        @media (max-width: 480px) {
+          .audit-page { padding: 16px; }
+          .audit-page .header-title { gap: 12px; }
+          .audit-page .icon-box.purple { width: 44px; height: 44px; }
+          .audit-page .header-title h1 { font-size: 1.5rem; }
+          .audit-page .header-title p { font-size: 0.85rem; }
+          .audit-page .filter-group.right { flex-direction: column; }
+          .audit-page .density-select, .audit-page .reset-btn { width: 100%; justify-content: center; }
+          .audit-page .page-btn { min-width: 32px; height: 32px; font-size: 0.8rem; }
         }
       `}} />
     </MainLayout>
