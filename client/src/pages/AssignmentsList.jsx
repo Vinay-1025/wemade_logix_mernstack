@@ -3,6 +3,7 @@ import { CheckCircle2, XCircle, Clock, Search, ExternalLink, MessageSquare, Code
 import MainLayout from '../components/MainLayout';
 import CodeEditor from '../components/CodeEditor';
 import { useLocation } from 'react-router-dom';
+import axios from 'axios';
 
 const AssignmentsList = () => {
   const location = useLocation();
@@ -22,12 +23,12 @@ const AssignmentsList = () => {
       const userData = JSON.parse(localStorage.getItem('user'));
       const token = userData?.token;
       
-      const response = await fetch('/api/assignments', {
+      const response = await axios.get('/api/assignments', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
-      const data = await response.json();
+      const data = response.data;
       if (Array.isArray(data)) {
         setAssignments(data);
       } else {
@@ -56,16 +57,13 @@ const AssignmentsList = () => {
       const userData = JSON.parse(localStorage.getItem('user'));
       const token = userData?.token;
 
-      const response = await fetch(`/api/assignments/${selectedAssignment._id}`, {
-        method: 'PUT',
+      const response = await axios.put(`/api/assignments/${selectedAssignment._id}`, { status, feedback }, {
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ status, feedback })
+        }
       });
 
-      if (response.ok) {
+      if (response.status === 200) {
         alert(`Assignment ${status} successfully`);
         setSelectedAssignment(null);
         setFeedback('');

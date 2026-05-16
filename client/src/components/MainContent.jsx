@@ -3,6 +3,7 @@ import { useCourse } from '../context/CourseContext';
 import CodeEditor from './CodeEditor';
 import Quiz from './Quiz';
 import { FileEdit, Lightbulb, ClipboardCheck, ArrowUpRight, ArrowLeft, ArrowRight, CheckCircle2, XCircle, ShieldCheck } from 'lucide-react';
+import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { courseData } from '../data/mockData';
 
@@ -334,20 +335,17 @@ const MainContent = () => {
                           const user = JSON.parse(localStorage.getItem('user'));
                           const token = user?.token;
                           
-                          const response = await fetch('/api/assignments', {
-                            method: 'POST',
+                          const response = await axios.post('/api/assignments', {
+                            topicId: selectedTopic.id,
+                            topicTitle: selectedTopic.title,
+                            code: finalCode
+                          }, {
                             headers: {
-                              'Content-Type': 'application/json',
                               'Authorization': `Bearer ${token}`
-                            },
-                            body: JSON.stringify({
-                              topicId: selectedTopic.id,
-                              topicTitle: selectedTopic.title,
-                              code: finalCode
-                            })
+                            }
                           });
                           
-                          if (response.ok) {
+                          if (response.status === 201) {
                             showSnackbar('Mission Re-launched Successfully!', 'success');
                             if (typeof refreshAssignments === 'function') {
                               refreshAssignments();
