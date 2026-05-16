@@ -93,10 +93,7 @@ const Login = () => {
       <div className="auth-right">
         <div className="auth-form-container">
           <h2>Welcome back</h2>
-          <p className="subtitle">
-            Admin: admin@wemadelogix.com (admin123) <br />
-            Student: student@wemadelogix.com (student123)
-          </p>
+          <p className="subtitle">Sign in to access your dashboard</p>
           
           <div className="login-form-wrapper">
             <form onSubmit={onSubmit}>
