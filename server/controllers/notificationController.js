@@ -5,7 +5,10 @@ const Notification = require('../models/Notification');
 // @access  Private
 const getNotifications = async (req, res) => {
   try {
-    const notifications = await Notification.find({ recipient: req.user._id })
+    const notifications = await Notification.find({ 
+      recipient: req.user._id,
+      isDeleted: false 
+    })
       .sort('-createdAt')
       .limit(20);
     res.json(notifications);
@@ -35,6 +38,7 @@ const markAsRead = async (req, res) => {
     }
 
     notification.isRead = true;
+    notification.isDeleted = true; // Soft delete on click
     await notification.save();
 
     res.json({ message: 'Notification marked as read' });
@@ -45,7 +49,10 @@ const markAsRead = async (req, res) => {
 
 const clearNotifications = async (req, res) => {
   try {
-    await Notification.deleteMany({ recipient: req.user._id });
+    await Notification.updateMany(
+      { recipient: req.user._id },
+      { isDeleted: true }
+    );
     res.json({ message: 'All notifications cleared' });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
