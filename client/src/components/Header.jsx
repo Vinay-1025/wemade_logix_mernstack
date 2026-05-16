@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios';
 import { logout, reset } from '../features/auth/authSlice';
 import { Sun, Moon, Menu, Search, Bell, User, LogOut, Users, Shield, GraduationCap, ChevronDown, ClipboardCheck, MessageSquare } from 'lucide-react';
 import { useCourse } from '../context/CourseContext';
@@ -21,26 +22,24 @@ const Header = () => {
       const token = userData?.token;
       if (!token) return;
 
-      const response = await fetch('/api/notifications', {
+      const response = await axios.get('/api/notifications', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
       
-      if (response.status === 401) {
-        setNotifications([]);
-        return;
-      }
-
-      const data = await response.json();
-      if (Array.isArray(data)) {
-        setNotifications(data);
+      if (Array.isArray(response.data)) {
+        setNotifications(response.data);
       } else {
         setNotifications([]);
       }
     } catch (err) {
-      console.error('Failed to fetch notifications');
-      setNotifications([]);
+      if (err.response?.status === 401) {
+        setNotifications([]);
+      } else {
+        console.error('Failed to fetch notifications:', err);
+        setNotifications([]);
+      }
     }
   };
 
@@ -57,15 +56,14 @@ const Header = () => {
       const userData = JSON.parse(localStorage.getItem('user'));
       const token = userData?.token;
       
-      await fetch(`/api/notifications/${id}`, {
-        method: 'PUT',
+      await axios.put(`/api/notifications/${id}`, {}, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
       fetchNotifications();
     } catch (err) {
-      console.error('Failed to mark read');
+      console.error('Failed to mark read:', err);
     }
   };
 
@@ -73,15 +71,14 @@ const Header = () => {
     try {
       const userData = JSON.parse(localStorage.getItem('user'));
       const token = userData?.token;
-      await fetch('/api/notifications', {
-        method: 'DELETE',
+      await axios.delete('/api/notifications', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
       fetchNotifications();
     } catch (err) {
-      console.error('Failed to clear notifications');
+      console.error('Failed to clear notifications:', err);
     }
   };
 

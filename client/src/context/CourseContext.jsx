@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import axios from 'axios';
 import { courseData } from '../data/mockData';
 
 const CourseContext = createContext();
@@ -24,15 +25,15 @@ export const CourseProvider = ({ children }) => {
       const userData = JSON.parse(localStorage.getItem('user'));
       if (!userData?.token) return;
       
-      const response = await fetch('/api/assignments/my', { // We'll create this route
+      const response = await axios.get('/api/assignments/my', {
         headers: { 'Authorization': `Bearer ${userData.token}` }
       });
-      const data = await response.json();
-      if (Array.isArray(data)) {
-        setUserAssignments(data);
+      
+      if (Array.isArray(response.data)) {
+        setUserAssignments(response.data);
       }
     } catch (err) {
-      console.error('Failed to fetch user assignments');
+      console.error('Failed to fetch user assignments:', err);
     }
   };
 
