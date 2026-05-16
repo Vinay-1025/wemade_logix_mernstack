@@ -447,7 +447,7 @@ const AuditLogs = () => {
         }
 
         @media (max-width: 480px) {
-          .audit-page { padding: 16px; }
+          .audit-page { padding: 16px; padding-bottom: 80px; }
           .audit-page .header-title { gap: 12px; }
           .audit-page .icon-box.purple { width: 44px; height: 44px; }
           .audit-page .header-title h1 { font-size: 1.5rem; }

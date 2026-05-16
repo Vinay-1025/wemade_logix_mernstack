@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
-import { User, Mail, Shield, Calendar, Search, ArrowLeft, Plus, X, UserPlus, ChevronLeft, ChevronRight, MoreVertical, Trash2, UserCheck, Edit2, Ban, Bell, AlertCircle, CheckCircle } from 'lucide-react';
+import { User, Mail, Shield, Calendar, Search, ArrowLeft, Plus, X, UserPlus, ChevronLeft, ChevronRight, MoreVertical, Trash2, UserCheck, Edit2, Ban, Bell, AlertCircle, CheckCircle, Filter, RotateCcw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import MainLayout from '../components/MainLayout';
 
@@ -16,7 +16,7 @@ const UsersList = () => {
   const [editingUser, setEditingUser] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [usersPerPage] = useState(10);
+  const [usersPerPage, setUsersPerPage] = useState(10);
 
   // Feedback states
   const [snackbar, setSnackbar] = useState({ open: false, message: '', type: 'success' });
@@ -112,6 +112,15 @@ const UsersList = () => {
     fetchUsers();
   }, [currentUser]);
 
+  const resetFilters = () => {
+    setSearchTerm('');
+    setCurrentPage(1);
+  };
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, usersPerPage]);
+
   const handleAddUser = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -182,12 +191,27 @@ const UsersList = () => {
                 type="text"
                 placeholder="Filter personnel by name, email or role..."
                 value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setCurrentPage(1); // Reset to first page on search
-                }}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
+            
+            <div className="filter-group-users">
+              <div className="density-select">
+                <Filter size={16} />
+                <select value={usersPerPage} onChange={(e) => setUsersPerPage(Number(e.target.value))}>
+                  <option value={10}>10 Rows</option>
+                  <option value={20}>20 Rows</option>
+                  <option value={50}>50 Rows</option>
+                </select>
+              </div>
+              {searchTerm && (
+                <button className="reset-btn-users" onClick={resetFilters}>
+                  <RotateCcw size={14} />
+                  Reset
+                </button>
+              )}
+            </div>
+
             <div className="stats-mini">
               <span>Total Active: <strong>{users.length}</strong></span>
               <span>Administrative: <strong>{users.filter(u => u.role === 'admin' || u.role === 'superadmin').length}</strong></span>
@@ -348,35 +372,43 @@ const UsersList = () => {
             </div>
           )}
 
-          {totalPages > 1 && (
-            <div className="pagination">
-              <button
-                disabled={currentPage === 1}
-                onClick={() => paginate(currentPage - 1)}
-                className="page-btn"
-              >
-                <ChevronLeft size={18} />
-              </button>
-
-              <div className="page-numbers">
-                {[...Array(totalPages)].map((_, index) => (
-                  <button
-                    key={index + 1}
-                    onClick={() => paginate(index + 1)}
-                    className={`page-btn ${currentPage === index + 1 ? 'active' : ''}`}
-                  >
-                    {index + 1}
-                  </button>
-                ))}
+          {filteredUsers.length > 0 && (
+            <div className="audit-pagination">
+              <div className="pagination-info">
+                Showing <span className="bold">{indexOfFirstUser + 1}</span> to <span className="bold">{Math.min(indexOfLastUser, filteredUsers.length)}</span> of <span className="bold">{filteredUsers.length}</span> records
               </div>
+              
+              {totalPages > 1 && (
+                <div className="page-navigation">
+                  <button 
+                    disabled={currentPage === 1}
+                    onClick={() => paginate(currentPage - 1)}
+                    className="page-btn"
+                  >
+                    <ChevronLeft size={18} />
+                  </button>
+                  
+                  <div className="page-numbers">
+                    {[...Array(totalPages)].map((_, index) => (
+                      <button
+                        key={index + 1}
+                        onClick={() => paginate(index + 1)}
+                        className={`page-btn ${currentPage === index + 1 ? 'active' : ''}`}
+                      >
+                        {index + 1}
+                      </button>
+                    ))}
+                  </div>
 
-              <button
-                disabled={currentPage === totalPages}
-                onClick={() => paginate(currentPage + 1)}
-                className="page-btn"
-              >
-                <ChevronRight size={18} />
-              </button>
+                  <button 
+                    disabled={currentPage === totalPages}
+                    onClick={() => paginate(currentPage + 1)}
+                    className="page-btn"
+                  >
+                    <ChevronRight size={18} />
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -515,11 +547,17 @@ const UsersList = () => {
           box-shadow: 0 6px 16px rgba(0, 209, 209, 0.3); 
         }
         
-        .header-bottom { display: flex; justify-content: space-between; align-items: center; background: var(--app-card-bg); padding: 12px 20px; border-radius: 16px; border: 1px solid var(--app-border); }
-        .search-container { display: flex; align-items: center; gap: 12px; flex: 1; max-width: 500px; }
+        .header-bottom { display: flex; justify-content: space-between; align-items: center; background: var(--app-card-bg); padding: 12px 20px; border-radius: 16px; border: 1px solid var(--app-border); gap: 20px; }
+        .search-container { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 200px; }
         .search-container input { background: transparent; border: none; color: var(--app-text); width: 100%; outline: none; font-size: 0.95rem; }
         .search-container svg { color: var(--app-text-muted); }
-        .stats-mini { display: flex; gap: 24px; font-size: 0.85rem; color: var(--app-text-muted); border-left: 1px solid var(--app-border); padding-left: 24px; }
+        .filter-group-users { display: flex; align-items: center; gap: 12px; }
+        .density-select { display: flex; align-items: center; gap: 10px; background: #f8fafc; border: 1px solid #e2e8f0; padding: 6px 12px; border-radius: 10px; }
+        .density-select select { border: none; background: transparent; outline: none; font-size: 0.85rem; color: #1e293b; font-weight: 600; cursor: pointer; }
+        .density-select svg { color: #94a3b8; }
+        .reset-btn-users { display: flex; align-items: center; gap: 6px; background: #f1f5f9; border: 1px solid #e2e8f0; padding: 6px 12px; border-radius: 10px; color: #64748b; font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+        .reset-btn-users:hover { background: #e2e8f0; color: #1e293b; }
+        .stats-mini { display: flex; gap: 24px; font-size: 0.85rem; color: var(--app-text-muted); border-left: 1px solid var(--app-border); padding-left: 24px; white-space: nowrap; }
         .stats-mini strong { color: var(--primary); }
 
         .table-container { background: var(--app-card-bg); border-radius: 24px; border: 1px solid var(--app-border); overflow-x: auto; padding: 12px; -webkit-overflow-scrolling: touch; }
@@ -546,13 +584,17 @@ const UsersList = () => {
         @keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
         @media (max-width: 768px) {
-          .users-page { padding: 20px; }
+          .users-page { padding: 20px; padding-bottom: 80px; }
           .header-top { flex-direction: column; align-items: stretch; gap: 16px; }
           .header-title { gap: 12px; }
           .header-title h1 { font-size: 1.5rem; }
           .header-bottom { flex-direction: column; gap: 12px; align-items: stretch; }
-          .stats-mini { border-left: none; border-top: 1px solid var(--app-border); padding: 12px 0 0; }
+          .filter-group-users { justify-content: space-between; }
+          .density-select, .reset-btn-users { flex: 1; justify-content: center; }
+          .stats-mini { border-left: none; border-top: 1px solid var(--app-border); padding: 12px 0 0; justify-content: space-around; }
           .search-container { max-width: none; }
+          .audit-pagination { flex-direction: column; gap: 16px; text-align: center; }
+          .page-navigation { width: 100%; justify-content: center; }
         }
         .personnel-info { display: flex; flex-direction: column; }
         .name-status { display: flex; align-items: center; gap: 10px; }
@@ -603,12 +645,15 @@ const UsersList = () => {
         
         .icon-btn:disabled { opacity: 0.2; cursor: not-allowed; filter: grayscale(1); pointer-events: none; border-color: #f1f5f9; }
 
-        /* Pagination */
-        .pagination { display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 24px; padding-bottom: 12px; }
-        .page-numbers { display: flex; gap: 6px; }
-        .page-btn { min-width: 36px; height: 36px; padding: 0 8px; background: transparent; border: 1px solid var(--app-border); border-radius: 10px; color: var(--app-text-muted); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; font-weight: 600; }
-        .page-btn:hover:not(:disabled) { background: rgba(255,255,255,0.05); color: white; border-color: #64748b; }
-        .page-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: var(--glow-sm); }
+        /* Pagination Style (Synced with Audit) */
+        .audit-pagination { display: flex; justify-content: space-between; align-items: center; padding: 20px; border-top: 1px solid #f1f5f9; margin-top: 12px; }
+        .pagination-info { color: #64748b; font-size: 0.85rem; font-weight: 500; }
+        .pagination-info .bold { color: #1e293b; font-weight: 700; }
+        .page-navigation { display: flex; align-items: center; gap: 12px; }
+        .page-numbers { display: flex; gap: 8px; }
+        .page-btn { min-width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 10px; border: 1px solid #e2e8f0; background: white; color: #64748b; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; }
+        .page-btn:hover:not(:disabled) { border-color: #00d1d1; color: #00d1d1; background: rgba(0, 209, 209, 0.05); transform: translateY(-2px); }
+        .page-btn.active { background: #00d1d1; color: white; border-color: #00d1d1; box-shadow: 0 4px 12px rgba(0, 209, 209, 0.3); }
         .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
         .empty-state { padding: 60px; text-align: center; color: var(--app-text-muted); }
