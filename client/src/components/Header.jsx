@@ -590,6 +590,25 @@ const Header = () => {
         @media (max-width: 600px) {
           .logo-text { display: none; }
         }
+
+        @media (max-width: 480px) {
+          .notifications-dropdown {
+            position: fixed;
+            top: 60px;
+            right: 16px;
+            left: 16px;
+            width: auto;
+            max-width: none;
+          }
+          .profile-dropdown {
+            position: fixed;
+            top: 60px;
+            right: 16px;
+            left: 16px;
+            width: auto;
+          }
+          .header-actions { gap: var(--space-1); }
+        }
       `}} />
     </header>
   );
