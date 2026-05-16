@@ -1,0 +1,601 @@
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { logout, reset } from '../features/auth/authSlice';
+import { Sun, Moon, Menu, Search, Bell, User, LogOut, Users, Shield, GraduationCap, ChevronDown, ClipboardCheck, MessageSquare } from 'lucide-react';
+import { useCourse } from '../context/CourseContext';
+
+const Header = () => {
+  const { theme, toggleTheme, toggleSidebar } = useCourse();
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+
+  const fetchNotifications = async () => {
+    try {
+      const userData = JSON.parse(localStorage.getItem('user'));
+      const token = userData?.token;
+      if (!token) return;
+
+      const response = await fetch('/api/notifications', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (response.status === 401) {
+        setNotifications([]);
+        return;
+      }
+
+      const data = await response.json();
+      if (Array.isArray(data)) {
+        setNotifications(data);
+      } else {
+        setNotifications([]);
+      }
+    } catch (err) {
+      console.error('Failed to fetch notifications');
+      setNotifications([]);
+    }
+  };
+
+  useEffect(() => {
+    if (user) {
+      fetchNotifications();
+      const interval = setInterval(fetchNotifications, 30000); // Poll every 30s
+      return () => clearInterval(interval);
+    }
+  }, [user]);
+
+  const markAsRead = async (id) => {
+    try {
+      const userData = JSON.parse(localStorage.getItem('user'));
+      const token = userData?.token;
+      
+      await fetch(`/api/notifications/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      fetchNotifications();
+    } catch (err) {
+      console.error('Failed to mark read');
+    }
+  };
+
+  const clearAllNotifications = async () => {
+    try {
+      const userData = JSON.parse(localStorage.getItem('user'));
+      const token = userData?.token;
+      await fetch('/api/notifications', {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      fetchNotifications();
+    } catch (err) {
+      console.error('Failed to clear notifications');
+    }
+  };
+
+  const handleNotifClick = (notif) => {
+    markAsRead(notif._id);
+    setShowNotifications(false);
+
+    if (notif.type === 'assignment_submission') {
+      // Navigate to admin assignments and select this one
+      navigate('/admin/assignments', { state: { selectedId: notif.relatedId } });
+    } else if (notif.type === 'assignment_feedback') {
+      // Navigate to home and let MainContent handle it or just show success
+      navigate('/');
+    }
+  };
+
+  const unreadCount = Array.isArray(notifications) ? notifications.filter(n => !n.isRead).length : 0;
+
+  const onLogout = () => {
+    dispatch(logout());
+    dispatch(reset());
+    navigate('/login');
+  };
+
+  const isAdminView = location.pathname.startsWith('/admin');
+
+  // Close menus on click outside
+  React.useEffect(() => {
+    const closeMenus = () => {
+      setShowProfileMenu(false);
+      setShowNotifications(false);
+    };
+    if (showProfileMenu || showNotifications) {
+      window.addEventListener('click', closeMenus);
+    }
+    return () => window.removeEventListener('click', closeMenus);
+  }, [showProfileMenu, showNotifications]);
+
+  return (
+    <header className="app-header">
+      <div className="header-left">
+        <button className="menu-btn" onClick={toggleSidebar}>
+          <Menu size={20} />
+        </button>
+        <div className="logo">
+          <img src="/fav_icon.png" alt="Wemade Logix" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
+          <span className="logo-text">Wemade<span style={{ color: 'var(--primary-cyan)' }}> Logix</span></span>
+        </div>
+      </div>
+
+      <div className="header-search">
+        <Search size={18} className="search-icon" />
+        <input type="text" placeholder="Search topics, tutorials..." />
+      </div>
+
+      <div className="header-actions">
+        <div className="notification-container">
+          <button 
+            className="icon-btn" 
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowNotifications(!showNotifications);
+            }}
+          >
+            <Bell size={20} />
+            {unreadCount > 0 && <span className="notification-dot">{unreadCount}</span>}
+          </button>
+
+          {showNotifications && (
+            <div className="notifications-dropdown" onClick={(e) => e.stopPropagation()}>
+              <div className="dropdown-header">
+                <div className="header-info-notif">
+                  <h3>Notifications</h3>
+                  {unreadCount > 0 && <span className="unread-badge">{unreadCount} new</span>}
+                </div>
+                {notifications.length > 0 && (
+                  <button className="clear-btn-notif" onClick={clearAllNotifications}>Clear All</button>
+                )}
+              </div>
+              <div className="notifications-list">
+                {notifications.length === 0 ? (
+                  <div className="empty-notifications">No notifications yet</div>
+                ) : (
+                  notifications.map(notif => (
+                    <div 
+                      key={notif._id} 
+                      className={`notification-item ${!notif.isRead ? 'unread' : ''}`}
+                      onClick={() => handleNotifClick(notif)}
+                    >
+                      <div className="notif-icon">
+                        {notif.type === 'assignment_submission' ? <ClipboardCheck size={16} /> : <MessageSquare size={16} />}
+                      </div>
+                      <div className="notif-content">
+                        <p className="notif-message">{notif.message}</p>
+                        <span className="notif-time">{new Date(notif.createdAt).toLocaleTimeString()}</span>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+        
+        <div className="user-profile-container">
+          <div 
+            className="user-profile" 
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowProfileMenu(!showProfileMenu);
+            }}
+          >
+            <div className="avatar">
+              <User size={18} />
+            </div>
+            <span className="user-name">{user ? user.name : 'User'}</span>
+            <ChevronDown size={14} className={`chevron-icon ${showProfileMenu ? 'open' : ''}`} />
+          </div>
+
+          {showProfileMenu && (
+            <div className="profile-dropdown" onClick={(e) => e.stopPropagation()}>
+              <div className="dropdown-header">
+                <p className="dropdown-user-name">{user?.name}</p>
+                <p className="dropdown-user-email">{user?.email}</p>
+              </div>
+              
+              <div className="dropdown-divider"></div>
+
+              {user && (user.role === 'admin' || user.role === 'superadmin') && (
+                <button 
+                  className="dropdown-item mode-switch" 
+                  onClick={() => {
+                    navigate(isAdminView ? '/' : '/admin/users');
+                    setShowProfileMenu(false);
+                  }}
+                >
+                  {isAdminView ? (
+                    <>
+                      <GraduationCap size={18} />
+                      <span>View as Student</span>
+                    </>
+                  ) : (
+                    <>
+                      <Shield size={18} />
+                      <span>View as Admin</span>
+                    </>
+                  )}
+                </button>
+              )}
+
+              <button 
+                className="dropdown-item" 
+                onClick={() => {
+                  navigate('/profile');
+                  setShowProfileMenu(false);
+                }}
+              >
+                <User size={18} />
+                <span>My Profile</span>
+              </button>
+
+              <div className="dropdown-divider"></div>
+
+              <button className="dropdown-item logout-item" onClick={onLogout}>
+                <LogOut size={18} />
+                <span>Sign Out</span>
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <style dangerouslySetInnerHTML={{ __html: `
+        .app-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0 var(--space-4);
+          height: 64px;
+          background: var(--app-header-bg);
+          backdrop-filter: blur(12px);
+          border-bottom: 1px solid var(--app-border);
+          position: sticky;
+          top: 0;
+          z-index: 1000;
+        }
+        .header-left {
+          display: flex;
+          align-items: center;
+          gap: var(--space-4);
+        }
+        .menu-btn {
+          display: none;
+          background: transparent;
+          border: none;
+          color: var(--app-text);
+          cursor: pointer;
+        }
+        .logo {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+        .logo-icon {
+          width: 32px;
+          height: 32px;
+          background: var(--brand-gradient);
+          border-radius: var(--radius-sm);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-weight: 800;
+          font-size: 1.2rem;
+        }
+        .logo-text {
+          font-weight: 800;
+          font-size: 1.25rem;
+          letter-spacing: -0.5px;
+        }
+        .header-search {
+          flex: 1;
+          max-width: 480px;
+          position: relative;
+          margin: 0 var(--space-4);
+        }
+        .search-icon {
+          position: absolute;
+          left: 12px;
+          top: 50%;
+          transform: translateY(-50%);
+          color: var(--text-neutral);
+        }
+        .header-search input {
+          width: 100%;
+          padding: 8px 12px 8px 40px;
+          background: var(--light-secondary);
+          border: 1px solid var(--light-tertiary);
+          border-radius: var(--radius-xl);
+          color: var(--app-text);
+          font-family: inherit;
+          transition: var(--transition);
+        }
+        [data-theme='dark'] .header-search input {
+          background: var(--dark-secondary);
+          border-color: var(--dark-tertiary);
+        }
+        .header-search input:focus {
+          outline: none;
+          border-color: var(--primary);
+          box-shadow: 0 0 0 4px rgba(0, 71, 171, 0.1);
+        }
+        .header-actions {
+          display: flex;
+          align-items: center;
+          gap: var(--space-3);
+        }
+        .user-profile-container {
+          position: relative;
+        }
+        .user-profile {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 6px 12px;
+          border-radius: 12px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          border: 1px solid transparent;
+        }
+        .user-profile:hover {
+          background: var(--light-secondary);
+          border-color: var(--light-tertiary);
+        }
+        .chevron-icon {
+          color: var(--text-neutral);
+          transition: transform 0.3s ease;
+        }
+        .chevron-icon.open {
+          transform: rotate(180deg);
+        }
+        .profile-dropdown {
+          position: absolute;
+          top: calc(100% + 8px);
+          right: 0;
+          width: 240px;
+          background: white;
+          border-radius: 16px;
+          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+          border: 1px solid var(--light-tertiary);
+          padding: 8px;
+          z-index: 1001;
+          animation: slideDown 0.2s ease-out;
+        }
+        @keyframes slideDown {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .dropdown-header {
+          padding: 12px 16px;
+        }
+        .dropdown-user-name {
+          font-weight: 700;
+          color: var(--text-primary);
+          margin-bottom: 2px;
+        }
+        .dropdown-user-email {
+          font-size: 0.8rem;
+          color: var(--text-neutral);
+        }
+        .dropdown-divider {
+          height: 1px;
+          background: var(--light-tertiary);
+          margin: 8px 0;
+        }
+        .dropdown-item {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 10px 16px;
+          border: none;
+          background: transparent;
+          border-radius: 10px;
+          color: var(--text-secondary);
+          font-size: 0.9rem;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          text-align: left;
+        }
+        .dropdown-item:hover {
+          background: var(--light-secondary);
+          color: var(--primary-blue);
+        }
+        .dropdown-item svg {
+          color: var(--text-neutral);
+          transition: color 0.2s ease;
+        }
+        .dropdown-item:hover svg {
+          color: var(--primary-blue);
+        }
+        .dropdown-item.mode-switch {
+          background: rgba(0, 71, 171, 0.05);
+          color: var(--primary-blue);
+          margin-bottom: 4px;
+        }
+        .dropdown-item.mode-switch:hover {
+          background: var(--primary-blue);
+          color: white;
+        }
+        .dropdown-item.mode-switch:hover svg {
+          color: white;
+        }
+        .logout-item:hover {
+          background: #fff1f2;
+          color: #e11d48;
+        }
+        .logout-item:hover svg {
+          color: #e11d48;
+        }
+        .notification-container { position: relative; }
+        .notification-dot {
+          position: absolute;
+          top: -2px;
+          right: -2px;
+          background: #ef4444;
+          color: white;
+          width: 18px;
+          height: 18px;
+          border-radius: 50%;
+          font-size: 0.65rem;
+          font-weight: 800;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 2px solid white;
+        }
+        .notifications-dropdown {
+          position: absolute;
+          top: calc(100% + 8px);
+          right: 0;
+          width: 320px;
+          background: white;
+          border-radius: 16px;
+          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+          border: 1px solid var(--light-tertiary);
+          padding: 8px;
+          z-index: 1001;
+          animation: slideDown 0.2s ease-out;
+        }
+        .dropdown-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 8px 12px;
+          border-bottom: 1px solid var(--light-tertiary);
+          margin-bottom: 8px;
+        }
+        .header-info-notif {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+        .clear-btn-notif {
+          background: transparent;
+          border: none;
+          color: var(--text-neutral);
+          font-size: 0.75rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: color 0.2s;
+        }
+        .clear-btn-notif:hover { color: #ef4444; }
+        .unread-badge {
+          background: rgba(0, 71, 171, 0.1);
+          color: var(--primary-blue);
+          padding: 2px 8px;
+          border-radius: 10px;
+          font-size: 0.7rem;
+          font-weight: 700;
+        }
+        .notifications-list {
+          max-height: 400px;
+          overflow-y: auto;
+        }
+        .notification-item {
+          display: flex;
+          gap: 12px;
+          padding: 12px;
+          border-radius: 12px;
+          cursor: pointer;
+          transition: background 0.2s;
+        }
+        .notification-item:hover { background: var(--light-secondary); }
+        .notification-item.unread { background: rgba(0, 71, 171, 0.03); }
+        .notif-icon {
+          width: 32px;
+          height: 32px;
+          background: var(--light-secondary);
+          border-radius: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: var(--primary-blue);
+        }
+        .notif-content p {
+          margin: 0;
+          font-size: 0.85rem;
+          color: var(--text-primary);
+          line-height: 1.4;
+        }
+        .notif-time {
+          font-size: 0.75rem;
+          color: var(--text-neutral);
+        }
+        .empty-notifications {
+          padding: 32px;
+          text-align: center;
+          color: var(--text-neutral);
+          font-size: 0.9rem;
+        }
+        .icon-btn {
+          position: relative;
+          background: transparent;
+          border: none;
+          color: var(--app-text-muted);
+          cursor: pointer;
+          padding: 8px;
+          border-radius: 50%;
+          transition: var(--transition);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .icon-btn:hover {
+          background: var(--light-tertiary);
+          color: var(--app-text);
+        }
+        [data-theme='dark'] .icon-btn:hover {
+          background: var(--dark-tertiary);
+        }
+        .user-profile {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding-left: var(--space-2);
+          border-left: 1px solid var(--app-border);
+          cursor: pointer;
+        }
+        .avatar {
+          width: 36px;
+          height: 36px;
+          background: var(--light-tertiary);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: var(--text-secondary);
+        }
+        .user-name {
+          font-weight: 500;
+          font-size: 0.9rem;
+        }
+        @media (max-width: 768px) {
+          .menu-btn { display: block; }
+          .header-search, .user-name { display: none; }
+        }
+        @media (max-width: 600px) {
+          .logo-text { display: none; }
+        }
+      `}} />
+    </header>
+  );
+};
+
+export default Header;
