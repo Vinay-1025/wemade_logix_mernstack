@@ -10,7 +10,12 @@ const getNotifications = async (req, res) => {
       .limit(20);
     res.json(notifications);
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    console.error('FETCH_NOTIFICATIONS_ERROR:', error);
+    res.status(500).json({ 
+      message: 'Server error fetching notifications', 
+      error: error.message,
+      stack: process.env.NODE_ENV === 'production' ? null : error.stack 
+    });
   }
 };
 

@@ -28,7 +28,11 @@ const AssignmentsList = () => {
         }
       });
       const data = await response.json();
-      setAssignments(data);
+      if (Array.isArray(data)) {
+        setAssignments(data);
+      } else {
+        setAssignments([]);
+      }
       setLoading(false);
 
       // Handle navigation from notification
@@ -72,12 +76,12 @@ const AssignmentsList = () => {
     }
   };
 
-  const filteredAssignments = assignments.filter(asn => {
-    const matchesSearch = asn.student.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          asn.topicTitle.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredAssignments = Array.isArray(assignments) ? assignments.filter(asn => {
+    const matchesSearch = asn.student?.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                          asn.topicTitle?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesFilter = filter === 'all' || asn.status === filter;
     return matchesSearch && matchesFilter;
-  });
+  }) : [];
 
   // Helper to parse code if it's stringified JSON
   const getParsedCode = (codeStr) => {
@@ -99,11 +103,11 @@ const AssignmentsList = () => {
           <div className="header-stats">
             <div className="mini-stat">
               <span className="label">Pending</span>
-              <span className="value">{assignments.filter(a => a.status === 'pending').length}</span>
+              <span className="value">{Array.isArray(assignments) ? assignments.filter(a => a.status === 'pending').length : 0}</span>
             </div>
             <div className="mini-stat">
               <span className="label">Total</span>
-              <span className="value">{assignments.length}</span>
+              <span className="value">{Array.isArray(assignments) ? assignments.length : 0}</span>
             </div>
           </div>
         </div>

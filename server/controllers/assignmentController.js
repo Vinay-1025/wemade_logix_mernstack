@@ -52,7 +52,8 @@ const getAssignments = async (req, res) => {
       .sort('-submittedAt');
     res.json(assignments);
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    console.error('FETCH_ASSIGNMENTS_ERROR:', error);
+    res.status(500).json({ message: 'Server error fetching assignments', error: error.message });
   }
 };
 
@@ -100,7 +101,8 @@ const getMyAssignments = async (req, res) => {
     const assignments = await Assignment.find({ student: req.user._id });
     res.json(assignments);
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    console.error('FETCH_MY_ASSIGNMENTS_ERROR:', error);
+    res.status(500).json({ message: 'Server error fetching your assignments', error: error.message });
   }
 };
 
