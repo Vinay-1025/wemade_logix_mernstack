@@ -522,8 +522,8 @@ const UsersList = () => {
         .stats-mini { display: flex; gap: 24px; font-size: 0.85rem; color: var(--app-text-muted); border-left: 1px solid var(--app-border); padding-left: 24px; }
         .stats-mini strong { color: var(--primary); }
 
-        .table-container { background: var(--app-card-bg); border-radius: 24px; border: 1px solid var(--app-border); overflow-x: auto; padding: 12px; }
-        .personnel-table { width: 100%; border-collapse: collapse; text-align: left; min-width: 800px; }
+        .table-container { background: var(--app-card-bg); border-radius: 24px; border: 1px solid var(--app-border); overflow-x: auto; padding: 12px; -webkit-overflow-scrolling: touch; }
+        .personnel-table { width: 100%; border-collapse: collapse; text-align: left; min-width: 850px; }
         .personnel-table th { padding: 16px; border-bottom: 1px solid var(--app-border); color: var(--app-text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 800; }
         .personnel-table td { padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.03); color: var(--app-text); font-size: 0.9rem; vertical-align: middle; }
         
