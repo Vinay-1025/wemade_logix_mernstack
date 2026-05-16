@@ -81,12 +81,12 @@ body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background-color: var(--app-bg);
   color: var(--app-text);
-  overflow: hidden; /* We'll handle scrolling in sub-containers */
+  overflow-x: hidden;
   transition: var(--transition);
 }
 
 #root {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
@@ -196,7 +196,6 @@ p { line-height: 1.6; margin-bottom: var(--space-2); color: var(--app-text-muted
   min-height: 100vh;
   background-color: #ffffff;
   font-family: 'Inter', sans-serif;
-  overflow: hidden;
 }
 
 
