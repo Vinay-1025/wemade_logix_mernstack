@@ -128,9 +128,7 @@ const Login = () => {
             </form>
             
             <div className="secondary-action">
-              <p>
-                Don't have an account? <Link to="/register">Create one now</Link>
-              </p>
+              <p>Contact your administrator for access</p>
             </div>
           </div>
         </div>
