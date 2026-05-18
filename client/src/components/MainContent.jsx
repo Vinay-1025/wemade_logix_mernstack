@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useCourse } from '../context/CourseContext';
 import CodeEditor from './CodeEditor';
-import Quiz from './Quiz';
-import { FileEdit, Lightbulb, ClipboardCheck, ArrowUpRight, ArrowLeft, ArrowRight, CheckCircle2, XCircle, ShieldCheck } from 'lucide-react';
+import { FileEdit, Lightbulb, ClipboardCheck, ArrowUpRight, ArrowLeft, ArrowRight, CheckCircle2, XCircle, ShieldCheck, FileText, Clock } from 'lucide-react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { courseData } from '../data/mockData';
@@ -62,10 +61,21 @@ const MainContent = () => {
     });
   }, []);
 
-  // Flatten course data to find next/prev topics
   const allTopics = courseData.flatMap(week => 
     week.days.flatMap(day => day.topics)
   );
+
+  let currentDayData = null;
+  courseData.forEach(week => {
+    week.days.forEach(day => {
+      if (day.topics.some(t => t.id === selectedTopic?.id)) {
+        currentDayData = day;
+      }
+    });
+  });
+
+  const loggedInUser = JSON.parse(localStorage.getItem('user') || '{}');
+  const isTutorOrAdmin = loggedInUser?.role === 'admin' || loggedInUser?.role === 'superadmin';
 
   const currentIndex = allTopics.findIndex(t => t.id === selectedTopic?.id);
   const prevTopic = currentIndex > 0 ? allTopics[currentIndex - 1] : null;
@@ -108,6 +118,26 @@ const MainContent = () => {
             <span className="topic-tag">Topic</span>
             <h1>{selectedTopic.title}</h1>
           </div>
+
+          {isTutorOrAdmin && currentDayData?.tutorMaterial && (
+            <section className="tutor-material-section card-3d">
+              <div className="section-title">
+                <FileText size={20} color="#a855f7" />
+                <h2>{currentDayData.tutorMaterial.title}</h2>
+              </div>
+              <p className="tutor-content">{currentDayData.tutorMaterial.content}</p>
+              <div className="tutor-meta">
+                <span className="tutor-duration"><Clock size={14}/> {currentDayData.tutorMaterial.duration}</span>
+              </div>
+              {currentDayData.tutorMaterial.resources && (
+                <ul className="tutor-resources">
+                  {currentDayData.tutorMaterial.resources.map((res, i) => (
+                    <li key={i}><ArrowRight size={14}/> {res}</li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          )}
 
           <section className="progression-section">
             {selectedTopic.progression ? (
@@ -206,8 +236,6 @@ const MainContent = () => {
               </div>
             </section>
           )}
-
-          <Quiz questions={selectedTopic.quiz} />
 
           {/* Assignment Section - Only show for Mini Projects */}
           {selectedTopic.title.toLowerCase().includes('mini project') && (() => {
@@ -415,6 +443,16 @@ const MainContent = () => {
         .goal-preview-container { background: #f8fafc; border-radius: 12px; border: 1px solid var(--light-tertiary); overflow: hidden; }
         .preview-label { background: var(--light-tertiary); padding: 8px 16px; font-size: 0.75rem; font-weight: 700; color: var(--text-neutral); text-transform: uppercase; letter-spacing: 0.5px; }
         .goal-preview-frame { width: 100%; height: 250px; border: none; background: white; }
+        
+        /* Tutor Material Styling */
+        .tutor-material-section { margin-bottom: var(--space-6); background: rgba(168, 85, 247, 0.05); border: 1px solid rgba(168, 85, 247, 0.2); padding: var(--space-4); border-radius: var(--radius-lg); }
+        .tutor-material-section h2 { color: #a855f7; margin: 0; }
+        .tutor-content { color: var(--app-text); font-size: 0.95rem; line-height: 1.6; margin-bottom: var(--space-3); }
+        .tutor-meta { display: flex; gap: var(--space-3); margin-bottom: var(--space-3); color: var(--text-neutral); font-size: 0.85rem; align-items: center; }
+        .tutor-duration { display: flex; align-items: center; gap: 4px; font-weight: 600; }
+        .tutor-resources { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+        .tutor-resources li { display: flex; align-items: center; gap: 8px; color: var(--primary-cyan); font-size: 0.85rem; font-weight: 500; }
+
         /* Mission Control Styling */
         .mission-control { background: #0f172a; border: 1px solid #1e293b; border-radius: 24px; padding: 32px; color: white; margin-top: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
         .mission-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid #1e293b; }
