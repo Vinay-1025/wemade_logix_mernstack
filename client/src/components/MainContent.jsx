@@ -2270,6 +2270,112 @@ const MainContent = () => {
             )}
           </section>
 
+          {selectedTopic.detailedReference && (
+            <motion.section
+              className="academic-reference-section card-3d"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              style={{ marginTop: '30px', marginBottom: '30px' }}
+            >
+              <div className="section-title" style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
+                <BookOpen size={22} color="var(--primary-cyan)" />
+                <h2 style={{ fontSize: '1.4rem', fontWeight: 800, background: 'linear-gradient(135deg, #ffffff 40%, var(--primary-cyan) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', margin: 0 }}>
+                  Academic Reference Hub
+                </h2>
+                <span style={{ fontSize: '0.75rem', fontWeight: 800, background: 'rgba(0, 209, 209, 0.1)', color: 'var(--primary-cyan)', padding: '4px 10px', borderRadius: '12px', border: '1px solid rgba(0, 209, 209, 0.2)' }}>
+                  DEEP DIVE
+                </span>
+              </div>
+
+              <div className="reference-framework" style={{ background: 'var(--app-card-bg)', borderRadius: '16px', border: '1px solid var(--app-border)', padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                
+                {/* Summary Statement */}
+                <div className="ref-summary-box" style={{ borderLeft: '4px solid var(--primary-cyan)', paddingLeft: '16px', background: 'rgba(0, 209, 209, 0.02)', padding: '16px 20px', borderRadius: '0 12px 12px 0' }}>
+                  <h4 style={{ margin: '0 0 8px 0', fontSize: '0.9rem', fontWeight: 800, color: 'var(--primary-cyan)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    Reference Overview
+                  </h4>
+                  <p style={{ margin: 0, fontSize: '0.95rem', color: '#cbd5e1', lineHeight: '1.6' }}>
+                    {selectedTopic.detailedReference.summary}
+                  </p>
+                </div>
+
+                {/* Key Concepts Grid */}
+                <div style={{ marginTop: '10px' }}>
+                  <h4 style={{ margin: '0 0 16px 0', fontSize: '1rem', fontWeight: 700, color: 'white', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <ShieldCheck size={16} color="var(--primary-cyan)" /> Core Architectural Standards
+                  </h4>
+                  <div className="concepts-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
+                    {selectedTopic.detailedReference.keyConcepts.map((concept, cIdx) => (
+                      <div 
+                        key={cIdx} 
+                        className="concept-ref-card"
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.02)',
+                          border: '1px solid var(--app-border)',
+                          borderRadius: '12px',
+                          padding: '20px',
+                          transition: 'all 0.3s ease',
+                          position: 'relative',
+                          overflow: 'hidden'
+                        }}
+                      >
+                        <span style={{ position: 'absolute', top: '12px', right: '16px', fontSize: '0.7rem', fontWeight: 800, color: 'rgba(255,255,255,0.05)', fontFamily: 'monospace' }}>
+                          0{cIdx + 1}
+                        </span>
+                        <h5 style={{ margin: '0 0 8px 0', fontSize: '0.95rem', fontWeight: 700, color: 'var(--primary-cyan)' }}>
+                          {concept.term}
+                        </h5>
+                        <p style={{ margin: 0, fontSize: '0.85rem', color: '#94a3b8', lineHeight: '1.55' }}>
+                          {concept.definition}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Best Practices */}
+                <div style={{ marginTop: '10px', borderTop: '1px solid var(--app-border)', paddingTop: '20px' }}>
+                  <h4 style={{ margin: '0 0 16px 0', fontSize: '1rem', fontWeight: 700, color: 'white', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Lightbulb size={16} color="#fb7185" /> Production Best Practices
+                  </h4>
+                  <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    {selectedTopic.detailedReference.bestPractices.map((bp, bpIdx) => (
+                      <li 
+                        key={bpIdx}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'flex-start',
+                          gap: '12px',
+                          fontSize: '0.88rem',
+                          color: '#cbd5e1',
+                          lineHeight: '1.5',
+                          background: 'rgba(255,255,255,0.01)',
+                          padding: '12px 16px',
+                          borderRadius: '8px',
+                          border: '1px solid rgba(255,255,255,0.03)'
+                        }}
+                      >
+                        <span style={{ 
+                          width: '6px', 
+                          height: '6px', 
+                          borderRadius: '50%', 
+                          background: 'var(--primary-cyan)', 
+                          marginTop: '8px',
+                          boxShadow: '0 0 8px var(--primary-cyan)',
+                          flexShrink: 0
+                        }} />
+                        <span>{bp}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+              </div>
+            </motion.section>
+          )}
+
           {(selectedTopic.visualization || selectedTopic.customComponent) && 
            !(selectedTopic.title.toLowerCase().includes('mini project') || selectedTopic.title.toLowerCase().includes('assignment task')) && (
             <motion.section
