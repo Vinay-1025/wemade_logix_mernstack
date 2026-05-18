@@ -91,6 +91,16 @@ const MainContent = () => {
         { id: 'iframe', text: 'Embed an <iframe> with sandboxing enabled', regex: /<iframe\s+[^>]*?sandbox[^>]*?>/i, met: false },
         { id: 'meta', text: 'Configure at least 4 <meta> configuration tags (charset, viewport, SEO)', regex: /<meta\s+[^>]*?>/gi, count: 4, met: false },
       ]);
+    } else if (selectedTopic?.id === 'd3-t7') {
+      setRequirements([
+        { id: 'lists', text: 'Include at least 1 list (<ul> or <ol>) with at least 2 items', regex: /<(ul|ol).*?>.*?<li.*?>.*?<\/li>.*?<li.*?>.*?<\/li>.*?<\/\1>/is, met: false },
+        { id: 'table', text: 'Build a structural <table> to present schedule details', regex: /<table.*?>.*?<\/table>/is, met: false },
+        { id: 'colspan', text: 'Use colspan attribute to merge schedule columns', regex: /colspan\s*=\s*['"]\d+['"]/i, met: false },
+        { id: 'rowspan', text: 'Use rowspan attribute to merge schedule rows', regex: /rowspan\s*=\s*['"]\d+['"]/i, met: false },
+        { id: 'form', text: 'Add a registration <form> wrapper tag', regex: /<form.*?>.*?<\/form>/is, met: false },
+        { id: 'inputs', text: 'Implement text, email, and validation attributes (required)', regex: /type=['"](text|email)['"].*?required|required.*?type=['"](text|email)['"]/i, met: false },
+        { id: 'selections', text: 'Include checkboxes (<input type="checkbox">) and submit buttons', regex: /type=['"]checkbox['"]/i, met: false },
+      ]);
     } else if (selectedTopic?.title?.toLowerCase()?.includes('mini project') || selectedTopic?.title?.toLowerCase()?.includes('assignment task')) {
       setRequirements([
         { id: 'semantic', text: 'Use HTML Semantic layout structure', regex: /<(div|section|main|header|footer).*?>/i, met: false },

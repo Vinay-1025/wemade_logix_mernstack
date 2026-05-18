@@ -1109,201 +1109,202 @@ export const courseData = [
       },
       {
         "dayId": "w1-d3",
-        "dayTitle": "Day 3: Introduction to CSS Styling",
+        "dayTitle": "Day 3: Advanced HTML Structures",
         "topics": [
           {
             "id": "d3-t1",
-            "title": "1. Introduction to CSS",
+            "title": "1. Lists & Structural Bulleting",
             "visualization": "/css-box-model.png",
             "progression": [
               {
                 "level": "easy",
-                "title": "What is CSS?",
-                "content": "CSS (Cascading Style Sheets) is the makeup of the web. While HTML provides the skeleton (structure), CSS provides the skin, clothes, and accessories (style)."
+                "title": "Lists Classifications",
+                "content": "HTML provides ordered lists (<ol>) for numbered sequences and unordered lists (<ul>) for standard bullet points. Nesting list items (<li>) inside them displays clustered ideas."
               },
               {
                 "level": "intermediate",
-                "title": "Ways to Add CSS",
-                "content": "There are three ways to style elements: Inline (directly in the tag), Internal (using <style> in the head), and External (a separate .css file). External is the professional standard."
+                "title": "Unordered Bullet Options",
+                "content": "By default, unordered list items display direct visual bullet markers. These markers can be customized in stylesheets using 'list-style-type' attributes (disc, circle, square)."
               },
               {
                 "level": "advanced",
-                "title": "The 'Cascade' in CSS",
-                "content": "The 'C' in CSS stands for Cascading. This means styles are applied from top to bottom. If you define two different colors for the same element, the one declared last will usually win!"
+                "title": "Ordered Sequence Schemes",
+                "content": "Ordered lists support varying sequencing types (numbers, uppercase letters, Roman numerals) controlled using the type attribute (<ol type='A'> or <ol type='I'>)."
               }
             ],
             "codeTemplate": {
-              "html": "<h1 class='title'>Hello CSS!</h1>\n<p>Styling makes the web beautiful.</p>",
-              "css": "/* This is external CSS */\n.title {\n  color: #00d1d1;\n  text-decoration: underline;\n}\np {\n  font-style: italic;\n  color: #64748b;\n}",
+              "html": "<h3>Course Prerequisites</h3>\n<ul>\n  <li>Basic internet access protocols</li>\n  <li>Day 1 & Day 2 HTML basics</li>\n</ul>\n\n<h3>Step-by-Step Directives</h3>\n<ol type='A'>\n  <li>Configure local workspace environment</li>\n  <li>Initialize boilerplate documents</li>\n</ol>",
+              "css": "ul { padding-left: 20px; color: #cbd5e1; }\nol { padding-left: 20px; color: #38bdf8; }",
               "js": ""
             },
-            "assessment": "Write an internal style tag that changes the body background color to lightblue."
+            "assessment": "Draft an ordered list containing three tasks, using Roman numerals as indicators."
           },
           {
             "id": "d3-t2",
-            "title": "2. CSS Selectors",
+            "title": "2. Tables & Tabular Data",
             "visualization": "/css-selectors.png",
             "progression": [
               {
                 "level": "easy",
-                "title": "Targeting Elements",
-                "content": "Selectors are how you tell CSS which HTML elements to style. The simplest is the Element selector (e.g., h1 { color: red; })."
+                "title": "Symmetric Table Containers",
+                "content": "The <table> tag holds structured data blocks. Rows (<tr>) contain headers (<th>) representing column definitions and data cells (<td>) representing values."
               },
               {
                 "level": "intermediate",
-                "title": "Classes and IDs",
-                "content": "Use Classes (.className) for multiple elements (like buttons) and IDs (#idName) for unique elements (like a navigation bar)."
+                "title": "Table Elements Division",
+                "content": "Group columns into <thead> (header labels), <tbody> (body content), and <tfoot> (footers/sums). This helps search engines analyze data sheets logically."
               },
               {
                 "level": "advanced",
-                "title": "Universal Selector (*)",
-                "content": "The asterisk (*) targets every single element on the page. It's often used for 'resets' to clear default browser margins and padding."
+                "title": "Tabular Styling Rules",
+                "content": "Using the 'border-collapse: collapse' CSS property merges adjacent cell borders into a unified grid, replacing the legacy default double-bordered style."
               }
             ],
             "codeTemplate": {
-              "html": "<ul>\n  <li id='first'>Unique Item</li>\n  <li class='blue'>Standard Item</li>\n  <li class='blue'>Standard Item</li>\n</ul>",
-              "css": "#first { font-weight: 800; color: #f87171; }\n.blue { color: #38bdf8; }\n* { font-family: 'Inter', sans-serif; }",
+              "html": "<table>\n  <thead>\n    <tr>\n      <th>Course</th>\n      <th>Lectures</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>HTML Foundations</td>\n      <td>12 Labs</td>\n    </tr>\n  </tbody>\n</table>",
+              "css": "table {\n  width: 100%;\n  border-collapse: collapse;\n  margin-top: 10px;\n}\nth, td {\n  padding: 10px;\n  text-align: left;\n  border: 1px solid #334155;\n}\nth { background: #1e293b; color: #00d1d1; }",
               "js": ""
             },
-            "assessment": "Apply a class called 'special-text' to a paragraph and style it with a gold color."
+            "assessment": "Build a two-row table representing three standard developer skills and competency levels."
           },
           {
             "id": "d3-t3",
-            "title": "3. Colors & Units",
+            "title": "3. Colspan & Rowspan (Grid Spanning)",
             "progression": [
               {
                 "level": "easy",
-                "title": "Color Formats",
-                "content": "You can define colors by Name (red), Hex Code (#FF0000), or RGB (255, 0, 0). Hex is the most popular in web development."
+                "title": "Merged Columns (Colspan)",
+                "content": "Add the colspan attribute to cells (<th> or <td>) to stretch them horizontally across multiple columns, merging separate blocks into unified spans."
               },
               {
                 "level": "intermediate",
-                "title": "Fixed vs Relative Units",
-                "content": "PX is a fixed unit. REM and EM are relative units that scale based on font size. Using REM is better for accessibility!"
+                "title": "Merged Rows (Rowspan)",
+                "content": "Add the rowspan attribute to cells to stretch them vertically down across multiple rows, perfect for presenting overlapping time slots in weekly schedules."
               },
               {
                 "level": "advanced",
-                "title": "VH and VW Units",
-                "content": "Viewport Height (vh) and Viewport Width (vw) are units based on the screen size. 100vh means 'take up 100% of the screen height'."
+                "title": "Grid Balancing Constraints",
+                "content": "When a cell spans across multiple columns or rows, you must omit subsequent cells in the merged rows or columns to keep the table grid perfectly aligned."
               }
             ],
             "codeTemplate": {
-              "html": "<div class='box'>Responsive Box</div>",
-              "css": ".box {\n  background: #1e293b;\n  color: #fbbf24;\n  width: 50vw;\n  padding: 2rem;\n  font-size: 1.25rem;\n  border: 1px solid #334155;\n}",
+              "html": "<table border='1' style='border-collapse: collapse; width: 100%;'>\n  <tr>\n    <th>Time</th>\n    <th>Monday</th>\n    <th>Wednesday</th>\n  </tr>\n  <tr>\n    <td>09:00 AM</td>\n    <td rowspan='2'>Full Stack Architecture Lab</td>\n    <td>APIs</td>\n  </tr>\n  <tr>\n    <td>11:00 AM</td>\n    <td>Databases</td>\n  </tr>\n  <tr>\n    <td>02:00 PM</td>\n    <td colspan='2'>Weekly Evaluation Sync</td>\n  </tr>\n</table>",
+              "css": "th, td { padding: 8px; border: 1px solid #475569; text-align: center; }",
               "js": ""
             },
-            "assessment": "Set an element's width to 75% and its padding to 1.5rem."
+            "assessment": "Draft a table with a merged header row that spans across three columns."
           },
           {
             "id": "d3-t4",
-            "title": "4. Box Model",
+            "title": "4. HTML Forms & Data Collection",
             "visualization": "/css-box-model.png",
             "progression": [
               {
                 "level": "easy",
-                "title": "The Space Around You",
-                "content": "Every element is a box. Margin is outside the border (space between elements), Padding is inside the border (space between content and border)."
+                "title": "Interactive Forms wrapper",
+                "content": "The <form> element wraps user interactive controls, acting as a gateway that aggregates user-supplied information and submits it to servers."
               },
               {
                 "level": "intermediate",
-                "title": "Border vs Content",
-                "content": "The content is your text/image. The border sits between padding and margin. You can style borders with thickness, color, and style (solid, dashed)."
+                "title": "Labels Binding & Accessibility",
+                "content": "Always bind <label> elements to inputs using the 'for' attribute, matching the input's 'id'. This creates a larger clickable area and aids screen readers."
               },
               {
                 "level": "advanced",
-                "title": "Box-Sizing: Border-Box",
-                "content": "By default, padding and borders ADD to an element's width. Using 'box-sizing: border-box' keeps the width stable even when you add padding!"
+                "title": "Standard Submission Protocols",
+                "content": "Forms use the action attribute (target endpoint) and method (GET displays parameters in URL, POST packages data in request body securely)."
               }
             ],
             "codeTemplate": {
-              "html": "<div class='container'>\n  <div class='box m-1'>Margin 20px</div>\n  <div class='box p-1'>Padding 20px</div>\n</div>",
-              "css": ".box {\n  background: #0ea5e9;\n  color: white;\n  width: 150px;\n  height: 100px;\n  border: 2px solid white;\n  display: inline-block;\n}\n.m-1 { margin: 20px; }\n.p-1 { padding: 20px; }",
+              "html": "<form action='/enroll' method='POST'>\n  <label for='studentName'>Student Name:</label>\n  <input type='text' id='studentName' name='studentName' placeholder='Enter your name' required>\n  <button type='submit'>Register</button>\n</form>",
+              "css": "form { display: flex; flex-direction: column; gap: 10px; max-width: 300px; }\ninput { padding: 8px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: white; }\nbutton { background: #00d1d1; padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }",
               "js": ""
             },
-            "assessment": "Create a box with 10px margin, 20px padding, and a 2px solid border."
+            "assessment": "Build a form containing a single bound text input and a submit button."
           },
           {
             "id": "d3-t5",
-            "title": "5. Typography & Fonts",
+            "title": "5. Input Controls & Validation",
             "visualization": "/css-typography.png",
             "progression": [
               {
                 "level": "easy",
-                "title": "Font Basics",
-                "content": "Transform your text by changing the Font-Family (type of font) and Font-Size (how big it is)."
+                "title": "Input Type Variations",
+                "content": "Inputs take on varying forms depending on the type attribute: 'text' for generic names, 'email' for addresses, and 'password' to hide keystrokes."
               },
               {
                 "level": "intermediate",
-                "title": "Weights and Spacing",
-                "content": "Font-Weight controls thickness (100 to 900). Line-Height controls the vertical gap between lines, which is crucial for readability."
+                "title": "HTML5 Validation Attributes",
+                "content": "Add attributes like required (blocking empty submissions), placeholder (helpful hints), and minlength (enforcing secure string sizes)."
               },
               {
                 "level": "advanced",
-                "title": "Letter Spacing and Alignment",
-                "content": "Text-Align centers or justifies your text. Letter-Spacing controls the gap between characters, perfect for modern heading styles."
+                "title": "Mobile Input Keyboard Maps",
+                "content": "Using semantic input types (e.g. type='email' or type='number') automatically triggers mobile keyboards with appropriate keys, improving user experience."
               }
             ],
             "codeTemplate": {
-              "html": "<h1>Premium Heading</h1>\n<p>This paragraph is styled for maximum readability.</p>",
-              "css": "h1 {\n  font-family: 'Outfit', sans-serif;\n  letter-spacing: 2px;\n  text-transform: uppercase;\n  color: #00d1d1;\n}\np {\n  line-height: 1.8;\n  font-size: 1.1rem;\n  color: #94a3b8;\n}",
+              "html": "<label for='userMail'>Email Address:</label>\n<input type='email' id='userMail' placeholder='student@wemade.com' required>\n<br><br>\n<label for='userPass'>Access Code:</label>\n<input type='password' id='userPass' minlength='6' placeholder='Min 6 chars' required>",
+              "css": "input { padding: 8px; border-radius: 4px; border: 1px solid #334155; background: #0f172a; color: white; }\ninput:invalid { border-color: #ef4444; }\ninput:valid { border-color: #10b981; }",
               "js": ""
             },
-            "assessment": "Change the font size of a paragraph to 18px and set its line height to 1.5."
+            "assessment": "Draft an email input field that is marked as required and has a matching placeholder."
           },
           {
             "id": "d3-t6",
-            "title": "6. Backgrounds & Borders",
+            "title": "6. Modern Selection Fields",
             "visualization": "/css-backgrounds.png",
             "progression": [
               {
                 "level": "easy",
-                "title": "Solid Backgrounds",
-                "content": "Background-color gives your element a solid base color. It sits behind all text and images in the element."
+                "title": "Checkboxes (Multiple choices)",
+                "content": "Checkboxes (<input type='checkbox'>) allow users to select multiple options from a group (e.g., agreeing to terms or listing skills)."
               },
               {
                 "level": "intermediate",
-                "title": "Border Radius",
-                "content": "Border-radius rounds the corners of your boxes. Use 50% for circles and small px values for modern rounded cards."
+                "title": "Radio Buttons (Unique choices)",
+                "content": "Radio buttons (<input type='radio'>) restrict users to picking a single choice from a list. Declare a matching name attribute on all buttons to group them."
               },
               {
                 "level": "advanced",
-                "title": "Background Images & Gradients",
-                "content": "You can use images as backgrounds or create smooth color transitions using 'linear-gradient'. Combine with 'background-size: cover' for full-screen visuals."
+                "title": "Fieldsets and Legends",
+                "content": "Wrap related inputs inside a <fieldset> element and label it using <legend> to group choices and assist visually impaired users."
               }
             ],
             "codeTemplate": {
-              "html": "<div class='card'>\n  <h3>Glass Card</h3>\n</div>",
-              "css": ".card {\n  width: 250px;\n  height: 150px;\n  background: linear-gradient(135deg, #3730a3, #4338ca);\n  border-radius: 20px;\n  padding: 30px;\n  color: white;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-shadow: 0 10px 25px rgba(0,0,0,0.2);\n}",
+              "html": "<fieldset>\n  <legend>Select Track Mode</legend>\n  <input type='radio' id='modeFull' name='trackMode' value='full' checked>\n  <label for='modeFull'>Full Stack</label><br>\n  <input type='radio' id='modeFront' name='trackMode' value='front'>\n  <label for='modeFront'>Frontend</label>\n</fieldset>\n<br>\n<label>\n  <input type='checkbox' name='agree' required>\n  I agree to Wemade terms.\n</label>",
+              "css": "fieldset { border: 1px solid #334155; padding: 15px; border-radius: 8px; }\nlegend { color: #00d1d1; padding: 0 5px; font-weight: bold; }",
               "js": ""
             },
-            "assessment": "Build a circular div (width/height same + 50% radius) with a gradient background."
+            "assessment": "Create a grouped fieldset containing two radio options sharing a matching name."
           },
           {
             "id": "d3-t7",
-            "title": "7. Mini Project – Styled Profile Page",
+            "title": "Assignment Task",
+            "visualization": "/lists-types.png",
             "progression": [
               {
                 "level": "easy",
-                "title": "Theme Setup",
-                "content": "Start by picking a color palette (a primary and secondary color) and applying it to your background and headings."
+                "title": "Syllabus Lists & Table Headers",
+                "content": "Setup standard course prerequisites using an HTML list. Build an academic schedule table containing column headers."
               },
               {
                 "level": "intermediate",
-                "title": "Card Layout",
-                "content": "Use margins, padding, and borders to turn your profile info into a clean, centered card with rounded corners."
+                "title": "Cell Spanning & Form Fieldsets",
+                "content": "Apply colspan and rowspan inside schedule columns and rows to merge overlapping slots. Setup a registration form with a fieldset wrapper."
               },
               {
                 "level": "advanced",
-                "title": "Polishing Visuals",
-                "content": "Add a circular border to your profile image, style your skills list with custom bullets, and add a hover effect to your links."
+                "title": "Inputs Validation & Selections",
+                "content": "Configure text, email, and checkbox elements, implementing validation attributes. Add cohort selection radio button groups and submit keys."
               }
             ],
             "codeTemplate": {
-              "html": "<div class='profile-container'>\n  <div class='profile-card'>\n    <img src='https://i.pravatar.cc/120' alt='User'>\n    <h1>Jane Smith</h1>\n    <p>Creative UI Designer & CSS Architect</p>\n    \n    <div class='stats'>\n      <span class='stat-item'>50+ Projects</span>\n      <span class='stat-item'>UX Expert</span>\n    </div>\n    \n    <button class='follow-btn'>View Portfolio</button>\n  </div>\n</div>",
-              "css": "body { background: #0f172a; font-family: sans-serif; }\n.profile-container { display: flex; justify-content: center; padding: 50px; }\n.profile-card {\n  background: #1e293b;\n  padding: 40px;\n  border-radius: 30px;\n  text-align: center;\n  color: white;\n  width: 350px;\n  border: 1px solid #334155;\n}\n.profile-card img {\n  border-radius: 50%;\n  border: 4px solid #00d1d1;\n  margin-bottom: 20px;\n}\n.stat-item {\n  background: #334155;\n  padding: 5px 12px;\n  border-radius: 100px;\n  font-size: 0.8rem;\n  margin: 0 5px;\n}\n.follow-btn {\n  margin-top: 30px;\n  padding: 12px 30px;\n  background: #00d1d1;\n  color: #0f172a;\n  border: none;\n  border-radius: 10px;\n  font-weight: bold;\n  cursor: pointer;\n}",
+              "html": "<!-- Mission Objective: Recreate this Student Enrollment & Registration Portal using advanced Day 3 structures. Ensure all checklist requirements are fully satisfied! -->\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <meta name=\"description\" content=\"Student enrollment and interactive course registration portal for Wemade Logix.\">\n  <meta name=\"keywords\" content=\"Enrollment, Registration, Course Schedule, HTML5 Forms\">\n  <title>Student Registration & Schedule Portal</title>\n</head>\n<body>\n\n  <header>\n    <h1>Wemade Logix Learning Academy</h1>\n    <h3>Advanced HTML Structural Course Registry</h3>\n  </header>\n\n  <main>\n    <!-- Course Prerequisites -->\n    <section>\n      <h2>MERN Stack Course Prerequisites</h2>\n      <p>Before launching your registration request, please confirm you have reviewed the following baseline structures:</p>\n      <ul>\n        <li><strong>Day 1 Foundations:</strong> Semantic layouts, structural heading hierarchies, and escapings.</li>\n        <li><strong>Day 2 Multimedia:</strong> External anchor logs, responsive headshots, and media playback.</li>\n      </ul>\n    </section>\n\n    <!-- Interactive Schedule (Tables, Colspan, Rowspan) -->\n    <section>\n      <h2>Weekly Classroom Schedule</h2>\n      <p>Our unified lecture schedule merges overlapping blocks for intensive modules:</p>\n      <table border=\"1\" cellpadding=\"8\" style=\"border-collapse: collapse; width: 100%;\">\n        <thead>\n          <tr>\n            <th>Time Slot</th>\n            <th>Monday</th>\n            <th>Wednesday</th>\n            <th>Friday</th>\n          </tr>\n        </thead>\n        <tbody>\n          <tr>\n            <td>09:00 AM - 11:00 AM</td>\n            <td rowspan=\"2\">Full Stack Architecture Lab</td>\n            <td>Database Schemas</td>\n            <td>Network Nodes</td>\n          </tr>\n          <tr>\n            <td>11:00 AM - 01:00 PM</td>\n            <td colspan=\"2\">API Pipeline Workshop</td>\n          </tr>\n          <tr>\n            <td>02:00 PM - 04:00 PM</td>\n            <td>CSS Styling Basics</td>\n            <td>Responsive Flexbox</td>\n            <td>Weekly Evaluation Sync</td>\n          </tr>\n        </tbody>\n      </table>\n    </section>\n\n    <!-- Student Registration Form -->\n    <section>\n      <h2>Student Registry Application</h2>\n      <p>Complete this standard enrollment form to secure your seat inside our next cohort:</p>\n      <form action=\"/submit-registration\" method=\"POST\">\n        <fieldset>\n          <legend>Student Profile Information</legend>\n          \n          <p>\n            <label for=\"fullName\">Full Name:</label><br>\n            <input type=\"text\" id=\"fullName\" name=\"fullName\" placeholder=\"Enter your full name\" required>\n          </p>\n          \n          <p>\n            <label for=\"emailAddr\">Academic Email Address:</label><br>\n            <input type=\"email\" id=\"emailAddr\" name=\"emailAddr\" placeholder=\"student@academy.com\" required>\n          </p>\n\n          <p>\n            <label>Select Cohort track:</label><br>\n            <input type=\"radio\" id=\"trackFrontend\" name=\"cohortTrack\" value=\"frontend\">\n            <label for=\"trackFrontend\">Frontend Developer</label><br>\n            <input type=\"radio\" id=\"trackBackend\" name=\"cohortTrack\" value=\"backend\">\n            <label for=\"trackBackend\">Backend Developer</label>\n          </p>\n          \n          <p>\n            <input type=\"checkbox\" id=\"termsCheck\" name=\"termsCheck\" required>\n            <label for=\"termsCheck\">I agree to Wemade Academy's code of conduct and safety regulations.</label>\n          </p>\n        </fieldset>\n        \n        <p>\n          <button type=\"submit\">Submit Registration</button>\n        </p>\n      </form>\n    </section>\n  </main>\n\n  <footer>\n    <p>Academic Access Secured &copy; 2026 Wemade Logix. All rights reserved.</p>\n  </footer>\n\n</body>\n</html>",
+              "css": "",
               "js": ""
             },
-            "assessment": "Final Challenge: Take your HTML profile page from Day 1 and apply full CSS styling to make it look professional!"
+            "assessment": "Final Challenge: Recreate this Student Enrollment & Registration Portal using the interactive code editor. Satisfy all dynamic lists, tables, grid spanning (colspan/rowspan), form fieldsets, input validations, and checkbox requirements to earn your advanced credentials!"
           },
           {
             "id": "w1-d3-resources",
@@ -1312,13 +1313,13 @@ export const courseData = [
             "explanation": "This section contains the official slide decks, exercises, tutor reference guides, and student worksheets for this session.",
             "tutorMaterial": {
               "title": "Tutor Lesson Plan & Reference Guide",
-              "content": "Important talking points, structural timeline, common student pitfalls, and solutions for this session.",
+              "content": "Talking points, advanced grid spanning diagrams, security guidelines for forms validation, and structural solutions.",
               "duration": "15 mins",
               "resources": [
-                "Classroom Presentation Slides (PDF)",
-                "Student Hands-on Lab Worksheet (PDF)",
-                "Reference Code & Solutions (ZIP)",
-                "Day Evaluation Rubric"
+                "Classroom Slides: HTML Advanced Structures (PDF)",
+                "Student Interactive Lab & Schedules Worksheet (PDF)",
+                "Wemade Registration Portal Solution File (HTML)",
+                "Day Evaluation Matrix"
               ]
             }
           }
