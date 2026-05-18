@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const logAction = require('../utils/auditLogger');
+const { sendWelcomeEmail } = require('../utils/emailService');
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -30,6 +31,9 @@ const registerUser = async (req, res) => {
     if (user) {
       // Audit Log
       await logAction(user, 'User Registration', `New student registered: ${user.email}`, user._id, 'User');
+
+      // Auto email credentials securely
+      await sendWelcomeEmail(user.email, user.name, password, user.role);
 
       res.status(201).json({
         _id: user._id,
@@ -124,6 +128,9 @@ const createUser = async (req, res) => {
     if (user) {
       // Audit Log
       await logAction(req.user, 'Personnel Enrollment', `Enrolled new ${role}: ${user.email}`, user._id, 'User');
+
+      // Auto email credentials securely
+      await sendWelcomeEmail(user.email, user.name, password, user.role);
 
       res.status(201).json({
         _id: user._id,
