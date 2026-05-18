@@ -651,17 +651,17 @@ export const courseData = [
               {
                 "level": "easy",
                 "title": "The Global Web Pipeline",
-                "content": "Web development operates on a global request-response cycle. A client (web browser like Google Chrome) issues HTTP request envelopes over web interfaces to target server IP addresses. The server processes request variables, carries out database queries, and packages resources (HTML, CSS, JS) back into TCP segments to deliver interactive layouts for the end-user."
+                "content": "Web development operates on a global request-response cycle. A client (web browser like Google Chrome or Safari) issues standard HTTP/HTTPS request packages over TCP/IP web interfaces to target unique server IP addresses. The server processes incoming request headers and parameters, queries relational or non-relational databases, and packages compiled resources (HTML documents, CSS stylesheet coordinates, and Javascript interaction modules) back into TCP segments to deliver interactive layouts for the end-user."
               },
               {
                 "level": "intermediate",
                 "title": "Secure Protocols: HTTP vs HTTPS",
-                "content": "HTTP acts as the standard plain text communication dialect of the web. HTTPS secures this dialect by wrapping traffic payloads in SSL/TLS cryptographic keys, preventing network packet sniffers from reading sensitive data like forms or login hashes."
+                "content": "HTTP (Hypertext Transfer Protocol) acts as the standard plain text communication dialect of the web, sending variables in clear text. HTTPS secures this transmission by wrapping traffic payloads in SSL/TLS cryptographic keys, preventing network packet sniffers and man-in-the-middle attacks from reading or tampering with sensitive user data, such as registration forms, credit cards, or authentication cookies."
               },
               {
                 "level": "advanced",
                 "title": "DNS & Dynamic IP Routing",
-                "content": "All nodes on the network are located via a unique numerical IP address. Because humans rely on natural-language strings, the Domain Name System (DNS) translates friendly domain names like wemadelogix.com into their corresponding static server IP addresses behind the scenes."
+                "content": "All nodes on the internet are located via a unique numerical IP address (IPv4 like 192.168.1.1 or IPv6). Because humans rely on natural-language strings, the Domain Name System (DNS) acts as the internet's phonebook, translating friendly domain names like wemadelogix.com into their corresponding static or dynamic server IP addresses. When a user requests a URL, a DNS resolver is queried first, returning the host IP to establish the low-level connection."
               }
             ],
             "codeTemplate": {
@@ -680,17 +680,17 @@ export const courseData = [
               {
                 "level": "easy",
                 "title": "Defining the DOM Tree",
-                "content": "HTML uses hierarchical tag pairs to construct a structured outline called the Document Object Model (DOM). Elements must open and close symmetrically, forming clear parent-child boundaries that represent layout boxes inside the browser."
+                "content": "HTML (Hypertext Markup Language) uses hierarchical tag pairs to construct a structured outline called the Document Object Model (DOM). Elements must open and close symmetrically, forming clear parent-child boundaries that represent layout boxes inside the browser. Attributes (like class, id, or style) provide key metadata and configuration options inside the opening tag, telling the rendering engine how to classify and handle the element."
               },
               {
                 "level": "intermediate",
                 "title": "Nesting Constraints",
-                "content": "Nesting determines hierarchy. Parent elements pass down coordinate boundaries to their children. Always close nested tags in reverse-opening order (e.g. <div><p>...</p></div>) to prevent structural rendering engine bugs."
+                "content": "Nesting determines hierarchy. Parent elements pass down coordinate boundaries and CSS inheritances to their children. Always close nested tags in reverse-opening order (e.g. <div><p>...</p></div>) to prevent structural rendering engine bugs, layout breakages, and invalid document parses that fail standard W3C validation audits."
               },
               {
                 "level": "advanced",
                 "title": "Block vs Inline Box Models",
-                "content": "HTML tags dictate default layouts. Block elements (like section, main, h1, p) stack vertically, breaking the layout line and covering 100% of parent width. Inline elements (like a, strong, span) flow side-by-side with text blocks without forcing line wraps."
+                "content": "HTML tags dictate default layouts. Block elements (like section, main, h1, p, div) stack vertically, breaking the layout line and covering 100% of parent width, forcing succeeding elements below them. Inline elements (like a, strong, em, span, code) flow side-by-side with text blocks without forcing line wraps, taking up only as much width as their inner content demands."
               }
             ],
             "codeTemplate": {
@@ -709,17 +709,17 @@ export const courseData = [
               {
                 "level": "easy",
                 "title": "Standard Skeleton Files",
-                "content": "Every valid HTML document demands a standard boilerplate setup. The document starts with <!DOCTYPE html> to enforce modern standard parsing, followed by root html tags, a head block for configuration, and a body block for visual elements."
+                "content": "Every valid HTML document demands a standard boilerplate setup. The document starts with the mandatory <!DOCTYPE html> preamble to enforce standard-compliant rendering mode in modern web engines. This prevents the browser from falling back into 'quirks mode', which interprets legacy CSS/HTML rules in inconsistent ways. It is immediately followed by root html tags containing the language code (<html lang='en'>), a head block for document configuration, and a body block for visual elements."
               },
               {
                 "level": "intermediate",
                 "title": "Global UTF-8 Character Encoding",
-                "content": "Declaring <meta charset='UTF-8'> instructs the browser to parse character code maps cleanly. UTF-8 supports rendering special letters, foreign characters, and emojis from all human languages without displaying corrupted accent boxes."
+                "content": "Declaring <meta charset='UTF-8'> inside the head block instructs the browser to parse character code maps cleanly. UTF-8 supports rendering special letters, foreign characters, mathematical glyphs, and emojis from all human languages without displaying corrupted accent boxes (known as 'mojibake') or broken character markers."
               },
               {
                 "level": "advanced",
                 "title": "Mobile Viewport Control",
-                "content": "The meta viewport tag (<meta name='viewport' content='width=device-width, initial-scale=1.0'>) tells mobile browsers to scale layouts to the device's native pixel width. If omitted, mobile viewports default to desktop sizing, rendering small text that requires pinch-zooming."
+                "content": "The meta viewport tag (<meta name='viewport' content='width=device-width, initial-scale=1.0'>) tells mobile browsers to scale layouts to the device's native physical pixel width. If omitted, mobile viewports default to an simulated desktop width (usually 980px), rendering text and buttons extremely small and requiring awkward pinch-zooming and horizontal scrolling."
               }
             ],
             "codeTemplate": {
@@ -738,17 +738,17 @@ export const courseData = [
               {
                 "level": "easy",
                 "title": "Rank & Document Priority",
-                "content": "HTML provides six headings levels (H1 to H6) to group document content. Headings establish the priority levels of information, with H1 carrying top rank weight."
+                "content": "HTML provides six headings levels (H1 to H6) to group document content. Headings establish the priority levels of information, with H1 carrying top rank weight. Browsers apply default visual stylings, assigning larger font sizes and bold weights to higher-rank headers, though these visual styles should be overridden with CSS while maintaining the semantic rank of the headers."
               },
               {
                 "level": "intermediate",
                 "title": "SEO & Indexing Stature",
-                "content": "Search engine bots use headings trees to determine topic focus. A valid page should only contain a single H1 representing the main topic, with sub-features grouped under H2 and H3 nodes to prevent diluting search weight."
+                "content": "Search engine crawl bots use heading hierarchies to index page topics. A valid page should only contain a single H1 representing the main topic, with sub-features grouped under H2 and H3 nodes to prevent diluting search weight. This logical structure allows search crawlers to extract key topics and index them accurately."
               },
               {
                 "level": "advanced",
                 "title": "Accessibility Tree Rules",
-                "content": "Visually impaired users navigate pages using headers lists. Skipping heading ranks (e.g. jumping from H1 directly to H4) breaks the accessibility map, confusing screen-readers attempting to read document sections."
+                "content": "Visually impaired users rely heavily on headers lists to navigate page sections. Skipping heading ranks (e.g. jumping from H1 directly to H4) breaks the accessibility map, confusing screen-readers attempting to read document sections. Maintaining a sequential structure (H1 -> H2 -> H3) ensures a predictable, compliant screen-reader experience."
               }
             ],
             "codeTemplate": {
@@ -767,17 +767,17 @@ export const courseData = [
               {
                 "level": "easy",
                 "title": "Passing Copy Passages",
-                "content": "Paragraph elements (<p>) organize structural blocks of text content. They instruct browsers to establish breathing space around reading segments by applying default vertical margins (1em)."
+                "content": "Paragraph elements (<p>) organize structural blocks of text content. They instruct browsers to establish breathing space around reading segments by applying default vertical margins (usually 1em or 16px at top and bottom) via the user-agent stylesheet, ensuring that adjacent paragraphs do not clump together."
               },
               {
                 "level": "intermediate",
                 "title": "Layout Line-Wrapping",
-                "content": "Unlike plain inline spans, paragraph boxes automatically wrap text lines dynamically to fit within their parent container width, ensuring responsive layouts across phone and monitor displays."
+                "content": "Unlike plain inline spans, paragraph boxes automatically wrap text lines dynamically to fit within their parent container width, ensuring responsive layouts across phone and monitor displays. They are block-level elements that always begin on a new line and force subsequent elements to start on a new line below them."
               },
               {
                 "level": "advanced",
                 "title": "Spacing vs BR Breaks",
-                "content": "Always separate paragraphs using p tags rather than manually introducing line breaks (<br>). Breaks split text inside a single idea but fail to convey paragraph changes to screen-reader software."
+                "content": "Always separate distinct thoughts using p tags rather than manually introducing line breaks (<br>). Breaks split text inside a single idea but fail to convey paragraph changes to screen-reader software, which relies on paragraph boundaries to announce pauses to users."
               }
             ],
             "codeTemplate": {
@@ -796,17 +796,17 @@ export const courseData = [
               {
                 "level": "easy",
                 "title": "Linguistic vs Visual Focus",
-                "content": "HTML formatting tags are classified as visual formatting or semantic formatting. While visual tags like <b> and <i> apply styling only, semantic tags like <strong> and <em> add structural emphasis."
+                "content": "HTML formatting tags are classified as visual formatting or semantic formatting. While visual tags like <b> and <i> apply styling only, semantic tags like <strong> and <em> add structural emphasis. Visual tags are relics of older HTML versions and should be avoided in favor of semantic ones."
               },
               {
                 "level": "intermediate",
                 "title": "Accessibility Voice Stress",
-                "content": "Assistive software adjusts speech profiles (raising volume or changing pitch) when reading <strong> and <em> tags to indicate emphasis. In contrast, <b> and <i> tags are read flat, leaving visually impaired users unaware of highlights."
+                "content": "Assistive software adjusts speech profiles (raising volume or changing pitch) when reading <strong> and <em> tags to indicate emphasis. In contrast, <b> and <i> tags are read flat, leaving visually impaired users unaware of highlights. This distinction is crucial for building accessible web interfaces."
               },
               {
                 "level": "advanced",
                 "title": "Monospaced & Highlights",
-                "content": "Use <code> to wrap code variables, rendering them in monospaced fonts to indicate computer instructions. Use <mark> to highlight text, rendering a visual yellow marker highlight for quick scannability."
+                "content": "Use <code> to wrap code variables, rendering them in monospaced fonts to indicate computer instructions. Use <mark> to highlight text, rendering a visual yellow marker highlight for quick scannability. This helps readers locate key search matches or highlighted quotes easily."
               }
             ],
             "codeTemplate": {
@@ -825,17 +825,17 @@ export const courseData = [
               {
                 "level": "easy",
                 "title": "Escaping Syntax Characters",
-                "content": "Browsers use characters like < and > to define tags. If you use them raw inside a text paragraph, the HTML parser gets confused, interpreting the symbol as a tag boundary and breaking your layout."
+                "content": "Browsers use characters like < and > to define tags. If you use them raw inside a text paragraph, the HTML parser gets confused, interpreting the symbol as a tag boundary and breaking your layout. This can lead to security vulnerabilities like cross-site scripting (XSS) if user input is not escaped."
               },
               {
                 "level": "intermediate",
                 "title": "Entity Code Structure",
-                "content": "HTML Entities act as character escapes, starting with an ampersand (&) and ending with a semicolon (;). They translate entity keywords into visual symbols on screen (e.g. '&lt;' for '<', '&gt;' for '>')."
+                "content": "HTML Entities act as character escapes, starting with an ampersand (&) and ending with a semicolon (;). They translate entity keywords into visual symbols on screen (e.g. '&lt;' for '<', '&gt;' for '>'). This allows you to print raw HTML code blocks safely on web pages."
               },
               {
                 "level": "advanced",
                 "title": "Special Symbol Rendering",
-                "content": "Entities guarantee clean rendering of trademark (&reg;), copyright (&copy;), and mathematical symbols across all browser engines, regardless of historical host-server configurations."
+                "content": "Entities guarantee clean rendering of trademark (&reg;), copyright (&copy;), and mathematical symbols across all browser engines, regardless of historical host-server configurations. This ensures a consistent typography display on all systems."
               }
             ],
             "codeTemplate": {
@@ -905,17 +905,17 @@ export const courseData = [
               {
                 "level": "easy",
                 "title": "Anchor Basics & Href",
-                "content": "The anchor tag (<a>) establishes a hyperlink connecting pages together. The href (Hypertext Reference) attribute contains the target URL string."
+                "content": "The anchor tag (<a>) establishes a hyperlink connecting separate pages together. The href (Hypertext Reference) attribute contains the target URL destination string. Browsers by default style anchor tags with blue text and underlines to establish visual signposting."
               },
               {
                 "level": "intermediate",
                 "title": "Targets & External Links",
-                "content": "Using target='_blank' instructs browsers to open links inside fresh tabs rather than taking over the active page. Always set rel='noopener noreferrer' for security!"
+                "content": "Using target='_blank' instructs browsers to open links inside fresh tabs rather than taking over the active page. Always set rel='noopener noreferrer' for security to prevent the newly opened tab from accessing the original window context via window.opener."
               },
               {
                 "level": "advanced",
                 "title": "Absolute vs Relative Paths",
-                "content": "Absolute paths (e.g. https://google.com) target remote servers. Relative paths (e.g. ./about.html) link local sub-pages within the same website directory."
+                "content": "Absolute paths (e.g. https://google.com) target remote servers across the global web pipeline. Relative paths (e.g. ./about.html) link local sub-pages within the same website directory, allowing portable hosting across varying root configurations."
               }
             ],
             "codeTemplate": {
@@ -932,17 +932,17 @@ export const courseData = [
               {
                 "level": "easy",
                 "title": "Image Rendering Basics",
-                "content": "The <img> tag embeds visual graphics. Since it is an empty element, it does not have a closing tag and instead requires src and alt attributes."
+                "content": "The <img> tag embeds visual graphics inside the page structure. Since it is an empty element, it does not have a closing tag and instead requires src (source location path) and alt (descriptive alternative text) attributes to be valid."
               },
               {
                 "level": "intermediate",
                 "title": "Alternative Text (Alt)",
-                "content": "Alt text provides descriptive copy to assistive reading programs when images fail to load or when screen readers narrate pages for visually impaired users."
+                "content": "Alt text provides descriptive copy to assistive reading programs when images fail to load due to slow networks, or when screen readers narrate layouts for visually impaired users. Good alt text summarizes the visual context without starting with 'image of'."
               },
               {
                 "level": "advanced",
                 "title": "Sizing & Aspect Controls",
-                "content": "Always define width and height attributes in raw pixel dimensions to prevent content layout shifts while pages are downloading."
+                "content": "Always define width and height attributes in raw pixel dimensions to reserve spacing blocks on the page before resources download. This prevents content layout shifts (CLS), protecting readers from page text jumps while scrolling."
               }
             ],
             "codeTemplate": {
@@ -959,17 +959,17 @@ export const courseData = [
               {
                 "level": "easy",
                 "title": "Playable Audio Logs",
-                "content": "The <audio> element makes sound files playable in browsers. Adding the controls attribute immediately builds standard play, pause, and volume buttons."
+                "content": "The <audio> element makes sound files playable in browsers. Adding the controls attribute immediately builds standard play, pause, seek, and volume buttons, enabling native player operations without requiring custom JS controllers."
               },
               {
                 "level": "intermediate",
                 "title": "Format Audio Sources",
-                "content": "Nest multiple <source> tags with varying formats (mp3, ogg, wav) inside the audio tag to ensure cross-browser compatibility across legacy devices."
+                "content": "Nest multiple <source> tags with varying formats (mp3, ogg, wav) inside the audio tag to ensure cross-browser compatibility. Browsers will check sources sequentially and execute the first file format their core engine supports."
               },
               {
                 "level": "advanced",
                 "title": "Playback Fallback Copy",
-                "content": "Always write readable text inside the audio block to display a fallback message for old search engines or legacy browsers that do not support playback."
+                "content": "Always write readable fallback copy text inside the audio block. This fallback is completely hidden in modern systems but displays a helpful download notice to legacy search indexers or outdated browser systems."
               }
             ],
             "codeTemplate": {
@@ -986,17 +986,17 @@ export const courseData = [
               {
                 "level": "easy",
                 "title": "Rich Video Integration",
-                "content": "The <video> tag embeds responsive videos. Adding the controls attribute provides complete playback tracking and volume sliders for user convenience."
+                "content": "The <video> tag embeds responsive videos. Adding the controls attribute provides play/pause toggles, timelines, and fullscreen controls, rendering a high-performance player block tailored to the host browser's native styling."
               },
               {
                 "level": "intermediate",
                 "title": "Video Player Parameters",
-                "content": "Attributes like width, height, loop (re-triggering playback), and muted (suppressing sound) optimize rendering profiles across page grids."
+                "content": "Video player parameters like width, height, loop (re-triggering playback from the start), and muted (suppressing sound tracks) optimize media performance. Using standard aspect ratios like 16:9 avoids displaying thick black letterbox borders."
               },
               {
                 "level": "advanced",
                 "title": "Autoplay Constraints",
-                "content": "Most browsers completely block video autoplay unless you declare the muted attribute alongside it, safeguarding users against noisy initial page loading."
+                "content": "Modern browser security policies block autoplaying videos unless you declare the muted attribute alongside it. Muted autoplay prevents noisy surprises when pages first load, safeguarding user bandwidth and experience."
               }
             ],
             "codeTemplate": {
@@ -1013,17 +1013,17 @@ export const courseData = [
               {
                 "level": "easy",
                 "title": "Nested Page Embedding",
-                "content": "An iframe (Inline Frame) embeds secondary document windows. The src attribute tells the frame what document to fetch and render."
+                "content": "An iframe (Inline Frame) embeds secondary HTML document windows. The src attribute tells the frame what document or web address to fetch and render, allowing interactive Google Maps, YouTube clips, or third-party tools to sit inside the page."
               },
               {
                 "level": "intermediate",
                 "title": "Sandboxing parameters",
-                "content": "Declare the sandbox attribute to prevent embedded iframes from executing malicious scripts, accessing local cookies, or popping up modals."
+                "content": "Declare the sandbox attribute to prevent embedded iframes from executing malicious scripts, accessing local storage, or popping up navigation redirects. Specifying subset tokens like 'allow-scripts' enables only safe, verified scripts."
               },
               {
                 "level": "advanced",
                 "title": "Accessibility Mapping",
-                "content": "Always include a descriptive title attribute on all iframes so that screen readers can easily announce the frame's contents to users."
+                "content": "Always include a descriptive title attribute on all iframes so that screen readers can easily announce the frame's contents to users. This satisfies standard W3C accessibility audits for nested frame containers."
               }
             ],
             "codeTemplate": {
@@ -1040,17 +1040,17 @@ export const courseData = [
               {
                 "level": "easy",
                 "title": "Metadata Infrastructure",
-                "content": "Meta tags inside the <head> block hold key configuration details about the document that aren't displayed directly to readers."
+                "content": "Meta tags inside the <head> block hold key configuration details about the document. These details are read by browser parsers, search engines, and social media scrapers but are not displayed directly inside the visual body area."
               },
               {
                 "level": "intermediate",
                 "title": "Standard viewports & charsets",
-                "content": "Declaring meta charset='UTF-8' secures character mapping. Declaring name='viewport' ensures layout elements scale cleanly on mobile devices."
+                "content": "Declaring meta charset='UTF-8' secures standard global character mapping. Declaring name='viewport' ensures that width coordinates scale cleanly to the device width, preventing layout rendering errors on mobile screens."
               },
               {
                 "level": "advanced",
                 "title": "SEO Keywords & Descriptions",
-                "content": "Metadata descriptions provide the precise copy displayed below search results, optimizing the website's search performance and click-through rates."
+                "content": "Meta description tags write the snippet shown beneath search engine links, directly impacting search visibility. Open Graph (OG) meta tags customize card titles and preview images when sharing links across social platforms like WhatsApp or Slack."
               }
             ],
             "codeTemplate": {
@@ -1119,17 +1119,17 @@ export const courseData = [
               {
                 "level": "easy",
                 "title": "Lists Classifications",
-                "content": "HTML provides ordered lists (<ol>) for numbered sequences and unordered lists (<ul>) for standard bullet points. Nesting list items (<li>) inside them displays clustered ideas."
+                "content": "HTML provides ordered lists (<ol>) for numbered sequences and unordered lists (<ul>) for standard bullet points. Nesting list items (<li>) inside them displays clustered ideas. List elements tell web crawlers and screen readers that individual items share a logical structural relationship."
               },
               {
                 "level": "intermediate",
                 "title": "Unordered Bullet Options",
-                "content": "By default, unordered list items display direct visual bullet markers. These markers can be customized in stylesheets using 'list-style-type' attributes (disc, circle, square)."
+                "content": "By default, unordered list items display direct visual bullet markers. These markers can be customized in stylesheets using 'list-style-type' attributes (disc, circle, square, or none). Custom SVGs can also be integrated via CSS to deliver unique list indicators."
               },
               {
                 "level": "advanced",
                 "title": "Ordered Sequence Schemes",
-                "content": "Ordered lists support varying sequencing types (numbers, uppercase letters, Roman numerals) controlled using the type attribute (<ol type='A'> or <ol type='I'>)."
+                "content": "Ordered lists support varying sequencing types (Arabic numbers, uppercase/lowercase letters, Roman numerals) controlled using the type attribute (<ol type='A'> or <ol type='I'>). Tutors can set a custom starting number using the start attribute (<ol start='5'>)."
               }
             ],
             "codeTemplate": {
@@ -1147,17 +1147,17 @@ export const courseData = [
               {
                 "level": "easy",
                 "title": "Symmetric Table Containers",
-                "content": "The <table> tag holds structured data blocks. Rows (<tr>) contain headers (<th>) representing column definitions and data cells (<td>) representing values."
+                "content": "The <table> tag holds structured data blocks in grid layouts. Rows (<tr>) contain headers (<th>) representing column definitions with default bold weights, and data cells (<td>) representing specific values, mapping data pairs cleanly."
               },
               {
                 "level": "intermediate",
                 "title": "Table Elements Division",
-                "content": "Group columns into <thead> (header labels), <tbody> (body content), and <tfoot> (footers/sums). This helps search engines analyze data sheets logically."
+                "content": "Divide tables semantically into <thead> (header labels), <tbody> (primary body content), and <tfoot> (footers/sums/summaries). This helps search engines analyze data sheets logically and enables scroll-independent header rendering."
               },
               {
                 "level": "advanced",
                 "title": "Tabular Styling Rules",
-                "content": "Using the 'border-collapse: collapse' CSS property merges adjacent cell borders into a unified grid, replacing the legacy default double-bordered style."
+                "content": "Using the 'border-collapse: collapse' CSS property merges adjacent cell borders into a unified grid, replacing the legacy default double-bordered style. You can add padding and zebra-striping to table rows to improve visual readability."
               }
             ],
             "codeTemplate": {
@@ -1174,17 +1174,17 @@ export const courseData = [
               {
                 "level": "easy",
                 "title": "Merged Columns (Colspan)",
-                "content": "Add the colspan attribute to cells (<th> or <td>) to stretch them horizontally across multiple columns, merging separate blocks into unified spans."
+                "content": "Add the colspan attribute to cells (<th> or <td>) to stretch them horizontally across multiple columns. This is perfect for styling section headers or banners that span the entire width of a data grid."
               },
               {
                 "level": "intermediate",
                 "title": "Merged Rows (Rowspan)",
-                "content": "Add the rowspan attribute to cells to stretch them vertically down across multiple rows, perfect for presenting overlapping time slots in weekly schedules."
+                "content": "Add the rowspan attribute to cells to stretch them vertically down across multiple rows, perfect for presenting overlapping time slots, multi-day calendar blocks, or shared categories in structural matrices."
               },
               {
                 "level": "advanced",
                 "title": "Grid Balancing Constraints",
-                "content": "When a cell spans across multiple columns or rows, you must omit subsequent cells in the merged rows or columns to keep the table grid perfectly aligned."
+                "content": "When a cell spans across multiple columns or rows, you must omit subsequent cells in the merged rows or columns in your markup to keep the table grid perfectly aligned. Missing cell omission leads to misaligned tables and broken visual flows."
               }
             ],
             "codeTemplate": {
@@ -1202,17 +1202,17 @@ export const courseData = [
               {
                 "level": "easy",
                 "title": "Interactive Forms wrapper",
-                "content": "The <form> element wraps user interactive controls, acting as a gateway that aggregates user-supplied information and submits it to servers."
+                "content": "The <form> element wraps user interactive controls, acting as a gateway that aggregates user-supplied information and submits it to servers. Forms should always carry standard semantic block structures inside their layout."
               },
               {
                 "level": "intermediate",
                 "title": "Labels Binding & Accessibility",
-                "content": "Always bind <label> elements to inputs using the 'for' attribute, matching the input's 'id'. This creates a larger clickable area and aids screen readers."
+                "content": "Always bind <label> elements to inputs using the 'for' attribute, matching the input's 'id'. This increases the clickable target size (highly useful on mobile screens) and provides vital structural context for screen readers."
               },
               {
                 "level": "advanced",
                 "title": "Standard Submission Protocols",
-                "content": "Forms use the action attribute (target endpoint) and method (GET displays parameters in URL, POST packages data in request body securely)."
+                "content": "Forms use the action attribute (target backend URL or endpoint) and method (GET displays parameters in URL for query parameters, POST packages data in request body securely for creations/mutations) to handle backend pipelines."
               }
             ],
             "codeTemplate": {
@@ -1230,17 +1230,17 @@ export const courseData = [
               {
                 "level": "easy",
                 "title": "Input Type Variations",
-                "content": "Inputs take on varying forms depending on the type attribute: 'text' for generic names, 'email' for addresses, and 'password' to hide keystrokes."
+                "content": "Inputs take on varying forms depending on the type attribute: 'text' for generic names, 'email' for validation rules, and 'password' to hide keystrokes. Using the correct type triggers custom visual designs in many modern operating systems."
               },
               {
                 "level": "intermediate",
                 "title": "HTML5 Validation Attributes",
-                "content": "Add attributes like required (blocking empty submissions), placeholder (helpful hints), and minlength (enforcing secure string sizes)."
+                "content": "Add attributes like required (blocking empty submissions), placeholder (helpful hints), minlength/maxlength (enforcing secure string sizes), and pattern (regex-based parsing) to build robust front-end field validations."
               },
               {
                 "level": "advanced",
                 "title": "Mobile Input Keyboard Maps",
-                "content": "Using semantic input types (e.g. type='email' or type='number') automatically triggers mobile keyboards with appropriate keys, improving user experience."
+                "content": "Using semantic input types (e.g. type='email', type='number', or type='tel') automatically triggers mobile keyboards with appropriate keys, improving mobile UX and reducing user typing friction."
               }
             ],
             "codeTemplate": {
@@ -1258,17 +1258,17 @@ export const courseData = [
               {
                 "level": "easy",
                 "title": "Checkboxes (Multiple choices)",
-                "content": "Checkboxes (<input type='checkbox'>) allow users to select multiple options from a group (e.g., agreeing to terms or listing skills)."
+                "content": "Checkboxes (<input type='checkbox'>) allow users to select multiple options from a group (e.g., agreeing to terms or listing skills). They are independent nodes that can be toggled without affecting neighboring fields."
               },
               {
                 "level": "intermediate",
                 "title": "Radio Buttons (Unique choices)",
-                "content": "Radio buttons (<input type='radio'>) restrict users to picking a single choice from a list. Declare a matching name attribute on all buttons to group them."
+                "content": "Radio buttons (<input type='radio'>) restrict users to picking a single choice from a list. Declare a matching name attribute on all buttons in the group to bind them, allowing only one selection at a time."
               },
               {
                 "level": "advanced",
                 "title": "Fieldsets and Legends",
-                "content": "Wrap related inputs inside a <fieldset> element and label it using <legend> to group choices and assist visually impaired users."
+                "content": "Wrap related inputs inside a <fieldset> element and label it using <legend> to group choices visually and assist visually impaired users. This delivers an elegant, high-contrast block boundary around options."
               }
             ],
             "codeTemplate": {
