@@ -84,11 +84,12 @@ const MainContent = () => {
       ]);
     } else if (selectedTopic?.id === 'd2-t7') {
       setRequirements([
-        { id: 'form', text: 'Include a <form> wrapper tag', regex: /<form.*?>.*?<\/form>/is, met: false },
-        { id: 'fieldset', text: 'Use <fieldset> and <legend> elements', regex: /<fieldset.*?>.*?<legend.*?>.*?<\/legend>.*?<\/fieldset>/is, met: false },
-        { id: 'labels', text: 'Implement <label> tags bound to inputs', regex: /<label.*?>.*?<\/label>/gi, count: 2, met: false },
-        { id: 'input-types', text: 'Use email and password input types', regex: /type=['"](email|password)['"]/gi, count: 2, met: false },
-        { id: 'required', text: 'Add required attribute to inputs', regex: /required/i, met: false },
+        { id: 'links', text: 'Use at least 3 Anchor links with at least one external (target="_blank")', regex: /<a\s+[^>]*?href\s*=\s*['"][^'"]+['"][^>]*?>.*?<\/a>/gi, count: 3, met: false },
+        { id: 'image', text: 'Include an <img> with a descriptive alt attribute (min 5 chars)', regex: /<img\s+[^>]*?alt\s*=\s*['"][^'"]{5,}['"][^>]*?>/i, met: false },
+        { id: 'audio', text: 'Embed a playable <audio> track with controls enabled', regex: /<audio\s+[^>]*?controls[^>]*?>/i, met: false },
+        { id: 'video', text: 'Embed a playable <video> player with controls enabled', regex: /<video\s+[^>]*?controls[^>]*?>/i, met: false },
+        { id: 'iframe', text: 'Embed an <iframe> with sandboxing enabled', regex: /<iframe\s+[^>]*?sandbox[^>]*?>/i, met: false },
+        { id: 'meta', text: 'Configure at least 4 <meta> configuration tags (charset, viewport, SEO)', regex: /<meta\s+[^>]*?>/gi, count: 4, met: false },
       ]);
     } else if (selectedTopic?.title?.toLowerCase()?.includes('mini project') || selectedTopic?.title?.toLowerCase()?.includes('assignment task')) {
       setRequirements([

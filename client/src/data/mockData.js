@@ -895,200 +895,198 @@ export const courseData = [
       },
       {
         "dayId": "w1-d2",
-        "dayTitle": "Day 2: Forms, Tables & Semantics",
+        "dayTitle": "Day 2: Multimedia Elements & Metadata",
         "topics": [
           {
             "id": "d2-t1",
-            "title": "1. HTML Forms Introduction",
-            "visualization": "/html-forms.png",
+            "title": "1. Links & Navigation",
+            "visualization": "/html-structure.png",
             "progression": [
               {
                 "level": "easy",
-                "title": "Collecting Data",
-                "content": "The <form> element is a container for different types of input elements. It's how websites 'listen' to users, whether it's for logging in, searching, or signing up."
+                "title": "Anchor Basics & Href",
+                "content": "The anchor tag (<a>) establishes a hyperlink connecting pages together. The href (Hypertext Reference) attribute contains the target URL string."
               },
               {
                 "level": "intermediate",
-                "title": "Labels and Focus",
-                "content": "Never use an input without a <label>. Labels tell the user what the field is for and, more importantly, they are clickable! Clicking a label will put focus on its related input."
+                "title": "Targets & External Links",
+                "content": "Using target='_blank' instructs browsers to open links inside fresh tabs rather than taking over the active page. Always set rel='noopener noreferrer' for security!"
               },
               {
                 "level": "advanced",
-                "title": "Form Validation Basics",
-                "content": "Browsers have built-in ways to check if data is correct before the form is even sent. This is called 'Client-side validation' and uses attributes like 'required' and 'pattern'."
+                "title": "Absolute vs Relative Paths",
+                "content": "Absolute paths (e.g. https://google.com) target remote servers. Relative paths (e.g. ./about.html) link local sub-pages within the same website directory."
               }
             ],
             "codeTemplate": {
-              "html": "<form>\n  <label for='name'>Full Name:</label>\n  <input type='text' id='name' placeholder='Enter your name' required>\n  \n  <button type='submit'>Register</button>\n</form>",
-              "css": "form {\n  display: flex;\n  flex-direction: column;\n  gap: 15px;\n  max-width: 300px;\n}\ninput {\n  padding: 10px;\n  border-radius: 6px;\n  border: 1px solid #334155;\n  background: #1e293b;\n  color: white;\n}\nbutton {\n  background: #00d1d1;\n  color: #0f172a;\n  padding: 10px;\n  border: none;\n  border-radius: 6px;\n  cursor: pointer;\n  font-weight: bold;\n}",
-              "js": "document.querySelector('form').onsubmit = (e) => {\n  e.preventDefault();\n  alert('Form Submitted!');\n};"
+              "html": "<nav>\n  <a href='https://github.com' target='_blank' rel='noopener noreferrer'>Visit GitHub Profile</a> |\n  <a href='#about'>Learn More About Me</a>\n</nav>",
+              "css": "a {\n  color: #00d1d1;\n  text-decoration: none;\n  font-weight: 600;\n  transition: opacity 0.2s;\n}\na:hover { opacity: 0.8; }",
+              "js": ""
             },
-            "assessment": "Create a form with a label and a required text input."
+            "assessment": "Draft a navigation bar with at least two internal anchors and one external anchor that opens in a fresh browser tab."
           },
           {
             "id": "d2-t2",
-            "title": "2. Input Fields & Types",
+            "title": "2. Images & Graphic Embeds",
             "progression": [
               {
                 "level": "easy",
-                "title": "One Tag, Many Jobs",
-                "content": "The <input> tag changes its behavior entirely based on the 'type' attribute. 'text' for names, 'password' to hide characters, and 'email' for validation."
+                "title": "Image Rendering Basics",
+                "content": "The <img> tag embeds visual graphics. Since it is an empty element, it does not have a closing tag and instead requires src and alt attributes."
               },
               {
                 "level": "intermediate",
-                "title": "Selection Inputs",
-                "content": "Radio buttons (type='radio') are for 'pick one only' choices, while Checkboxes (type='checkbox') let users pick multiple options."
+                "title": "Alternative Text (Alt)",
+                "content": "Alt text provides descriptive copy to assistive reading programs when images fail to load or when screen readers narrate pages for visually impaired users."
               },
               {
                 "level": "advanced",
-                "title": "HTML5 Modern Types",
-                "content": "Modern HTML5 gives us 'date' pickers, 'color' selectors, and 'number' inputs with up/down arrows. Use these instead of JS whenever possible for better mobile support!"
+                "title": "Sizing & Aspect Controls",
+                "content": "Always define width and height attributes in raw pixel dimensions to prevent content layout shifts while pages are downloading."
               }
             ],
             "codeTemplate": {
-              "html": "<h3>User Preferences</h3>\n<label>Email: <input type='email'></label><br><br>\n<label>Birthday: <input type='date'></label><br><br>\n<label><input type='checkbox'> Subscribe to Newsletter</label>",
-              "css": "input[type='date'] { color-scheme: dark; }",
+              "html": "<img src='https://picsum.photos/300/200?random=1' alt='A high-performance modern laptop workstation sitting on an office desk' width='300' height='200'>",
+              "css": "img {\n  border-radius: 8px;\n  box-shadow: 0 4px 12px rgba(0,0,0,0.15);\n  display: block;\n  max-width: 100%;\n  height: auto;\n}",
               "js": ""
             },
-            "assessment": "Build a mini-form with an email input, a date picker, and a checkbox."
+            "assessment": "Embed a remote image graphic with alternative text containing at least 5 words and a matching pixel width parameter."
           },
           {
             "id": "d2-t3",
-            "title": "3. Form Attributes",
+            "title": "3. Audio Element & Controls",
             "progression": [
               {
                 "level": "easy",
-                "title": "Action & Method",
-                "content": "The 'action' attribute tells the form WHERE to send the data. The 'method' tells it HOW (usually 'GET' or 'POST')."
+                "title": "Playable Audio Logs",
+                "content": "The <audio> element makes sound files playable in browsers. Adding the controls attribute immediately builds standard play, pause, and volume buttons."
               },
               {
                 "level": "intermediate",
-                "title": "GET vs POST",
-                "content": "GET sends data in the URL (visible/insecure), while POST sends it hidden in the request body (secure/large data). Use POST for passwords!"
+                "title": "Format Audio Sources",
+                "content": "Nest multiple <source> tags with varying formats (mp3, ogg, wav) inside the audio tag to ensure cross-browser compatibility across legacy devices."
               },
               {
                 "level": "advanced",
-                "title": "HTML Validation Power",
-                "content": "Attributes like 'minlength', 'max', and 'required' prevent submission of bad data. No JavaScript needed for basic checks!"
+                "title": "Playback Fallback Copy",
+                "content": "Always write readable text inside the audio block to display a fallback message for old search engines or legacy browsers that do not support playback."
               }
             ],
             "codeTemplate": {
-              "html": "<form action='/submit' method='POST'>\n  <label>Age: <input type='number' min='18' max='100' required></label>\n  <input type='submit' value='Join Club'>\n</form>",
-              "css": "input:invalid { border-color: #f87171; }\ninput:valid { border-color: #4ade80; }",
+              "html": "<audio controls>\n  <source src='https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' type='audio/mpeg'>\n  Your browser does not support the audio element.\n</audio>",
+              "css": "audio {\n  width: 100%;\n  max-width: 320px;\n  outline: none;\n}",
               "js": ""
             },
-            "assessment": "Modify a form to use the POST method and require a number between 1 and 10."
+            "assessment": "Add a standard audio element with controls containing at least one fallback download notice."
           },
           {
             "id": "d2-t4",
-            "title": "4. Tables in HTML",
-            "visualization": "/html-tables.png",
+            "title": "4. Video Integration & Formats",
             "progression": [
               {
                 "level": "easy",
-                "title": "Row by Row",
-                "content": "Tables are built one row (<tr>) at a time. Inside each row, you put cells for data (<td>)."
+                "title": "Rich Video Integration",
+                "content": "The <video> tag embeds responsive videos. Adding the controls attribute provides complete playback tracking and volume sliders for user convenience."
               },
               {
                 "level": "intermediate",
-                "title": "Table Headers (th)",
-                "content": "Use <th> instead of <td> for the top row or first column. This makes the text bold and centered by default, and clarifies meaning for screen readers."
+                "title": "Video Player Parameters",
+                "content": "Attributes like width, height, loop (re-triggering playback), and muted (suppressing sound) optimize rendering profiles across page grids."
               },
               {
                 "level": "advanced",
-                "title": "Semantic Table Parts",
-                "content": "Complex tables use <thead>, <tbody>, and <tfoot> to group content. This helps browsers handle scrollable tables and printing better."
+                "title": "Autoplay Constraints",
+                "content": "Most browsers completely block video autoplay unless you declare the muted attribute alongside it, safeguarding users against noisy initial page loading."
               }
             ],
             "codeTemplate": {
-              "html": "<table>\n  <tr>\n    <th>Name</th>\n    <th>Role</th>\n  </tr>\n  <tr>\n    <td>John</td>\n    <td>Frontend</td>\n  </tr>\n  <tr>\n    <td>Sarah</td>\n    <td>Backend</td>\n  </tr>\n</table>",
-              "css": "table {\n  width: 100%;\n  border-collapse: collapse;\n  margin-top: 20px;\n}\nth, td {\n  padding: 12px;\n  text-align: left;\n  border-bottom: 1px solid #334155;\n}\nth { background: #1e293b; color: #00d1d1; }",
+              "html": "<video controls width='320' height='240' loop muted>\n  <source src='https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4' type='video/mp4'>\n  Your browser does not support the video tag.\n</video>",
+              "css": "video {\n  border-radius: 12px;\n  border: 2px solid #1e293b;\n  display: block;\n}",
               "js": ""
             },
-            "assessment": "Build a table with 3 columns (Item, Price, Qty) and 2 rows of data."
+            "assessment": "Embed a video player with controls that repeats automatically in a muted state."
           },
           {
             "id": "d2-t5",
-            "title": "5. Semantic HTML",
-            "visualization": "/semantic-layout.png",
+            "title": "5. iframes & Sandboxed Embedding",
             "progression": [
               {
                 "level": "easy",
-                "title": "Meaning Over Appearance",
-                "content": "Semantic elements (like <header>, <footer>) tell the browser and user exactly WHAT the content is, not just how it should look."
+                "title": "Nested Page Embedding",
+                "content": "An iframe (Inline Frame) embeds secondary document windows. The src attribute tells the frame what document to fetch and render."
               },
               {
                 "level": "intermediate",
-                "title": "Structure Elements",
-                "content": "<nav> is for links, <main> is for the core content, and <section> groups related ideas together. These replace generic <div> tags."
+                "title": "Sandboxing parameters",
+                "content": "Declare the sandbox attribute to prevent embedded iframes from executing malicious scripts, accessing local cookies, or popping up modals."
               },
               {
                 "level": "advanced",
-                "title": "SEO and Screen Readers",
-                "content": "Google Loves Semantic HTML. It help search engines understand your site's structure, which leads to better ranking. It also helps blind users navigate your site using voice tools."
+                "title": "Accessibility Mapping",
+                "content": "Always include a descriptive title attribute on all iframes so that screen readers can easily announce the frame's contents to users."
               }
             ],
             "codeTemplate": {
-              "html": "<header>\n  <h1>My Blog</h1>\n  <nav>\n    <a href='#'>Home</a> | <a href='#'>About</a>\n  </nav>\n</header>\n<main>\n  <article>\n    <h2>Semantic Wisdom</h2>\n    <p>Good code is readable code.</p>\n  </article>\n</main>\n<footer>\n  <p>© 2024</p>\n</footer>",
-              "css": "header { padding: 20px; background: #1e293b; }\nmain { padding: 20px; }\nfooter { text-align: center; font-size: 0.8rem; }",
+              "html": "<iframe src='about:blank' title='Sandboxed Developer Workspace Embed' width='100%' height='200' sandbox></iframe>",
+              "css": "iframe {\n  border: 2px dashed #00d1d1;\n  border-radius: 8px;\n  background: #f8fafc;\n}",
               "js": ""
             },
-            "assessment": "Refactor a simple layout to use <header>, <main>, and <footer> instead of <div> tags."
+            "assessment": "Add a sandboxed iframe with a title attribute for assistive accessibility."
           },
           {
             "id": "d2-t6",
-            "title": "6. Basic Accessibility (a11y)",
-            "visualization": "/html-a11y.png",
+            "title": "6. Meta Tags & Document Config (SEO)",
             "progression": [
               {
                 "level": "easy",
-                "title": "The Web is for Everyone",
-                "content": "Accessibility (often called a11y) means designing sites so people with disabilities can use them effectively."
+                "title": "Metadata Infrastructure",
+                "content": "Meta tags inside the <head> block hold key configuration details about the document that aren't displayed directly to readers."
               },
               {
                 "level": "intermediate",
-                "title": "Alt Text & Labels",
-                "content": "Always provide 'alt' text for images. If an image doesn't load or a user is blind, the 'alt' text explains what the image contains. Similarly, labels are critical for inputs."
+                "title": "Standard viewports & charsets",
+                "content": "Declaring meta charset='UTF-8' secures character mapping. Declaring name='viewport' ensures layout elements scale cleanly on mobile devices."
               },
               {
                 "level": "advanced",
-                "title": "ARIA Attributes",
-                "content": "When standard HTML isn't enough, we use ARIA (Accessible Rich Internet Applications) attributes like 'aria-label' or 'aria-hidden' to give extra context to assistive tech."
+                "title": "SEO Keywords & Descriptions",
+                "content": "Metadata descriptions provide the precise copy displayed below search results, optimizing the website's search performance and click-through rates."
               }
             ],
             "codeTemplate": {
-              "html": "<img src='https://picsum.photos/200' alt='A beautiful sunset over mountains'>\n\n<button aria-label='Close Dialog'>X</button>",
-              "css": "button {\n  padding: 5px 10px;\n  background: #f87171;\n  color: white;\n  border: none;\n  border-radius: 4px;\n}",
+              "html": "<!DOCTYPE html>\n<html lang='en'>\n<head>\n  <meta charset='UTF-8'>\n  <meta name='viewport' content='width=device-width, initial-scale=1.0'>\n  <meta name='description' content='Jane Developer multimedia showcase portfolio.'>\n  <meta name='keywords' content='Portfolio, Jane Developer, Web Architect'>\n  <title>Metadata Workspace</title>\n</head>\n<body>\n  <p>Metadata configured inside the head tag block!</p>\n</body>\n</html>",
+              "css": "body { padding: 16px; font-family: sans-serif; }",
               "js": ""
             },
-            "assessment": "Add alt text to an image and an ARIA label to a generic button."
+            "assessment": "Draft a head block containing standard mobile viewport scaling, charset definitions, and SEO descriptions."
           },
           {
             "id": "d2-t7",
-            "title": "7. Mini Project – Registration Form",
+            "title": "Assignment Task",
+            "visualization": "/lists-types.png",
             "progression": [
               {
                 "level": "easy",
-                "title": "Building the Form",
-                "content": "Setup a <form> with semantic sections for personal info (Name, Email)."
+                "title": "Metadata Setup & Anchor Hierarchy",
+                "content": "Configure HTML boilerplate meta tags (charset, viewport, description, keywords). Set up a responsive navigation panel with internal and external links."
               },
               {
                 "level": "intermediate",
-                "title": "Security & Validation",
-                "content": "Add a password field, a password confirmation, and use HTML5 attributes to ensure the email is valid and fields aren't empty."
+                "title": "Embedded headshots & audio logs",
+                "content": "Embed a visual headshot using an img tag with clean descriptions. Add a playable audio log explaining client-side multimedia integration details."
               },
               {
                 "level": "advanced",
-                "title": "Polished UX",
-                "content": "Group related inputs using <fieldset> and <legend>, and add helpful placeholders and autofocus to the first field."
+                "title": "Video walkthroughs & Sandboxed iframes",
+                "content": "Integrate a muted, looping video project showcase. Add an accessible, sandboxed iframe demonstrating nested dashboard operations."
               }
             ],
             "codeTemplate": {
-              "html": "<form class='registration-form'>\n  <h2>Create Account</h2>\n  \n  <fieldset>\n    <legend>Account Info</legend>\n    <label for='user'>Username:</label>\n    <input type='text' id='user' required autofocus>\n    \n    <label for='mail'>Email:</label>\n    <input type='email' id='mail' required>\n  </fieldset>\n\n  <fieldset>\n    <legend>Security</legend>\n    <label for='pass'>Password:</label>\n    <input type='password' id='pass' minlength='8' required>\n  </fieldset>\n\n  <button type='submit'>Sign Up Now</button>\n</form>",
-              "css": ".registration-form {\n  background: #1e293b;\n  padding: 30px;\n  border-radius: 12px;\n  border: 1px solid #334155;\n}\nfieldset {\n  border: 1px solid #334155;\n  border-radius: 8px;\n  margin-bottom: 20px;\n  padding: 20px;\n}\nlegend {\n  color: #00d1d1;\n  padding: 0 10px;\n  font-weight: bold;\n}\nlabel {\n  display: block;\n  margin: 10px 0 5px;\n}\ninput {\n  width: 100%;\n  padding: 8px;\n  background: #0f172a;\n  border: 1px solid #334155;\n  border-radius: 4px;\n  color: white;\n}\nbutton {\n  width: 100%;\n  padding: 12px;\n  background: #00d1d1;\n  color: #0f172a;\n  font-weight: bold;\n  border: none;\n  border-radius: 6px;\n  cursor: pointer;\n}",
+              "html": "<!-- Mission Objective: Recreate this Multimedia Developer Biography using only Day 1 and Day 2 elements. Ensure you satisfy all checklist requirements! -->\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <meta name=\"description\" content=\"Multimedia portfolio showcase for Jane Developer, highlighting core web capabilities, video walk-throughs, and interactive audio logs.\">\n  <meta name=\"keywords\" content=\"Jane Developer, Full Stack Software Architect, Multimedia Portfolio, HTML5 Media\">\n  <title>Jane Developer - Multimedia Showcase</title>\n</head>\n<body>\n\n  <header>\n    <h1>Jane Developer</h1>\n    <h3>Full Stack Software Architect</h3>\n    <nav>\n      <a href=\"#about\">About Me</a> |\n      <a href=\"#media\">Media Showcase</a> |\n      <a href=\"#interactive\">Interactive Nodes</a> |\n      <a href=\"https://github.com\" target=\"_blank\">GitHub Profile</a>\n    </nav>\n  </header>\n\n  <main>\n    <section id=\"about\">\n      <h2>Professional Mission Statement</h2>\n      <p>I am dedicated to building high-performance, accessible web architectures. In my showcase below, you can inspect custom structural layouts, local audio logs, and dynamic embedded assets.</p>\n      <img src=\"https://picsum.photos/300/200?random=1\" alt=\"Jane Developer professional headshot with desk background\" width=\"300\" height=\"200\">\n    </section>\n\n    <section id=\"media\">\n      <h2>Multimedia Integration</h2>\n      <h3>Audio Lecture Log</h3>\n      <p>Listen to my commentary on mastering client-side media rendering protocols:</p>\n      <audio controls>\n        <source src=\"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3\" type=\"audio/mpeg\">\n        Your browser does not support the audio element.\n      </audio>\n\n      <h3>Video Project Walkthrough</h3>\n      <p>Watch my technical walkthrough demonstration explaining structural markup compilation:</p>\n      <video controls width=\"320\" height=\"240\" loop muted>\n        <source src=\"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4\" type=\"video/mp4\">\n        Your browser does not support the video element.\n      </video>\n    </section>\n\n    <section id=\"interactive\">\n      <h2>Embedded Sandboxed Nodes</h2>\n      <p>Below is a live, sandboxed embed showcasing our course map:</p>\n      <iframe src=\"about:blank\" title=\"Sandboxed Embed Map\" width=\"100%\" height=\"200\" sandbox></iframe>\n    </section>\n  </main>\n\n  <footer>\n    <p>Secure Node Access Secured &copy; 2026 Jane Developer. All rights reserved.</p>\n  </footer>\n\n</body>\n</html>",
+              "css": "",
               "js": ""
             },
-            "assessment": "Final Challenge: Build this complete registration form and ensure all validation rules are met!"
+            "assessment": "Final Challenge: Recreate this Multimedia Developer Biography using the interactive code editor. Satisfy all dynamic metadata, anchors, images, audio, video, and iframe requirements to earn your credentials!"
           },
           {
             "id": "w1-d2-resources",
@@ -1097,13 +1095,13 @@ export const courseData = [
             "explanation": "This section contains the official slide decks, exercises, tutor reference guides, and student worksheets for this session.",
             "tutorMaterial": {
               "title": "Tutor Lesson Plan & Reference Guide",
-              "content": "Important talking points, structural timeline, common student pitfalls, and solutions for this session.",
+              "content": "Talking points, media integration timeline, sandbox security warnings, and reference layouts.",
               "duration": "15 mins",
               "resources": [
-                "Classroom Presentation Slides (PDF)",
-                "Student Hands-on Lab Worksheet (PDF)",
-                "Reference Code & Solutions (ZIP)",
-                "Day Evaluation Rubric"
+                "Classroom Slides: HTML Multimedia (PDF)",
+                "Multimedia Lab Guide & Assets Worksheet (PDF)",
+                "Jane Developer Portfolio Reference Key (HTML)",
+                "Day Evaluation Matrix"
               ]
             }
           }
