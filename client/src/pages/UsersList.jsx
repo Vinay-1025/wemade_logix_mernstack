@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
-import { User, Mail, Shield, Calendar, Search, ArrowLeft, Plus, X, UserPlus, ChevronLeft, ChevronRight, MoreVertical, Trash2, UserCheck, Edit2, Ban, Bell, AlertCircle, CheckCircle, Filter, RotateCcw } from 'lucide-react';
+import { User, Mail, Shield, Calendar, Search, ArrowLeft, Plus, X, UserPlus, ChevronLeft, ChevronRight, MoreVertical, Trash2, UserCheck, Edit2, Ban, Bell, AlertCircle, CheckCircle, Filter, RotateCcw, FileSpreadsheet, Upload, Download, Database } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import MainLayout from '../components/MainLayout';
 
@@ -18,9 +18,162 @@ const UsersList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [usersPerPage, setUsersPerPage] = useState(10);
 
+  // Excel / CSV Batch states
+  const [isExcelModalOpen, setIsExcelModalOpen] = useState(false);
+  const [excelUsers, setExcelUsers] = useState([]);
+  const [isImporting, setIsImporting] = useState(false);
+  const [importProgress, setImportProgress] = useState(0);
+  const [dragActive, setDragActive] = useState(false);
+  const [excelFile, setExcelFile] = useState(null);
+
   // Feedback states
   const [snackbar, setSnackbar] = useState({ open: false, message: '', type: 'success' });
   const [confirmDialog, setConfirmDialog] = useState({ open: false, title: '', message: '', onConfirm: null });
+
+  const downloadTemplate = () => {
+    const headers = "Name,Email,Password,Role\n";
+    const sampleData = "Jane Doe,jane.doe@example.com,securePass123,student\nJohn Admin,john.admin@example.com,adminPass456,admin\n";
+    const blob = new Blob([headers + sampleData], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "personnel_import_template.csv");
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleDrag = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  const parseCSV = (text) => {
+    const lines = text.split('\n');
+    const result = [];
+    if (lines.length < 2) return result;
+
+    const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+    const nameIdx = headers.indexOf('name');
+    const emailIdx = headers.indexOf('email');
+    const passIdx = headers.indexOf('password');
+    const roleIdx = headers.indexOf('role');
+
+    if (nameIdx === -1 || emailIdx === -1) {
+      throw new Error("Invalid CSV template. Column headers must contain 'Name' and 'Email'.");
+    }
+
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (!line) continue;
+
+      const cols = line.split(',').map(c => c.trim().replace(/^["']|["']$/g, ''));
+      if (cols.length < 2) continue;
+
+      const name = cols[nameIdx] || '';
+      const email = cols[emailIdx] || '';
+      const password = passIdx !== -1 ? (cols[passIdx] || 'wemade123') : 'wemade123';
+      let role = roleIdx !== -1 ? (cols[roleIdx] || 'student') : 'student';
+
+      // Normalize role
+      role = role.toLowerCase().includes('admin') ? 'admin' : 'student';
+
+      if (name && email) {
+        result.push({ name, email, password, role });
+      }
+    }
+    return result;
+  };
+
+  const handleFile = (file) => {
+    if (!file) return;
+    const isCSV = file.name.endsWith('.csv') || file.name.endsWith('.txt');
+    const isXLS = file.name.endsWith('.xlsx') || file.name.endsWith('.xls');
+
+    if (!isCSV && !isXLS) {
+      showSnackbar("Only Excel (.xlsx) or CSV (.csv) template files are supported.", "error");
+      return;
+    }
+
+    setExcelFile(file);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const text = e.target.result;
+        const parsed = parseCSV(text);
+        if (parsed.length === 0) {
+          showSnackbar("No valid personnel records found in the template.", "error");
+          setExcelFile(null);
+        } else {
+          setExcelUsers(parsed);
+          showSnackbar(`Parsed ${parsed.length} personnel records successfully!`, "success");
+        }
+      } catch (err) {
+        showSnackbar(err.message || "Failed to parse file data.", "error");
+        setExcelFile(null);
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleFile(e.dataTransfer.files[0]);
+    }
+  };
+
+  const handleFileSelect = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      handleFile(e.target.files[0]);
+    }
+  };
+
+  const handleBatchImport = async () => {
+    if (excelUsers.length === 0) return;
+    setIsImporting(true);
+    setImportProgress(0);
+    let successCount = 0;
+    let failCount = 0;
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${currentUser.token}`,
+      },
+    };
+
+    for (let i = 0; i < excelUsers.length; i++) {
+      const userToCreate = excelUsers[i];
+      try {
+        await axios.post('/api/auth/users', userToCreate, config);
+        successCount++;
+      } catch (err) {
+        console.error('Import failure:', userToCreate.email, err);
+        failCount++;
+      }
+      setImportProgress(Math.round(((i + 1) / excelUsers.length) * 100));
+    }
+
+    setIsImporting(false);
+    setIsExcelModalOpen(false);
+    setExcelUsers([]);
+    setExcelFile(null);
+    fetchUsers();
+
+    if (failCount === 0) {
+      showSnackbar(`Successfully imported ${successCount} personnel records!`, 'success');
+    } else {
+      showSnackbar(`Import complete. ${successCount} imported, ${failCount} skipped due to email duplication.`, 'error');
+    }
+  };
 
   const showSnackbar = (message, type = 'success') => {
     setSnackbar({ open: true, message, type });
@@ -178,10 +331,32 @@ const UsersList = () => {
               </div>
             </div>
 
-            <button className="btn btn-primary add-user-btn" onClick={() => setIsAddModalOpen(true)}>
-              <Plus size={18} />
-              Add Personnel
-            </button>
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button 
+                className="btn btn-secondary excel-import-btn" 
+                onClick={() => setIsExcelModalOpen(true)}
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '8px', 
+                  background: 'rgba(0, 209, 209, 0.05)', 
+                  color: 'var(--primary-cyan)', 
+                  border: '1px solid rgba(0, 209, 209, 0.2)', 
+                  padding: '10px 20px', 
+                  borderRadius: '10px', 
+                  fontWeight: 700, 
+                  cursor: 'pointer',
+                  fontSize: '0.85rem'
+                }}
+              >
+                <FileSpreadsheet size={18} />
+                Excel Import
+              </button>
+              <button className="btn btn-primary add-user-btn" onClick={() => setIsAddModalOpen(true)}>
+                <Plus size={18} />
+                Add Personnel
+              </button>
+            </div>
           </div>
 
           <div className="header-bottom">
@@ -218,6 +393,170 @@ const UsersList = () => {
             </div>
           </div>
         </div>
+
+        {isExcelModalOpen && (
+          <div className="modal-overlay">
+            <div className="modal-content card-3d excel-modal" style={{ maxWidth: '600px' }}>
+              <div className="modal-header">
+                <div className="modal-icon">
+                  <FileSpreadsheet size={24} />
+                </div>
+                <div>
+                  <h3 style={{ margin: 0 }}>Batch Personnel Onboarding</h3>
+                  <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: '#64748b' }}>Import multiple users simultaneously via Excel/CSV templates</p>
+                </div>
+                <button className="close-btn" onClick={() => { setIsExcelModalOpen(false); setExcelUsers([]); setExcelFile(null); }}>
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="excel-workflow" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                
+                {/* Step 1: Download Template */}
+                <div className="workflow-step" style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div>
+                    <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700 }}>1. Get Configuration Spreadsheet</h4>
+                    <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: '#64748b' }}>Download our prepared template containing required user schemas.</p>
+                  </div>
+                  <button 
+                    type="button" 
+                    className="btn btn-secondary" 
+                    onClick={downloadTemplate}
+                    style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(0, 209, 209, 0.08)', color: 'var(--primary-cyan)', border: '1px solid rgba(0, 209, 209, 0.2)', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '0.8rem' }}
+                  >
+                    <Download size={14} />
+                    Download Schema
+                  </button>
+                </div>
+
+                {/* Step 2: Drag and Drop Zone */}
+                <div className="workflow-step">
+                  <h4 style={{ margin: '0 0 10px', fontSize: '0.95rem', fontWeight: 700 }}>2. Upload Populated Template</h4>
+                  
+                  <div 
+                    className={`dropzone-container ${dragActive ? 'active' : ''}`}
+                    onDragEnter={handleDrag}
+                    onDragOver={handleDrag}
+                    onDragLeave={handleDrag}
+                    onDrop={handleDrop}
+                    style={{
+                      border: dragActive ? '2px dashed var(--primary-cyan)' : '2px dashed #cbd5e1',
+                      background: dragActive ? 'rgba(0, 209, 209, 0.02)' : '#f8fafc',
+                      borderRadius: '16px',
+                      padding: '30px 20px',
+                      textAlign: 'center',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      position: 'relative'
+                    }}
+                    onClick={() => document.getElementById('file-upload-input').click()}
+                  >
+                    <input 
+                      id="file-upload-input" 
+                      type="file" 
+                      accept=".csv, .xlsx, .xls"
+                      onChange={handleFileSelect}
+                      style={{ display: 'none' }}
+                    />
+                    
+                    <Upload size={32} style={{ color: dragActive ? 'var(--primary-cyan)' : '#94a3b8', marginBottom: '12px' }} />
+                    {excelFile ? (
+                      <div>
+                        <p style={{ margin: 0, fontWeight: 700, color: '#1e293b', fontSize: '0.9rem' }}>{excelFile.name}</p>
+                        <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: '#16a34a', fontWeight: 600 }}>
+                          Detected {excelUsers.length} valid personnel record(s) ready to synchronize
+                        </p>
+                      </div>
+                    ) : (
+                      <div>
+                        <p style={{ margin: 0, fontWeight: 700, color: '#475569', fontSize: '0.9rem' }}>Drag & drop populated spreadsheet template here</p>
+                        <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: '#94a3b8' }}>Supports Excel (.xlsx) or CSV (.csv) formats up to 10MB</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Step 3: parsed preview */}
+                {excelUsers.length > 0 && (
+                  <div className="parsed-preview-container" style={{ border: '1px solid #e2e8f0', borderRadius: '16px', overflow: 'hidden' }}>
+                    <div style={{ background: '#f8fafc', padding: '10px 16px', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: '#64748b', letterSpacing: '0.5px' }}>Data Schema Preview</span>
+                      <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--primary-cyan)' }}>Total: {excelUsers.length}</span>
+                    </div>
+                    <div style={{ maxHeight: '150px', overflowY: 'auto' }}>
+                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem', textAlign: 'left' }}>
+                        <thead>
+                          <tr style={{ background: '#f1f5f9', borderBottom: '1px solid #e2e8f0' }}>
+                            <th style={{ padding: '8px 12px', color: '#64748b' }}>Name</th>
+                            <th style={{ padding: '8px 12px', color: '#64748b' }}>Email</th>
+                            <th style={{ padding: '8px 12px', color: '#64748b' }}>Role</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {excelUsers.slice(0, 5).map((user, idx) => (
+                            <tr key={idx} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                              <td style={{ padding: '8px 12px', fontWeight: 600 }}>{user.name}</td>
+                              <td style={{ padding: '8px 12px', color: '#64748b' }}>{user.email}</td>
+                              <td style={{ padding: '8px 12px' }}>
+                                <span style={{ padding: '2px 8px', borderRadius: '6px', fontSize: '0.7rem', fontWeight: 700, background: user.role === 'admin' ? 'rgba(0, 209, 209, 0.08)' : '#f1f5f9', color: user.role === 'admin' ? 'var(--primary-cyan)' : '#475569' }}>
+                                  {user.role}
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                          {excelUsers.length > 5 && (
+                            <tr>
+                              <td colSpan="3" style={{ padding: '8px 12px', textAlign: 'center', color: '#94a3b8', background: '#f8fafc' }}>
+                                + {excelUsers.length - 5} more records parsed
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+
+                {/* Import Status Progress */}
+                {isImporting && (
+                  <div className="import-progress-container" style={{ background: '#f8fafc', padding: '16px', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', fontWeight: 700, marginBottom: '8px' }}>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--primary-cyan)' }}>
+                        <Database size={16} />
+                        Synchronizing with Main Directory...
+                      </span>
+                      <span>{importProgress}%</span>
+                    </div>
+                    <div style={{ width: '100%', height: '8px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
+                      <div style={{ width: `${importProgress}%`, height: '100%', background: 'linear-gradient(90deg, var(--primary-cyan) 0%, #3b82f6 100%)', transition: 'width 0.1s ease', borderRadius: '4px' }}></div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="modal-footer" style={{ marginTop: '30px' }}>
+                <button 
+                  type="button" 
+                  className="btn btn-ghost" 
+                  onClick={() => { setIsExcelModalOpen(false); setExcelUsers([]); setExcelFile(null); }}
+                  disabled={isImporting}
+                  style={{ width: '50%' }}
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="button" 
+                  className="btn btn-primary" 
+                  onClick={handleBatchImport}
+                  disabled={excelUsers.length === 0 || isImporting}
+                  style={{ width: '50%', background: 'linear-gradient(135deg, var(--primary-cyan) 0%, #3b82f6 100%)' }}
+                >
+                  {isImporting ? 'Syncing...' : `Import ${excelUsers.length} Users`}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {isAddModalOpen && (
           <div className="modal-overlay">

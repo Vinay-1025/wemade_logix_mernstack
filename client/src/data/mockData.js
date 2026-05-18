@@ -996,19 +996,32 @@ export const courseData = [
               {
                 "level": "easy",
                 "title": "Anchor Basics & Href",
-                "content": "The anchor tag (<a>) establishes a hyperlink connecting separate pages together. The href (Hypertext Reference) attribute contains the target URL destination string. Browsers by default style anchor tags with blue text and underlines to establish visual signposting."
+                "content": "The anchor tag establishes a hyperlink. The href attribute specifies the destination URL, and browsers default to blue underlined text."
               },
               {
                 "level": "intermediate",
                 "title": "Targets & External Links",
-                "content": "Using target='_blank' instructs browsers to open links inside fresh tabs rather than taking over the active page. Always set rel='noopener noreferrer' for security to prevent the newly opened tab from accessing the original window context via window.opener."
+                "content": "Using target='_blank' opens links in fresh tabs. Always append rel='noopener noreferrer' to secure against host thread vulnerability hijacking."
               },
               {
                 "level": "advanced",
                 "title": "Absolute vs Relative Paths",
-                "content": "Absolute paths (e.g. https://google.com) target remote servers across the global web pipeline. Relative paths (e.g. ./about.html) link local sub-pages within the same website directory, allowing portable hosting across varying root configurations."
+                "content": "Absolute paths target remote servers globally. Relative paths connect internal sub-pages within local file structures, ensuring build portability."
               }
             ],
+            "detailedReference": {
+              "summary": "Hyperlinks form the connective tissue of the global web, enabling users and search spiders to traverse unrelated resources and navigate nested portal pathways.",
+              "keyConcepts": [
+                { "term": "Target Specifiers", "definition": "Instructing the user-agent where to render the fetched resource (current viewport vs fresh sandboxed tab)." },
+                { "term": "Window Security", "definition": "Mitigating cross-origin information leaks by stripping dynamic referrer URLs when spawning new browser threads." },
+                { "term": "Addressing Modes", "definition": "Distinguishing fully qualified global domain endpoints from local, directory-relative pathways." }
+              ],
+              "bestPractices": [
+                "Always append rel='noopener noreferrer' when targeting blank windows to seal window handle vulnerabilities.",
+                "Prefer relative paths for local site structures to ensure portable hosting builds across staging environments.",
+                "Ensure descriptive link anchors are readable and explain the actual target, entirely avoiding generic phrases like 'Click Here'."
+              ]
+            },
             "codeTemplate": {
               "html": "<nav>\n  <a href='https://github.com' target='_blank' rel='noopener noreferrer'>Visit GitHub Profile</a> |\n  <a href='#about'>Learn More About Me</a>\n</nav>",
               "css": "a {\n  color: #00d1d1;\n  text-decoration: none;\n  font-weight: 600;\n  transition: opacity 0.2s;\n}\na:hover { opacity: 0.8; }",
@@ -1023,19 +1036,32 @@ export const courseData = [
               {
                 "level": "easy",
                 "title": "Image Rendering Basics",
-                "content": "The <img> tag embeds visual graphics inside the page structure. Since it is an empty element, it does not have a closing tag and instead requires src (source location path) and alt (descriptive alternative text) attributes to be valid."
+                "content": "The img element integrates graphics. It is a self-closing tag requiring src and alt attributes for valid structure."
               },
               {
                 "level": "intermediate",
                 "title": "Alternative Text (Alt)",
-                "content": "Alt text provides descriptive copy to assistive reading programs when images fail to load due to slow networks, or when screen readers narrate layouts for visually impaired users. Good alt text summarizes the visual context without starting with 'image of'."
+                "content": "Alt text provides descriptive copy to screen readers for accessibility, and renders if dynamic remote assets fail to load."
               },
               {
                 "level": "advanced",
                 "title": "Sizing & Aspect Controls",
-                "content": "Always define width and height attributes in raw pixel dimensions to reserve spacing blocks on the page before resources download. This prevents content layout shifts (CLS), protecting readers from page text jumps while scrolling."
+                "content": "Define explicit width and height pixel fields to pre-allocate element blocks, completely preventing Cumulative Layout Shifts (CLS)."
               }
             ],
+            "detailedReference": {
+              "summary": "Image integration bridges binary vector and raster assets with layout geometry, balancing user experience with asset bandwidth budget constraints.",
+              "keyConcepts": [
+                { "term": "Cumulative Layout Shift (CLS)", "definition": "Visual instability caused when browser engines redraw elements after delayed image downloads." },
+                { "term": "Alternative Metadata (Alt)", "definition": "Providing descriptive text alternatives for screen reader consumption and broken network fallbacks." },
+                { "term": "Raster vs Vector Assets", "definition": "Decoupling pixel-based layouts from responsive, math-driven visual graphics." }
+              ],
+              "bestPractices": [
+                "Always define raw height and width boundaries on image tags to reserve space and prevent layout shifts.",
+                "Keep alternative text concise, meaningful, and strictly descriptive of the graphic's actual informational value.",
+                "Choose scalable vectors (SVG) for UI widgets and optimized modern web formats (WebP) for photographs."
+              ]
+            },
             "codeTemplate": {
               "html": "<img src='https://picsum.photos/300/200?random=1' alt='A high-performance modern laptop workstation sitting on an office desk' width='300' height='200'>",
               "css": "img {\n  border-radius: 8px;\n  box-shadow: 0 4px 12px rgba(0,0,0,0.15);\n  display: block;\n  max-width: 100%;\n  height: auto;\n}",
@@ -1050,19 +1076,32 @@ export const courseData = [
               {
                 "level": "easy",
                 "title": "Playable Audio Logs",
-                "content": "The <audio> element makes sound files playable in browsers. Adding the controls attribute immediately builds standard play, pause, seek, and volume buttons, enabling native player operations without requiring custom JS controllers."
+                "content": "The audio tag renders audio tracks directly. Declaring the controls attribute displays standard browser play, seek, and volume keys."
               },
               {
                 "level": "intermediate",
                 "title": "Format Audio Sources",
-                "content": "Nest multiple <source> tags with varying formats (mp3, ogg, wav) inside the audio tag to ensure cross-browser compatibility. Browsers will check sources sequentially and execute the first file format their core engine supports."
+                "content": "Nest multiple source tags with varying mime types to secure cross-device support across different rendering engines."
               },
               {
                 "level": "advanced",
                 "title": "Playback Fallback Copy",
-                "content": "Always write readable fallback copy text inside the audio block. This fallback is completely hidden in modern systems but displays a helpful download notice to legacy search indexers or outdated browser systems."
+                "content": "Include explicit fallback notice copy inside the tags to guide legacy system engines that lack native media player components."
               }
             ],
+            "detailedReference": {
+              "summary": "Native browser sound playback utilizes standard hardware pipelines, removing legacy requirements for heavy external plug-ins or custom JS wrappers.",
+              "keyConcepts": [
+                { "term": "Format Fallbacks", "definition": "Defining multiple sequential source nodes to support different operating system capabilities." },
+                { "term": "Native Player UI", "definition": "Invoking sandboxed playback controls directly within browser layers using semantic attributes." },
+                { "term": "Legacy Hooks", "definition": "Writing standard textual elements inside tags for legacy indexers and out-of-date clients." }
+              ],
+              "bestPractices": [
+                "Provide standard MP3 and OGG formats within child source tags to achieve universal device compatibility.",
+                "Ensure the controls attribute is present unless implementing a custom visual interface via JavaScript.",
+                "Always place descriptive fallbacks inside the audio tag to assist legacy systems."
+              ]
+            },
             "codeTemplate": {
               "html": "<audio controls>\n  <source src='https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' type='audio/mpeg'>\n  Your browser does not support the audio element.\n</audio>",
               "css": "audio {\n  width: 100%;\n  max-width: 320px;\n  outline: none;\n}",
@@ -1077,19 +1116,32 @@ export const courseData = [
               {
                 "level": "easy",
                 "title": "Rich Video Integration",
-                "content": "The <video> tag embeds responsive videos. Adding the controls attribute provides play/pause toggles, timelines, and fullscreen controls, rendering a high-performance player block tailored to the host browser's native styling."
+                "content": "The video tag embeds rich playable videos, providing timelines, fullscreens, and toggles directly in hardware layers."
               },
               {
                 "level": "intermediate",
                 "title": "Video Player Parameters",
-                "content": "Video player parameters like width, height, loop (re-triggering playback from the start), and muted (suppressing sound tracks) optimize media performance. Using standard aspect ratios like 16:9 avoids displaying thick black letterbox borders."
+                "content": "Configure loop, muted, and posters to customize layouts, adhering to standard 16:9 aspects to avoid black letterboxing."
               },
               {
                 "level": "advanced",
                 "title": "Autoplay Constraints",
-                "content": "Modern browser security policies block autoplaying videos unless you declare the muted attribute alongside it. Muted autoplay prevents noisy surprises when pages first load, safeguarding user bandwidth and experience."
+                "content": "Modern security frameworks block autoplaying video media unless the muted attribute is explicitly declared alongside it."
               }
             ],
+            "detailedReference": {
+              "summary": "High-performance video players run directly within hardware-accelerated sandboxes, enabling responsive streams without freezing browser threads.",
+              "keyConcepts": [
+                { "term": "Muted Autoplay Security", "definition": "Universal browser security policies that reject video autoplay loops unless audio streams are muted." },
+                { "term": "Letterbox Mitigation", "definition": "Allocating standardized frame dimensions to bypass dark letterbox boundaries." },
+                { "term": "Buffering Directives", "definition": "Instructing the browser whether to pull media headers before user interaction." }
+              ],
+              "bestPractices": [
+                "Combine 'autoplay', 'muted', and 'loop' to design gorgeous, silent backdrop loops without freezing the main thread.",
+                "Configure the 'poster' attribute to display a static graphic placeholder while the video is buffered.",
+                "Select MP4/H.264 formats for reliable, cross-browser compatibility and optimized file sizes."
+              ]
+            },
             "codeTemplate": {
               "html": "<video controls width='320' height='240' loop muted>\n  <source src='https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4' type='video/mp4'>\n  Your browser does not support the video tag.\n</video>",
               "css": "video {\n  border-radius: 12px;\n  border: 2px solid #1e293b;\n  display: block;\n}",
@@ -1104,19 +1156,32 @@ export const courseData = [
               {
                 "level": "easy",
                 "title": "Nested Page Embedding",
-                "content": "An iframe (Inline Frame) embeds secondary HTML document windows. The src attribute tells the frame what document or web address to fetch and render, allowing interactive Google Maps, YouTube clips, or third-party tools to sit inside the page."
+                "content": "iframes embed visual viewport windows targeting secondary documents (e.g. Google Maps or external dashboards) inside the layout."
               },
               {
                 "level": "intermediate",
                 "title": "Sandboxing parameters",
-                "content": "Declare the sandbox attribute to prevent embedded iframes from executing malicious scripts, accessing local storage, or popping up navigation redirects. Specifying subset tokens like 'allow-scripts' enables only safe, verified scripts."
+                "content": "Declare the sandbox attribute to lock down script executions, cookie accesses, and redirects inside the nested frame window."
               },
               {
                 "level": "advanced",
                 "title": "Accessibility Mapping",
-                "content": "Always include a descriptive title attribute on all iframes so that screen readers can easily announce the frame's contents to users. This satisfies standard W3C accessibility audits for nested frame containers."
+                "content": "Include descriptive title attributes on frame elements to guarantee screen readers announce their nested visual content clearly."
               }
             ],
+            "detailedReference": {
+              "summary": "Inline frames partition documents into separate sandboxed browsing contexts, securing host scopes from embedded script execution vulnerabilities.",
+              "keyConcepts": [
+                { "term": "Same-Origin Lockdowns", "definition": "Denying nested frames direct access to the parent window's local storage, memory, and state." },
+                { "term": "Sandboxing Privileges", "definition": "Isolating embedded windows with strict restrictions unless explicit privileges are allowed." },
+                { "term": "Accessibility Announcements", "definition": "Declaring descriptive labels to tell screen readers what frame modules are active." }
+              ],
+              "bestPractices": [
+                "Always declare the 'sandbox' attribute with minimal allowed tokens ('allow-scripts', 'allow-same-origin').",
+                "Include clear, concise title tags on every iframe element to satisfy accessibility parameters.",
+                "Set styling to border: none to seamlessly blend nested widgets within the container design."
+              ]
+            },
             "codeTemplate": {
               "html": "<iframe src='about:blank' title='Sandboxed Developer Workspace Embed' width='100%' height='200' sandbox></iframe>",
               "css": "iframe {\n  border: 2px dashed #00d1d1;\n  border-radius: 8px;\n  background: #f8fafc;\n}",
@@ -1131,19 +1196,32 @@ export const courseData = [
               {
                 "level": "easy",
                 "title": "Metadata Infrastructure",
-                "content": "Meta tags inside the <head> block hold key configuration details about the document. These details are read by browser parsers, search engines, and social media scrapers but are not displayed directly inside the visual body area."
+                "content": "Meta tags reside inside the head tag, holding document directives that search crawlers parse but screen viewports do not render."
               },
               {
                 "level": "intermediate",
                 "title": "Standard viewports & charsets",
-                "content": "Declaring meta charset='UTF-8' secures standard global character mapping. Declaring name='viewport' ensures that width coordinates scale cleanly to the device width, preventing layout rendering errors on mobile screens."
+                "content": "Enforce mobile viewport scaling and UTF-8 charset declarations to prevent rendering page bugs across diverse high-density layouts."
               },
               {
                 "level": "advanced",
                 "title": "SEO Keywords & Descriptions",
-                "content": "Meta description tags write the snippet shown beneath search engine links, directly impacting search visibility. Open Graph (OG) meta tags customize card titles and preview images when sharing links across social platforms like WhatsApp or Slack."
+                "content": "Configure descriptions and Open Graph (OG) tags to control visual card preview representations when pages are shared."
               }
             ],
+            "detailedReference": {
+              "summary": "Document metadata defines critical parsing rules, encoding models, indexing flags, and social graph cards inside the head context.",
+              "keyConcepts": [
+                { "term": "Viewport Rules", "definition": "Enforcing pixel-perfect scaling across high-density mobile viewports." },
+                { "term": "Open Graph Protocol", "definition": "Injecting semantic meta headers to customize card snippets when sharing on social media platforms." },
+                { "term": "Unicode Decoders", "definition": "Instructing the parser to decode files using standardized global charset grids." }
+              ],
+              "bestPractices": [
+                "Define <meta charset='UTF-8'> as the first tag inside the <head> block to prevent parser errors.",
+                "Limit meta descriptions to 150-160 characters to ensure perfect display on search engines.",
+                "Incorporate Open Graph attributes (og:title, og:description) to drive sharing engagement."
+              ]
+            },
             "codeTemplate": {
               "html": "<!DOCTYPE html>\n<html lang='en'>\n<head>\n  <meta charset='UTF-8'>\n  <meta name='viewport' content='width=device-width, initial-scale=1.0'>\n  <meta name='description' content='Jane Developer multimedia showcase portfolio.'>\n  <meta name='keywords' content='Portfolio, Jane Developer, Web Architect'>\n  <title>Metadata Workspace</title>\n</head>\n<body>\n  <p>Metadata configured inside the head tag block!</p>\n</body>\n</html>",
               "css": "body { padding: 16px; font-family: sans-serif; }",
@@ -1210,19 +1288,32 @@ export const courseData = [
               {
                 "level": "easy",
                 "title": "Lists Classifications",
-                "content": "HTML provides ordered lists (<ol>) for numbered sequences and unordered lists (<ul>) for standard bullet points. Nesting list items (<li>) inside them displays clustered ideas. List elements tell web crawlers and screen readers that individual items share a logical structural relationship."
+                "content": "HTML provides ordered lists (<ol>) for numbered sequences and unordered lists (<ul>) for bulleted list arrays, grouping related elements logically."
               },
               {
                 "level": "intermediate",
                 "title": "Unordered Bullet Options",
-                "content": "By default, unordered list items display direct visual bullet markers. These markers can be customized in stylesheets using 'list-style-type' attributes (disc, circle, square, or none). Custom SVGs can also be integrated via CSS to deliver unique list indicators."
+                "content": "Customize bullet markers visually using stylesheet 'list-style-type' attributes (e.g. square, circle) or dynamic vector SVG pointers."
               },
               {
                 "level": "advanced",
                 "title": "Ordered Sequence Schemes",
-                "content": "Ordered lists support varying sequencing types (Arabic numbers, uppercase/lowercase letters, Roman numerals) controlled using the type attribute (<ol type='A'> or <ol type='I'>). Tutors can set a custom starting number using the start attribute (<ol start='5'>)."
+                "content": "Configure numbering schemes using 'type' attributes (e.g. Roman numerals, letters) and set custom starter indices with 'start'."
               }
             ],
+            "detailedReference": {
+              "summary": "HTML lists establish structural relationships between related elements, conveying ordered sequences or grouped items to search engines and screen readers.",
+              "keyConcepts": [
+                { "term": "Structural Semantics", "definition": "Conveying that individual items share a logical parent relationship rather than just being separated by line breaks." },
+                { "term": "Sequence Manipulation", "definition": "Adjusting start indexes, descending numbering directions, or Roman/alphabetic formatting schemas." },
+                { "term": "Deep Hierarchical Nesting", "definition": "Embedding list structures cleanly inside specific list items to construct complex layout hierarchies." }
+              ],
+              "bestPractices": [
+                "Ensure child elements nested inside <ul> or <ol> elements are strictly limited to <li> tags.",
+                "Use ordered lists when the sequence of operations directly impacts the final result (e.g., procedural tutorials).",
+                "Prefer stylesheet styling ('list-style-type') rather than outdated physical markup attributes."
+              ]
+            },
             "codeTemplate": {
               "html": "<h3>Course Prerequisites</h3>\n<ul>\n  <li>Basic internet access protocols</li>\n  <li>Day 1 & Day 2 HTML basics</li>\n</ul>\n\n<h3>Step-by-Step Directives</h3>\n<ol type='A'>\n  <li>Configure local workspace environment</li>\n  <li>Initialize boilerplate documents</li>\n</ol>",
               "css": "ul { padding-left: 20px; color: #cbd5e1; }\nol { padding-left: 20px; color: #38bdf8; }",
@@ -1238,19 +1329,32 @@ export const courseData = [
               {
                 "level": "easy",
                 "title": "Symmetric Table Containers",
-                "content": "The <table> tag holds structured data blocks in grid layouts. Rows (<tr>) contain headers (<th>) representing column definitions with default bold weights, and data cells (<td>) representing specific values, mapping data pairs cleanly."
+                "content": "Tables arrange data in grids. Rows (<tr>) hold headers (<th>) with bold weights and data cells (<td>) representing key values."
               },
               {
                 "level": "intermediate",
                 "title": "Table Elements Division",
-                "content": "Divide tables semantically into <thead> (header labels), <tbody> (primary body content), and <tfoot> (footers/sums/summaries). This helps search engines analyze data sheets logically and enables scroll-independent header rendering."
+                "content": "Segment grids semantically into <thead>, <tbody>, and <tfoot> to enable indexers to navigate multi-column logs cleanly."
               },
               {
                 "level": "advanced",
                 "title": "Tabular Styling Rules",
-                "content": "Using the 'border-collapse: collapse' CSS property merges adjacent cell borders into a unified grid, replacing the legacy default double-bordered style. You can add padding and zebra-striping to table rows to improve visual readability."
+                "content": "Apply 'border-collapse: collapse' stylesheets to merge adjacent cell borders into a sleek, unified, highly readable matrix."
               }
             ],
+            "detailedReference": {
+              "summary": "Tabular structures organize two-dimensional data arrays into clear grids, maintaining distinct visual rows and columns with semantic tag hierarchies.",
+              "keyConcepts": [
+                { "term": "Tabular Segmentation", "definition": "Organizing grid content into designated headers, core data sets, and bottom summaries for crawlers." },
+                { "term": "Zebra Striping Controls", "definition": "Injecting zebra patterns inside matching stylesheet elements to make complex rows easily scannable." },
+                { "term": "Semantic Scoping", "definition": "Binding headers explicitly to columns or rows using standard scope parameters." }
+              ],
+              "bestPractices": [
+                "Apply standard semantical tags (thead, tbody, tfoot) to ensure readable data structures.",
+                "Incorporate border-collapse: collapse in your CSS file to make grid lines professional.",
+                "Add text-align configurations in table styles to keep numerical data perfectly visible."
+              ]
+            },
             "codeTemplate": {
               "html": "<table>\n  <thead>\n    <tr>\n      <th>Course</th>\n      <th>Lectures</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>HTML Foundations</td>\n      <td>12 Labs</td>\n    </tr>\n  </tbody>\n</table>",
               "css": "table {\n  width: 100%;\n  border-collapse: collapse;\n  margin-top: 10px;\n}\nth, td {\n  padding: 10px;\n  text-align: left;\n  border: 1px solid #334155;\n}\nth { background: #1e293b; color: #00d1d1; }",
@@ -1265,19 +1369,32 @@ export const courseData = [
               {
                 "level": "easy",
                 "title": "Merged Columns (Colspan)",
-                "content": "Add the colspan attribute to cells (<th> or <td>) to stretch them horizontally across multiple columns. This is perfect for styling section headers or banners that span the entire width of a data grid."
+                "content": "Apply the 'colspan' attribute to span cells horizontally across multiple columns, perfect for designing full-width title headers."
               },
               {
                 "level": "intermediate",
                 "title": "Merged Rows (Rowspan)",
-                "content": "Add the rowspan attribute to cells to stretch them vertically down across multiple rows, perfect for presenting overlapping time slots, multi-day calendar blocks, or shared categories in structural matrices."
+                "content": "Apply the 'rowspan' attribute to span cells vertically down across multiple rows, perfect for presenting shared schedule blocks."
               },
               {
                 "level": "advanced",
                 "title": "Grid Balancing Constraints",
-                "content": "When a cell spans across multiple columns or rows, you must omit subsequent cells in the merged rows or columns in your markup to keep the table grid perfectly aligned. Missing cell omission leads to misaligned tables and broken visual flows."
+                "content": "Carefully omit overlapping subsequent td cell blocks in your markup to balance layouts and prevent table structural misalignment."
               }
             ],
+            "detailedReference": {
+              "summary": "Cell spanning attributes allow tables to break out of rigid symmetrical grids, spanning multiple visual cells horizontally or vertically.",
+              "keyConcepts": [
+                { "term": "Horizontal Integration", "definition": "Extending a data block over multiple column slots for headers or section categories." },
+                { "term": "Vertical Integration", "definition": "Extending a data block down over multiple row slots for time blocks or master categories." },
+                { "term": "Markup Offsetting", "definition": "Omitting duplicate cell declarations in target coordinates to accommodate spanned dimensions." }
+              ],
+              "bestPractices": [
+                "Count target column widths carefully before configuring spanning to prevent tables from breaking.",
+                "Omit duplicate td elements in subsequent rows when applying rowspan.",
+                "Add visual background highlighting classes to spanned cells to convey category hierarchies."
+              ]
+            },
             "codeTemplate": {
               "html": "<table border='1' style='border-collapse: collapse; width: 100%;'>\n  <tr>\n    <th>Time</th>\n    <th>Monday</th>\n    <th>Wednesday</th>\n  </tr>\n  <tr>\n    <td>09:00 AM</td>\n    <td rowspan='2'>Full Stack Architecture Lab</td>\n    <td>APIs</td>\n  </tr>\n  <tr>\n    <td>11:00 AM</td>\n    <td>Databases</td>\n  </tr>\n  <tr>\n    <td>02:00 PM</td>\n    <td colspan='2'>Weekly Evaluation Sync</td>\n  </tr>\n</table>",
               "css": "th, td { padding: 8px; border: 1px solid #475569; text-align: center; }",
@@ -1288,24 +1405,36 @@ export const courseData = [
           {
             "id": "d3-t4",
             "title": "4. HTML Forms & Data Collection",
-            "visualization": "/css-box-model.png",
             "progression": [
               {
                 "level": "easy",
                 "title": "Interactive Forms wrapper",
-                "content": "The <form> element wraps user interactive controls, acting as a gateway that aggregates user-supplied information and submits it to servers. Forms should always carry standard semantic block structures inside their layout."
+                "content": "The form element acts as a visual wrapper that aggregates interactive field selections, preparing user entries for server transfers."
               },
               {
                 "level": "intermediate",
                 "title": "Labels Binding & Accessibility",
-                "content": "Always bind <label> elements to inputs using the 'for' attribute, matching the input's 'id'. This increases the clickable target size (highly useful on mobile screens) and provides vital structural context for screen readers."
+                "content": "Use explicit labels bound via 'for' to input IDs to increase mobile touch target scales and supply clean context to screen reader programs."
               },
               {
                 "level": "advanced",
                 "title": "Standard Submission Protocols",
-                "content": "Forms use the action attribute (target backend URL or endpoint) and method (GET displays parameters in URL for query parameters, POST packages data in request body securely for creations/mutations) to handle backend pipelines."
+                "content": "Configure 'action' target URLs and 'method' parameters (GET for parameters in URLs vs POST for secure payloads inside request bodies)."
               }
             ],
+            "detailedReference": {
+              "summary": "Forms aggregate independent visual controls and input elements, packaging user data securely for server-side processing.",
+              "keyConcepts": [
+                { "term": "Transmission Pipelines", "definition": "Selecting standard data transmission models (GET requests vs POST creations)." },
+                { "term": "Target Handlers", "definition": "Routing form datasets to target server actions and endpoints." },
+                { "term": "Label Binding Scopes", "definition": "Coupling text cues directly to core inputs via explicit attribute mappings." }
+              ],
+              "bestPractices": [
+                "Always couple inputs with explicit labels, matching the 'for' and 'id' parameters.",
+                "Define the method parameter as POST when submitting sensitive user profile information.",
+                "Set a clear name property on every input to ensure datasets are serialized correctly on submit."
+              ]
+            },
             "codeTemplate": {
               "html": "<form action='/enroll' method='POST'>\n  <label for='studentName'>Student Name:</label>\n  <input type='text' id='studentName' name='studentName' placeholder='Enter your name' required>\n  <button type='submit'>Register</button>\n</form>",
               "css": "form { display: flex; flex-direction: column; gap: 10px; max-width: 300px; }\ninput { padding: 8px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: white; }\nbutton { background: #00d1d1; padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }",
@@ -1316,24 +1445,36 @@ export const courseData = [
           {
             "id": "d3-t5",
             "title": "5. Input Controls & Validation",
-            "visualization": "/css-typography.png",
             "progression": [
               {
                 "level": "easy",
                 "title": "Input Type Variations",
-                "content": "Inputs take on varying forms depending on the type attribute: 'text' for generic names, 'email' for validation rules, and 'password' to hide keystrokes. Using the correct type triggers custom visual designs in many modern operating systems."
+                "content": "Inputs adapt automatically to type attributes: 'text' for names, 'email' for basic formatting, and 'password' to secure text inputs."
               },
               {
                 "level": "intermediate",
                 "title": "HTML5 Validation Attributes",
-                "content": "Add attributes like required (blocking empty submissions), placeholder (helpful hints), minlength/maxlength (enforcing secure string sizes), and pattern (regex-based parsing) to build robust front-end field validations."
+                "content": "Enforce validations inside browser engines using attributes like 'required', 'placeholder', 'minlength', or regex 'pattern' masks."
               },
               {
                 "level": "advanced",
                 "title": "Mobile Input Keyboard Maps",
-                "content": "Using semantic input types (e.g. type='email', type='number', or type='tel') automatically triggers mobile keyboards with appropriate keys, improving mobile UX and reducing user typing friction."
+                "content": "Declaring semantic types (e.g. type='tel' or type='number') automatically displays matching, optimized smartphone keyboards."
               }
             ],
+            "detailedReference": {
+              "summary": "Client-side form validation enforces structural restrictions on user data inputs before server-side database handoffs.",
+              "keyConcepts": [
+                { "term": "Constraint Validation", "definition": "Browser engines natively blocking empty submissions and invalid formatting configurations." },
+                { "term": "Dynamic Keyboard Layouts", "definition": "Declaring specific input types to launch optimized smartphone keyboard layouts." },
+                { "term": "Regular Expression Validation", "definition": "Leveraging client pattern matching to validate custom structural formats." }
+              ],
+              "bestPractices": [
+                "Use specific types like 'email', 'number', or 'tel' rather than generic 'text' tags.",
+                "Implement appropriate minlength/maxlength limits on all password blocks.",
+                "Combine basic HTML5 front-end validations with backend checking to ensure security."
+              ]
+            },
             "codeTemplate": {
               "html": "<label for='userMail'>Email Address:</label>\n<input type='email' id='userMail' placeholder='student@wemade.com' required>\n<br><br>\n<label for='userPass'>Access Code:</label>\n<input type='password' id='userPass' minlength='6' placeholder='Min 6 chars' required>",
               "css": "input { padding: 8px; border-radius: 4px; border: 1px solid #334155; background: #0f172a; color: white; }\ninput:invalid { border-color: #ef4444; }\ninput:valid { border-color: #10b981; }",
@@ -1344,24 +1485,36 @@ export const courseData = [
           {
             "id": "d3-t6",
             "title": "6. Modern Selection Fields",
-            "visualization": "/css-backgrounds.png",
             "progression": [
               {
                 "level": "easy",
                 "title": "Checkboxes (Multiple choices)",
-                "content": "Checkboxes (<input type='checkbox'>) allow users to select multiple options from a group (e.g., agreeing to terms or listing skills). They are independent nodes that can be toggled without affecting neighboring fields."
+                "content": "Checkboxes (<input type='checkbox'>) capture multiple non-exclusive choices, acting as independent select toggles."
               },
               {
                 "level": "intermediate",
                 "title": "Radio Buttons (Unique choices)",
-                "content": "Radio buttons (<input type='radio'>) restrict users to picking a single choice from a list. Declare a matching name attribute on all buttons in the group to bind them, allowing only one selection at a time."
+                "content": "Radio buttons restrict choices to a single option. Declare matching 'name' attributes on all options to group them cleanly."
               },
               {
                 "level": "advanced",
                 "title": "Fieldsets and Legends",
-                "content": "Wrap related inputs inside a <fieldset> element and label it using <legend> to group choices visually and assist visually impaired users. This delivers an elegant, high-contrast block boundary around options."
+                "content": "Wrap options inside a semantic <fieldset> box and configure a <legend> header label to group visual segments cleanly."
               }
             ],
+            "detailedReference": {
+              "summary": "Selection fields provide structured controls for choosing options, preventing typo-prone manual entries.",
+              "keyConcepts": [
+                { "term": "Exclusive Selections", "definition": "Declaring grouped names on radio buttons to allow only one active choice." },
+                { "term": "Multi-Select Structures", "definition": "Aggregating checkbox vectors to submit array values." },
+                { "term": "Semantic Groups", "definition": "Surrounding visual choices with fieldset borders and legend headers." }
+              ],
+              "bestPractices": [
+                "Always wrap radio buttons and checkboxes within fieldsets to organize options logically.",
+                "Ensure radio option keys in the same question share matching name values.",
+                "Provide a checked attribute by default on one radio button in each group to simplify user actions."
+              ]
+            },
             "codeTemplate": {
               "html": "<fieldset>\n  <legend>Select Track Mode</legend>\n  <input type='radio' id='modeFull' name='trackMode' value='full' checked>\n  <label for='modeFull'>Full Stack</label><br>\n  <input type='radio' id='modeFront' name='trackMode' value='front'>\n  <label for='modeFront'>Frontend</label>\n</fieldset>\n<br>\n<label>\n  <input type='checkbox' name='agree' required>\n  I agree to Wemade terms.\n</label>",
               "css": "fieldset { border: 1px solid #334155; padding: 15px; border-radius: 8px; }\nlegend { color: #00d1d1; padding: 0 5px; font-weight: bold; }",

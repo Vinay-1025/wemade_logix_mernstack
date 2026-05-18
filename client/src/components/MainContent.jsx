@@ -2281,7 +2281,7 @@ const MainContent = () => {
             >
               <div className="section-title" style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
                 <BookOpen size={22} color="var(--primary-cyan)" />
-                <h2 style={{ fontSize: '1.4rem', fontWeight: 800, background: 'linear-gradient(135deg, var(--app-text) 40%, var(--primary-cyan) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', margin: 0 }}>
+                <h2 style={{ fontSize: '1.4rem', fontWeight: 800, background: 'linear-gradient(135deg, var(--primary-cyan) 0%, #3b82f6 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', margin: 0 }}>
                   Academic Reference Hub
                 </h2>
                 <span style={{ fontSize: '0.75rem', fontWeight: 800, background: 'rgba(0, 209, 209, 0.1)', color: 'var(--primary-cyan)', padding: '4px 10px', borderRadius: '12px', border: '1px solid rgba(0, 209, 209, 0.2)' }}>
