@@ -651,17 +651,17 @@ export const courseData = [
               {
                 "level": "easy",
                 "title": "The Global Web Pipeline",
-                "content": "Web development operates on a global request-response cycle. A client (web browser like Google Chrome or Safari) issues standard HTTP/HTTPS request packages over TCP/IP web interfaces to target unique server IP addresses. The server processes incoming request headers and parameters, queries relational or non-relational databases, and packages compiled resources (HTML documents, CSS stylesheet coordinates, and Javascript interaction modules) back into TCP segments to deliver interactive layouts for the end-user."
+                "content": "The internet operates on a structured client-server architecture model. When a user requests a page, a client (e.g. Google Chrome, Firefox, or Safari) packages a formatted request and transmits it across global networking interfaces using TCP/IP packets. The request is routed to a target host server, where the backend infrastructure processes headers, queries relational databases, compiles templates, and packages requested resources. Finally, the server dispatches a response envelope containing HTML structure, CSS rules, and JavaScript assets back over the wire to be reassembled and displayed inside the browser."
               },
               {
                 "level": "intermediate",
                 "title": "Secure Protocols: HTTP vs HTTPS",
-                "content": "HTTP (Hypertext Transfer Protocol) acts as the standard plain text communication dialect of the web, sending variables in clear text. HTTPS secures this transmission by wrapping traffic payloads in SSL/TLS cryptographic keys, preventing network packet sniffers and man-in-the-middle attacks from reading or tampering with sensitive user data, such as registration forms, credit cards, or authentication cookies."
+                "content": "HTTP (Hypertext Transfer Protocol) transfers data between the client and server in clear, unencrypted text, making it vulnerable to interception. HTTPS solves this security vulnerability by layering the standard HTTP dialogue over a secure cryptographic protocol called SSL/TLS. When establishing an HTTPS session, the client and server execute a TLS handshake to exchange public keys, authenticate the server's identity via SSL certificates, and generate symmetric session keys. This ensures all form submissions, credentials, and cookies are fully encrypted before leaving the client."
               },
               {
                 "level": "advanced",
                 "title": "DNS & Dynamic IP Routing",
-                "content": "All nodes on the internet are located via a unique numerical IP address (IPv4 like 192.168.1.1 or IPv6). Because humans rely on natural-language strings, the Domain Name System (DNS) acts as the internet's phonebook, translating friendly domain names like wemadelogix.com into their corresponding static or dynamic server IP addresses. When a user requests a URL, a DNS resolver is queried first, returning the host IP to establish the low-level connection."
+                "content": "Every device connected to the internet is identified by a unique numerical IP address (IPv4 or IPv6). Since remembering these numbers is impractical, the Domain Name System (DNS) acts as the directory of the web, translating human-friendly names (e.g. wemadelogix.com) into IP addresses. When a user enters a URL, the system queries recursive resolvers, root servers, Top-Level Domain (TLD) nameservers, and authoritative nameservers to resolve the hostname. Once resolved, the browser opens a direct TCP connection to the host IP address to initiate the request-response transaction."
               }
             ],
             "codeTemplate": {
@@ -680,17 +680,17 @@ export const courseData = [
               {
                 "level": "easy",
                 "title": "Defining the DOM Tree",
-                "content": "HTML (Hypertext Markup Language) uses hierarchical tag pairs to construct a structured outline called the Document Object Model (DOM). Elements must open and close symmetrically, forming clear parent-child boundaries that represent layout boxes inside the browser. Attributes (like class, id, or style) provide key metadata and configuration options inside the opening tag, telling the rendering engine how to classify and handle the element."
+                "content": "HTML (Hypertext Markup Language) uses hierarchical tag pairs to construct the Document Object Model (DOM), the structural skeleton of web pages. Tags like <div>, <p>, and <section> define structural nodes that the browser parses into a visual tree. Each element must open and close symmetrically to establish clear parent-child boundaries. Attributes (e.g., class, id, title) are defined inside the opening tag to provide critical metadata, layout identifiers, and configuration options."
               },
               {
                 "level": "intermediate",
                 "title": "Nesting Constraints",
-                "content": "Nesting determines hierarchy. Parent elements pass down coordinate boundaries and CSS inheritances to their children. Always close nested tags in reverse-opening order (e.g. <div><p>...</p></div>) to prevent structural rendering engine bugs, layout breakages, and invalid document parses that fail standard W3C validation audits."
+                "content": "HTML elements must be nested correctly to maintain DOM tree integrity. Parent elements define containment boundaries and pass styles down to their children. Always close nested tags in reverse-opening order (e.g. <div><p>...</p></div>) rather than overlapping them (e.g. <div><p>...</div></p>). Improper nesting causes browser rendering engines to guess the structural layout, leading to unexpected rendering anomalies, invalid DOM parsing, and failures in W3C compliance audits."
               },
               {
                 "level": "advanced",
                 "title": "Block vs Inline Box Models",
-                "content": "HTML tags dictate default layouts. Block elements (like section, main, h1, p, div) stack vertically, breaking the layout line and covering 100% of parent width, forcing succeeding elements below them. Inline elements (like a, strong, em, span, code) flow side-by-side with text blocks without forcing line wraps, taking up only as much width as their inner content demands."
+                "content": "HTML elements are categorized into two primary display modes: block-level and inline. Block elements (e.g., <main>, <section>, <p>, <div>) stack vertically, take up 100% of their parent's width, and force subsequent elements to start on a new line. Inline elements (e.g., <a>, <strong>, <em>, <span>) flow side-by-side with surrounding text, only occupying the width of their inner content without forcing line breaks. Understanding this distinction is fundamental to designing predictable document flows."
               }
             ],
             "codeTemplate": {
@@ -709,17 +709,17 @@ export const courseData = [
               {
                 "level": "easy",
                 "title": "Standard Skeleton Files",
-                "content": "Every valid HTML document demands a standard boilerplate setup. The document starts with the mandatory <!DOCTYPE html> preamble to enforce standard-compliant rendering mode in modern web engines. This prevents the browser from falling back into 'quirks mode', which interprets legacy CSS/HTML rules in inconsistent ways. It is immediately followed by root html tags containing the language code (<html lang='en'>), a head block for document configuration, and a body block for visual elements."
+                "content": "Every valid HTML document requires a standard boilerplate skeleton to ensure clean rendering. The document begins with the <!DOCTYPE html> preamble, which tells the browser to use modern, standards-compliant parsing rules. Without it, the browser enters 'quirks mode', interpreting CSS and layout rules differently to accommodate legacy websites. The boilerplate is completed by the root <html> container (typically specifying the language, e.g. <html lang='en'>), a <head> block for configuration, and a <body> block for visual content."
               },
               {
                 "level": "intermediate",
                 "title": "Global UTF-8 Character Encoding",
-                "content": "Declaring <meta charset='UTF-8'> inside the head block instructs the browser to parse character code maps cleanly. UTF-8 supports rendering special letters, foreign characters, mathematical glyphs, and emojis from all human languages without displaying corrupted accent boxes (known as 'mojibake') or broken character markers."
+                "content": "Specifying <meta charset='UTF-8'> inside the <head> section instructs the browser to parse character code maps cleanly. UTF-8 is the industry-standard character encoding, supporting letters, accents, mathematical glyphs, and emojis from all human languages. If this metadata is missing or set incorrectly, the browser may display corrupted characters, known as 'mojibake' (e.g., rendering small black boxes or accent symbols in place of readable text)."
               },
               {
                 "level": "advanced",
                 "title": "Mobile Viewport Control",
-                "content": "The meta viewport tag (<meta name='viewport' content='width=device-width, initial-scale=1.0'>) tells mobile browsers to scale layouts to the device's native physical pixel width. If omitted, mobile viewports default to an simulated desktop width (usually 980px), rendering text and buttons extremely small and requiring awkward pinch-zooming and horizontal scrolling."
+                "content": "The meta viewport tag (<meta name='viewport' content='width=device-width, initial-scale=1.0'>) tells mobile browsers to scale layouts to the device's native screen width. By default, mobile browsers render pages on a simulated desktop canvas (usually 980 pixels wide) and scale it down, resulting in microscopic text and elements. The viewport tag forces the mobile device to render the page at its native resolution, enabling responsive design and avoiding pinch-zooming."
               }
             ],
             "codeTemplate": {
@@ -738,17 +738,17 @@ export const courseData = [
               {
                 "level": "easy",
                 "title": "Rank & Document Priority",
-                "content": "HTML provides six headings levels (H1 to H6) to group document content. Headings establish the priority levels of information, with H1 carrying top rank weight. Browsers apply default visual stylings, assigning larger font sizes and bold weights to higher-rank headers, though these visual styles should be overridden with CSS while maintaining the semantic rank of the headers."
+                "content": "HTML provides six heading tags (<h1> through <h6>) to establish structure and priority. High-priority sections start with <h1> and cascade down to <h6>. By default, browsers render larger font sizes and bold weights for higher-ranked headings, though these visual styles should be customized with CSS. Headings act as table-of-contents landmarks, organizing content blocks into clear, readable sections."
               },
               {
                 "level": "intermediate",
                 "title": "SEO & Indexing Stature",
-                "content": "Search engine crawl bots use heading hierarchies to index page topics. A valid page should only contain a single H1 representing the main topic, with sub-features grouped under H2 and H3 nodes to prevent diluting search weight. This logical structure allows search crawlers to extract key topics and index them accurately."
+                "content": "Search engines rely on heading tags to understand the primary topics of a web page. A page should contain exactly one <h1> tag representing the main topic, matching the page's primary focus. Subsections should use <h2>, followed by <h3> for finer details. Keeping heading trees clean and keyword-rich helps search bots catalog and rank content accurately, directly improving SEO performance."
               },
               {
                 "level": "advanced",
                 "title": "Accessibility Tree Rules",
-                "content": "Visually impaired users rely heavily on headers lists to navigate page sections. Skipping heading ranks (e.g. jumping from H1 directly to H4) breaks the accessibility map, confusing screen-readers attempting to read document sections. Maintaining a sequential structure (H1 -> H2 -> H3) ensures a predictable, compliant screen-reader experience."
+                "content": "Visually impaired users often navigate pages by generating an outline of the headings tree. Skipping heading levels (e.g. jumping from <h1> directly to <h4>) breaks the accessibility map, making the page confusing to read with a screen reader. Maintaining sequential heading ranks (H1 -> H2 -> H3) ensures a predictable, compliant screen-reader experience."
               }
             ],
             "codeTemplate": {
@@ -767,17 +767,17 @@ export const courseData = [
               {
                 "level": "easy",
                 "title": "Passing Copy Passages",
-                "content": "Paragraph elements (<p>) organize structural blocks of text content. They instruct browsers to establish breathing space around reading segments by applying default vertical margins (usually 1em or 16px at top and bottom) via the user-agent stylesheet, ensuring that adjacent paragraphs do not clump together."
+                "content": "Paragraph elements (<p>) organize blocks of text into readable passages. Browsers apply default vertical margins (typically 1em or 16px at the top and bottom) via the user-agent stylesheet, ensuring distinct blocks of text are separated by breathing space. This default styling prevents text from clumping together, optimizing readability."
               },
               {
                 "level": "intermediate",
                 "title": "Layout Line-Wrapping",
-                "content": "Unlike plain inline spans, paragraph boxes automatically wrap text lines dynamically to fit within their parent container width, ensuring responsive layouts across phone and monitor displays. They are block-level elements that always begin on a new line and force subsequent elements to start on a new line below them."
+                "content": "Paragraphs are block-level elements that always start on a new line and force subsequent elements down. Paragraph boxes dynamically wrap text lines to fit the parent container width, ensuring readable layouts on both mobile screens and desktop monitors. Spans or inline text inside a paragraph will auto-flow smoothly to accommodate resizing."
               },
               {
                 "level": "advanced",
                 "title": "Spacing vs BR Breaks",
-                "content": "Always separate distinct thoughts using p tags rather than manually introducing line breaks (<br>). Breaks split text inside a single idea but fail to convey paragraph changes to screen-reader software, which relies on paragraph boundaries to announce pauses to users."
+                "content": "Always separate distinct thoughts using <p> tags rather than inserting multiple line breaks (<br>). A line break (<br>) splits lines within a single paragraph or address block, but does not indicate a new thought. Screen readers announce a pauses at paragraph boundaries, making correct semantic structure crucial for visually impaired users."
               }
             ],
             "codeTemplate": {
@@ -796,17 +796,17 @@ export const courseData = [
               {
                 "level": "easy",
                 "title": "Linguistic vs Visual Focus",
-                "content": "HTML formatting tags are classified as visual formatting or semantic formatting. While visual tags like <b> and <i> apply styling only, semantic tags like <strong> and <em> add structural emphasis. Visual tags are relics of older HTML versions and should be avoided in favor of semantic ones."
+                "content": "HTML formatting tags are classified as visual formatting or semantic formatting. Visual tags like <b> (bold) and <i> (italic) apply styling only, without adding any linguistic weight. Semantic tags like <strong> and <em> add structural emphasis. While they appear identical in visual browsers, semantic formatting adds important structural context."
               },
               {
                 "level": "intermediate",
                 "title": "Accessibility Voice Stress",
-                "content": "Assistive software adjusts speech profiles (raising volume or changing pitch) when reading <strong> and <em> tags to indicate emphasis. In contrast, <b> and <i> tags are read flat, leaving visually impaired users unaware of highlights. This distinction is crucial for building accessible web interfaces."
+                "content": "Assistive screen readers adjust their speech parameters (such as changing volume, pitch, or reading speed) when encountering <strong> and <em> tags to indicate emphasis. Visual tags (<b> and <i>) are read flat, leaving visually impaired users unaware of highlighted content. Using semantic elements is key to creating inclusive websites."
               },
               {
                 "level": "advanced",
                 "title": "Monospaced & Highlights",
-                "content": "Use <code> to wrap code variables, rendering them in monospaced fonts to indicate computer instructions. Use <mark> to highlight text, rendering a visual yellow marker highlight for quick scannability. This helps readers locate key search matches or highlighted quotes easily."
+                "content": "HTML provides specialized tags to indicate technical context. The <code> element renders text in a monospaced font to identify variable names, keyboard keys, and script blocks. The <mark> tag highlights text with a yellow background, helping users quickly scan a document for keywords, search matches, or key quotes."
               }
             ],
             "codeTemplate": {
@@ -825,17 +825,17 @@ export const courseData = [
               {
                 "level": "easy",
                 "title": "Escaping Syntax Characters",
-                "content": "Browsers use characters like < and > to define tags. If you use them raw inside a text paragraph, the HTML parser gets confused, interpreting the symbol as a tag boundary and breaking your layout. This can lead to security vulnerabilities like cross-site scripting (XSS) if user input is not escaped."
+                "content": "Browsers interpret characters like < and > as the boundaries of HTML tags. If you print these symbols raw inside a text paragraph, the HTML parser may try to parse them as a tag, breaking your layout. This can also lead to security vulnerabilities like Cross-Site Scripting (XSS) if user input is not escaped."
               },
               {
                 "level": "intermediate",
                 "title": "Entity Code Structure",
-                "content": "HTML Entities act as character escapes, starting with an ampersand (&) and ending with a semicolon (;). They translate entity keywords into visual symbols on screen (e.g. '&lt;' for '<', '&gt;' for '>'). This allows you to print raw HTML code blocks safely on web pages."
+                "content": "HTML entities act as character escapes, starting with an ampersand (&) and ending with a semicolon (;). They map special characters to safe codes that the browser parses as plain text (e.g. '&lt;' for '<' and '&gt;' for '>'). This allows you to display raw code snippets on a web page safely."
               },
               {
                 "level": "advanced",
                 "title": "Special Symbol Rendering",
-                "content": "Entities guarantee clean rendering of trademark (&reg;), copyright (&copy;), and mathematical symbols across all browser engines, regardless of historical host-server configurations. This ensures a consistent typography display on all systems."
+                "content": "Entities guarantee accurate rendering of trademark (&reg;), copyright (&copy;), mathematical glyphs, and non-breaking spaces (&nbsp;) across all browser engines. Using standardized entities ensures your typography renders consistently regardless of the user's operating system, browser, or server configuration."
               }
             ],
             "codeTemplate": {
