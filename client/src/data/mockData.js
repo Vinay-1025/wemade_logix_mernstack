@@ -4,218 +4,890 @@ export const courseData = [
     "weekTitle": "Week 1: Foundations of Web Development",
     "days": [
       {
+        "dayId": "w1-d0",
+        "dayTitle": "Prerequisite Day: Fundamentals",
+        "topics": [
+          {
+            "id": "w1-d0-t1",
+            "title": "1. Introduction to Web Development",
+            "explanation": "Web development refers to the building, creating, and maintaining of websites. It includes everything from a simple single static page of plain text to complex web applications. Websites work through a communication loop between a Client (like Google Chrome) and a Server (where website data is stored). Web applications are critical today because they power modern businesses, social connectivity, e-commerce, and global communication.",
+            "customComponent": "WebFundamentalsVisualizer",
+            "howItWorks": "Web development works via the client-server model. A client (browser) requests resources, the request travels across networks via HTTP, the web server processes it, fetches data, and sends back HTML, CSS, and JS files which the browser compiles into a visual interface.",
+            "dataHandling": "Data is packaged into HTTP request packets (headers + body), routed through network hops, parsed by the server engine into structured objects, query-processed, and sent back as parsed BSON/JSON/HTML payload streams.",
+            "whatIfMissing": "Without web development, websites would remain static plain-text documents with zero user engagement, no databases, no modern SaaS apps, and no online commerce or real-time connectivity.",
+            "advantages": [
+              "Enables global communication and information dissemination.",
+              "Powers modern e-commerce, cloud software, and digital businesses.",
+              "Provides accessible, interactive platform-agnostic applications."
+            ],
+            "realWorldExample": "Accessing https://google.com sends an instant HTTP query, routes it to Google servers, queries a search index, and sends back a rich visual portal of links in under 200ms."
+          },
+          {
+            "id": "w1-d0-t2",
+            "title": "2. Types of Web Development",
+            "explanation": "Web development is generally divided into three main roles: Frontend, Backend, and Full Stack. Frontend focuses on what users see and interact with. Backend manages the servers, databases, and APIs running behind the scenes. Full Stack is the mastery of both client-side and server-side development, allowing a single developer to build complete, functional web applications from scratch.",
+            "customComponent": "WebFundamentalsVisualizer",
+            "howItWorks": "Web development is segmented based on execution layers. Frontend development runs client-side inside the user's browser; Backend development executes server-side on remote machines; Full Stack connects both ends into a cohesive pipeline.",
+            "dataHandling": "The Frontend formats inputs and handles user triggers; the Backend validates, filters, and saves state to storage; the Full Stack architect designs the schemas and API contracts connecting both environments.",
+            "whatIfMissing": "Without distinct development types, specialization would collapse, leading to bloated monolithic architectures where simple design changes could break backend server routines.",
+            "advantages": [
+              "Enables modular development and high specialization.",
+              "Improves codebase maintenance and scalability.",
+              "Accelerates deployment cycles using separated micro-services."
+            ],
+            "realWorldExample": "When booking a flight, the Frontend renders the interactive seat map selection, the Backend checks flight seat availability in the database, and a Full Stack engineer ensures the entire seat selection api syncs flawlessly."
+          },
+          {
+            "id": "w1-d0-t3",
+            "title": "3. Frontend Development",
+            "explanation": "Frontend development, also known as client-side development, is the practice of producing HTML, CSS, and JavaScript for a website or Web Application so that a user can see and interact with them directly. HTML provides the structural skeleton, CSS styles the visual presentation, and JavaScript implements complex animations, logic, and dynamic user interactions.",
+            "customComponent": "WebFundamentalsVisualizer",
+            "howItWorks": "Frontend code is parsed and rendered entirely inside the user's browser. HTML builds the DOM tree, CSS computes structural layout styles (like flexbox and grid), and JS registers event listeners to update the DOM dynamically.",
+            "dataHandling": "Data is held in the browser's local memory (State, LocalStorage), gathered via form inputs, validated locally, and passed to server APIs as JSON payloads.",
+            "whatIfMissing": "Without frontend development, websites would have no styling or user interface, rendering raw markup text that looks like a basic notepad document.",
+            "advantages": [
+              "Creates responsive, visually stunning layouts.",
+              "Ensures highly accessible user interfaces across devices.",
+              "Offloads basic validation and rendering tasks to the client."
+            ],
+            "realWorldExample": "Hovering over a sign-in button changes its color smoothly via CSS transition, and clicking it triggers a JavaScript form validator before sending details to the server."
+          },
+          {
+            "id": "w1-d0-t4",
+            "title": "4. Backend Development",
+            "explanation": "Backend development, also known as server-side development, focuses on database interactions, user authentication, business logic, and API configurations. While frontend developers build the visual user interface, backend developers write the clean code that powers the databases (like MongoDB, PostgreSQL) and servers (like Express, Node.js) that make the application functional and secure.",
+            "customComponent": "WebFundamentalsVisualizer",
+            "howItWorks": "The backend server listens on a network port for incoming API requests, authenticates and validates payloads, triggers application business logic, queries database servers, and builds response payloads.",
+            "dataHandling": "Receives request payloads (JSON/BSON), sanitizes fields to prevent script injection, processes queries (CRUD), encrypts sensitive records, and writes to hard drive databases.",
+            "whatIfMissing": "Without backend development, there would be no user authentication, no databases, no persistent storage, and no way to save progress or secure user accounts.",
+            "advantages": [
+              "Enables central security, data persistence, and integrity.",
+              "Handles heavy computational workloads off user devices.",
+              "Secures API credentials and databases behind corporate firewalls."
+            ],
+            "realWorldExample": "Submitting a password hash during login; the backend queries the database for the matching email, compares hashes, and returns a secure JWT login token."
+          },
+          {
+            "id": "w1-d0-t5",
+            "title": "5. Full Stack Development",
+            "explanation": "Full Stack development refers to the comprehensive development of both the frontend (client-side) and backend (server-side) portions of an application. A Full Stack developer has a versatile understanding of styling databases, API integrations, server configurations, and user experience, enabling them to oversee a project from concept to final deployment.",
+            "customComponent": "WebFundamentalsVisualizer",
+            "howItWorks": "Full Stack integration involves building client interfaces that make asynchronous network calls (AJAX/Fetch) to server endpoints, which process the request via business logic routines and write/read from database schemas.",
+            "dataHandling": "Full Stack engineers ensure JSON/BSON data structures map perfectly from the React frontend states, down through Express controllers, into MongoDB document schemas.",
+            "whatIfMissing": "Without full-stack architectures, frontends and backends would operate in disconnected silos, causing frequent API contract breaking and integration mismatch failures.",
+            "advantages": [
+              "Creates highly unified, robust end-to-end applications.",
+              "Saves engineering overhead and streamlines integration.",
+              "Provides full visibility across database schemas and user views."
+            ],
+            "realWorldExample": "Creating a modern chat platform where user inputs immediately update the browser state, emit socket payloads, write records to MongoDB, and broadcast to the recipient."
+          },
+          {
+            "id": "w1-d0-t6",
+            "title": "6. What is a Network?",
+            "explanation": "A network consists of two or more computers or devices connected together to share resources (such as printers and internet connections), exchange files, or allow electronic communications. Devices on a network communicate using established protocols (rules) to transmit data packets reliably over wired or wireless connections.",
+            "customComponent": "NetworkProtocolsVisualizer",
+            "howItWorks": "Devices on a network are connected via physical wiring (fiber, ethernet) or wireless waves (WiFi, cellular). They share resource links and address locations to pack, route, and deliver digitized data blocks.",
+            "dataHandling": "Data is split into small TCP/IP packet segments, stamped with source and destination IP addresses, and routed through switches and routers to be reassembled at the destination.",
+            "whatIfMissing": "Without networks, every computer would act as an isolated offline terminal, requiring physical thumb drives to transfer simple files between machines.",
+            "advantages": [
+              "Facilitates lightning-fast, global digital communication.",
+              "Enables remote computing and database storage access.",
+              "Permits resource sharing, reducing hardware infrastructure costs."
+            ],
+            "realWorldExample": "Connecting your office computer, phone, and printer to the local Wi-Fi router to share files and print worksheets without plugging in wires."
+          },
+          {
+            "id": "w1-d0-t7",
+            "title": "7. Types of Networks",
+            "explanation": "Networks are classified based on their geographical scale. The main types include PAN (Personal Area Network) for personal devices, LAN (Local Area Network) for local environments like a home or school, MAN (Metropolitan Area Network) for city-wide coverage, and WAN (Wide Area Network) for massive, global communication systems like the Internet.",
+            "customComponent": "NetworkProtocolsVisualizer",
+            "howItWorks": "Networks are engineered to cover varying geographic sizes. PAN handles personal Bluetooth range; LAN manages local buildings; MAN handles metropolitan hubs; WAN spans oceans to link continents globally.",
+            "dataHandling": "PAN routes direct wireless frames; LAN uses local switches and MAC address broadcasting; MAN leverages local fiber rings; WAN relies on massive internet backbones and routers.",
+            "whatIfMissing": "Without distinct network types, network routing would be extremely inefficient, as local pings would have to hop across global satellite nodes unnecessarily.",
+            "advantages": [
+              "Optimizes router bandwidth and geographical routing.",
+              "Enforces secure subnet bounds for personal vs corporate nodes.",
+              "Improves structural redundancy and overall uptime."
+            ],
+            "realWorldExample": "Using a Bluetooth headset (PAN) while connected to school Wi-Fi (LAN) to access a global server hosted on AWS in another country (WAN)."
+          },
+          {
+            "id": "w1-d0-t8",
+            "title": "8. PAN (Personal Area Network)",
+            "explanation": "A Personal Area Network (PAN) is the smallest network, centered around a single person in a single location. It typically has a range of less than 10 meters (33 feet). Common examples include Bluetooth pairings between your smartphone and wireless headphones, or a personal Wi-Fi hotspot sharing cellular data with a laptop.",
+            "customComponent": "NetworkProtocolsVisualizer",
+            "howItWorks": "A PAN connects close-proximity personal devices using low-power wireless frequencies like Bluetooth or Wi-Fi hotspots, typically covering a 10-meter workspace circle.",
+            "dataHandling": "Data is transmitted as short-range wireless electromagnetic packets, verified using device pairings to prevent snooping by nearby hardware.",
+            "whatIfMissing": "Without PANs, you would need physical wires for every peripheral—headphones, mice, smartwatches, and local file sharing.",
+            "advantages": [
+              "Extremely low power consumption, saving device battery.",
+              "Requires zero cables or physical connecting interfaces.",
+              "Highly secure due to short physical range and pairing locks."
+            ],
+            "realWorldExample": "Your smart watch syncing your heart rate data to your phone automatically via a secure Bluetooth Personal Area Network."
+          },
+          {
+            "id": "w1-d0-t9",
+            "title": "9. LAN (Local Area Network)",
+            "explanation": "A Local Area Network (LAN) connects computers and devices within a limited geographical area, such as a single room, home, office building, or school. LANs are characterized by high data-transfer rates, small geographical scope, and lack of need for leased telecommunication lines. WiFi and Ethernet are standard LAN technologies.",
+            "customComponent": "NetworkProtocolsVisualizer",
+            "howItWorks": "A LAN connects local nodes (laptops, servers, printers) within a small building using a centralized Wi-Fi access point or high-speed Ethernet switch, bypassing public internet routes.",
+            "dataHandling": "Data packets are routed locally using MAC (Media Access Control) addresses and local IP addresses assigned by the local router's DHCP server.",
+            "whatIfMissing": "Without LANs, printing a document or sharing a file in an office would require uploading it to the public cloud first, slowing speeds dramatically.",
+            "advantages": [
+              "Blazing fast data transfer speeds (up to 10Gbps+).",
+              "High security since local traffic can be kept off public lines.",
+              "Cost-effective resource sharing of central servers and drives."
+            ],
+            "realWorldExample": "A computer lab at school where all student computers are linked via Ethernet cables to access a shared local school storage folder."
+          },
+          {
+            "id": "w1-d0-t10",
+            "title": "10. MAN (Metropolitan Area Network)",
+            "explanation": "A Metropolitan Area Network (MAN) is a high-speed network that covers a larger geographic area than a LAN but is smaller than a WAN—typically spanning a town or city. It connects multiple local area networks (LANs) together. A classic real-world example is a city-wide cable television network or a university campus network.",
+            "customComponent": "NetworkProtocolsVisualizer",
+            "howItWorks": "A MAN links multiple local area networks (LANs) across a town or city using high-performance fiber optic backbones managed by local telecom providers.",
+            "dataHandling": "Aggregates LAN packets at city gateway routers and transmits them across high-capacity municipal fiber rings connecting branch nodes.",
+            "whatIfMissing": "Without MANs, school districts or city halls would have to pay expensive commercial WAN internet providers to route data across local offices.",
+            "advantages": [
+              "Extremely efficient city-wide data aggregation and routing.",
+              "Provides municipal control and highly stable fiber links.",
+              "Faster and cheaper than relying solely on global WAN lines."
+            ],
+            "realWorldExample": "A university campus network linking the libraries, athletic centers, and dormitories across different city sectors."
+          },
+          {
+            "id": "w1-d0-t11",
+            "title": "11. WAN (Wide Area Network)",
+            "explanation": "A Wide Area Network (WAN) is a large information network that is not tied to a single location. WANs can facilitate communication, sharing of information, and much more between devices from around the world through a provider. The Internet itself is the largest and most famous example of a public WAN.",
+            "customComponent": "NetworkProtocolsVisualizer",
+            "howItWorks": "A WAN connects geographically separated networks across states or countries using submarine cables, satellite arrays, and transcontinental fiber optics.",
+            "dataHandling": "Uses complex packet-switching routers and global routing protocols (like BGP) to route packets dynamically across hundreds of router hops globally.",
+            "whatIfMissing": "Without WANs, the internet could not exist, and communication across cities or countries would be restricted to phone calls and postal mail.",
+            "advantages": [
+              "Enables global digital access, trade, and communication.",
+              "Provides massive geographical redundancy for server storage.",
+              "Connects remote offices to central corporate servers instantly."
+            ],
+            "realWorldExample": "An office branch in Tokyo pulling files from the corporate headquarters server located in New York City over a private WAN."
+          },
+          {
+            "id": "w1-d0-t12",
+            "title": "12. Internet",
+            "explanation": "The Internet is a global network of billions of computers and other electronic devices. Through it, it is possible to access almost any information, communicate with anyone else in the world, and do much more. It works by using a standardized suite of protocols (TCP/IP) to route packets of data between networks globally.",
+            "customComponent": "NetworkProtocolsVisualizer",
+            "howItWorks": "The Internet is a cooperative global mesh of independent networks connected via standardized gateway routers using the TCP/IP protocol suite to route packets worldwide.",
+            "dataHandling": "Data is broken into standardized TCP packets, encapsulated in IP envelopes, dynamically routed across global ISP networks, and reassembled at the target.",
+            "whatIfMissing": "Without the Internet, global business, remote work, online learning, cloud software, and immediate digital communication would completely vanish.",
+            "advantages": [
+              "Unprecedented global access to the entirety of human knowledge.",
+              "Immediate, zero-cost communication across the planet.",
+              "Powers global economies, e-commerce, and software services."
+            ],
+            "realWorldExample": "Searching for a recipe on a server in Italy, reading it on a tablet in India, and sharing it to a chat group in California in milliseconds."
+          },
+          {
+            "id": "w1-d0-t13",
+            "title": "13. Client-Server Architecture",
+            "explanation": "Client-Server architecture is a distributed application structure that partitions tasks or workloads between the providers of a resource or service, called servers, and service requesters, called clients. In web development, your browser acts as the Client (making requests), and the backend server processes and fulfills those requests.",
+            "customComponent": "NetworkProtocolsVisualizer",
+            "howItWorks": "A Client (like Chrome) sends a structured request over the network. The Server (like Express) processes the request, performs queries on a Database, and returns a response.",
+            "dataHandling": "Strict split of concerns: the client manages user state and visual layout; the server manages validation and APIs; the database handles storage tables.",
+            "whatIfMissing": "Without Client-Server architectures, every website would have to download the entire database to the user's phone to load a simple search page.",
+            "advantages": [
+              "Centralized data security, management, and backups.",
+              "Offloads storage and processing workloads from user devices.",
+              "Allows developers to update database logic without updating the client."
+            ],
+            "realWorldExample": "Searching for a video on YouTube; your phone (Client) sends a search string to YouTube (Server), which queries a video index database and returns matches."
+          },
+          {
+            "id": "w1-d0-t14",
+            "title": "14. What is a Protocol?",
+            "explanation": "A protocol is a standardized set of rules that governs how data is transmitted and processed between different devices on a network. Just as humans speak different languages to communicate, computers use protocols to establish connection methods, packet formats, error checking, and data compression guidelines.",
+            "customComponent": "NetworkProtocolsVisualizer",
+            "howItWorks": "Network protocols define a strict set of rules, formats, and handshakes that devices must follow to communicate, ensuring diverse hardware can exchange data seamlessly.",
+            "dataHandling": "Enforces packet headers, payload bounds, character encoding standardizations, error-checking checksums, and compression formats.",
+            "whatIfMissing": "Without protocols, computers would transmit raw binary noise that other devices could not parse, making network communication impossible.",
+            "advantages": [
+              "Enables universal compatibility across different operating systems.",
+              "Guarantees data integrity using error checking and handshakes.",
+              "Optimizes data throughput using compression rules."
+            ],
+            "realWorldExample": "A Windows laptop, an Apple iPhone, and a Linux server sharing files perfectly because they all follow standard Wi-Fi and TCP/IP protocols."
+          },
+          {
+            "id": "w1-d0-t15",
+            "title": "15. HTTP",
+            "explanation": "HTTP stands for HyperText Transfer Protocol. It is the foundational protocol used by the World Wide Web to define how messages are formatted and transmitted, and what actions web servers and browsers should take in response to various commands. It operates on a simple, stateless request-response cycle.",
+            "customComponent": "NetworkProtocolsVisualizer",
+            "howItWorks": "HTTP operates on a stateless Request-Response cycle. The client sends a GET/POST request over TCP, the server processes it, and returns an HTTP status code (like 200 OK) and a payload.",
+            "dataHandling": "Data is sent as plain text strings containing request headers (user-agent, content-type) and a body payload, making it simple to parse but open to sniffing.",
+            "whatIfMissing": "Without HTTP, there would be no World Wide Web, and accessing website pages would require custom socket programming for every portal.",
+            "advantages": [
+              "Stateless, fast, and highly scalable for billions of servers.",
+              "Standardized methods (GET, POST, PUT, DELETE) map to CRUD.",
+              "Extremely easy to parse and integrate across frontends."
+            ],
+            "realWorldExample": "Entering a URL in your address bar; your browser sends an HTTP GET request and receives an HTML file representing the homepage in response."
+          },
+          {
+            "id": "w1-d0-t16",
+            "title": "16. HTTPS",
+            "explanation": "HTTPS (HyperText Transfer Protocol Secure) is the secure version of HTTP. It encrypts all communication between the browser and the server using SSL/TLS (Secure Sockets Layer/Transport Layer Security) protocols. This prevents malicious third parties from eavesdropping, intercepting, or tampering with sensitive user data like credit card info or passwords.",
+            "customComponent": "NetworkProtocolsVisualizer",
+            "howItWorks": "HTTPS runs standard HTTP inside an encrypted cryptographic tunnel established using an SSL/TLS handshake. Public keys encrypt data, and private keys decrypt it.",
+            "dataHandling": "All HTTP headers, URLs, cookies, and body payloads are scrambled into secure ciphertext before leaving the device network card.",
+            "whatIfMissing": "Without HTTPS, any password, credit card, or personal message sent online could be intercepted and stolen by anyone on the same Wi-Fi router.",
+            "advantages": [
+              "Guarantees end-to-end data encryption and privacy.",
+              "Verifies website identity using official trusted CA certificates.",
+              "Boosts SEO search result rankings, as search engines favor secure sites."
+            ],
+            "realWorldExample": "Shopping on Amazon; HTTPS encrypts your credit card number, ensuring hacker sniffing tools on public cafe Wi-Fi only see gibberish."
+          },
+          {
+            "id": "w1-d0-t17",
+            "title": "17. TCP",
+            "explanation": "TCP (Transmission Control Protocol) is one of the main protocols of the Internet protocol suite. It sits on top of the IP protocol and guarantees the reliable, ordered, and error-checked delivery of a stream of octets (bytes) between applications running on hosts communicating over an IP network.",
+            "customComponent": "NetworkProtocolsVisualizer",
+            "howItWorks": "TCP establishes a reliable, bidirectional, connection-oriented channel using a 3-Way Handshake. It numbers every packet, tracks delivery, and resends missing blocks.",
+            "dataHandling": "Splits raw streams into numbered TCP segments, checks packet integrity using checksums, and rearranges out-of-order packets at the receiver.",
+            "whatIfMissing": "Without TCP, files downloaded online would arrive corrupted, images would have missing lines, and code files would fail to compile.",
+            "advantages": [
+              "Guarantees 100% reliable, error-checked, and complete data delivery.",
+              "Enforces order-guaranteed reassembly of data packets.",
+              "Prevents network congestion using dynamic flow-control sizing."
+            ],
+            "realWorldExample": "Downloading a ZIP file; TCP ensures every single byte is received in the exact order, allowing the file to extract without corruption."
+          },
+          {
+            "id": "w1-d0-t18",
+            "title": "18. IP",
+            "explanation": "IP (Internet Protocol) is the primary network protocol used to route data packets across the internet. Every device connected to the internet is assigned a unique IP address, which allows routers and servers to identify where data packets originate and ensure they are delivered to the correct destination.",
+            "customComponent": "NetworkProtocolsVisualizer",
+            "howItWorks": "IP is a connectionless, best-effort network protocol responsible for addressing and routing individual envelopes of data (IP packets) across global networks.",
+            "dataHandling": "Wraps TCP segments in IP packets stamped with the source IP, destination IP, and a Time-To-Live (TTL) hop count limit.",
+            "whatIfMissing": "Without IP, routers would not know where to direct network data, and packets would circle the internet forever without finding their destination.",
+            "advantages": [
+              "Provides a standardized, unique addressing system for every device.",
+              "Highly flexible routing dynamically bypasses offline network nodes.",
+              "Enables universal packet encapsulation across diverse network cables."
+            ],
+            "realWorldExample": "Your router analyzing an incoming packet's destination IP to decide whether to forward it to your phone or your smart television."
+          },
+          {
+            "id": "w1-d0-t19",
+            "title": "19. DNS",
+            "explanation": "DNS (Domain Name System) acts as the phonebook of the internet. Since humans prefer to remember names like google.com instead of numerical IP addresses like 142.250.190.46, DNS servers translate friendly domain names entered into the browser s address bar into the numerical IP addresses that computers use to find each other.",
+            "customComponent": "NetworkProtocolsVisualizer",
+            "howItWorks": "When you enter a domain, the DNS resolver queries Root, TLD, and Authoritative DNS servers in a hierarchical chain to locate and return the server's numerical IP address.",
+            "dataHandling": "Translates domain string inputs into numerical IPv4/IPv6 address strings, utilizing high-speed UDP queries and caching for fast retrieval.",
+            "whatIfMissing": "Without DNS, you would have to memorize and enter numerical IP addresses (like 172.217.16.142) instead of writing friendly domains like google.com.",
+            "advantages": [
+              "Replaces complex numbers with easy-to-remember domain names.",
+              "Allows companies to change server IP addresses without changing URLs.",
+              "Enables global server load balancing using dynamic DNS routing."
+            ],
+            "realWorldExample": "Typing wemadelogix.com in Chrome; DNS resolves it to 104.244.42.1, letting your browser connect to the server backend instantly."
+          },
+          {
+            "id": "w1-d0-t20",
+            "title": "20. FTP",
+            "explanation": "FTP (File Transfer Protocol) is a standard network protocol used for the transfer of computer files between a client and server on a computer network. It is commonly used by developers to upload web page files, assets, and databases from local machines to hosting servers.",
+            "customComponent": "NetworkProtocolsVisualizer",
+            "howItWorks": "FTP establishes separate connections for command instructions (port 21) and active file data transfer (port 20), allowing stable, raw file transmission.",
+            "dataHandling": "Transmits binary or plain-text files directly over dedicated TCP channels, supporting bulk file uploads and directory browsing controls.",
+            "whatIfMissing": "Without FTP, developers would have to copy files to server drives manually, or build custom HTTP upload utilities for simple file migrations.",
+            "advantages": [
+              "Highly optimized for massive bulk file uploads and downloads.",
+              "Supports connection resuming if network links drop mid-transfer.",
+              "Enforces secure file permissions and user-account access controls."
+            ],
+            "realWorldExample": "An engineer uploading a folder of 5,000 product images to a web server's assets directory using a tool like FileZilla."
+          },
+          {
+            "id": "w1-d0-t21",
+            "title": "21. SMTP",
+            "explanation": "SMTP (Simple Mail Transfer Protocol) is the standard protocol used for sending and routing digital mail messages across the Internet. When you hit send on an email, your email client uses SMTP to forward the message to your mail server, which then routes it to the recipient s mail server.",
+            "customComponent": "NetworkProtocolsVisualizer",
+            "howItWorks": "SMTP acts as a digital postal router. It transfers outbound email messages from the sender's client to mail servers, routing them to the recipient's mail server.",
+            "dataHandling": "Formulates email envelopes containing headers (To, From, Subject) and parses body data (text, attachments) into plain text streams.",
+            "whatIfMissing": "Without SMTP, sending emails would be limited to walled-garden platforms, preventing communication between different hosts (like Outlook to Gmail).",
+            "advantages": [
+              "Universal protocol enabling cross-provider email routing.",
+              "Highly stable spooling queues emails if recipient servers are offline.",
+              "Lightweight text-based protocol that is fast and efficient."
+            ],
+            "realWorldExample": "Sending a message from az@wemadelogix.com to friend@gmail.com; SMTP routes it from the company mail server to Gmail's mail server."
+          },
+          {
+            "id": "w1-d0-t22",
+            "title": "22. WebSocket",
+            "explanation": "WebSocket is a computer communications protocol providing full-duplex (two-way) communication channels over a single TCP connection. Unlike HTTP s request-response model, WebSockets allow servers to push real-time data to the client instantly without the client asking, making it ideal for chat apps and live feeds.",
+            "customComponent": "NetworkProtocolsVisualizer",
+            "howItWorks": "WebSocket begins as a standard HTTP upgrade request. Once handshake succeeds, the connection switches, keeping a persistent, bidirectional TCP pipe open.",
+            "dataHandling": "Data is framed into lightweight binary or text frames sent instantly over the single open connection without HTTP header overhead.",
+            "whatIfMissing": "Without WebSockets, real-time apps like chats or stock tickers would have to poll the HTTP server every second, bloating network bandwidth.",
+            "advantages": [
+              "Extremely low latency real-time bidirectional data transfers.",
+              "Eliminates massive HTTP header overhead on frequent updates.",
+              "Allows servers to push data to clients instantly without client request."
+            ],
+            "realWorldExample": "A multiplayer browser game where your movement updates are sent instantly to other players and their locations are pushed back in milliseconds."
+          },
+          {
+            "id": "w1-d0-t23",
+            "title": "23. What is an IP Address?",
+            "explanation": "An IP (Internet Protocol) address is a unique string of characters (usually numbers separated by periods or colons) that identifies each computer or device using the Internet Protocol to communicate over a network. It serves as both a device location address and a route identifier.",
+            "customComponent": "NetworkProtocolsVisualizer",
+            "howItWorks": "An IP address acts as a device's digital mailing address. Global routers read the IP prefix to locate the target network, and the suffix to locate the specific host.",
+            "dataHandling": "Represented as IPv4 (four 8-bit octets: 192.168.1.1) or modern IPv6 (eight 16-bit hexadecimal groups: 2001:db8::ff00:42:8329).",
+            "whatIfMissing": "Without IP addresses, computers would have no unique destination identities, preventing network routers from delivering data packets to the correct device.",
+            "advantages": [
+              "Provides a globally unique identification system for all devices.",
+              "Structured hierarchy allows routers to locate devices extremely fast.",
+              "Supports local subnet partitioning for secure home/office loops."
+            ],
+            "realWorldExample": "Your home router having the external public IP address of 84.22.105.14, identifying your specific home connection to the global internet."
+          },
+          {
+            "id": "w1-d0-t24",
+            "title": "24. Types of IP Address",
+            "explanation": "IP addresses are classified based on their allocation type and network environment. The primary types are Static IP addresses (which never change and are manually configured) and Dynamic IP addresses (which are temporary and automatically assigned by network routers whenever a device connects).",
+            "customComponent": "NetworkProtocolsVisualizer",
+            "howItWorks": "IP addresses are allocated dynamically (temporary leases assigned automatically by a router's DHCP server) or statically (permanently assigned by an administrator).",
+            "dataHandling": "DHCP servers track lease intervals and dynamic pools; Static IPs are manually bound to network cards and bypassed in the DHCP allocation loop.",
+            "whatIfMissing": "Without distinct IP types, network admins would have to manually type and coordinate IP addresses for every phone and laptop connecting to WiFi.",
+            "advantages": [
+              "Dynamic IPs conserve massive pools of IPv4 addresses automatically.",
+              "Static IPs provide highly reliable, unchanging server connections.",
+              "Simplifies home setups since consumer devices work instantly."
+            ],
+            "realWorldExample": "Your phone gets a new dynamic IP every time you connect to cafe Wi-Fi, while Google's search server keeps a static IP so it never changes."
+          },
+          {
+            "id": "w1-d0-t25",
+            "title": "25. Static IP Address",
+            "explanation": "A Static IP address is an IP address that is manually assigned to a device by an administrator and remains constant over time. Static IPs are highly reliable and are commonly used by web hosting servers, database instances, and enterprise printers so their addresses are always predictable.",
+            "customComponent": "NetworkProtocolsVisualizer",
+            "howItWorks": "A Static IP address is manually configured on a server's network card, instructing the router to reserve it permanently, guaranteeing the host address never changes.",
+            "dataHandling": "The device requests the specific bound IP on connection boot, and the gateway router locks it to the device's hardware MAC address.",
+            "whatIfMissing": "Without Static IPs, web servers would change addresses every time they rebooted, forcing DNS records to constantly update and causing site outages.",
+            "advantages": [
+              "Guarantees constant, highly predictable server connections.",
+              "Ideal for hosting databases, web servers, and remote printers.",
+              "Simpler routing configuration for advanced network firewalls."
+            ],
+            "realWorldExample": "A company database server locked to 10.0.1.200 so that all corporate backend apps can connect to it reliably every day."
+          },
+          {
+            "id": "w1-d0-t26",
+            "title": "26. Dynamic IP Address",
+            "explanation": "A Dynamic IP address is an IP address that is automatically assigned to a device by a DHCP (Dynamic Host Configuration Protocol) server on a network router. These addresses are leased and can change periodically, which helps conserve available IP address pools for standard consumer devices.",
+            "customComponent": "NetworkProtocolsVisualizer",
+            "howItWorks": "A DHCP server on the router listens for discovery broadcasts from new devices, offers an available IP from its pool, and assigns it a temporary time lease.",
+            "dataHandling": "Runs the DORA process: Discover (client broadcast) -> Offer (router proposal) -> Request (client request) -> Acknowledge (router lease lock).",
+            "whatIfMissing": "Without Dynamic IPs, connecting to a public Wi-Fi network would require the manager to manually assign a numeric IP to your phone.",
+            "advantages": [
+              "Requires zero manual setup, enabling plug-and-play Wi-Fi.",
+              "Recycles inactive IP addresses back into the pool automatically.",
+              "Prevents network conflicts from duplicate IP allocations."
+            ],
+            "realWorldExample": "Walking into Starbucks; your phone connects to Wi-Fi, silently runs DORA, and gets a temporary IP lease for your session."
+          },
+          {
+            "id": "w1-d0-t27",
+            "title": "27. What is DNS?",
+            "explanation": "DNS stands for Domain Name System. It is a hierarchical and decentralized naming system for computers, services, or other resources connected to the Internet or a private network. It plays a critical role in internet routing by mapping domain names to their underlying web servers.",
+            "customComponent": "NetworkProtocolsVisualizer",
+            "howItWorks": "DNS operates as a distributed database. High-speed lookup servers translate alphanumeric names into numeric IPs using a cache-first hierarchical search.",
+            "dataHandling": "Converts domain text queries into numeric IP addresses, storing records (A, AAAA, MX, CNAME) in lightweight structured zone files.",
+            "whatIfMissing": "Without DNS, internet usability would collapse, as humans would have to write down and memorize strings of numbers to open simple web links.",
+            "advantages": [
+              "Replaces complex numbers with easy-to-remember domain names.",
+              "Allows companies to change server IP addresses without changing URLs.",
+              "Enables global server load balancing using dynamic DNS routing."
+            ],
+            "realWorldExample": "Typing google.com resolved instantly to 142.250.190.46, bypassing complex subnet address numbering."
+          },
+          {
+            "id": "w1-d0-t28",
+            "title": "28. Functions of DNS",
+            "explanation": "The main functions of DNS are domain-to-IP resolution, mail server routing (via MX records), load balancing across multiple server instances, and providing aliasing (CNAME records). Without DNS, internet usability would collapse, as users would have to memorize long strings of numbers to access websites.",
+            "customComponent": "NetworkProtocolsVisualizer",
+            "howItWorks": "DNS servers use specialized resource records: A records map domains to IPv4; CNAME records create aliases; MX records route emails; NS records identify authoritative zones.",
+            "dataHandling": "Coordinates zone updates, caches query resolutions locally to reduce network traffic, and balances user queries across server pools.",
+            "whatIfMissing": "Without advanced DNS functions, companies could not balance web traffic across servers, and custom corporate email routing would be impossible.",
+            "advantages": [
+              "Decentralizes server load using round-robin DNS balances.",
+              "Directs corporate emails securely using specialized MX entries.",
+              "Maintains clean structural aliases using CNAME definitions."
+            ],
+            "realWorldExample": "An MX record mapping @wemadelogix.com emails to Microsoft Office 365 servers while the website points to Firebase hosting."
+          },
+          {
+            "id": "w1-d0-t29",
+            "title": "29. Introduction to HTML",
+            "explanation": "HTML (HyperText Markup Language) is the standard markup language used to create the structure of webpages. Along with CSS and JavaScript, it forms the triad of core web technologies. Every visual layout, text passage, image embed, and form on a website starts as raw HTML elements.",
+            "customComponent": "HTMLBoilerplateVisualizer",
+            "howItWorks": "HTML uses text-based markup tags to construct a tree of DOM nodes (Document Object Model). The browser parses this tree, mapping nodes to visual layout blocks.",
+            "dataHandling": "Plain text files (.html) are read as character streams, tokenized into nested element nodes, and compiled into the active browser DOM tree.",
+            "whatIfMissing": "Without HTML, there would be no web browser pages, as there would be no markup structure to represent headings, text paragraphs, or links.",
+            "advantages": [
+              "The universal, open-standard structural language of the web.",
+              "Extremely lightweight, loading visual structures instantly.",
+              "Highly accessible and understood by all search engine crawlers."
+            ],
+            "realWorldExample": "Writing <h1>My Portfolio</h1> tells the browser to instantly display that string as a primary page title."
+          },
+          {
+            "id": "w1-d0-t30",
+            "title": "30. Meaning of HTML",
+            "explanation": "HTML stands for HyperText Markup Language. HyperText refers to the hyperlinks that connect webpages together. Markup refers to the tags (like <p> or <h1>) used to annotate text, telling the browser how to organize content. Language indicates the structured syntax used to communicate layout instructions to the browser.",
+            "customComponent": "HTMLBoilerplateVisualizer",
+            "howItWorks": "HTML is not a logical language (no loops or math). It works by using a nested tag grammar to markup raw text, assigning semantic meaning to content.",
+            "dataHandling": "Translates a nested code block into parsed structural nodes. E.g. <p>Hello</p> becomes an HTMLParagraphElement in browser memory.",
+            "whatIfMissing": "Without HTML structure, browsers would treat a webpage's text as a single massive, unformatted block of continuous, running letters.",
+            "advantages": [
+              "Highly intuitive nested tree structure is easy to write and parse.",
+              "Decouples document structure from presentation styling (CSS).",
+              "Compatible with all generations of client web browsers."
+            ],
+            "realWorldExample": "Wrapping a phrase in <em> emphasizes it to the reader and signals screen readers to read it with a different voice tone."
+          },
+          {
+            "id": "w1-d0-t31",
+            "title": "31. What is HyperText?",
+            "explanation": "HyperText is text displayed on a computer screen or other electronic device with references (hyperlinks) to other text that the reader can immediately access. It is the core concept behind the interconnected nature of the World Wide Web, allowing users to jump seamlessly between pages.",
+            "customComponent": "HTMLBoilerplateVisualizer",
+            "howItWorks": "HyperText links documents globally. The browser reads the href attribute of an anchor tag and triggers a new HTTP request to load the linked resource on click.",
+            "dataHandling": "The anchor node binds a click event listener that maps the target URL string to the browser's window navigation interface.",
+            "whatIfMissing": "Without HyperText, the web would be a collection of isolated files. Navigating would require manually typing a new file path for every page.",
+            "advantages": [
+              "Creates an interconnected world-wide web of instant information.",
+              "Allows seamless navigation between independent global domains.",
+              "Supports deep linking directly to specific text anchors on a page."
+            ],
+            "realWorldExample": "Clicking a blue underlined link to jump from a Wikipedia article directly to a references source page on another site."
+          },
+          {
+            "id": "w1-d0-t32",
+            "title": "32. What is Text?",
+            "explanation": "In HTML, Text represents the actual alphanumeric content, letters, words, and sentences that are wrapped inside HTML tags. While the tags themselves provide instructions and structure, the text is the primary information payload that is displayed to the user.",
+            "customComponent": "HTMLBoilerplateVisualizer",
+            "howItWorks": "Text in HTML is the physical, readable alphanumeric characters placed between opening and closing tags. It represents the primary information payload.",
+            "dataHandling": "Parsed as character arrays (strings) and stored as innerText or textContent DOM properties, rendered on-screen using specified body fonts.",
+            "whatIfMissing": "Without text payloads, websites would be empty layouts of blank boxes and outlines, containing no actual readable information.",
+            "advantages": [
+              "Highly searchable by search engine crawlers, boosting organic SEO.",
+              "Extremely fast loading, requiring minimal network bandwidth.",
+              "Easily translated and adjusted by browser accessibility tools."
+            ],
+            "realWorldExample": "The words and descriptions you are reading inside this application dashboard are raw HTML text payloads."
+          },
+          {
+            "id": "w1-d0-t33",
+            "title": "33. What is Markup?",
+            "explanation": "Markup refers to the process of using special syntax tags (like <header>, <strong>, or <li>) to annotate or mark up plain text content. These tags tell the browser exactly how to interpret the semantic meaning and structural layout of the raw text inside.",
+            "customComponent": "HTMLBoilerplateVisualizer",
+            "howItWorks": "Markup uses opening tags (e.g. <b>) and closing tags (e.g. </b>) to annotate text. The parser applies specific rendering rules based on the tag identified.",
+            "dataHandling": "Tokens like <p> instruct the DOM engine to instantiate specific styles, margins, and layout boxes around the text contents.",
+            "whatIfMissing": "Without markup annotations, there would be no distinction between a bold page header, an italic quote, and a standard paragraph block.",
+            "advantages": [
+              "Simple, clean syntax that is easy for humans and machines to read.",
+              "Provides semantic structure that aids screen-reader accessibility.",
+              "Extremely robust; browsers ignore invalid tags instead of crashing."
+            ],
+            "realWorldExample": "Adding <strong>Important</strong> to the text compiles it into a bold font with strong semantic emphasis."
+          },
+          {
+            "id": "w1-d0-t34",
+            "title": "34. What is Language?",
+            "explanation": "The Language in HTML describes the highly structured system of tags, attributes, and nesting rules that developers use to write web layouts. While not a logical programming language (since it lacks variables and loops), it is a standardized presentation markup language understood by all web browsers.",
+            "customComponent": "HTMLBoilerplateVisualizer",
+            "howItWorks": "As a presentation markup language, HTML uses a defined, globally standardized dictionary of tag elements that all browser rendering engines are coded to compile.",
+            "dataHandling": "Coordinates with W3C web standards to ensure tag definitions (like <article> or <button>) behave identically across Safari, Chrome, and Firefox.",
+            "whatIfMissing": "Without a standardized language, every browser would require its own separate markup syntax, forcing developers to build different sites for Chrome vs Safari.",
+            "advantages": [
+              "Ensures universal, cross-browser page layout compatibility.",
+              "Open standard managed by the W3C ensures continuous modernization.",
+              "Extremely easy to learn, paving the way for developers worldwide."
+            ],
+            "realWorldExample": "A <button> element rendering as an interactive, clickable form button on every smartphone and laptop browser on earth."
+          },
+          {
+            "id": "w1-d0-t35",
+            "title": "35. Structure of HTML Document",
+            "explanation": "A valid HTML document follows a strict hierarchical tree structure. It begins with the <!DOCTYPE html> declaration, followed by the root <html> element. Inside the root are the <head> element (containing metadata, titles, and links) and the <body> element (containing the visible content).",
+            "customComponent": "HTMLBoilerplateVisualizer",
+            "howItWorks": "The structure acts as a structural tree: DOCTYPE sets rendering rules; html is the root; head holds invisible metadata; body holds all visual content.",
+            "dataHandling": "The browser builds a parent-child node layout map based on the tag nesting hierarchy. Parent elements pass down structural boundaries to child nodes.",
+            "whatIfMissing": "Without a strict document structure, browsers could misinterpret metadata as page body text, causing broken rendering and SEO failures.",
+            "advantages": [
+              "Enforces clean code organization and modular layout builds.",
+              "Ensures critical search engine metadata is parsed before body load.",
+              "Enables CSS parent-child styling inheritance (Cascading)."
+            ],
+            "realWorldExample": "A webpage having a defined <head> containing stylesheet links, and a <body> containing the actual header navigation, images, and text cards."
+          },
+          {
+            "id": "w1-d0-t36",
+            "title": "36. Boilerplate Code",
+            "explanation": "HTML Boilerplate is the standard template required to create a clean, modern, and accessible webpage. It includes the doctype, html lang attribute, head section with character encoding (UTF-8), responsive viewport tags, and the body section ready for custom layouts.",
+            "customComponent": "HTMLBoilerplateVisualizer",
+            "howItWorks": "HTML Boilerplate provides a standard structural baseline. It tells the browser the character set, ensures correct mobile view sizing, and wraps elements in valid root nodes.",
+            "dataHandling": "Sets structural variables like viewport configurations, character encoding parameters (UTF-8), and language bindings in browser memory.",
+            "whatIfMissing": "Without boilerplate baselines, pages could load with corrupted accent characters (wrong encoding) or look extremely tiny on mobile screens.",
+            "advantages": [
+              "Guarantees mobile responsiveness using the meta-viewport tag.",
+              "Prevents character display corruption using UTF-8 declarations.",
+              "Provides a clean, standardize starting template for new web pages."
+            ],
+            "realWorldExample": "The standard <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"> boilerplate ensuring your website fits mobile screens."
+          },
+          {
+            "id": "w1-d0-t37",
+            "title": "37. Headings",
+            "explanation": "HTML headings are defined with the <h1> to <h6> tags. <h1> defines the most important heading (usually the page title), while <h6> defines the least important heading. Headings provide a structured hierarchy for screen readers and SEO crawlers, and should never be skipped.",
+            "customComponent": "HTMLBoilerplateVisualizer",
+            "howItWorks": "Headings elements (h1 to h6) instruct the parser to assign size hierarchy and semantic importance, defining structural sections of the page document.",
+            "dataHandling": "Establishes a logical tree of headers. Search engines analyze h1 elements to understand the primary topic of the webpage.",
+            "whatIfMissing": "Without headings, there would be no visual hierarchy on pages, and search crawlers could not determine the structural priority of texts.",
+            "advantages": [
+              "Enforces clear visual hierarchy and layout scannability.",
+              "Significantly improves search engine index ranking (SEO).",
+              "Improves accessibility navigation for screen readers."
+            ],
+            "realWorldExample": "Using <h1>MERN Boot Camp</h1> as the main title, and <h2>Week 1 Curriculum</h2> as the sub-section header."
+          },
+          {
+            "id": "w1-d0-t38",
+            "title": "38. Paragraphs",
+            "explanation": "HTML paragraphs are defined using the <p> tag. Browsers automatically add a small amount of vertical space (margin) before and after a paragraph to ensure clean text separation. Text inside a <p> tag is automatically wrapped to fit the width of its parent container.",
+            "customComponent": "HTMLBoilerplateVisualizer",
+            "howItWorks": "The p tag wraps text passages, instructing the browser to add a standard vertical margin (1em) to separate text ideas visually.",
+            "dataHandling": "Compiles text content into a block-level paragraph layout box that wraps words automatically to fit the width of the parent container.",
+            "whatIfMissing": "Without paragraph tags, all text on a website would merge into one massive, unreadable block of continuous sentences.",
+            "advantages": [
+              "Enforces neat text spacing and paragraph separation automatically.",
+              "Highly responsive text wrapping adapts to any device viewport width.",
+              "Supports nested inline styling (like bold or italic text) cleanly."
+            ],
+            "realWorldExample": "Wrapping a blog post's thoughts in <p> tags so readers can easily scan between separate paragraphs."
+          },
+          {
+            "id": "w1-d0-t39",
+            "title": "39. Formatting Tags",
+            "explanation": "HTML provides several tags for text formatting: <b> and <strong> for bold styling, <i> and <em> for italicized text, and <u> for underlined text. While <b> and <i> only apply visual styling, <strong> and <em> carry semantic emphasis which is crucial for accessibility and screen readers.",
+            "customComponent": "HTMLBoilerplateVisualizer",
+            "howItWorks": "Formatting tags apply visual changes (bold, italics) and semantic indicators. tags like strong tell screen readers to change pitch and volume to stress importance.",
+            "dataHandling": "Alters font properties (font-weight, font-style) and assigns accessibility traits inside the browser's accessibility tree.",
+            "whatIfMissing": "Without formatting tags, all text inside a paragraph would look identical, preventing developers from highlighting key terms or quotes.",
+            "advantages": [
+              "Adds micro-emphasis and visual variety to copy text.",
+              "Improves reading scannability and structural layout highlight.",
+              "Enriches semantic detail for screen-reader accessibility."
+            ],
+            "realWorldExample": "Wrapping a critical security warning in <strong>WARNING</strong> to display it in a bold font that demands user attention."
+          },
+          {
+            "id": "w1-d0-t40",
+            "title": "40. HTML Comments",
+            "explanation": "HTML comments are defined using the <!-- comment content --> syntax. Comments are ignored by the web browser and do not render on the screen. They are highly useful for explaining code structure, organizing layout sections, and leaving notes for other developers.",
+            "customComponent": "HTMLBoilerplateVisualizer",
+            "howItWorks": "HTML comments are identified by special opening and closing symbols. The browser's HTML compiler ignores any text placed inside these tags, bypassing DOM render.",
+            "dataHandling": "The characters are completely skipped during tokenization and DOM tree creation, keeping the compiled page output free of commented text.",
+            "whatIfMissing": "Without comments, developers could not document their markup structures or temporarily disable code sections during page troubleshooting.",
+            "advantages": [
+              "Enforces clear, inline documentation and code sectioning.",
+              "Allows fast debugging by temporarily hiding layout blocks.",
+              "Does not affect the compiled page size or visual rendering."
+            ],
+            "realWorldExample": "Writing <!-- Begin Navbar --> inside your code to help other developers locate the header section quickly."
+          },
+          {
+            "id": "w1-d0-t41",
+            "title": "41. HTML Entities",
+            "explanation": "HTML Entities are special codes used to display reserved characters (like < or >) or characters not easily typed on a standard keyboard (like © or &). They begin with an ampersand (&) and end with a semicolon (;). For example, &lt; displays <, and &copy; displays ©.",
+            "customComponent": "HTMLBoilerplateVisualizer",
+            "howItWorks": "HTML Entities use specialized code keywords starting with an ampersand and ending with a semicolon. The parser translates these codes into special visual glyphs.",
+            "dataHandling": "Intercepts entity tokens during character parsing and substitutes them with the corresponding Unicode special character glyph.",
+            "whatIfMissing": "Without HTML entities, writing a less-than symbol (<) inside a paragraph would confuse the parser, making it think you are opening a new tag and breaking the page.",
+            "advantages": [
+              "Allows safe rendering of reserved HTML symbols like < and >.",
+              "Enables easy rendering of trademark, copyright, and mathematical glyphs.",
+              "Guarantees characters display correctly regardless of file encoding."
+            ],
+            "realWorldExample": "Using &copy; to display the copyright symbol (©) or &lt; to display a less-than sign (<) safely."
+          },
+          {
+            "id": "w1-d0-resources",
+            "title": "Tutor Materials & Resources",
+            "isResources": true,
+            "explanation": "Access the official prerequisite slides, networking basics infographics, and HTML fundamentals worksheets.",
+            "tutorMaterial": {
+              "title": "Prerequisite Lesson Plan & Guide",
+              "content": "Ensure all students are familiar with basic internet architectures and can successfully open the browser inspection panel before Day 1 starts.",
+              "duration": "10 mins",
+              "resources": [
+                "Client-Server Architecture Visual Deck (PDF)"
+              ]
+            }
+          }
+        ]
+      },
+      {
         "dayId": "w1-d1",
-        "dayTitle": "Day 1: HTML Semantic Structure",
+        "dayTitle": "Day 1: HTML Foundations & Syntax",
         "topics": [
           {
             "id": "t1",
-            "title": "1. How the Web Works",
+            "title": "1. The Fundamental of Web Development",
             "visualization": "/how-web-works.png",
-            "customComponent": "NetworkAnimation",
+            "customComponent": "WebFundamentalsInteractive",
             "progression": [
               {
                 "level": "easy",
-                "title": "The Request-Response Cycle",
-                "content": "Think of the web like a restaurant. You (the Client) order a pizza (a Request). The Waiter (the Internet) brings your order to the Kitchen (the Server). The Kitchen makes the pizza and sends it back (the Response)."
+                "title": "The Global Web Pipeline",
+                "content": "Web development operates on a global request-response cycle. A client (web browser like Google Chrome) issues HTTP request envelopes over web interfaces to target server IP addresses. The server processes request variables, carries out database queries, and packages resources (HTML, CSS, JS) back into TCP segments to deliver interactive layouts for the end-user."
               },
               {
                 "level": "intermediate",
-                "title": "Protocols: HTTP vs HTTPS",
-                "content": "HTTP is the language browsers and servers speak. HTTPS is the 'secure' version, where all data is encrypted. This is crucial for protecting passwords and credit card info."
+                "title": "Secure Protocols: HTTP vs HTTPS",
+                "content": "HTTP acts as the standard plain text communication dialect of the web. HTTPS secures this dialect by wrapping traffic payloads in SSL/TLS cryptographic keys, preventing network packet sniffers from reading sensitive data like forms or login hashes."
               },
               {
                 "level": "advanced",
-                "title": "DNS & IP Addresses",
-                "content": "Every server has an IP address (like 142.250.190.46). Since humans can't remember numbers, we use DNS (Domain Name System) to map 'google.com' to that IP."
+                "title": "DNS & Dynamic IP Routing",
+                "content": "All nodes on the network are located via a unique numerical IP address. Because humans rely on natural-language strings, the Domain Name System (DNS) translates friendly domain names like wemadelogix.com into their corresponding static server IP addresses behind the scenes."
               }
             ],
             "codeTemplate": {
-              "html": "<!-- Live Test: See how a server response 'feels' -->\n<div id='network-log'>Network Idle...</div>\n<button id='fetch-btn'>Make Request</button>",
-              "css": "#network-log {\n  padding: 15px;\n  background: #1e293b;\n  color: #38bdf8;\n  border-radius: 8px;\n  margin-bottom: 10px;\n  font-family: monospace;\n}\nbutton {\n  background: #0ea5e9;\n  color: white;\n  border: none;\n  padding: 10px 20px;\n  border-radius: 4px;\n  cursor: pointer;\n}",
-              "js": "document.getElementById('fetch-btn').onclick = () => {\n  const log = document.getElementById('network-log');\n  log.innerText = '-> Sending GET /api/data...';\n  setTimeout(() => {\n    log.innerText = '<- Status 200 OK (Received JSON)';\n  }, 1000);\n};"
+              "html": "<!-- Hands-on check: Dispatch a simulated request! -->\n<div id='api-log'>Terminal idle...</div>\n<button id='api-trigger'>Launch Request</button>",
+              "css": "#api-log {\n  padding: 15px;\n  background: #0f172a;\n  color: #38bdf8;\n  border-radius: 8px;\n  margin-bottom: 10px;\n  font-family: monospace;\n  border: 1px solid #1e293b;\n}\nbutton {\n  background: #0ea5e9;\n  color: white;\n  border: none;\n  padding: 10px 20px;\n  border-radius: 6px;\n  cursor: pointer;\n  font-weight: bold;\n}",
+              "js": "document.getElementById('api-trigger').onclick = () => {\n  const log = document.getElementById('api-log');\n  log.innerText = '-> Packaging GET payload. Querying DNS...';\n  setTimeout(() => {\n    log.innerText = '-> TLS Handshake verified. Sending ciphertext...';\n  }, 1000);\n  setTimeout(() => {\n    log.innerText = '<- Status 200 OK (Secure HTTPS session active)';\n  }, 2200);\n};"
             },
-            "assessment": "Draw a simple diagram showing the path of a request from your laptop to a server and back."
+            "assessment": "Summarize the primary difference between HTTP and HTTPS, explaining why TLS handshake keys protect modern websites."
           },
           {
             "id": "t2",
-            "title": "2. Introduction to HTML",
+            "title": "2. Structure",
             "visualization": "/html-tags.png",
+            "customComponent": "HTMLStructureInteractive",
             "progression": [
               {
                 "level": "easy",
-                "title": "The Backbone of the Web",
-                "content": "HTML stands for HyperText Markup Language. It's not a programming language—it's a 'markup' language that tells the browser how to organize text, images, and links."
+                "title": "Defining the DOM Tree",
+                "content": "HTML uses hierarchical tag pairs to construct a structured outline called the Document Object Model (DOM). Elements must open and close symmetrically, forming clear parent-child boundaries that represent layout boxes inside the browser."
               },
               {
                 "level": "intermediate",
-                "title": "Tags and Elements",
-                "content": "A tag is the code (like <h1>). An element is the whole thing, including the content inside. Most tags come in pairs: an opening tag <h1> and a closing tag </h1>."
+                "title": "Nesting Constraints",
+                "content": "Nesting determines hierarchy. Parent elements pass down coordinate boundaries to their children. Always close nested tags in reverse-opening order (e.g. <div><p>...</p></div>) to prevent structural rendering engine bugs."
               },
               {
                 "level": "advanced",
-                "title": "Attributes & Values",
-                "content": "Tags can have extra info called Attributes. For example, <h1 class='title'> has an attribute 'class' with the value 'title'. This is how we give tags 'labels' for styling."
+                "title": "Block vs Inline Box Models",
+                "content": "HTML tags dictate default layouts. Block elements (like section, main, h1, p) stack vertically, breaking the layout line and covering 100% of parent width. Inline elements (like a, strong, span) flow side-by-side with text blocks without forcing line wraps."
               }
             ],
             "codeTemplate": {
-              "html": "<h1 class='glow'>My First Heading</h1>\n<p>HTML elements are nested inside each other.</p>",
-              "css": ".glow {\n  color: #00d1d1;\n  text-shadow: 0 0 10px #00d1d1;\n}\np {\n  color: #94a3b8;\n}",
+              "html": "<main>\n  <section class='box'>\n    <h2>Structural Layout</h2>\n    <p>This paragraph contains an <a href='#'>inline anchor link</a>.</p>\n  </section>\n</main>",
+              "css": ".box {\n  padding: 20px;\n  background: rgba(251, 146, 60, 0.05);\n  border: 1px dashed #fb923c;\n  border-radius: 8px;\n}\nh2 { color: #fb923c; margin: 0 0 10px 0; }\na {\n  color: #2563eb;\n  font-weight: bold;\n}",
               "js": ""
             },
-            "assessment": "Explain why closing tags are important in HTML."
+            "assessment": "Define the primary layout difference between block-level elements and inline elements."
           },
           {
             "id": "t3",
-            "title": "3. HTML Document Structure",
+            "title": "3. Boilerplate",
             "visualization": "/html-structure.png",
+            "customComponent": "HTMLBoilerplateInteractive",
             "progression": [
               {
                 "level": "easy",
-                "title": "The Three Musketeers",
-                "content": "Every valid HTML file needs three main parts: <html> (the root), <head> (the brain), and <body> (the body users see)."
+                "title": "Standard Skeleton Files",
+                "content": "Every valid HTML document demands a standard boilerplate setup. The document starts with <!DOCTYPE html> to enforce modern standard parsing, followed by root html tags, a head block for configuration, and a body block for visual elements."
               },
               {
                 "level": "intermediate",
-                "title": "The Head vs Body",
-                "content": "The <head> contains things you DON'T see (like titles and search engine info). The <body> contains everything you DO see (text, images, buttons)."
+                "title": "Global UTF-8 Character Encoding",
+                "content": "Declaring <meta charset='UTF-8'> instructs the browser to parse character code maps cleanly. UTF-8 supports rendering special letters, foreign characters, and emojis from all human languages without displaying corrupted accent boxes."
               },
               {
                 "level": "advanced",
-                "title": "The DOCTYPE Declaration",
-                "content": "The very first line must be <!DOCTYPE html>. This tells the browser you are using the modern HTML5 standard, preventing old 'quirks' from breaking your site."
+                "title": "Mobile Viewport Control",
+                "content": "The meta viewport tag (<meta name='viewport' content='width=device-width, initial-scale=1.0'>) tells mobile browsers to scale layouts to the device's native pixel width. If omitted, mobile viewports default to desktop sizing, rendering small text that requires pinch-zooming."
               }
             ],
             "codeTemplate": {
-              "html": "<!DOCTYPE html>\n<html>\n<head>\n  <title>Deep Dive Structure</title>\n</head>\n<body>\n  <h1>Welcome to the Lab</h1>\n  <p>Inspect the 'Head' tab to see metadata!</p>\n</body>\n</html>",
-              "css": "body { padding: 40px; background: #0f172a; color: white; }",
+              "html": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>Boilerplate Lab</title>\n</head>\n<body>\n  <h1>Symmetric Skeleton Active</h1>\n  <p>Accents render safely: café, crème, © 2026</p>\n</body>\n</html>",
+              "css": "body { padding: 20px; font-family: sans-serif; background: #fafafa; }",
               "js": ""
             },
-            "assessment": "Create a skeleton HTML file and explain what happens if you remove the <!DOCTYPE>."
+            "assessment": "Draft a perfect HTML5 boilerplate template, and write a summary explaining the critical role of viewport and charset metadata tags."
           },
           {
             "id": "t4",
-            "title": "4. Headings, Paragraphs & Links",
+            "title": "4. Headings",
             "visualization": "/headings-hierarchy.png",
+            "customComponent": "HTMLHeadingsInteractive",
             "progression": [
               {
                 "level": "easy",
-                "title": "Headings (H1 - H6)",
-                "content": "HTML provides 6 levels of headings. H1 is the most important (usually for page titles). Never skip levels (don't jump from H1 to H3) as it confuses screen readers."
+                "title": "Rank & Document Priority",
+                "content": "HTML provides six headings levels (H1 to H6) to group document content. Headings establish the priority levels of information, with H1 carrying top rank weight."
               },
               {
                 "level": "intermediate",
-                "title": "Paragraphs and Spacing",
-                "content": "The <p> tag automatically adds space before and after your text. Browsers ignore extra spaces inside the code, so <p> is your best friend for formatting."
+                "title": "SEO & Indexing Stature",
+                "content": "Search engine bots use headings trees to determine topic focus. A valid page should only contain a single H1 representing the main topic, with sub-features grouped under H2 and H3 nodes to prevent diluting search weight."
               },
               {
                 "level": "advanced",
-                "title": "Anchor Tags (Links)",
-                "content": "The <a> tag creates links. The 'href' attribute tells it where to go. Pro tip: Use target='_blank' to open links in a new tab."
+                "title": "Accessibility Tree Rules",
+                "content": "Visually impaired users navigate pages using headers lists. Skipping heading ranks (e.g. jumping from H1 directly to H4) breaks the accessibility map, confusing screen-readers attempting to read document sections."
               }
             ],
             "codeTemplate": {
-              "html": "<h1>Article Title</h1>\n<p>This is the first paragraph of our story.</p>\n<a href='https://google.com' target='_blank'>Click here for more</a>",
-              "css": "a {\n  color: #38bdf8;\n  text-decoration: underline;\n  font-weight: bold;\n}\na:hover { color: #7dd3fc; }",
+              "html": "<h1>Main Document Focus</h1>\n<h2>Sub-Section Title</h2>\n<h3>Micro-Detail Section</h3>",
+              "css": "h1 { color: #1e293b; border-bottom: 2px solid #e2e8f0; padding-bottom: 5px; }\nh2 { color: #475569; }\nh3 { color: #64748b; font-style: italic; }",
               "js": ""
             },
-            "assessment": "Create a page with an H1, H2, and a link that opens in a new tab."
+            "assessment": "Create a semantic three-level hierarchy for a restaurant page containing menu classifications and pricing items."
           },
           {
             "id": "t5",
-            "title": "5. Images & Lists",
+            "title": "5. Paragraphs",
             "visualization": "/lists-types.png",
+            "customComponent": "HTMLParagraphsInteractive",
             "progression": [
               {
                 "level": "easy",
-                "title": "Unordered Lists (UL)",
-                "content": "Use <ul> for items where the order doesn't matter, like a grocery list. Each item is wrapped in an <li> tag."
+                "title": "Passing Copy Passages",
+                "content": "Paragraph elements (<p>) organize structural blocks of text content. They instruct browsers to establish breathing space around reading segments by applying default vertical margins (1em)."
               },
               {
                 "level": "intermediate",
-                "title": "Ordered Lists (OL)",
-                "content": "Use <ol> when the order matters, like a recipe. The browser will automatically number the items for you!"
+                "title": "Layout Line-Wrapping",
+                "content": "Unlike plain inline spans, paragraph boxes automatically wrap text lines dynamically to fit within their parent container width, ensuring responsive layouts across phone and monitor displays."
               },
               {
                 "level": "advanced",
-                "title": "The Self-Closing Image Tag",
-                "content": "The <img> tag is special—it doesn't have a closing tag. It needs 'src' (source URL) and 'alt' (description for people who can't see the image)."
+                "title": "Spacing vs BR Breaks",
+                "content": "Always separate paragraphs using p tags rather than manually introducing line breaks (<br>). Breaks split text inside a single idea but fail to convey paragraph changes to screen-reader software."
               }
             ],
             "codeTemplate": {
-              "html": "<h3>Skills to Master</h3>\n<ul>\n  <li>HTML Structure</li>\n  <li>CSS Flexbox</li>\n</ul>\n\n<h3>Recipe Steps</h3>\n<ol>\n  <li>Crack eggs</li>\n  <li>Fry them</li>\n</ol>\n\n<img src='https://picsum.photos/200/100' alt='Study Logo' style='margin-top: 20px;'>",
-              "css": "li { margin: 10px 0; }\nimg { border: 3px solid #00d1d1; border-radius: 12px; }",
+              "html": "<p>First copy text block. The browser assigns automatic vertical margins to optimize scanning comfort.</p>\n<p>Second copy text block. Sits cleanly underneath without manual breaks.</p>",
+              "css": "p {\n  color: #334155;\n  line-height: 1.6;\n  font-family: Georgia, serif;\n}",
               "js": ""
             },
-            "assessment": "Build a list of your top 3 favorite movies using an ordered list."
+            "assessment": "Identify the semantic and accessibility differences between grouping text inside separate <p> tags versus manually pushing text down with <br> breaks."
           },
           {
             "id": "t6",
-            "title": "6. Basic Page Structuring",
+            "title": "6. Formatting",
+            "visualization": "/lists-types.png",
+            "customComponent": "HTMLFormattingInteractive",
             "progression": [
               {
                 "level": "easy",
-                "title": "Logical Flow",
-                "content": "A good webpage flows from Top to Bottom. Start with a header, move to main content, and end with a footer."
+                "title": "Linguistic vs Visual Focus",
+                "content": "HTML formatting tags are classified as visual formatting or semantic formatting. While visual tags like <b> and <i> apply styling only, semantic tags like <strong> and <em> add structural emphasis."
               },
               {
                 "level": "intermediate",
-                "title": "Nesting Elements",
-                "content": "Nesting means putting elements inside other elements. For example, putting <li> inside <ul>. Always close in the reverse order you opened!"
+                "title": "Accessibility Voice Stress",
+                "content": "Assistive software adjusts speech profiles (raising volume or changing pitch) when reading <strong> and <em> tags to indicate emphasis. In contrast, <b> and <i> tags are read flat, leaving visually impaired users unaware of highlights."
               },
               {
                 "level": "advanced",
-                "title": "The Content First Approach",
-                "content": "Before styling with CSS, your HTML should be clear and readable. If it looks good in plain text, it'll look amazing with styles."
+                "title": "Monospaced & Highlights",
+                "content": "Use <code> to wrap code variables, rendering them in monospaced fonts to indicate computer instructions. Use <mark> to highlight text, rendering a visual yellow marker highlight for quick scannability."
               }
             ],
             "codeTemplate": {
-              "html": "<!-- Structural Challenge -->\n<header>\n  <h1>Company Name</h1>\n</header>\n<main>\n  <section>\n    <h2>Our Services</h2>\n    <ul>\n      <li>Web Design</li>\n      <li>App Development</li>\n    </ul>\n  </section>\n</main>",
-              "css": "header { padding: 20px; border-bottom: 2px solid #334155; }\nmain { padding: 20px; }",
+              "html": "<p>Please complete this <strong>CRITICAL</strong> action.</p>\n<p>Remember to execute the <code>npm run dev</code> command.</p>",
+              "css": "strong { color: #dc2626; }\ncode {\n  background: #e2e8f0;\n  padding: 2px 6px;\n  border-radius: 4px;\n  color: #0f172a;\n}",
               "js": ""
             },
-            "assessment": "Structure a simple landing page outline using semantic tags."
+            "assessment": "Explain why <strong> and <em> elements are preferred over <b> and <i> elements for modern web accessibility."
           },
           {
             "id": "t7",
-            "title": "7. Mini Project – Personal Portfolio Page",
+            "title": "7. Entities",
+            "visualization": "/lists-types.png",
+            "customComponent": "HTMLEntitiesInteractive",
             "progression": [
               {
                 "level": "easy",
-                "title": "Core HTML Structure",
-                "content": "Use the <!DOCTYPE html> and structural tags (header, main, footer) you learned today."
+                "title": "Escaping Syntax Characters",
+                "content": "Browsers use characters like < and > to define tags. If you use them raw inside a text paragraph, the HTML parser gets confused, interpreting the symbol as a tag boundary and breaking your layout."
               },
               {
                 "level": "intermediate",
-                "title": "Content & Hierarchy",
-                "content": "Add your name as an H1, a professional bio as a paragraph, and a list of your core values using an unordered list."
+                "title": "Entity Code Structure",
+                "content": "HTML Entities act as character escapes, starting with an ampersand (&) and ending with a semicolon (;). They translate entity keywords into visual symbols on screen (e.g. '&lt;' for '<', '&gt;' for '>')."
               },
               {
                 "level": "advanced",
-                "title": "Interactivity & Media",
-                "content": "Include a profile image (use a placeholder if needed) and external links to your social profiles using the <a> tag."
+                "title": "Special Symbol Rendering",
+                "content": "Entities guarantee clean rendering of trademark (&reg;), copyright (&copy;), and mathematical symbols across all browser engines, regardless of historical host-server configurations."
               }
             ],
             "codeTemplate": {
-              "html": "<!-- TARGET GOAL: Build this exact structure using only HTML -->\n<!DOCTYPE html>\n<html>\n<head>\n  <title>Mission: Personal Portfolio</title>\n</head>\n<body>\n\n  <header>\n    <h1>Jane Developer</h1>\n    <h3>Full Stack Engineer & Tech Enthusiast</h3>\n  </header>\n\n  <main>\n    <section>\n      <h2>Mission Objective</h2>\n      <p>I am building the foundations of the web. This project demonstrates semantic HTML structure and accessibility standards.</p>\n      <img src='https://picsum.photos/200/200' alt='Professional Headshot of Jane Developer'>\n    </section>\n\n    <section>\n      <h2>Core Arsenal (Skills)</h2>\n      <ul>\n        <li>Semantic Layouts</li>\n        <li>Accessible Media</li>\n        <li>Link Management</li>\n        <li>Document Hierarchy</li>\n      </ul>\n    </section>\n\n    <section>\n      <h2>Digital Footprint</h2>\n      <p>Connect with me on my mission logs:</p>\n      <a href='https://github.com' target='_blank'>View GitHub Forge</a>\n      <br>\n      <a href='https://linkedin.com' target='_blank'>Access LinkedIn Node</a>\n    </section>\n  </main>\n\n  <footer>\n    <p>© 2024 Jane Developer. All rights reserved.</p>\n  </footer>\n\n</body>\n</html>",
+              "html": "<p>To display headers, write the &lt;h1&gt; entity format code.</p>\n<p>All assets are secured &copy; 2026.</p>",
+              "css": "p { font-family: monospace; color: #0284c7; }",
+              "js": ""
+            },
+            "assessment": "Explain what happens when a browser parses a raw less-than sign (<) in a text sentence, and detail how HTML entities bypass this issue."
+          },
+          {
+            "id": "t8",
+            "title": "Assignment Task",
+            "visualization": "/lists-types.png",
+            "customComponent": "HTMLPortfolioInteractive",
+            "progression": [
+              {
+                "level": "easy",
+                "title": "Base Document Blueprint",
+                "content": "Initialize a valid HTML boilerplate skeleton, declaring standard <!DOCTYPE html>, UTF-8 character encoding, responsive viewport meta tags, and a body visual wrapper."
+              },
+              {
+                "level": "intermediate",
+                "title": "Nesting Semantic Layout Blocks",
+                "content": "Organize your page body using structural semantic tags. Nest a header for branding, a main block for the biography details, and a footer for copyright metadata."
+              },
+              {
+                "level": "advanced",
+                "title": "Hierarchy, Formatting & Escapes",
+                "content": "Use a clear headings structure with H1, H2, and H3 levels. Organize biography content inside paragraphs, highlight tech terms with strong, em, and code tags, and escape custom tag syntax using HTML entities."
+              }
+            ],
+            "codeTemplate": {
+              "html": "<!-- Mission Objective: Recreate this Semantic Professional Biography using only Day 1 elements. No styling, links, lists, or images are allowed! -->\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>Jane Developer Biography</title>\n</head>\n<body>\n\n  <header>\n    <h1>Jane Developer</h1>\n    <h3>Full Stack Software Architect</h3>\n  </header>\n\n  <main>\n    <section>\n      <h2>Professional Mission Statement</h2>\n      <p>I am dedicated to building high-performance, accessible web architectures. By understanding the core mechanics of client-server transactions and DOM compiling, I write optimized, clean structural components.</p>\n      <p>My core development directive is: always test changes locally using <code>npm run dev</code> before pushing to staging!</p>\n    </section>\n\n    <section>\n      <h2>Syllabus Mastery Progress</h2>\n      <p>Today I mastered <strong>HTML5 Document Structure</strong> and boilerplate configuration parameters, including the critical <em>meta viewport</em> scaling rule and <em>meta charset</em> character maps.</p>\n    </section>\n\n    <section>\n      <h2>Syntactic Escape Protocol</h2>\n      <p>When displaying markup snippets in my logs, I always use standard ampersand entity codes. For example, rendering the &lt;header&gt; and &lt;footer&gt; tag wrappers requires escaping brackets so browsers parse them as plain text rather than active structural nodes!</p>\n    </section>\n  </main>\n\n  <footer>\n    <p>Secure Node Access Secured &copy; 2026 Jane Developer. Under active local review.</p>\n  </footer>\n\n</body>\n</html>",
               "css": "",
               "js": ""
             },
-            "assessment": "Final Challenge: Recreate this professional portfolio structure using all the semantic tags, headings, lists, and links we've covered today. No CSS allowed!"
+            "assessment": "Final Challenge: Recreate this Semantic Professional Biography using the interactive code editor. Complete all requirements listed below to earn your badge!"
           },
           {
             "id": "w1-d1-resources",
             "title": "Tutor Materials & Resources",
             "isResources": true,
-            "explanation": "This section contains the official slide decks, exercises, tutor reference guides, and student worksheets for this session.",
+            "explanation": "This section contains slide decks, reference guides, student worksheets, and solution keys for this HTML Foundations session.",
             "tutorMaterial": {
               "title": "Tutor Lesson Plan & Reference Guide",
-              "content": "Important talking points, structural timeline, common student pitfalls, and solutions for this session.",
+              "content": "Pedagogical goals, interactive visualization walkthrough notes, troubleshooting tips for students, and perfect solution files.",
               "duration": "15 mins",
               "resources": [
-                "Classroom Presentation Slides (PDF)",
-                "Student Hands-on Lab Worksheet (PDF)",
-                "Reference Code & Solutions (ZIP)",
-                "Day Evaluation Rubric"
+                "Classroom Slides: HTML Foundations (PDF)",
+                "Hands-on Lab Worksheet & Prompts (PDF)",
+                "Perfect Portfolio Reference Key (HTML)",
+                "Day Evaluation Matrix"
               ]
             }
           }

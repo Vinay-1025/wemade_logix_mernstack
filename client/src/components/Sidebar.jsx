@@ -59,6 +59,9 @@ const Sidebar = () => {
       prevDayId = prevWeek.days[prevWeek.days.length - 1].dayId;
     }
 
+    // If the previous day is the Prerequisite Day, it has no assignment, so this day is unlocked automatically
+    if (prevDayId === 'w1-d0') return true;
+
     const prevStatus = getDayStatus(prevDayId);
     return prevStatus.isSubmitted; // Unlocked if submitted
   };

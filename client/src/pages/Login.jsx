@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { login, reset } from '../features/auth/authSlice';
-import { ArrowRight, Plus, UserCircle } from 'lucide-react';
+import { ArrowRight, Plus, UserCircle, Eye, EyeOff } from 'lucide-react';
 
 const Login = () => {
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -111,15 +112,25 @@ const Login = () => {
               </div>
               <div className="input-group">
                 <label>Password</label>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  value={password}
-                  placeholder="••••••••"
-                  onChange={onChange}
-                  required
-                />
+                <div className="password-input-wrapper">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    id="password"
+                    name="password"
+                    value={password}
+                    placeholder="••••••••"
+                    onChange={onChange}
+                    required
+                  />
+                  <button 
+                    type="button"
+                    className="password-toggle-btn"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
               </div>
               
               <button type="submit" className="submit-btn" disabled={isLoading}>

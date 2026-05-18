@@ -3,12 +3,13 @@ import Editor from '@monaco-editor/react';
 import { Play, RotateCcw, Layout, Code2, Monitor } from 'lucide-react';
 
 const CodeEditor = ({ initialCode, onChange, tabs = ['html', 'css', 'js'], readOnly = false }) => {
-  const [code, setCode] = useState(initialCode);
+  const safeInitialCode = initialCode || { html: '', css: '', js: '' };
+  const [code, setCode] = useState(safeInitialCode);
   const [activeTab, setActiveTab] = useState(tabs[0] || 'html');
   const [srcDoc, setSrcDoc] = useState('');
 
   useEffect(() => {
-    setCode(initialCode);
+    setCode(initialCode || { html: '', css: '', js: '' });
   }, [initialCode]);
 
   useEffect(() => {
