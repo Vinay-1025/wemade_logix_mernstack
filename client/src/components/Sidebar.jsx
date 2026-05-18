@@ -207,7 +207,13 @@ const Sidebar = () => {
                               }}
                             >
                               <BookOpen size={16} />
-                              {!isSidebarCollapsed && <span>{topic.title}</span>}
+                              {!isSidebarCollapsed && (
+                                <span>
+                                  {topic.isResources 
+                                    ? (user?.role === 'admin' || user?.role === 'superadmin' ? 'Tutor Materials & Resources' : 'Resources & Materials') 
+                                    : topic.title}
+                                </span>
+                              )}
                             </button>
                           ))}
                         </div>

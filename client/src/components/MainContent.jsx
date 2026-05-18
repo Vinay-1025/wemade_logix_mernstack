@@ -104,6 +104,138 @@ const MainContent = () => {
 
   if (!selectedTopic) return <div className="main-content">Select a topic to start learning</div>;
 
+  if (selectedTopic.isResources) {
+    return (
+      <main className="main-content">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={selectedTopic.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+          >
+            <div className="content-header">
+              <span className="topic-tag" style={{ color: '#a855f7', borderColor: 'rgba(168, 85, 247, 0.2)' }}>Day Materials</span>
+              <h1>{selectedTopic.title}</h1>
+            </div>
+
+            <section className="explanation-section">
+              <p className="resources-intro">{selectedTopic.explanation}</p>
+            </section>
+
+            <div className="resources-dashboard-grid">
+              {/* Left Card: Resources & Assets */}
+              <div className="resources-card card-3d">
+                <div className="card-header-row">
+                  <div className="icon-badge primary">
+                    <ClipboardCheck size={20} />
+                  </div>
+                  <h2>Learning Materials</h2>
+                </div>
+                <p className="card-subtitle">Download or view the official reference materials for this day's lessons.</p>
+                
+                <div className="resource-download-list">
+                  {selectedTopic.tutorMaterial?.resources?.map((res, idx) => (
+                    <div key={idx} className="resource-item-btn">
+                      <div className="resource-info">
+                        <FileText size={18} className="res-icon" />
+                        <span>{res}</span>
+                      </div>
+                      <button className="btn-download" onClick={() => alert(`Accessing: ${res}`)}>
+                        <ArrowUpRight size={16} />
+                        Access
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Right Card: Tutor Guide (Only visible to Admin/Superadmin) */}
+              {isTutorOrAdmin && selectedTopic.tutorMaterial && (
+                <div className="resources-card card-3d tutor-guide-card">
+                  <div className="card-header-row">
+                    <div className="icon-badge secondary">
+                      <ShieldCheck size={20} color="#a855f7" />
+                    </div>
+                    <h2>{selectedTopic.tutorMaterial.title}</h2>
+                  </div>
+                  <p className="card-subtitle">Strictly Confidential • Instructor Use Only</p>
+                  
+                  <div className="tutor-guide-body">
+                    <p className="tutor-instructions">{selectedTopic.tutorMaterial.content}</p>
+                    
+                    <div className="tutor-meta-pill">
+                      <Clock size={14} />
+                      <span>Recommended Prep Time: <strong>{selectedTopic.tutorMaterial.duration}</strong></span>
+                    </div>
+
+                    <div className="tutor-alert-box">
+                      <Lightbulb size={16} />
+                      <span>Ensure students complete the hands-on playgrounds for all previous topics before launching the mini-project.</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Navigation Buttons */}
+            <div className="navigation-footer">
+              {prevTopic ? (
+                <button className="nav-btn prev" onClick={() => setSelectedTopic(prevTopic)}>
+                  <div className="nav-icon"><ArrowLeft size={20} /></div>
+                  <div className="nav-text">
+                    <span className="nav-label">Previous Topic</span>
+                    <span className="nav-title">{prevTopic.title}</span>
+                  </div>
+                </button>
+              ) : <div />}
+
+              {nextTopic && (
+                <button className="nav-btn next" onClick={() => setSelectedTopic(nextTopic)}>
+                  <div className="nav-text">
+                    <span className="nav-label">Next Topic</span>
+                    <span className="nav-title">{nextTopic.title}</span>
+                  </div>
+                  <div className="nav-icon"><ArrowRight size={20} /></div>
+                </button>
+              )}
+            </div>
+
+            <footer className="content-footer">
+              <p>© 2024 MERN Training Platform. Interactive Learning Experience.</p>
+            </footer>
+          </motion.div>
+        </AnimatePresence>
+
+        <style dangerouslySetInnerHTML={{ __html: `
+          .resources-intro { font-size: 1.05rem; color: var(--app-text-muted); line-height: 1.6; margin-bottom: var(--space-6); }
+          .resources-dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin-bottom: var(--space-8); }
+          .resources-card { background: var(--app-card-bg); border-radius: var(--radius-xl); border: 1px solid var(--app-border); padding: var(--space-6); display: flex; flex-direction: column; }
+          .card-header-row { display: flex; align-items: center; gap: var(--space-2); margin-bottom: 12px; }
+          .icon-badge { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+          .icon-badge.primary { background: rgba(0, 209, 209, 0.1); color: var(--primary-cyan); }
+          .icon-badge.secondary { background: rgba(168, 85, 247, 0.1); color: #a855f7; }
+          .resources-card h2 { margin: 0; font-size: 1.35rem; font-weight: 700; }
+          .card-subtitle { font-size: 0.85rem; color: var(--text-neutral); margin-bottom: var(--space-4); }
+          .resource-download-list { display: flex; flex-direction: column; gap: 12px; }
+          .resource-item-btn { display: flex; justify-content: space-between; align-items: center; background: var(--light-secondary); padding: 12px 16px; border-radius: 12px; border: 1px solid var(--app-border); }
+          .resource-info { display: flex; align-items: center; gap: 10px; font-weight: 500; font-size: 0.9rem; color: var(--app-text); }
+          .res-icon { color: var(--text-neutral); }
+          .btn-download { background: var(--brand-gradient); color: white; border: none; padding: 6px 14px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+          .tutor-guide-card { border-color: rgba(168, 85, 247, 0.3); background: rgba(168, 85, 247, 0.02); }
+          .tutor-guide-body { display: flex; flex-direction: column; gap: 16px; }
+          .tutor-instructions { font-size: 0.95rem; line-height: 1.6; color: var(--app-text); margin: 0; }
+          .tutor-meta-pill { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; color: var(--text-neutral); background: rgba(168, 85, 247, 0.05); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(168, 85, 247, 0.1); width: fit-content; }
+          .tutor-alert-box { display: flex; gap: 10px; background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.15); border-radius: 12px; padding: 12px; color: #f59e0b; font-size: 0.85rem; line-height: 1.4; }
+          @media (max-width: 1024px) {
+            .resources-dashboard-grid { grid-template-columns: 1fr; }
+          }
+        `}} />
+      </main>
+    );
+  }
+
   return (
     <main className="main-content">
       <AnimatePresence mode="wait">
@@ -118,26 +250,6 @@ const MainContent = () => {
             <span className="topic-tag">Topic</span>
             <h1>{selectedTopic.title}</h1>
           </div>
-
-          {isTutorOrAdmin && currentDayData?.tutorMaterial && (
-            <section className="tutor-material-section card-3d">
-              <div className="section-title">
-                <FileText size={20} color="#a855f7" />
-                <h2>{currentDayData.tutorMaterial.title}</h2>
-              </div>
-              <p className="tutor-content">{currentDayData.tutorMaterial.content}</p>
-              <div className="tutor-meta">
-                <span className="tutor-duration"><Clock size={14}/> {currentDayData.tutorMaterial.duration}</span>
-              </div>
-              {currentDayData.tutorMaterial.resources && (
-                <ul className="tutor-resources">
-                  {currentDayData.tutorMaterial.resources.map((res, i) => (
-                    <li key={i}><ArrowRight size={14}/> {res}</li>
-                  ))}
-                </ul>
-              )}
-            </section>
-          )}
 
           <section className="progression-section">
             {selectedTopic.progression ? (

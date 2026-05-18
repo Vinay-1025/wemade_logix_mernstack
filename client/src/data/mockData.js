@@ -201,18 +201,25 @@ export const courseData = [
               "js": ""
             },
             "assessment": "Final Challenge: Recreate this professional portfolio structure using all the semantic tags, headings, lists, and links we've covered today. No CSS allowed!"
+          },
+          {
+            "id": "w1-d1-resources",
+            "title": "Tutor Materials & Resources",
+            "isResources": true,
+            "explanation": "This section contains the official slide decks, exercises, tutor reference guides, and student worksheets for this session.",
+            "tutorMaterial": {
+              "title": "Tutor Lesson Plan & Reference Guide",
+              "content": "Important talking points, structural timeline, common student pitfalls, and solutions for this session.",
+              "duration": "15 mins",
+              "resources": [
+                "Classroom Presentation Slides (PDF)",
+                "Student Hands-on Lab Worksheet (PDF)",
+                "Reference Code & Solutions (ZIP)",
+                "Day Evaluation Rubric"
+              ]
+            }
           }
-        ],
-        "tutorMaterial": {
-          "title": "Tutor Material for Day 1: HTML Semantic Structure",
-          "content": "Specific guidelines, talking points, and supplementary materials for tutors to use during this session.",
-          "duration": "15 mins",
-          "resources": [
-            "Presentation Slides",
-            "Practice Worksheet",
-            "Evaluation Rubric"
-          ]
-        }
+        ]
       },
       {
         "dayId": "w1-d2",
@@ -410,18 +417,25 @@ export const courseData = [
               "js": ""
             },
             "assessment": "Final Challenge: Build this complete registration form and ensure all validation rules are met!"
+          },
+          {
+            "id": "w1-d2-resources",
+            "title": "Tutor Materials & Resources",
+            "isResources": true,
+            "explanation": "This section contains the official slide decks, exercises, tutor reference guides, and student worksheets for this session.",
+            "tutorMaterial": {
+              "title": "Tutor Lesson Plan & Reference Guide",
+              "content": "Important talking points, structural timeline, common student pitfalls, and solutions for this session.",
+              "duration": "15 mins",
+              "resources": [
+                "Classroom Presentation Slides (PDF)",
+                "Student Hands-on Lab Worksheet (PDF)",
+                "Reference Code & Solutions (ZIP)",
+                "Day Evaluation Rubric"
+              ]
+            }
           }
-        ],
-        "tutorMaterial": {
-          "title": "Tutor Material for Day 2: Forms, Tables & Semantics",
-          "content": "Specific guidelines, talking points, and supplementary materials for tutors to use during this session.",
-          "duration": "15 mins",
-          "resources": [
-            "Presentation Slides",
-            "Practice Worksheet",
-            "Evaluation Rubric"
-          ]
-        }
+        ]
       },
       {
         "dayId": "w1-d3",
@@ -620,18 +634,25 @@ export const courseData = [
               "js": ""
             },
             "assessment": "Final Challenge: Take your HTML profile page from Day 1 and apply full CSS styling to make it look professional!"
+          },
+          {
+            "id": "w1-d3-resources",
+            "title": "Tutor Materials & Resources",
+            "isResources": true,
+            "explanation": "This section contains the official slide decks, exercises, tutor reference guides, and student worksheets for this session.",
+            "tutorMaterial": {
+              "title": "Tutor Lesson Plan & Reference Guide",
+              "content": "Important talking points, structural timeline, common student pitfalls, and solutions for this session.",
+              "duration": "15 mins",
+              "resources": [
+                "Classroom Presentation Slides (PDF)",
+                "Student Hands-on Lab Worksheet (PDF)",
+                "Reference Code & Solutions (ZIP)",
+                "Day Evaluation Rubric"
+              ]
+            }
           }
-        ],
-        "tutorMaterial": {
-          "title": "Tutor Material for Day 3: Introduction to CSS Styling",
-          "content": "Specific guidelines, talking points, and supplementary materials for tutors to use during this session.",
-          "duration": "15 mins",
-          "resources": [
-            "Presentation Slides",
-            "Practice Worksheet",
-            "Evaluation Rubric"
-          ]
-        }
+        ]
       },
       {
         "dayId": "w1-d4",
@@ -828,18 +849,25 @@ export const courseData = [
               "js": ""
             },
             "assessment": "Final Challenge: Build a 3-column card grid that drops to 1 column on small screens using what you learned!"
+          },
+          {
+            "id": "w1-d4-resources",
+            "title": "Tutor Materials & Resources",
+            "isResources": true,
+            "explanation": "This section contains the official slide decks, exercises, tutor reference guides, and student worksheets for this session.",
+            "tutorMaterial": {
+              "title": "Tutor Lesson Plan & Reference Guide",
+              "content": "Important talking points, structural timeline, common student pitfalls, and solutions for this session.",
+              "duration": "15 mins",
+              "resources": [
+                "Classroom Presentation Slides (PDF)",
+                "Student Hands-on Lab Worksheet (PDF)",
+                "Reference Code & Solutions (ZIP)",
+                "Day Evaluation Rubric"
+              ]
+            }
           }
-        ],
-        "tutorMaterial": {
-          "title": "Tutor Material for Day 4: Mastering Flexbox Layouts",
-          "content": "Specific guidelines, talking points, and supplementary materials for tutors to use during this session.",
-          "duration": "15 mins",
-          "resources": [
-            "Presentation Slides",
-            "Practice Worksheet",
-            "Evaluation Rubric"
-          ]
-        }
+        ]
       },
       {
         "dayId": "w1-d5",
@@ -1036,18 +1064,25 @@ export const courseData = [
               "js": ""
             },
             "assessment": "Final Challenge: Take everything you learned and build a landing page that is perfectly readable on BOTH a phone and a high-res monitor!"
+          },
+          {
+            "id": "w1-d5-resources",
+            "title": "Tutor Materials & Resources",
+            "isResources": true,
+            "explanation": "This section contains the official slide decks, exercises, tutor reference guides, and student worksheets for this session.",
+            "tutorMaterial": {
+              "title": "Tutor Lesson Plan & Reference Guide",
+              "content": "Important talking points, structural timeline, common student pitfalls, and solutions for this session.",
+              "duration": "15 mins",
+              "resources": [
+                "Classroom Presentation Slides (PDF)",
+                "Student Hands-on Lab Worksheet (PDF)",
+                "Reference Code & Solutions (ZIP)",
+                "Day Evaluation Rubric"
+              ]
+            }
           }
-        ],
-        "tutorMaterial": {
-          "title": "Tutor Material for Day 5: Responsive Web Design",
-          "content": "Specific guidelines, talking points, and supplementary materials for tutors to use during this session.",
-          "duration": "15 mins",
-          "resources": [
-            "Presentation Slides",
-            "Practice Worksheet",
-            "Evaluation Rubric"
-          ]
-        }
+        ]
       },
       {
         "dayId": "w1-d6",
@@ -1242,18 +1277,25 @@ export const courseData = [
               "js": ""
             },
             "assessment": "Final Milestone: Push your Week 1 portfolio to GitHub and share your live Netlify URL!"
+          },
+          {
+            "id": "w1-d6-resources",
+            "title": "Tutor Materials & Resources",
+            "isResources": true,
+            "explanation": "This section contains the official slide decks, exercises, tutor reference guides, and student worksheets for this session.",
+            "tutorMaterial": {
+              "title": "Tutor Lesson Plan & Reference Guide",
+              "content": "Important talking points, structural timeline, common student pitfalls, and solutions for this session.",
+              "duration": "15 mins",
+              "resources": [
+                "Classroom Presentation Slides (PDF)",
+                "Student Hands-on Lab Worksheet (PDF)",
+                "Reference Code & Solutions (ZIP)",
+                "Day Evaluation Rubric"
+              ]
+            }
           }
-        ],
-        "tutorMaterial": {
-          "title": "Tutor Material for Day 6: Version Control & Deployment",
-          "content": "Specific guidelines, talking points, and supplementary materials for tutors to use during this session.",
-          "duration": "15 mins",
-          "resources": [
-            "Presentation Slides",
-            "Practice Worksheet",
-            "Evaluation Rubric"
-          ]
-        }
+        ]
       },
       {
         "dayId": "w1-d7",
@@ -1448,18 +1490,25 @@ export const courseData = [
               "js": ""
             },
             "assessment": "The Ultimate Challenge: Build and deploy your responsive portfolio using everything you learned in Week 1!"
+          },
+          {
+            "id": "w1-d7-resources",
+            "title": "Tutor Materials & Resources",
+            "isResources": true,
+            "explanation": "This section contains the official slide decks, exercises, tutor reference guides, and student worksheets for this session.",
+            "tutorMaterial": {
+              "title": "Tutor Lesson Plan & Reference Guide",
+              "content": "Important talking points, structural timeline, common student pitfalls, and solutions for this session.",
+              "duration": "15 mins",
+              "resources": [
+                "Classroom Presentation Slides (PDF)",
+                "Student Hands-on Lab Worksheet (PDF)",
+                "Reference Code & Solutions (ZIP)",
+                "Day Evaluation Rubric"
+              ]
+            }
           }
-        ],
-        "tutorMaterial": {
-          "title": "Tutor Material for Day 7: Final Project & Review",
-          "content": "Specific guidelines, talking points, and supplementary materials for tutors to use during this session.",
-          "duration": "15 mins",
-          "resources": [
-            "Presentation Slides",
-            "Practice Worksheet",
-            "Evaluation Rubric"
-          ]
-        }
+        ]
       }
     ]
   },
@@ -1666,18 +1715,25 @@ export const courseData = [
               "js": "document.getElementById('calc-btn').onclick = () => {\n  const n1 = parseFloat(document.getElementById('n1').value);\n  const n2 = parseFloat(document.getElementById('n2').value);\n  const op = document.getElementById('op').value;\n  const res = document.getElementById('res');\n  \n  let result;\n  switch(op) {\n    case '+': result = n1 + n2; break;\n    case '-': result = n1 - n2; break;\n    case '*': result = n1 * n2; break;\n    case '/': result = n2 !== 0 ? n1 / n2 : 'Error'; break;\n  }\n  res.innerText = result;\n};"
             },
             "assessment": "Build a calculator that also handles exponents (**)."
+          },
+          {
+            "id": "w2-d1-resources",
+            "title": "Tutor Materials & Resources",
+            "isResources": true,
+            "explanation": "This section contains the official slide decks, exercises, tutor reference guides, and student worksheets for this session.",
+            "tutorMaterial": {
+              "title": "Tutor Lesson Plan & Reference Guide",
+              "content": "Important talking points, structural timeline, common student pitfalls, and solutions for this session.",
+              "duration": "15 mins",
+              "resources": [
+                "Classroom Presentation Slides (PDF)",
+                "Student Hands-on Lab Worksheet (PDF)",
+                "Reference Code & Solutions (ZIP)",
+                "Day Evaluation Rubric"
+              ]
+            }
           }
-        ],
-        "tutorMaterial": {
-          "title": "Tutor Material for Day 1: JavaScript Fundamentals",
-          "content": "Specific guidelines, talking points, and supplementary materials for tutors to use during this session.",
-          "duration": "15 mins",
-          "resources": [
-            "Presentation Slides",
-            "Practice Worksheet",
-            "Evaluation Rubric"
-          ]
-        }
+        ]
       },
       {
         "dayId": "w2-d2",
@@ -1878,18 +1934,25 @@ export const courseData = [
               "js": "const students = [\n  { name: 'John', grade: 75 },\n  { name: 'Sarah', grade: 90 },\n  { name: 'Alex', grade: 85 }\n];\n\nconst display = (arr) => {\n  document.getElementById('manager-out').innerHTML = \n    arr.map(s => `<p>${s.name}: ${s.grade}</p>`).join('');\n};\n\ndisplay(students);\n\ndocument.getElementById('pass-btn').onclick = () => {\n  const passing = students.filter(s => s.grade > 80);\n  display(passing);\n};"
             },
             "assessment": "Extend the manager to calculate the average grade of all students."
+          },
+          {
+            "id": "w2-d2-resources",
+            "title": "Tutor Materials & Resources",
+            "isResources": true,
+            "explanation": "This section contains the official slide decks, exercises, tutor reference guides, and student worksheets for this session.",
+            "tutorMaterial": {
+              "title": "Tutor Lesson Plan & Reference Guide",
+              "content": "Important talking points, structural timeline, common student pitfalls, and solutions for this session.",
+              "duration": "15 mins",
+              "resources": [
+                "Classroom Presentation Slides (PDF)",
+                "Student Hands-on Lab Worksheet (PDF)",
+                "Reference Code & Solutions (ZIP)",
+                "Day Evaluation Rubric"
+              ]
+            }
           }
-        ],
-        "tutorMaterial": {
-          "title": "Tutor Material for Day 2: Functions, Scope & Arrays",
-          "content": "Specific guidelines, talking points, and supplementary materials for tutors to use during this session.",
-          "duration": "15 mins",
-          "resources": [
-            "Presentation Slides",
-            "Practice Worksheet",
-            "Evaluation Rubric"
-          ]
-        }
+        ]
       },
       {
         "dayId": "w2-d3",
@@ -2090,18 +2153,25 @@ export const courseData = [
               "js": "const input = document.getElementById('todo-in');\nconst addBtn = document.getElementById('add-todo');\nconst list = document.getElementById('todo-list');\n\naddBtn.onclick = () => {\n  if (!input.value) return;\n  \n  const li = document.createElement('li');\n  li.innerHTML = `\n    <span>${input.value}</span>\n    <button class='done-btn'>✓</button>\n    <button class='del-btn'>✕</button>\n  `;\n  \n  li.querySelector('.done-btn').onclick = () => li.classList.toggle('done');\n  li.querySelector('.del-btn').onclick = () => li.remove();\n  \n  list.appendChild(li);\n  input.value = '';\n};"
             },
             "assessment": "Final Challenge: Build the To-Do app and add a 'Clear All' button."
+          },
+          {
+            "id": "w2-d3-resources",
+            "title": "Tutor Materials & Resources",
+            "isResources": true,
+            "explanation": "This section contains the official slide decks, exercises, tutor reference guides, and student worksheets for this session.",
+            "tutorMaterial": {
+              "title": "Tutor Lesson Plan & Reference Guide",
+              "content": "Important talking points, structural timeline, common student pitfalls, and solutions for this session.",
+              "duration": "15 mins",
+              "resources": [
+                "Classroom Presentation Slides (PDF)",
+                "Student Hands-on Lab Worksheet (PDF)",
+                "Reference Code & Solutions (ZIP)",
+                "Day Evaluation Rubric"
+              ]
+            }
           }
-        ],
-        "tutorMaterial": {
-          "title": "Tutor Material for Day 3: DOM & Interactivity",
-          "content": "Specific guidelines, talking points, and supplementary materials for tutors to use during this session.",
-          "duration": "15 mins",
-          "resources": [
-            "Presentation Slides",
-            "Practice Worksheet",
-            "Evaluation Rubric"
-          ]
-        }
+        ]
       },
       {
         "dayId": "w2-d4",
@@ -2302,18 +2372,25 @@ export const courseData = [
               "js": "const btn = document.getElementById('fetch-users');\nconst display = document.getElementById('user-display');\n\nbtn.onclick = async () => {\n  display.innerText = 'Fetching...';\n  try {\n    const res = await fetch('https://jsonplaceholder.typicode.com/users/1');\n    const user = await res.json();\n    display.innerHTML = `\n      <div class='user-card'>\n        <h3>${user.name}</h3>\n        <p>Email: ${user.email}</p>\n        <p>City: ${user.address.city}</p>\n      </div>\n    `;\n  } catch (err) {\n    display.innerText = 'Failed to load user.';\n  }\n};"
             },
             "assessment": "Final Challenge: Modify the fetcher to display the user's company name and phone number."
+          },
+          {
+            "id": "w2-d4-resources",
+            "title": "Tutor Materials & Resources",
+            "isResources": true,
+            "explanation": "This section contains the official slide decks, exercises, tutor reference guides, and student worksheets for this session.",
+            "tutorMaterial": {
+              "title": "Tutor Lesson Plan & Reference Guide",
+              "content": "Important talking points, structural timeline, common student pitfalls, and solutions for this session.",
+              "duration": "15 mins",
+              "resources": [
+                "Classroom Presentation Slides (PDF)",
+                "Student Hands-on Lab Worksheet (PDF)",
+                "Reference Code & Solutions (ZIP)",
+                "Day Evaluation Rubric"
+              ]
+            }
           }
-        ],
-        "tutorMaterial": {
-          "title": "Tutor Material for Day 4: Advanced JS & Async",
-          "content": "Specific guidelines, talking points, and supplementary materials for tutors to use during this session.",
-          "duration": "15 mins",
-          "resources": [
-            "Presentation Slides",
-            "Practice Worksheet",
-            "Evaluation Rubric"
-          ]
-        }
+        ]
       },
       {
         "dayId": "w2-d5",
@@ -2514,18 +2591,25 @@ export const courseData = [
               "js": "const input = document.getElementById('note-text');\nconst addBtn = document.getElementById('add-note');\nconst list = document.getElementById('notes-list');\n\nlet notes = JSON.parse(localStorage.getItem('notes')) || [];\n\nconst render = () => {\n  list.innerHTML = notes.map((n, i) => `\n    <div class='note-item'>\n      <span>${n}</span>\n      <button onclick='deleteNote(${i})'>X</button>\n    </div>\n  `).join('');\n};\n\nwindow.deleteNote = (i) => {\n  notes.splice(i, 1);\n  localStorage.setItem('notes', JSON.stringify(notes));\n  render();\n};\n\naddBtn.onclick = () => {\n  if (!input.value) return;\n  notes.push(input.value);\n  localStorage.setItem('notes', JSON.stringify(notes));\n  input.value = '';\n  render();\n};\n\nrender();"
             },
             "assessment": "Final Challenge: Add a timestamp to every note saved in the app."
+          },
+          {
+            "id": "w2-d5-resources",
+            "title": "Tutor Materials & Resources",
+            "isResources": true,
+            "explanation": "This section contains the official slide decks, exercises, tutor reference guides, and student worksheets for this session.",
+            "tutorMaterial": {
+              "title": "Tutor Lesson Plan & Reference Guide",
+              "content": "Important talking points, structural timeline, common student pitfalls, and solutions for this session.",
+              "duration": "15 mins",
+              "resources": [
+                "Classroom Presentation Slides (PDF)",
+                "Student Hands-on Lab Worksheet (PDF)",
+                "Reference Code & Solutions (ZIP)",
+                "Day Evaluation Rubric"
+              ]
+            }
           }
-        ],
-        "tutorMaterial": {
-          "title": "Tutor Material for Day 5: ES6+ & Storage",
-          "content": "Specific guidelines, talking points, and supplementary materials for tutors to use during this session.",
-          "duration": "15 mins",
-          "resources": [
-            "Presentation Slides",
-            "Practice Worksheet",
-            "Evaluation Rubric"
-          ]
-        }
+        ]
       },
       {
         "dayId": "w2-d6",
@@ -2726,18 +2810,25 @@ export const courseData = [
               "js": "const list = document.getElementById('user-list');\nconst search = document.getElementById('search');\nlet allUsers = [];\n\nconst render = (users) => {\n  list.innerHTML = users.map(u => `\n    <div class='user-card'>\n      <h4>${u.name}</h4>\n      <p style='font-size: 0.8rem;'>${u.email}</p>\n    </div>\n  `).join('');\n};\n\nfetch('https://jsonplaceholder.typicode.com/users')\n  .then(res => res.json())\n  .then(data => {\n    allUsers = data;\n    render(allUsers);\n  });\n\nsearch.oninput = (e) => {\n  const filtered = allUsers.filter(u => \n    u.name.toLowerCase().includes(e.target.value.toLowerCase())\n  );\n  render(filtered);\n};"
             },
             "assessment": "Final Challenge: Add a button to each card that opens an alert with the user's phone number."
+          },
+          {
+            "id": "w2-d6-resources",
+            "title": "Tutor Materials & Resources",
+            "isResources": true,
+            "explanation": "This section contains the official slide decks, exercises, tutor reference guides, and student worksheets for this session.",
+            "tutorMaterial": {
+              "title": "Tutor Lesson Plan & Reference Guide",
+              "content": "Important talking points, structural timeline, common student pitfalls, and solutions for this session.",
+              "duration": "15 mins",
+              "resources": [
+                "Classroom Presentation Slides (PDF)",
+                "Student Hands-on Lab Worksheet (PDF)",
+                "Reference Code & Solutions (ZIP)",
+                "Day Evaluation Rubric"
+              ]
+            }
           }
-        ],
-        "tutorMaterial": {
-          "title": "Tutor Material for Day 6: Advanced JS & API Deep Dive",
-          "content": "Specific guidelines, talking points, and supplementary materials for tutors to use during this session.",
-          "duration": "15 mins",
-          "resources": [
-            "Presentation Slides",
-            "Practice Worksheet",
-            "Evaluation Rubric"
-          ]
-        }
+        ]
       },
       {
         "dayId": "w2-d7",
@@ -2938,18 +3029,25 @@ export const courseData = [
               "js": "// Final project skeleton\nconst search = document.getElementById('search');\nconst grid = document.getElementById('movie-grid');\n\nsearch.oninput = async (e) => {\n  if (e.target.value.length < 3) return;\n  grid.innerHTML = 'Searching...';\n  // In a real app, you would use a movie API key here!\n  // For this demo, we use placeholder data to simulate the result\n  setTimeout(() => {\n    grid.innerHTML = `\n      <div class='movie-card'>\n        <h4>${e.target.value} Result</h4>\n        <p>Movie information would appear here from the API.</p>\n      </div>\n    `;\n  }, 500);\n};"
             },
             "assessment": "Final Capstone: Submit the link to your completed interactive application."
+          },
+          {
+            "id": "w2-d7-resources",
+            "title": "Tutor Materials & Resources",
+            "isResources": true,
+            "explanation": "This section contains the official slide decks, exercises, tutor reference guides, and student worksheets for this session.",
+            "tutorMaterial": {
+              "title": "Tutor Lesson Plan & Reference Guide",
+              "content": "Important talking points, structural timeline, common student pitfalls, and solutions for this session.",
+              "duration": "15 mins",
+              "resources": [
+                "Classroom Presentation Slides (PDF)",
+                "Student Hands-on Lab Worksheet (PDF)",
+                "Reference Code & Solutions (ZIP)",
+                "Day Evaluation Rubric"
+              ]
+            }
           }
-        ],
-        "tutorMaterial": {
-          "title": "Tutor Material for Day 7: Final Review & Project",
-          "content": "Specific guidelines, talking points, and supplementary materials for tutors to use during this session.",
-          "duration": "15 mins",
-          "resources": [
-            "Presentation Slides",
-            "Practice Worksheet",
-            "Evaluation Rubric"
-          ]
-        }
+        ]
       }
     ]
   }
