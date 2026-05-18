@@ -40,7 +40,7 @@ const sendWelcomeEmail = async (to, name, password, role) => {
       <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Account Created - FluenC Dashboard</title>
+        <title>Account Created - Wemade Logix MERN Stack Program Dashboard</title>
         <style>
           body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f1f5f9; color: #1e293b; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
           .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0; }
@@ -65,12 +65,12 @@ const sendWelcomeEmail = async (to, name, password, role) => {
       <body>
         <div class="container">
           <div class="header">
-            <h1>FluenC Learning Hub</h1>
+            <h1>Wemade Logix MERN Stack Program</h1>
             <p>Your secure access keys are authorized</p>
           </div>
           <div class="content">
             <p class="welcome-text">Hello <strong>${name}</strong>,</p>
-            <p class="welcome-text">An administrator has authorized your personnel account on the FluenC learning portal. You can now authenticate using the secure credentials generated below:</p>
+            <p class="welcome-text">An administrator has authorized your personnel account on the Wemade Logix MERN Stack Program learning portal. You can now authenticate using the secure credentials generated below:</p>
             
             <div class="credential-card">
               <div class="credential-row">
@@ -100,7 +100,7 @@ const sendWelcomeEmail = async (to, name, password, role) => {
             </div>
           </div>
           <div class="footer">
-            <p>&copy; 2026 FluenC Learning Platform. All security parameters active.</p>
+            <p>&copy; 2026 Wemade Logix MERN Stack Program. All security parameters active.</p>
             <p>For support, please connect with your system administrator.</p>
           </div>
         </div>
@@ -110,9 +110,9 @@ const sendWelcomeEmail = async (to, name, password, role) => {
 
     // Send payload
     await transporter.sendMail({
-      from: EMAIL_FROM || '"FluenC Learning Hub" <noreply@wemade.com>',
+      from: EMAIL_FROM || '"Wemade Logix MERN Stack Program" <noreply@wemade.com>',
       to,
-      subject: '🔑 Security Keys Enforced - FluenC Account Created',
+      subject: '🔑 Security Keys Enforced - Wemade Logix MERN Stack Program Account Created',
       html: htmlTemplate,
     });
 
