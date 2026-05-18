@@ -230,6 +230,7 @@ const Sidebar = () => {
       <style dangerouslySetInnerHTML={{ __html: `
         .sidebar {
           width: 320px;
+          height: calc(100vh - 64px);
           transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s ease;
           display: flex;
           flex-direction: column;

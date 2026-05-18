@@ -32,7 +32,8 @@ const MainLayoutContent = ({ children, showSidebar = true }) => {
         .main-layout {
           display: flex;
           flex-direction: column;
-          min-height: 100vh;
+          height: 100vh;
+          overflow: hidden;
           background: var(--app-bg);
           color: var(--app-text);
         }
