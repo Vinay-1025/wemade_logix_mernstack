@@ -6,9 +6,10 @@ import axios from 'axios';
 import { logout, reset } from '../features/auth/authSlice';
 import { Sun, Moon, Menu, Search, Bell, User, LogOut, Users, Shield, GraduationCap, ChevronDown, ClipboardCheck, MessageSquare, Eye, EyeOff, X } from 'lucide-react';
 import { useCourse } from '../context/CourseContext';
+import { courseData } from '../data/mockData';
 
 const Header = () => {
-  const { theme, toggleTheme, toggleSidebar } = useCourse();
+  const { theme, toggleTheme, toggleSidebar, setSelectedTopic } = useCourse();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
@@ -96,6 +97,27 @@ const Header = () => {
       navigate('/admin/assignments', { state: { selectedId: notif.relatedId } });
     } else if (notif.type === 'assignment_feedback') {
       // Navigate to home and let MainContent handle it or just show success
+      navigate('/');
+    } else if (notif.type === 'system' && notif.targetTopicId) {
+      // Find the topic matching notif.targetTopicId
+      let foundTopic = null;
+      for (const week of courseData) {
+        for (const day of week.days) {
+          for (const topic of day.topics) {
+            if (topic.id === notif.targetTopicId) {
+              foundTopic = topic;
+              break;
+            }
+          }
+          if (foundTopic) break;
+        }
+        if (foundTopic) break;
+      }
+      
+      if (foundTopic) {
+        localStorage.setItem('activeResourcesSection', 'recording');
+        setSelectedTopic(foundTopic);
+      }
       navigate('/');
     }
   };

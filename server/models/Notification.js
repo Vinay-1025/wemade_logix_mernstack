@@ -22,6 +22,9 @@ const notificationSchema = new mongoose.Schema({
   relatedId: {
     type: mongoose.Schema.Types.ObjectId, // e.g., Assignment ID
   },
+  targetTopicId: {
+    type: String,
+  },
   isRead: {
     type: Boolean,
     default: false,

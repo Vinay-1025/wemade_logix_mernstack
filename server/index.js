@@ -30,6 +30,7 @@ app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/assignments', require('./routes/assignmentRoutes'));
 app.use('/api/notifications', require('./routes/notificationRoutes'));
 app.use('/api/audit', require('./routes/auditRoutes'));
+app.use('/api/recordings', require('./routes/recordingRoutes'));
 
 // Basic Route
 app.get('/', (req, res) => {

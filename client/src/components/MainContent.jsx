@@ -65,7 +65,13 @@ const MainContent = () => {
   const [activeDay2Tab, setActiveDay2Tab] = useState('anchor');
 
   useEffect(() => {
-    setActiveResourcesSection('overview');
+    const savedSection = localStorage.getItem('activeResourcesSection');
+    if (savedSection) {
+      setActiveResourcesSection(savedSection);
+      localStorage.removeItem('activeResourcesSection');
+    } else {
+      setActiveResourcesSection('overview');
+    }
     setActiveDay2Tab('anchor');
     setTutorGuideUnlocked(false);
     setTutorPasswordInput('');
@@ -158,6 +164,94 @@ const MainContent = () => {
 
   const loggedInUser = JSON.parse(localStorage.getItem('user') || '{}');
   const isTutorOrAdmin = loggedInUser?.role === 'admin' || loggedInUser?.role === 'superadmin';
+
+  const [recording, setRecording] = useState(null);
+  const [morningLinkInput, setMorningLinkInput] = useState('');
+  const [eveningLinkInput, setEveningLinkInput] = useState('');
+  const [commonLinkInput, setCommonLinkInput] = useState('');
+  const [saveRecordingLoading, setSaveRecordingLoading] = useState(false);
+  const [activeVideoUrl, setActiveVideoUrl] = useState(null);
+  const [activeVideoTitle, setActiveVideoTitle] = useState('');
+  const [isVideoLoading, setIsVideoLoading] = useState(false);
+  const [isIframeLoading, setIsIframeLoading] = useState(false);
+
+  useEffect(() => {
+    if (activeVideoUrl) {
+      if (isDirectVideo(activeVideoUrl)) {
+        setIsVideoLoading(true);
+        setIsIframeLoading(false);
+      } else {
+        setIsVideoLoading(false);
+        setIsIframeLoading(true);
+      }
+    } else {
+      setIsVideoLoading(false);
+      setIsIframeLoading(false);
+    }
+  }, [activeVideoUrl]);
+
+  useEffect(() => {
+    setActiveVideoUrl(null);
+    setActiveVideoTitle('');
+
+    if (!selectedTopic || !selectedTopic.isResources || !currentDayData?.dayId) {
+      setRecording(null);
+      setMorningLinkInput('');
+      setEveningLinkInput('');
+      setCommonLinkInput('');
+      return;
+    }
+
+    const fetchRecording = async () => {
+      try {
+        const response = await axios.get(`/api/recordings/${currentDayData.dayId}`, {
+          headers: { 'Authorization': `Bearer ${loggedInUser?.token}` }
+        });
+        setRecording(response.data);
+        setMorningLinkInput(response.data?.morningLink || '');
+        setEveningLinkInput(response.data?.eveningLink || '');
+        setCommonLinkInput(response.data?.commonLink || '');
+      } catch (error) {
+        console.error('Error fetching recording:', error);
+      }
+    };
+
+    fetchRecording();
+  }, [selectedTopic?.id, currentDayData?.dayId, loggedInUser?.token]);
+
+  const getEmbedUrl = (url) => {
+    if (!url) return '';
+    
+    // Google Drive
+    if (url.includes('drive.google.com')) {
+      const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+      if (match && match[1]) {
+        return `https://drive.google.com/file/d/${match[1]}/preview`;
+      }
+    }
+    
+    // YouTube
+    if (url.includes('youtube.com') || url.includes('youtu.be')) {
+      let videoId = '';
+      if (url.includes('youtu.be/')) {
+        videoId = url.split('youtu.be/')[1]?.split('?')[0];
+      } else {
+        const match = url.match(/[?&]v=([^&#]+)/);
+        videoId = match ? match[1] : '';
+      }
+      if (videoId) {
+        return `https://www.youtube.com/embed/${videoId}`;
+      }
+    }
+    
+    return url;
+  };
+
+  const isDirectVideo = (url) => {
+    if (!url) return false;
+    const path = url.toLowerCase().split('?')[0];
+    return path.endsWith('.mp4') || path.endsWith('.webm') || path.endsWith('.ogg') || path.endsWith('.mov');
+  };
 
   const currentIndex = allTopics.findIndex(t => t.id === selectedTopic?.id);
   const prevTopic = currentIndex > 0 ? allTopics[currentIndex - 1] : null;
@@ -253,6 +347,15 @@ const MainContent = () => {
     sections.push(
       { id: 'tutor', title: 'Wemade Material', icon: <ShieldCheck size={16} /> }
     );
+
+    const hasRecording = recording && (recording.morningLink || recording.eveningLink || recording.commonLink);
+    const showRecordingTab = isTutorOrAdmin || hasRecording;
+
+    if (showRecordingTab) {
+      sections.push(
+        { id: 'recording', title: 'Recording', icon: <Laptop size={16} /> }
+      );
+    }
 
     const renderOverviewIllustration = () => {
       if (dayId === 'w1-d0') {
@@ -1562,6 +1665,323 @@ const MainContent = () => {
                       style={{ border: 'none', borderRadius: '12px', background: 'white', display: 'block' }}
                       title="Instructor Deck Preview"
                     ></iframe>
+                  </div>
+                )}
+
+                {activeResourcesSection === 'recording' && (
+                  <div className="docs-section-card animate-fade">
+                    <div className="docs-section-header">
+                      <h2>Daily Session Recordings</h2>
+                      <p>Access the morning, evening, or common recorded sessions for this day's curriculum.</p>
+                    </div>
+
+                    {/* Inline Session Video Player */}
+                    {activeVideoUrl && (
+                      <div className="video-player-container animate-fade" style={{
+                        marginTop: '20px',
+                        marginBottom: '30px',
+                        padding: '20px',
+                        borderRadius: '20px',
+                        background: 'var(--light-secondary)',
+                        border: '1px solid var(--app-border)',
+                        boxShadow: 'var(--card-shadow)'
+                      }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase', color: 'var(--primary-cyan)', background: 'rgba(14, 165, 233, 0.08)', padding: '4px 10px', borderRadius: '20px' }}>
+                              Now Playing
+                            </span>
+                            <span style={{ fontSize: '0.9rem', fontWeight: '750', color: 'var(--text-primary)' }}>
+                              {activeVideoTitle}
+                            </span>
+                          </div>
+                          <button 
+                            onClick={() => { setActiveVideoUrl(null); setActiveVideoTitle(''); }}
+                            style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-neutral)', fontSize: '1.2rem', padding: '4px' }}
+                            title="Close Player"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                        
+                        <div style={{ position: 'relative', width: '100%', paddingTop: '56.25%', borderRadius: '12px', overflow: 'hidden', background: '#000' }}>
+                          {(isVideoLoading || isIframeLoading) && (
+                            <div style={{
+                              position: 'absolute',
+                              top: 0,
+                              left: 0,
+                              width: '100%',
+                              height: '100%',
+                              background: 'rgba(0, 0, 0, 0.7)',
+                              backdropFilter: 'blur(3px)',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              zIndex: 10,
+                              gap: '12px',
+                              color: '#fff'
+                            }}>
+                              <div className="spinner-mini" style={{
+                                width: '36px',
+                                height: '36px',
+                                borderRadius: '50%',
+                                border: '3px solid rgba(255, 255, 255, 0.1)',
+                                borderTopColor: 'var(--primary-cyan)',
+                                animation: 'spin 0.8s linear infinite'
+                              }} />
+                              <span style={{ fontSize: '0.8rem', fontWeight: '700', color: 'rgba(255, 255, 255, 0.85)', letterSpacing: '0.5px' }}>
+                                Loading / Buffering Video...
+                              </span>
+                            </div>
+                          )}
+                          {isDirectVideo(activeVideoUrl) ? (
+                            <video 
+                              src={activeVideoUrl}
+                              controls
+                              controlsList="nodownload"
+                              onContextMenu={(e) => e.preventDefault()}
+                              onLoadStart={() => setIsVideoLoading(true)}
+                              onWaiting={() => setIsVideoLoading(true)}
+                              onSeeking={() => setIsVideoLoading(true)}
+                              onPlaying={() => setIsVideoLoading(false)}
+                              onCanPlay={() => setIsVideoLoading(false)}
+                              onSeeked={() => setIsVideoLoading(false)}
+                              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'contain' }}
+                            />
+                          ) : (
+                            <>
+                              <iframe
+                                src={getEmbedUrl(activeVideoUrl)}
+                                onLoad={() => setIsIframeLoading(false)}
+                                width="100%"
+                                height="100%"
+                                style={{ position: 'absolute', top: 0, left: 0, border: 'none' }}
+                                allow="autoplay; encrypted-media; picture-in-picture"
+                                allowFullScreen
+                                title={activeVideoTitle}
+                              ></iframe>
+                              <div style={{
+                                position: 'absolute',
+                                top: '8px',
+                                right: '8px',
+                                width: '110px',
+                                height: '40px',
+                                borderRadius: '20px',
+                                background: '#1a1a1a',
+                                border: '1px solid rgba(255, 255, 255, 0.15)',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                zIndex: 5,
+                                pointerEvents: 'all',
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.5)',
+                                gap: '8px'
+                              }}>
+                                <img 
+                                  src="/fav_icon.png" 
+                                  alt="Wemade Logo" 
+                                  style={{ width: '16px', height: '16px', objectFit: 'contain' }}
+                                />
+                                <span style={{ color: '#fff', fontSize: '0.75rem', fontWeight: '800', letterSpacing: '0.5px' }}>WEMADE</span>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', marginTop: '20px' }}>
+                      {/* Morning Session Card */}
+                      {(recording?.morningLink || isTutorOrAdmin) && (
+                        <div className="recording-card" style={{
+                          padding: '24px',
+                          borderRadius: '16px',
+                          background: recording?.morningLink ? 'rgba(0, 71, 171, 0.03)' : 'var(--light-secondary)',
+                          border: recording?.morningLink ? '1px solid rgba(0, 71, 171, 0.15)' : '1px dashed var(--light-tertiary)',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'space-between',
+                          minHeight: '180px'
+                        }}>
+                          <div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                              <span style={{ fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase', color: 'var(--primary-blue)', background: 'rgba(0, 71, 171, 0.08)', padding: '4px 10px', borderRadius: '20px' }}>
+                                Morning Session
+                              </span>
+                              <span style={{ fontSize: '1.2rem' }}>☀️</span>
+                            </div>
+                            <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: 'var(--text-primary)', margin: '0 0 8px 0' }}>Concept & Theory Lecture</h3>
+                            <p style={{ fontSize: '0.85rem', color: 'var(--text-neutral)', margin: 0, lineHeight: '1.4' }}>
+                              {recording?.morningLink ? 'The morning session covering core conceptual frameworks and code-alongs is now available.' : 'Morning session video link has not been published yet.'}
+                            </p>
+                          </div>
+                          {recording?.morningLink && (
+                            <button 
+                              onClick={() => {
+                                setActiveVideoUrl(recording.morningLink);
+                                setActiveVideoTitle('Morning Session - Concept & Theory Lecture');
+                              }}
+                              className="primary-btn" 
+                              style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '10px 16px', borderRadius: '10px', fontSize: '0.85rem', fontWeight: '750', marginTop: '16px', width: '100%', border: 'none', cursor: 'pointer' }}
+                            >
+                              Watch Recording <ArrowUpRight size={14} />
+                            </button>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Evening Session Card */}
+                      {(recording?.eveningLink || isTutorOrAdmin) && (
+                        <div className="recording-card" style={{
+                          padding: '24px',
+                          borderRadius: '16px',
+                          background: recording?.eveningLink ? 'rgba(0, 71, 171, 0.03)' : 'var(--light-secondary)',
+                          border: recording?.eveningLink ? '1px solid rgba(0, 71, 171, 0.15)' : '1px dashed var(--light-tertiary)',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'space-between',
+                          minHeight: '180px'
+                        }}>
+                          <div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                              <span style={{ fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase', color: '#16a34a', background: 'rgba(22, 163, 74, 0.08)', padding: '4px 10px', borderRadius: '20px' }}>
+                                Evening Session
+                              </span>
+                              <span style={{ fontSize: '1.2rem' }}>🌙</span>
+                            </div>
+                            <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: 'var(--text-primary)', margin: '0 0 8px 0' }}>Lab Review & Q&A</h3>
+                            <p style={{ fontSize: '0.85rem', color: 'var(--text-neutral)', margin: 0, lineHeight: '1.4' }}>
+                              {recording?.eveningLink ? 'The evening session detailing lab assignments review, solution discussion, and Q&A is now available.' : 'Evening session video link has not been published yet.'}
+                            </p>
+                          </div>
+                          {recording?.eveningLink && (
+                            <button 
+                              onClick={() => {
+                                setActiveVideoUrl(recording.eveningLink);
+                                setActiveVideoTitle('Evening Session - Lab Review & Q&A');
+                              }}
+                              className="primary-btn" 
+                              style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '10px 16px', borderRadius: '10px', fontSize: '0.85rem', fontWeight: '750', marginTop: '16px', background: '#16a34a', borderColor: '#16a34a', width: '100%', border: 'none', cursor: 'pointer' }}
+                            >
+                              Watch Recording <ArrowUpRight size={14} />
+                            </button>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Common Session Card */}
+                      {(recording?.commonLink || isTutorOrAdmin) && (
+                        <div className="recording-card" style={{
+                          padding: '24px',
+                          borderRadius: '16px',
+                          background: recording?.commonLink ? 'rgba(14, 165, 233, 0.03)' : 'var(--light-secondary)',
+                          border: recording?.commonLink ? '1px solid rgba(14, 165, 233, 0.15)' : '1px dashed var(--light-tertiary)',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'space-between',
+                          minHeight: '180px'
+                        }}>
+                          <div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                              <span style={{ fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase', color: 'var(--primary-cyan)', background: 'rgba(14, 165, 233, 0.08)', padding: '4px 10px', borderRadius: '20px' }}>
+                                Common Session
+                              </span>
+                              <span style={{ fontSize: '1.2rem' }}>💻</span>
+                            </div>
+                            <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: 'var(--text-primary)', margin: '0 0 8px 0' }}>Full Day Lecture & Lab</h3>
+                            <p style={{ fontSize: '0.85rem', color: 'var(--text-neutral)', margin: 0, lineHeight: '1.4' }}>
+                              {recording?.commonLink ? 'The full day comprehensive lecture, code-alongs, and lab review recording is available.' : 'Common session video link has not been published yet.'}
+                            </p>
+                          </div>
+                          {recording?.commonLink && (
+                            <button 
+                              onClick={() => {
+                                setActiveVideoUrl(recording.commonLink);
+                                setActiveVideoTitle('Common Session - Full Day Lecture & Lab');
+                              }}
+                              className="primary-btn" 
+                              style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '10px 16px', borderRadius: '10px', fontSize: '0.85rem', fontWeight: '750', marginTop: '16px', background: 'var(--primary-cyan)', borderColor: 'var(--primary-cyan)', width: '100%', border: 'none', cursor: 'pointer' }}
+                            >
+                              Watch Full Session <ArrowUpRight size={14} />
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Admin Actions Panel */}
+                    {isTutorOrAdmin && (
+                      <div style={{ marginTop: '30px', padding: '24px', borderRadius: '16px', border: '1px solid var(--app-border)', background: 'var(--app-card-bg)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+                          <ShieldCheck size={18} style={{ color: 'var(--primary-blue)' }} />
+                          <h3 style={{ fontSize: '1rem', fontWeight: '800', margin: 0, color: 'var(--text-primary)' }}>Admin Link Manager</h3>
+                        </div>
+                        <p style={{ fontSize: '0.8rem', color: 'var(--text-neutral)', marginTop: 0, marginBottom: '16px' }}>
+                          Update the morning, evening, or common recorded lecture links for <strong>{currentDayData?.title || currentDayData?.dayId}</strong>.
+                        </p>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                          <div>
+                            <label style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--text-primary)', display: 'block', marginBottom: '4px' }}>Morning Session URL</label>
+                            <input 
+                              type="text" 
+                              value={morningLinkInput} 
+                              onChange={(e) => setMorningLinkInput(e.target.value)} 
+                              placeholder="e.g. https://drive.google.com/... or https://youtube.com/..." 
+                              style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--app-border)', background: 'var(--app-bg)', color: 'var(--text-primary)', fontSize: '0.85rem' }}
+                            />
+                          </div>
+                          <div>
+                            <label style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--text-primary)', display: 'block', marginBottom: '4px' }}>Evening Session URL</label>
+                            <input 
+                              type="text" 
+                              value={eveningLinkInput} 
+                              onChange={(e) => setEveningLinkInput(e.target.value)} 
+                              placeholder="e.g. https://drive.google.com/... or https://youtube.com/..." 
+                              style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--app-border)', background: 'var(--app-bg)', color: 'var(--text-primary)', fontSize: '0.85rem' }}
+                            />
+                          </div>
+                          <div>
+                            <label style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--text-primary)', display: 'block', marginBottom: '4px' }}>Common Session URL (Fallback / Full Day)</label>
+                            <input 
+                              type="text" 
+                              value={commonLinkInput} 
+                              onChange={(e) => setCommonLinkInput(e.target.value)} 
+                              placeholder="e.g. https://drive.google.com/... or https://youtube.com/..." 
+                              style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--app-border)', background: 'var(--app-bg)', color: 'var(--text-primary)', fontSize: '0.85rem' }}
+                            />
+                          </div>
+                          <button
+                            onClick={async () => {
+                              try {
+                                setSaveRecordingLoading(true);
+                                const response = await axios.post(`/api/recordings/${currentDayData.dayId}`, {
+                                  morningLink: morningLinkInput,
+                                  eveningLink: eveningLinkInput,
+                                  commonLink: commonLinkInput,
+                                  dayTitle: currentDayData?.dayTitle || '',
+                                  topicId: selectedTopic?.id || ''
+                                }, {
+                                  headers: { 'Authorization': `Bearer ${loggedInUser?.token}` }
+                                });
+                                setRecording(response.data);
+                                showSnackbar('Session recording links successfully added!', 'success');
+                                setSaveRecordingLoading(false);
+                              } catch (e) {
+                                console.error('Failed to save recordings:', e);
+                                showSnackbar('Failed to add session recording links.', 'error');
+                                setSaveRecordingLoading(false);
+                              }
+                            }}
+                            disabled={saveRecordingLoading}
+                            className="primary-btn"
+                            style={{ alignSelf: 'flex-start', padding: '10px 20px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: '750', cursor: 'pointer', marginTop: '8px' }}
+                          >
+                            {saveRecordingLoading ? 'Saving...' : 'Publish Links'}
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 
