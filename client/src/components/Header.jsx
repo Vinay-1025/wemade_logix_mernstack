@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
@@ -303,7 +304,7 @@ const Header = () => {
         </div>
       </div>
 
-      {showPasswordModal && (
+      {showPasswordModal && createPortal(
         <div className="modal-overlay" onClick={() => setShowPasswordModal(false)}>
           <div className="modal-content password-modal" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
@@ -349,7 +350,8 @@ const Header = () => {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       <style dangerouslySetInnerHTML={{ __html: `

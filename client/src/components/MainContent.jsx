@@ -2775,7 +2775,7 @@ const MainContent = () => {
         .navigation-footer { 
           position: sticky;
           bottom: 24px;
-          margin: 40px auto 0;
+          margin: 40px 0 0 auto;
           display: flex; 
           justify-content: space-between; 
           align-items: center;
@@ -2786,9 +2786,8 @@ const MainContent = () => {
           border: 1px solid var(--app-border); 
           border-radius: 100px;
           box-shadow: 0 10px 40px rgba(0,0,0,0.08);
-          width: fit-content;
-          min-width: 320px;
-          max-width: 600px;
+          width: 100%;
+          max-width: 800px;
           z-index: 100;
         }
         [data-theme='dark'] .navigation-footer {
