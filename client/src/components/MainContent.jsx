@@ -169,6 +169,7 @@ const MainContent = () => {
   const [morningLinkInput, setMorningLinkInput] = useState('');
   const [eveningLinkInput, setEveningLinkInput] = useState('');
   const [commonLinkInput, setCommonLinkInput] = useState('');
+  const [tutorMaterialLinkInput, setTutorMaterialLinkInput] = useState('');
   const [saveRecordingLoading, setSaveRecordingLoading] = useState(false);
   const [activeVideoUrl, setActiveVideoUrl] = useState(null);
   const [activeVideoTitle, setActiveVideoTitle] = useState('');
@@ -199,6 +200,7 @@ const MainContent = () => {
       setMorningLinkInput('');
       setEveningLinkInput('');
       setCommonLinkInput('');
+      setTutorMaterialLinkInput('');
       return;
     }
 
@@ -211,6 +213,7 @@ const MainContent = () => {
         setMorningLinkInput(response.data?.morningLink || '');
         setEveningLinkInput(response.data?.eveningLink || '');
         setCommonLinkInput(response.data?.commonLink || '');
+        setTutorMaterialLinkInput(response.data?.tutorMaterialLink || '');
       } catch (error) {
         console.error('Error fetching recording:', error);
       }
@@ -458,7 +461,7 @@ const MainContent = () => {
                     className="toc-select"
                   >
                     {sections.map(sec => {
-                      const isRestricted = sec.id === 'tutor' && !isTutorOrAdmin && !tutorGuideUnlocked;
+                      const isRestricted = false;
                       return (
                         <option key={sec.id} value={sec.id} disabled={isRestricted}>
                           {sec.title} {isRestricted ? '(Locked)' : ''}
@@ -473,7 +476,7 @@ const MainContent = () => {
                 <ul className="sidebar-nav-list desktop-toc-list">
                   {sections.map((sec) => {
                     const isActive = activeResourcesSection === sec.id;
-                    const isRestricted = sec.id === 'tutor' && !isTutorOrAdmin && !tutorGuideUnlocked;
+                    const isRestricted = false;
 
                     return (
                       <li key={sec.id}>
@@ -1607,81 +1610,145 @@ const MainContent = () => {
                 )}
 
                 {activeResourcesSection === 'tutor' && (
-                  <div className="docs-section-card animate-fade" style={{ padding: 0, background: 'transparent', boxShadow: 'none', position: 'relative', overflow: 'hidden', borderRadius: '12px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                    {recording?.tutorMaterialLink ? (
+                      <div className="docs-section-card animate-fade" style={{ padding: 0, background: 'transparent', boxShadow: 'none', position: 'relative', overflow: 'hidden', borderRadius: '12px' }}>
+                        {/* Secure Watermark Overlay */}
+                        <div className="secure-watermark-overlay" style={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: '100%',
+                          height: '100%',
+                          pointerEvents: 'none',
+                          zIndex: 10,
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          opacity: 0.10,
+                          userSelect: 'none',
+                          transform: 'rotate(-25deg)',
+                          transformOrigin: 'center center'
+                        }}>
+                          <img
+                            src="/fav_icon.png"
+                            alt="Watermark Logo"
+                            style={{
+                              width: '150px',
+                              height: '150px',
+                              marginBottom: '16px',
+                              objectFit: 'contain'
+                            }}
+                          />
+                          <span style={{
+                            fontSize: '3.2rem',
+                            fontWeight: '900',
+                            letterSpacing: '8px',
+                            color: 'white',
+                            textTransform: 'uppercase',
+                            textAlign: 'center',
+                            textShadow: '0 2px 10px rgba(0,0,0,0.5)'
+                          }}>
+                            WEMADE MATERIAL
+                          </span>
+                        </div>
 
-                    {/* Secure Watermark Overlay */}
-                    <div className="secure-watermark-overlay" style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      width: '100%',
-                      height: '100%',
-                      pointerEvents: 'none',
-                      zIndex: 10,
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      opacity: 0.10,
-                      userSelect: 'none',
-                      transform: 'rotate(-25deg)',
-                      transformOrigin: 'center center'
-                    }}>
-                      <img
-                        src="/fav_icon.png"
-                        alt="Watermark Logo"
-                        style={{
-                          width: '150px',
-                          height: '150px',
-                          marginBottom: '16px',
-                          objectFit: 'contain'
-                        }}
-                      />
-                      <span style={{
-                        fontSize: '3.2rem',
-                        fontWeight: '900',
-                        letterSpacing: '8px',
-                        color: 'white',
-                        textTransform: 'uppercase',
-                        textAlign: 'center',
-                        textShadow: '0 2px 10px rgba(0,0,0,0.5)'
-                      }}>
-                        WEMADE MATERIAL
-                      </span>
-                    </div>
+                        {/* Hide Google Drive External Link Icon Overlay */}
+                        <div style={{
+                          position: 'absolute',
+                          top: '8px',
+                          right: '8px',
+                          width: '110px',
+                          height: '40px',
+                          borderRadius: '20px',
+                          background: '#1a1a1a',
+                          border: '1px solid rgba(255, 255, 255, 0.15)',
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          zIndex: 5,
+                          pointerEvents: 'all',
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.5)',
+                          gap: '8px'
+                        }}>
+                          <img 
+                            src="/fav_icon.png" 
+                            alt="Wemade Logo" 
+                            style={{ width: '16px', height: '16px', objectFit: 'contain' }}
+                          />
+                          <span style={{ color: '#fff', fontSize: '0.75rem', fontWeight: '800', letterSpacing: '0.5px' }}>WEMADE</span>
+                        </div>
 
-                    {/* Hide Google Drive External Link Icon Overlay */}
-                    <div style={{
-                      position: 'absolute',
-                      top: '8px',
-                      right: '10px',
-                      width: '40px',
-                      height: '40px',
-                      background: 'white',
-                      zIndex: 5,
-                      borderRadius: '4px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
-                      <img 
-                        src="/fav_icon.png" 
-                        alt="Wemade Logix Logo" 
-                        style={{ 
-                          width: '24px', 
-                          height: '24px', 
-                          objectFit: 'contain' 
-                        }} 
-                      />
-                    </div>
+                        <iframe
+                          src={getEmbedUrl(recording.tutorMaterialLink)}
+                          className="tutor-material-iframe"
+                          title="Instructor Deck Preview"
+                        ></iframe>
+                      </div>
+                    ) : (
+                      <div className="docs-section-card animate-fade" style={{ padding: '40px', textAlign: 'center', color: 'var(--text-neutral)' }}>
+                        <ShieldCheck size={48} style={{ color: 'var(--primary-blue)', marginBottom: '16px', opacity: 0.8 }} />
+                        <h3 style={{ fontSize: '1.2rem', fontWeight: '800', margin: '0 0 8px 0', color: 'var(--text-primary)' }}>Wemade Material Not Yet Published</h3>
+                        <p style={{ fontSize: '0.85rem', color: 'var(--text-neutral)', margin: 0 }}>
+                          The instructor lecture deck for today has not been published yet. Please check back later.
+                        </p>
+                      </div>
+                    )}
 
-                    <iframe
-                      src={`https://drive.google.com/file/d/1RAebtVTnHmXbcQs0OOKjkcyK3jH-nWFr/preview?rm=minimal`}
-                      width="100%"
-                      height="750px"
-                      style={{ border: 'none', borderRadius: '12px', background: 'white', display: 'block' }}
-                      title="Instructor Deck Preview"
-                    ></iframe>
+                    {/* Admin Actions Panel */}
+                    {isTutorOrAdmin && (
+                      <div style={{ padding: '24px', borderRadius: '16px', border: '1px solid var(--app-border)', background: 'var(--app-card-bg)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+                          <ShieldCheck size={18} style={{ color: 'var(--primary-blue)' }} />
+                          <h3 style={{ fontSize: '1rem', fontWeight: '800', margin: 0, color: 'var(--text-primary)' }}>Admin Material Manager</h3>
+                        </div>
+                        <p style={{ fontSize: '0.8rem', color: 'var(--text-neutral)', marginTop: 0, marginBottom: '16px' }}>
+                          Update the Wemade Material lecture deck link for <strong>{currentDayData?.title || currentDayData?.dayId}</strong>.
+                        </p>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                          <div>
+                            <label style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--text-primary)', display: 'block', marginBottom: '4px' }}>Wemade Material URL</label>
+                            <input 
+                              type="text" 
+                              value={tutorMaterialLinkInput} 
+                              onChange={(e) => setTutorMaterialLinkInput(e.target.value)} 
+                              placeholder="e.g. https://drive.google.com/file/d/.../view" 
+                              style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--app-border)', background: 'var(--app-bg)', color: 'var(--text-primary)', fontSize: '0.85rem' }}
+                            />
+                          </div>
+                          <button
+                            onClick={async () => {
+                              try {
+                                setSaveRecordingLoading(true);
+                                const response = await axios.post(`/api/recordings/${currentDayData.dayId}`, {
+                                  morningLink: morningLinkInput,
+                                  eveningLink: eveningLinkInput,
+                                  commonLink: commonLinkInput,
+                                  tutorMaterialLink: tutorMaterialLinkInput,
+                                  dayTitle: currentDayData?.dayTitle || '',
+                                  topicId: selectedTopic?.id || ''
+                                }, {
+                                  headers: { 'Authorization': `Bearer ${loggedInUser?.token}` }
+                                });
+                                setRecording(response.data);
+                                showSnackbar('Wemade Material links successfully added!', 'success');
+                                setSaveRecordingLoading(false);
+                              } catch (e) {
+                                console.error('Failed to save material:', e);
+                                showSnackbar('Failed to add Wemade Material links.', 'error');
+                                setSaveRecordingLoading(false);
+                              }
+                            }}
+                            disabled={saveRecordingLoading}
+                            className="primary-btn"
+                            style={{ alignSelf: 'flex-start', padding: '10px 20px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: '750', cursor: 'pointer', marginTop: '8px' }}
+                          >
+                            {saveRecordingLoading ? 'Saving...' : 'Publish Material'}
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -1703,8 +1770,8 @@ const MainContent = () => {
                         border: '1px solid var(--app-border)',
                         boxShadow: 'var(--card-shadow)'
                       }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', gap: '12px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                             <span style={{ fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase', color: 'var(--primary-cyan)', background: 'rgba(14, 165, 233, 0.08)', padding: '4px 10px', borderRadius: '20px' }}>
                               Now Playing
                             </span>
@@ -1976,6 +2043,7 @@ const MainContent = () => {
                                   morningLink: morningLinkInput,
                                   eveningLink: eveningLinkInput,
                                   commonLink: commonLinkInput,
+                                  tutorMaterialLink: tutorMaterialLinkInput,
                                   dayTitle: currentDayData?.dayTitle || '',
                                   topicId: selectedTopic?.id || ''
                                 }, {
@@ -3303,6 +3371,22 @@ const MainContent = () => {
             }
             .docs-section-card iframe {
               max-width: 100%;
+              height: 480px !important;
+            }
+            .tutor-material-iframe {
+              height: 480px !important;
+            }
+            .video-player-container {
+              padding: 12px !important;
+              border-radius: 12px !important;
+              margin-top: 12px !important;
+              margin-bottom: 20px !important;
+            }
+            .docs-section-card table {
+              display: block;
+              width: 100%;
+              overflow-x: auto;
+              -webkit-overflow-scrolling: touch;
             }
             .docs-page-header h1 {
               font-size: 1.75rem;
@@ -3355,7 +3439,10 @@ const MainContent = () => {
               padding: 12px;
             }
             .docs-section-card iframe {
-              height: 500px !important;
+              height: 380px !important;
+            }
+            .tutor-material-iframe {
+              height: 380px !important;
             }
           }
         `}} />

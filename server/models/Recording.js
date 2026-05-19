@@ -18,6 +18,10 @@ const recordingSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
+  tutorMaterialLink: {
+    type: String,
+    default: '',
+  },
   updatedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
