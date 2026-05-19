@@ -10,7 +10,7 @@ const AssignmentsList = () => {
   const [assignments, setAssignments] = useState([]);
   const [selectedAssignment, setSelectedAssignment] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filter, setFilter] = useState('all');
+  const [filter, setFilter] = useState('pending');
   const [feedback, setFeedback] = useState('');
   const [loading, setLoading] = useState(true);
 
@@ -204,7 +204,6 @@ const AssignmentsList = () => {
             </div>
 
             <div className="filter-tabs">
-              <button className={filter === 'all' ? 'active' : ''} onClick={() => setFilter('all')}>All</button>
               <button className={filter === 'pending' ? 'active' : ''} onClick={() => setFilter('pending')}>Pending</button>
               <button className={filter === 'accepted' ? 'active' : ''} onClick={() => setFilter('accepted')}>Accepted</button>
               <button className={filter === 'rejected' ? 'active' : ''} onClick={() => setFilter('rejected')}>Rejected</button>
@@ -311,7 +310,7 @@ const AssignmentsList = () => {
             .assignments-page { height: auto; overflow: visible; padding: 20px; }
             .page-header { flex-direction: column; align-items: flex-start; gap: 20px; }
             .assignments-content { grid-template-columns: 1fr; }
-            .assignments-sidebar { height: 400px; }
+            .assignments-sidebar { height: 680px; }
           }
 
           @media (max-width: 768px) {
