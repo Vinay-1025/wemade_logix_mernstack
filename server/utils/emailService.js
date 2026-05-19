@@ -1,8 +1,66 @@
 const nodemailer = require('nodemailer');
+const https = require('https');
+
+/**
+ * Sends email using EmailJS REST API.
+ * 
+ * @param {string} serviceId 
+ * @param {string} templateId 
+ * @param {string} publicKey 
+ * @param {string} privateKey 
+ * @param {object} templateParams 
+ * @returns {Promise<boolean>}
+ */
+const sendEmailJS = (serviceId, templateId, publicKey, privateKey, templateParams) => {
+  return new Promise((resolve) => {
+    const data = JSON.stringify({
+      service_id: serviceId,
+      template_id: templateId,
+      user_id: publicKey,
+      accessToken: privateKey,
+      template_params: templateParams
+    });
+
+    const options = {
+      hostname: 'api.emailjs.com',
+      port: 443,
+      path: '/api/v1.0/email/send',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': data.length
+      }
+    };
+
+    const req = https.request(options, (res) => {
+      let responseBody = '';
+      res.on('data', (chunk) => {
+        responseBody += chunk;
+      });
+      res.on('end', () => {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          console.log(`[EMAILJS SERVICE] Email successfully routed via EmailJS to: ${templateParams.to_email}`);
+          resolve(true);
+        } else {
+          console.error('[EMAILJS SERVICE ERROR] Failed to send email via EmailJS:', res.statusCode, responseBody);
+          resolve(false);
+        }
+      });
+    });
+
+    req.on('error', (err) => {
+      console.error('[EMAILJS SERVICE REQUEST ERROR]', err);
+      resolve(false);
+    });
+
+    req.write(data);
+    req.end();
+  });
+};
 
 /**
  * Sends dynamic email notifications with auto-generated credentials to newly enrolled users.
- * Loads sensitive SMTP variables strictly from process.env.
+ * Loads sensitive SMTP/EmailJS variables strictly from process.env.
  * 
  * @param {string} to - Destination email address
  * @param {string} name - Recipient full name
@@ -12,9 +70,40 @@ const nodemailer = require('nodemailer');
  */
 const sendWelcomeEmail = async (to, name, password, role) => {
   // Destructure dynamic sensitive parameters strictly from .env
-  const { EMAIL_HOST, EMAIL_PORT, EMAIL_USER, EMAIL_PASS, EMAIL_FROM } = process.env;
+  const { 
+    EMAILJS_SERVICE_ID, 
+    EMAILJS_TEMPLATE_ID, 
+    EMAILJS_PUBLIC_KEY, 
+    EMAILJS_PRIVATE_KEY,
+    EMAIL_HOST, 
+    EMAIL_PORT, 
+    EMAIL_USER, 
+    EMAIL_PASS, 
+    EMAIL_FROM 
+  } = process.env;
 
-  // Validate environmental configurations
+  // 1. Attempt delivery via EmailJS if keys are configured in environment variables
+  if (EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID && EMAILJS_PUBLIC_KEY && EMAILJS_PRIVATE_KEY) {
+    const success = await sendEmailJS(
+      EMAILJS_SERVICE_ID,
+      EMAILJS_TEMPLATE_ID,
+      EMAILJS_PUBLIC_KEY,
+      EMAILJS_PRIVATE_KEY,
+      {
+        to_email: to,
+        to_name: name,
+        user_password: password,
+        user_role: role,
+        login_url: 'https://wemade-logix-mernstack.web.app'
+      }
+    );
+    if (success) {
+      return true;
+    }
+    console.log('[EMAIL SERVICE] EmailJS delivery failed. Falling back to SMTP...');
+  }
+
+  // 2. Validate environmental configurations for SMTP fallback
   if (!EMAIL_HOST || !EMAIL_USER || !EMAIL_PASS) {
     console.warn('\n[EMAIL SERVICE WARNING] SMTP configurations are missing in .env. Skipping welcome email.');
     console.log(`[CREDENTIAL LOG] User: ${name} | Email: ${to} | Pass: ${password} | Role: ${role}\n`);
@@ -116,10 +205,10 @@ const sendWelcomeEmail = async (to, name, password, role) => {
       html: htmlTemplate,
     });
 
-    console.log(`[EMAIL SERVICE] Credentials successfully routed to: ${to}`);
+    console.log(`[EMAIL SERVICE] Credentials successfully routed via SMTP to: ${to}`);
     return true;
   } catch (error) {
-    console.error('[EMAIL SERVICE ERROR] Failed to deliver credentials email:', error);
+    console.error('[EMAIL SERVICE ERROR] Failed to deliver credentials email via SMTP:', error);
     return false;
   }
 };
