@@ -1847,9 +1847,7 @@ const MainContent = () => {
                               <iframe
                                 src={getEmbedUrl(activeVideoUrl)}
                                 onLoad={() => setIsIframeLoading(false)}
-                                width="100%"
-                                height="100%"
-                                style={{ position: 'absolute', top: 0, left: 0, border: 'none' }}
+                                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
                                 allow="autoplay; encrypted-media; picture-in-picture"
                                 allowFullScreen
                                 title={activeVideoTitle}
@@ -3335,6 +3333,15 @@ const MainContent = () => {
             overflow: hidden;
             background: #000;
           }
+          .video-player-wrapper iframe {
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            border: none !important;
+            z-index: 2 !important;
+          }
 
           /* General animation helper classes */
           .animate-fade {
@@ -3460,7 +3467,7 @@ const MainContent = () => {
               height: 380px !important;
             }
             .video-player-wrapper {
-              padding-top: 85% !important; /* Taller Aspect Ratio for mobile viewports */
+              padding-top: 60% !important; /* Perfect fit aspect ratio for mobile viewports */
             }
           }
         `}} />
