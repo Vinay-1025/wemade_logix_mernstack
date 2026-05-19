@@ -975,10 +975,8 @@ export const courseData = [
               "content": "Pedagogical goals, interactive visualization walkthrough notes, troubleshooting tips for students, and perfect solution files.",
               "duration": "15 mins",
               "resources": [
-                "Classroom Slides: HTML Foundations (PDF)",
                 "Hands-on Lab Worksheet & Prompts (PDF)",
-                "Perfect Portfolio Reference Key (HTML)",
-                "Day Evaluation Matrix"
+                "Perfect Portfolio Reference Key (HTML)"
               ]
             }
           }
@@ -1267,10 +1265,7 @@ export const courseData = [
               "content": "Talking points, media integration timeline, sandbox security warnings, and reference layouts.",
               "duration": "15 mins",
               "resources": [
-                "Classroom Slides: HTML Multimedia (PDF)",
-                "Multimedia Lab Guide & Assets Worksheet (PDF)",
-                "Jane Developer Portfolio Reference Key (HTML)",
-                "Day Evaluation Matrix"
+                "Multimedia Lab Guide & Assets Worksheet (PDF)"
               ]
             }
           }
@@ -1560,10 +1555,8 @@ export const courseData = [
               "content": "Talking points, advanced grid spanning diagrams, security guidelines for forms validation, and structural solutions.",
               "duration": "15 mins",
               "resources": [
-                "Classroom Slides: HTML Advanced Structures (PDF)",
                 "Student Interactive Lab & Schedules Worksheet (PDF)",
-                "Wemade Registration Portal Solution File (HTML)",
-                "Day Evaluation Matrix"
+                "Wemade Registration Portal Solution File (HTML)"
               ]
             }
           }
@@ -1775,10 +1768,8 @@ export const courseData = [
               "content": "Important talking points, structural timeline, common student pitfalls, and solutions for this session.",
               "duration": "15 mins",
               "resources": [
-                "Classroom Presentation Slides (PDF)",
                 "Student Hands-on Lab Worksheet (PDF)",
-                "Reference Code & Solutions (ZIP)",
-                "Day Evaluation Rubric"
+                "Reference Code & Solutions (ZIP)"
               ]
             }
           }
@@ -1990,10 +1981,8 @@ export const courseData = [
               "content": "Important talking points, structural timeline, common student pitfalls, and solutions for this session.",
               "duration": "15 mins",
               "resources": [
-                "Classroom Presentation Slides (PDF)",
                 "Student Hands-on Lab Worksheet (PDF)",
-                "Reference Code & Solutions (ZIP)",
-                "Day Evaluation Rubric"
+                "Reference Code & Solutions (ZIP)"
               ]
             }
           }
@@ -2203,10 +2192,8 @@ export const courseData = [
               "content": "Important talking points, structural timeline, common student pitfalls, and solutions for this session.",
               "duration": "15 mins",
               "resources": [
-                "Classroom Presentation Slides (PDF)",
                 "Student Hands-on Lab Worksheet (PDF)",
-                "Reference Code & Solutions (ZIP)",
-                "Day Evaluation Rubric"
+                "Reference Code & Solutions (ZIP)"
               ]
             }
           }
@@ -2416,10 +2403,8 @@ export const courseData = [
               "content": "Important talking points, structural timeline, common student pitfalls, and solutions for this session.",
               "duration": "15 mins",
               "resources": [
-                "Classroom Presentation Slides (PDF)",
                 "Student Hands-on Lab Worksheet (PDF)",
-                "Reference Code & Solutions (ZIP)",
-                "Day Evaluation Rubric"
+                "Reference Code & Solutions (ZIP)"
               ]
             }
           }
@@ -2641,10 +2626,8 @@ export const courseData = [
               "content": "Important talking points, structural timeline, common student pitfalls, and solutions for this session.",
               "duration": "15 mins",
               "resources": [
-                "Classroom Presentation Slides (PDF)",
                 "Student Hands-on Lab Worksheet (PDF)",
-                "Reference Code & Solutions (ZIP)",
-                "Day Evaluation Rubric"
+                "Reference Code & Solutions (ZIP)"
               ]
             }
           }
@@ -2860,10 +2843,8 @@ export const courseData = [
               "content": "Important talking points, structural timeline, common student pitfalls, and solutions for this session.",
               "duration": "15 mins",
               "resources": [
-                "Classroom Presentation Slides (PDF)",
                 "Student Hands-on Lab Worksheet (PDF)",
-                "Reference Code & Solutions (ZIP)",
-                "Day Evaluation Rubric"
+                "Reference Code & Solutions (ZIP)"
               ]
             }
           }
@@ -3079,10 +3060,8 @@ export const courseData = [
               "content": "Important talking points, structural timeline, common student pitfalls, and solutions for this session.",
               "duration": "15 mins",
               "resources": [
-                "Classroom Presentation Slides (PDF)",
                 "Student Hands-on Lab Worksheet (PDF)",
-                "Reference Code & Solutions (ZIP)",
-                "Day Evaluation Rubric"
+                "Reference Code & Solutions (ZIP)"
               ]
             }
           }
@@ -3298,10 +3277,8 @@ export const courseData = [
               "content": "Important talking points, structural timeline, common student pitfalls, and solutions for this session.",
               "duration": "15 mins",
               "resources": [
-                "Classroom Presentation Slides (PDF)",
                 "Student Hands-on Lab Worksheet (PDF)",
-                "Reference Code & Solutions (ZIP)",
-                "Day Evaluation Rubric"
+                "Reference Code & Solutions (ZIP)"
               ]
             }
           }
@@ -3517,10 +3494,8 @@ export const courseData = [
               "content": "Important talking points, structural timeline, common student pitfalls, and solutions for this session.",
               "duration": "15 mins",
               "resources": [
-                "Classroom Presentation Slides (PDF)",
                 "Student Hands-on Lab Worksheet (PDF)",
-                "Reference Code & Solutions (ZIP)",
-                "Day Evaluation Rubric"
+                "Reference Code & Solutions (ZIP)"
               ]
             }
           }
@@ -3736,10 +3711,8 @@ export const courseData = [
               "content": "Important talking points, structural timeline, common student pitfalls, and solutions for this session.",
               "duration": "15 mins",
               "resources": [
-                "Classroom Presentation Slides (PDF)",
                 "Student Hands-on Lab Worksheet (PDF)",
-                "Reference Code & Solutions (ZIP)",
-                "Day Evaluation Rubric"
+                "Reference Code & Solutions (ZIP)"
               ]
             }
           }
@@ -3955,10 +3928,8 @@ export const courseData = [
               "content": "Important talking points, structural timeline, common student pitfalls, and solutions for this session.",
               "duration": "15 mins",
               "resources": [
-                "Classroom Presentation Slides (PDF)",
                 "Student Hands-on Lab Worksheet (PDF)",
-                "Reference Code & Solutions (ZIP)",
-                "Day Evaluation Rubric"
+                "Reference Code & Solutions (ZIP)"
               ]
             }
           }

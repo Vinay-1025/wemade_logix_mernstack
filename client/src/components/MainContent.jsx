@@ -62,9 +62,11 @@ const MainContent = () => {
   const [dnsSearchInput, setDnsSearchInput] = useState('google.com');
   const [dnsResolvedIp, setDnsResolvedIp] = useState('142.250.183.14');
   const [htmlActiveDeconstruct, setHtmlActiveDeconstruct] = useState('HYPER');
+  const [activeDay2Tab, setActiveDay2Tab] = useState('anchor');
 
   useEffect(() => {
     setActiveResourcesSection('overview');
+    setActiveDay2Tab('anchor');
     setTutorGuideUnlocked(false);
     setTutorPasswordInput('');
     setActivePdfPreview(null);
@@ -249,7 +251,7 @@ const MainContent = () => {
     });
 
     sections.push(
-      { id: 'tutor', title: 'Confidential Lesson Plan', icon: <ShieldCheck size={16} /> }
+      { id: 'tutor', title: 'Wemade Material', icon: <ShieldCheck size={16} /> }
     );
 
     const renderOverviewIllustration = () => {
@@ -415,303 +417,819 @@ const MainContent = () => {
                     </div>
 
                     {/* Add Premium Web Fundamentals Syllabus Notes */}
-                    <div className="syllabus-notes-container" style={{ marginTop: '40px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
+                    {(dayId === 'w1-d0' || dayId === 'w1-d1') && (
+                      <div className="syllabus-notes-container" style={{ marginTop: '40px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
 
-                      {/* Section 1: Web Development Breakdown */}
-                      <div className="syllabus-note-block" style={{ borderTop: '1px solid var(--app-border)', paddingTop: '32px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-                          <span style={{ background: 'rgba(0, 209, 209, 0.1)', color: 'var(--primary-cyan)', padding: '6px 12px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 800 }}>CONCEPT 01</span>
-                          <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: 'white' }}>Fundamentals of Web Development</h3>
-                        </div>
-                        <p className="docs-paragraph" style={{ marginBottom: '20px' }}>
-                          Web Development is the process of creating, building, and maintaining websites or web applications that run on the internet. It involves designing the user interface, developing server-side functionality, managing databases, and ensuring smooth communication between different systems.
-                        </p>
-
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
-                          <div className="objective-mini-card" style={{ borderLeft: '3px solid var(--primary-cyan)' }}>
-                            <h4 style={{ color: 'var(--primary-cyan)', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                              <Laptop size={16} /> Frontend Development
-                            </h4>
-                            <p style={{ margin: 0, fontSize: '0.82rem', color: '#cbd5e1', lineHeight: '1.5' }}>
-                              Focuses on the visual part of a website that users interact with using technologies like HTML, CSS, and JavaScript.
-                            </p>
+                        {/* Section 1: Web Development Breakdown */}
+                        <div className="syllabus-note-block" style={{ borderTop: '1px solid var(--app-border)', paddingTop: '32px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+                            <span style={{ background: 'rgba(0, 209, 209, 0.1)', color: 'var(--primary-cyan)', padding: '6px 12px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 800 }}>CONCEPT 01</span>
+                            <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: 'var(--app-text)' }}>Fundamentals of Web Development</h3>
                           </div>
+                          <p className="docs-paragraph" style={{ marginBottom: '20px' }}>
+                            Web Development is the process of creating, building, and maintaining websites or web applications that run on the internet. It involves designing the user interface, developing server-side functionality, managing databases, and ensuring smooth communication between different systems.
+                          </p>
 
-                          <div className="objective-mini-card" style={{ borderLeft: '3px solid #a855f7' }}>
-                            <h4 style={{ color: '#a855f7', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                              <Server size={16} /> Backend Development
-                            </h4>
-                            <p style={{ margin: 0, fontSize: '0.82rem', color: '#cbd5e1', lineHeight: '1.5' }}>
-                              Handles server-side logic, databases, authentication, and APIs using technologies like Node.js, Python, Java, PHP, etc.
-                            </p>
-                          </div>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
+                            <div className="objective-mini-card" style={{ borderLeft: '3px solid var(--primary-cyan)' }}>
+                              <h4 style={{ color: 'var(--primary-cyan)', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                                <Laptop size={16} /> Frontend Development
+                              </h4>
+                              <p style={{ margin: 0, fontSize: '0.82rem', color: '#cbd5e1', lineHeight: '1.5' }}>
+                                Focuses on the visual part of a website that users interact with using technologies like HTML, CSS, and JavaScript.
+                              </p>
+                            </div>
 
-                          <div className="objective-mini-card" style={{ borderLeft: '3px solid #10b981' }}>
-                            <h4 style={{ color: '#10b981', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                              <Layers size={16} /> Full Stack Development
-                            </h4>
-                            <p style={{ margin: 0, fontSize: '0.82rem', color: '#cbd5e1', lineHeight: '1.5' }}>
-                              Combines both frontend and backend development to design, deploy, and scale complete software platforms.
-                            </p>
+                            <div className="objective-mini-card" style={{ borderLeft: '3px solid #a855f7' }}>
+                              <h4 style={{ color: '#a855f7', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                                <Server size={16} /> Backend Development
+                              </h4>
+                              <p style={{ margin: 0, fontSize: '0.82rem', color: '#cbd5e1', lineHeight: '1.5' }}>
+                                Handles server-side logic, databases, authentication, and APIs using technologies like Node.js, Python, Java, PHP, etc.
+                              </p>
+                            </div>
+
+                            <div className="objective-mini-card" style={{ borderLeft: '3px solid #10b981' }}>
+                              <h4 style={{ color: '#10b981', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                                <Layers size={16} /> Full Stack Development
+                              </h4>
+                              <p style={{ margin: 0, fontSize: '0.82rem', color: '#cbd5e1', lineHeight: '1.5' }}>
+                                Combines both frontend and backend development to design, deploy, and scale complete software platforms.
+                              </p>
+                            </div>
                           </div>
                         </div>
-                      </div>
 
-                      {/* Section 2: Network & Connection */}
-                      <div className="syllabus-note-block" style={{ borderTop: '1px solid var(--app-border)', paddingTop: '32px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-                          <span style={{ background: 'rgba(168, 85, 247, 0.1)', color: '#a855f7', padding: '6px 12px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 800 }}>CONCEPT 02</span>
-                          <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: 'white' }}>Understanding Computer Networks</h3>
-                        </div>
-                        <p className="docs-paragraph" style={{ marginBottom: '20px' }}>
-                          A network literally translates to <strong>“connection”</strong>. In computer science, a Network is a collection of interconnected devices such as computers, servers, mobile phones, and routers that communicate and share resources with each other.
-                        </p>
+                        {/* Section 2: Network & Connection */}
+                        <div className="syllabus-note-block" style={{ borderTop: '1px solid var(--app-border)', paddingTop: '32px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+                            <span style={{ background: 'rgba(168, 85, 247, 0.1)', color: '#a855f7', padding: '6px 12px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 800 }}>CONCEPT 02</span>
+                            <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: 'var(--app-text)' }}>Understanding Computer Networks</h3>
+                          </div>
+                          <p className="docs-paragraph" style={{ marginBottom: '20px' }}>
+                            A network literally translates to <strong>“connection”</strong>. In computer science, a Network is a collection of interconnected devices such as computers, servers, mobile phones, and routers that communicate and share resources with each other.
+                          </p>
 
-                        <div style={{ background: 'var(--light-secondary)', borderRadius: '12px', border: '1px solid var(--app-border)', padding: '20px', marginBottom: '20px' }}>
-                          <h4 style={{ margin: '0 0 16px 0', fontSize: '0.9rem', color: 'white', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <Globe size={16} /> Classification & Coverage Range Comparison
-                          </h4>
+                          <div style={{ background: 'var(--light-secondary)', borderRadius: '12px', border: '1px solid var(--app-border)', padding: '20px', marginBottom: '20px' }}>
+                            <h4 style={{ margin: '0 0 16px 0', fontSize: '0.9rem', color: 'var(--app-text)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <Globe size={16} /> Classification & Coverage Range Comparison
+                            </h4>
 
-                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
-                            {[
-                              { type: 'PAN', name: 'Personal Area Network', range: '1 to 10 meters', ex: 'Bluetooth, Hotspot', col: '#00d1d1' },
-                              { type: 'LAN', name: 'Local Area Network', range: 'Up to 1 kilometer', ex: 'Office Wi-Fi, Computer Lab', col: '#38bdf8' },
-                              { type: 'MAN', name: 'Metropolitan Area Network', range: '1 to 50 kilometers', ex: 'City Cable TV, Campus Network', col: '#a855f7' },
-                              { type: 'WAN', name: 'Wide Area Network', range: 'Over 50 kilometers', ex: 'Internet, Global Banking', col: '#10b981' }
-                            ].map(net => (
-                              <div key={net.type} style={{ background: '#0f172a', border: '1px solid var(--app-border)', padding: '16px', borderRadius: '10px' }}>
-                                <span style={{ color: net.col, fontWeight: '800', fontSize: '1.1rem', display: 'block', marginBottom: '4px' }}>{net.type}</span>
-                                <span style={{ fontSize: '0.75rem', color: 'white', fontWeight: '700', display: 'block', marginBottom: '8px' }}>{net.name}</span>
-                                <div style={{ fontSize: '0.7rem', color: '#cbd5e1', marginBottom: '4px' }}>
-                                  <strong>Range:</strong> {net.range}
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+                              {[
+                                { type: 'PAN', name: 'Personal Area Network', range: '1 to 10 meters', ex: 'Bluetooth, Hotspot', col: '#00d1d1' },
+                                { type: 'LAN', name: 'Local Area Network', range: 'Up to 1 kilometer', ex: 'Office Wi-Fi, Computer Lab', col: '#38bdf8' },
+                                { type: 'MAN', name: 'Metropolitan Area Network', range: '1 to 50 kilometers', ex: 'City Cable TV, Campus Network', col: '#a855f7' },
+                                { type: 'WAN', name: 'Wide Area Network', range: 'Over 50 kilometers', ex: 'Internet, Global Banking', col: '#10b981' }
+                              ].map(net => (
+                                <div key={net.type} style={{ background: '#0f172a', border: '1px solid var(--app-border)', padding: '16px', borderRadius: '10px' }}>
+                                  <span style={{ color: net.col, fontWeight: '800', fontSize: '1.1rem', display: 'block', marginBottom: '4px' }}>{net.type}</span>
+                                  <span style={{ fontSize: '0.75rem', color: 'white', fontWeight: '700', display: 'block', marginBottom: '8px' }}>{net.name}</span>
+                                  <div style={{ fontSize: '0.7rem', color: '#cbd5e1', marginBottom: '4px' }}>
+                                    <strong>Range:</strong> {net.range}
+                                  </div>
+                                  <div style={{ fontSize: '0.7rem', color: '#cbd5e1' }}>
+                                    <strong>Examples:</strong> {net.ex}
+                                  </div>
                                 </div>
-                                <div style={{ fontSize: '0.7rem', color: '#cbd5e1' }}>
-                                  <strong>Examples:</strong> {net.ex}
-                                </div>
-                              </div>
-                            ))}
+                              ))}
+
+                            </div>
                           </div>
                         </div>
-                      </div>
 
-                      {/* Section 3: The Internet & Protocols Hub */}
-                      <div className="syllabus-note-block" style={{ borderTop: '1px solid var(--app-border)', paddingTop: '32px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-                          <span style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', padding: '6px 12px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 800 }}>CONCEPT 03</span>
-                          <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: 'white' }}>The Internet & Communication Protocols</h3>
+                        {/* Section 3: The Internet & Protocols Hub */}
+                        <div className="syllabus-note-block" style={{ borderTop: '1px solid var(--app-border)', paddingTop: '32px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+                            <span style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', padding: '6px 12px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 800 }}>CONCEPT 03</span>
+                            <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: 'var(--app-text)' }}>The Internet & Communication Protocols</h3>
+                          </div>
+                          <p className="docs-paragraph" style={{ marginBottom: '20px' }}>
+                            The <strong>Internet</strong> is a global network of interconnected computers and devices that communicate using standardized protocols.
+                            A <strong>Protocol</strong> is a strict set of rules and standards defining how data is formatted, transmitted, and validated across a network.
+                          </p>
+
+                          <div style={{ background: 'var(--light-secondary)', borderRadius: '12px', border: '1px solid var(--app-border)', padding: '24px' }}>
+                            <h4 style={{ margin: '0 0 16px 0', fontSize: '0.9rem', color: 'var(--app-text)' }}>Common Protocols in Web Development (Click to Learn)</h4>
+
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '20px' }}>
+                              {[
+                                { id: 'HTTP' },
+                                { id: 'HTTPS' },
+                                { id: 'TCP' },
+                                { id: 'IP' },
+                                { id: 'DNS' },
+                                { id: 'FTP' },
+                                { id: 'SMTP' },
+                                { id: 'WebSocket' }
+                              ].map(p => (
+                                <button
+                                  key={p.id}
+                                  onClick={() => setActiveProtocolTab(p.id)}
+                                  style={{
+                                    padding: '8px 14px',
+                                    fontSize: '0.75rem',
+                                    fontWeight: '700',
+                                    borderRadius: '8px',
+                                    border: '1px solid',
+                                    borderColor: activeProtocolTab === p.id ? 'var(--primary-cyan)' : 'var(--app-border)',
+                                    background: activeProtocolTab === p.id ? 'rgba(0, 209, 209, 0.1)' : '#0f172a',
+                                    color: activeProtocolTab === p.id ? 'var(--primary-cyan)' : '#cbd5e1',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s ease'
+                                  }}
+                                >
+                                  {p.id}
+                                </button>
+                              ))}
+                            </div>
+
+                            <div style={{ background: '#0f172a', border: '1px solid var(--app-border)', padding: '16px', borderRadius: '8px', minHeight: '80px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                              <span style={{ fontSize: '0.8rem', color: 'var(--primary-cyan)', fontWeight: '800', display: 'block', marginBottom: '6px' }}>
+                                {activeProtocolTab} Protocol Details
+                              </span>
+                              <p style={{ margin: 0, fontSize: '0.82rem', color: '#cbd5e1', lineHeight: '1.5' }}>
+                                {[
+                                  { id: 'HTTP', desc: 'HTTP (HyperText Transfer Protocol) - Used for transferring web pages between client browsers and web servers.' },
+                                  { id: 'HTTPS', desc: 'HTTPS (HyperText Transfer Protocol Secure) - A secure version of HTTP that encrypts data using SSL/TLS.' },
+                                  { id: 'TCP', desc: 'TCP (Transmission Control Protocol) - Ensures reliable and ordered delivery of data between systems.' },
+                                  { id: 'IP', desc: 'IP (Internet Protocol) - Responsible for identifying devices and routing data packets across networks.' },
+                                  { id: 'DNS', desc: 'DNS (Domain Name System) - Converts domain names into IP addresses.' },
+                                  { id: 'FTP', desc: 'FTP (File Transfer Protocol) - Used for transferring files between computers and servers.' },
+                                  { id: 'SMTP', desc: 'SMTP (Simple Mail Transfer Protocol) - Used for sending emails.' },
+                                  { id: 'WebSocket', desc: 'WebSocket - Enables real-time two-way communication between client and server.' }
+                                ].find(item => item.id === activeProtocolTab)?.desc}
+                              </p>
+                            </div>
+                          </div>
                         </div>
-                        <p className="docs-paragraph" style={{ marginBottom: '20px' }}>
-                          The <strong>Internet</strong> is a global network of interconnected computers and devices that communicate using standardized protocols.
-                          A <strong>Protocol</strong> is a strict set of rules and standards defining how data is formatted, transmitted, and validated across a network.
-                        </p>
 
-                        <div style={{ background: 'var(--light-secondary)', borderRadius: '12px', border: '1px solid var(--app-border)', padding: '24px' }}>
-                          <h4 style={{ margin: '0 0 16px 0', fontSize: '0.9rem', color: 'white' }}>Common Protocols in Web Development (Click to Learn)</h4>
+                        {/* Section 4: IP Address & DNS Phonebook Resolution */}
+                        <div className="syllabus-note-block" style={{ borderTop: '1px solid var(--app-border)', paddingTop: '32px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+                            <span style={{ background: 'rgba(0, 209, 209, 0.1)', color: 'var(--primary-cyan)', padding: '6px 12px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 800 }}>CONCEPT 04</span>
+                            <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: 'var(--app-text)' }}>IP Addresses & The DNS “Phonebook”</h3>
+                          </div>
 
-                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '20px' }}>
-                            {[
-                              { id: 'HTTP' },
-                              { id: 'HTTPS' },
-                              { id: 'TCP' },
-                              { id: 'IP' },
-                              { id: 'DNS' },
-                              { id: 'FTP' },
-                              { id: 'SMTP' },
-                              { id: 'WebSocket' }
-                            ].map(p => (
-                              <button
-                                key={p.id}
-                                onClick={() => setActiveProtocolTab(p.id)}
+                          <p className="docs-paragraph" style={{ marginBottom: '20px' }}>
+                            An <strong>IP Address</strong> (Internet Protocol Address) is a unique numerical identifier assigned to each device connected to a network. It helps devices identify and communicate with each other.
+                            <strong>DNS</strong> (Domain Name System) translates human-readable domain names into numeric IP addresses that computers can route.
+                          </p>
+
+                          <div style={{ background: 'var(--light-secondary)', border: '1px solid var(--app-border)', borderRadius: '12px', padding: '24px' }}>
+                            <h4 style={{ margin: '0 0 16px 0', fontSize: '0.9rem', color: 'var(--app-text)' }}>Interactive DNS Phonebook Translation Simulator</h4>
+
+                            <div style={{ display: 'flex', gap: '12px', marginBottom: '16px', maxWidth: '480px' }}>
+                              <select
+                                value={dnsSearchInput}
+                                onChange={(e) => {
+                                  setDnsSearchInput(e.target.value);
+                                  const ipMap = {
+                                    'google.com': '142.250.183.14',
+                                    'wikipedia.org': '208.80.154.224',
+                                    'github.com': '140.82.113.3',
+                                    'wemade.logix': '192.168.1.1'
+                                  };
+                                  setDnsResolvedIp(ipMap[e.target.value] || '0.0.0.0');
+                                }}
                                 style={{
-                                  padding: '8px 14px',
-                                  fontSize: '0.75rem',
+                                  flex: 1,
+                                  padding: '10px 16px',
+                                  fontSize: '0.85rem',
+                                  background: '#0f172a',
+                                  border: '1px solid var(--app-border)',
+                                  borderRadius: '8px',
+                                  color: 'white',
+                                  outline: 'none'
+                                }}
+                              >
+                                <option value="google.com">google.com</option>
+                                <option value="wikipedia.org">wikipedia.org</option>
+                                <option value="github.com">github.com</option>
+                                <option value="wemade.logix">wemade.logix</option>
+                              </select>
+                            </div>
+
+                            <div style={{ background: '#0f172a', border: '1px solid var(--app-border)', padding: '20px', borderRadius: '8px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px dashed var(--app-border)', paddingBottom: '10px' }}>
+                                <span style={{ fontSize: '0.8rem', color: '#cbd5e1' }}>1. Domain Target Request:</span>
+                                <strong style={{ fontSize: '0.85rem', color: 'var(--primary-cyan)' }}>{dnsSearchInput}</strong>
+                              </div>
+
+                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px dashed var(--app-border)', paddingBottom: '10px' }}>
+                                <span style={{ fontSize: '0.8rem', color: '#cbd5e1' }}>2. DNS lookup action:</span>
+                                <span style={{ fontSize: '0.75rem', background: 'rgba(168, 85, 247, 0.1)', color: '#a855f7', padding: '2px 8px', borderRadius: '4px', fontWeight: '700' }}>
+                                  Translating via DNS "Phonebook"...
+                                </span>
+                              </div>
+
+                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                <span style={{ fontSize: '0.8rem', color: '#cbd5e1' }}>3. Resolved Server IP:</span>
+                                <strong style={{ fontSize: '0.95rem', color: '#10b981', letterSpacing: '0.5px' }}>{dnsResolvedIp}</strong>
+                              </div>
+                            </div>
+
+                            <div style={{ marginTop: '16px', display: 'flex', gap: '8px', fontSize: '0.72rem', color: '#94a3b8' }}>
+                              <span style={{ padding: '2px 6px', background: 'rgba(255,255,255,0.03)', borderRadius: '4px', border: '1px solid var(--app-border)', color: '#cbd5e1' }}>Static IP: Address never changes</span>
+                              <span style={{ padding: '2px 6px', background: 'rgba(255,255,255,0.03)', borderRadius: '4px', border: '1px solid var(--app-border)', color: '#cbd5e1' }}>Dynamic IP: Changes periodically</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Section 5: HTML Word Deconstruction */}
+                        <div className="syllabus-note-block" style={{ borderTop: '1px solid var(--app-border)', paddingTop: '32px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+                            <span style={{ background: 'rgba(168, 85, 247, 0.1)', color: '#a855f7', padding: '6px 12px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 800 }}>CONCEPT 05</span>
+                            <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: 'var(--app-text)' }}>Deconstructing HTML (HyperText Markup Language)</h3>
+                          </div>
+
+                          <p className="docs-paragraph" style={{ marginBottom: '20px' }}>
+                            Let's deconstruct the core components of the foundational structural layout standard: <strong>HTML</strong>.
+                          </p>
+
+                          <div style={{ background: 'var(--light-secondary)', border: '1px solid var(--app-border)', borderRadius: '12px', padding: '24px' }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '20px' }}>
+                              {[
+                                { id: 'HYPER', tag: 'H', label: 'HyperText' },
+                                { id: 'TEXT', tag: 'T', label: 'Text' },
+                                { id: 'MARKUP', tag: 'M', label: 'Markup' },
+                                { id: 'LANGUAGE', tag: 'L', label: 'Language' }
+                              ].map(btn => (
+                                <button
+                                  key={btn.id}
+                                  onClick={() => setHtmlActiveDeconstruct(btn.id)}
+                                  style={{
+                                    padding: '16px 8px',
+                                    borderRadius: '10px',
+                                    border: '1px solid',
+                                    borderColor: htmlActiveDeconstruct === btn.id ? '#a855f7' : 'var(--app-border)',
+                                    background: htmlActiveDeconstruct === btn.id ? 'rgba(168, 85, 247, 0.1)' : '#0f172a',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s ease',
+                                    textAlign: 'center'
+                                  }}
+                                >
+                                  <span style={{ display: 'block', fontSize: '1.5rem', fontWeight: '900', color: htmlActiveDeconstruct === btn.id ? '#a855f7' : 'white' }}>{btn.tag}</span>
+                                  <span style={{ display: 'block', fontSize: '0.65rem', color: htmlActiveDeconstruct === btn.id ? '#a855f7' : '#cbd5e1', marginTop: '4px' }}>{btn.label}</span>
+                                </button>
+                              ))}
+                            </div>
+
+                            <div style={{ background: '#0f172a', border: '1px solid var(--app-border)', padding: '20px', borderRadius: '8px' }}>
+                              {htmlActiveDeconstruct === 'HYPER' && (
+                                <div>
+                                  <span style={{ fontSize: '0.8rem', color: '#a855f7', fontWeight: '800', display: 'block', marginBottom: '6px' }}>HYPER (More + Fast + Connected)</span>
+                                  <p style={{ margin: 0, fontSize: '0.82rem', color: '#cbd5e1', lineHeight: '1.6' }}>
+                                    <strong>Hyper</strong> means jumping from one page to another quickly. When you click a link on a website and it opens another page — that jumping action is hyper.
+                                  </p>
+                                </div>
+                              )}
+
+                              {htmlActiveDeconstruct === 'TEXT' && (
+                                <div>
+                                  <span style={{ fontSize: '0.8rem', color: '#a855f7', fontWeight: '800', display: 'block', marginBottom: '6px' }}>TEXT (Words, Letters, and Characters)</span>
+                                  <p style={{ margin: 0, fontSize: '0.82rem', color: '#cbd5e1', lineHeight: '1.6' }}>
+                                    <strong>Text</strong> means standard alphabetical characters and symbols. Anything typed on a computer — like "Hello", "Welcome", or "About Us" — is text.
+                                  </p>
+                                </div>
+                              )}
+
+                              {htmlActiveDeconstruct === 'MARKUP' && (
+                                <div>
+                                  <span style={{ fontSize: '0.8rem', color: '#a855f7', fontWeight: '800', display: 'block', marginBottom: '6px' }}>MARKUP (Tags for Formatting Structure)</span>
+                                  <p style={{ margin: 0, fontSize: '0.82rem', color: '#cbd5e1', lineHeight: '1.6' }}>
+                                    <strong>Markup</strong> means giving special instructions using tags to tell the computer: This is a heading <code style={{ color: '#c084fc', background: 'rgba(168, 85, 247, 0.1)', padding: '2px 6px', borderRadius: '4px', border: '1px solid rgba(168, 85, 247, 0.2)', fontSize: '0.78rem', fontFamily: 'monospace' }}>&lt;h1&gt;</code>, this is a paragraph <code style={{ color: '#c084fc', background: 'rgba(168, 85, 247, 0.1)', padding: '2px 6px', borderRadius: '4px', border: '1px solid rgba(168, 85, 247, 0.2)', fontSize: '0.78rem', fontFamily: 'monospace' }}>&lt;p&gt;</code>, this is an image <code style={{ color: '#c084fc', background: 'rgba(168, 85, 247, 0.1)', padding: '2px 6px', borderRadius: '4px', border: '1px solid rgba(168, 85, 247, 0.2)', fontSize: '0.78rem', fontFamily: 'monospace' }}>&lt;img&gt;</code>, or this is a link <code style={{ color: '#c084fc', background: 'rgba(168, 85, 247, 0.1)', padding: '2px 6px', borderRadius: '4px', border: '1px solid rgba(168, 85, 247, 0.2)', fontSize: '0.78rem', fontFamily: 'monospace' }}>&lt;a&gt;</code>.
+                                  </p>
+                                </div>
+                              )}
+
+                              {htmlActiveDeconstruct === 'LANGUAGE' && (
+                                <div>
+                                  <span style={{ fontSize: '0.8rem', color: '#a855f7', fontWeight: '800', display: 'block', marginBottom: '6px' }}>LANGUAGE (Browser Communication standard)</span>
+                                  <p style={{ margin: 0, fontSize: '0.82rem', color: '#cbd5e1', lineHeight: '1.6' }}>
+                                    <strong>Language</strong> means a language used to communicate with the computer. Just like we speak English, Telugu, or Hindi, we use HTML to tell the browser what to show, where to show, and how.
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                      </div>
+                    )}
+
+                    {dayId === 'w1-d2' && (
+                      <div className="syllabus-notes-container" style={{ marginTop: '40px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                        <div style={{ borderTop: '1px solid var(--app-border)', paddingTop: '32px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+                            <span style={{ background: 'rgba(0, 71, 171, 0.08)', color: 'var(--primary-blue)', padding: '6px 12px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 800 }}>DAY 2 RESOURCE</span>
+                            <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: 'var(--app-text)' }}>Text, Media Tags & Meta Tags</h3>
+                          </div>
+                          
+                          <p className="docs-paragraph" style={{ marginBottom: '20px' }}>
+                            Explore standard HTML tags for hyperlinks, media embedding (images, audio, video), inline documents (iframes), and document metadata tags that control SEO, mobile viewports, and page indexing.
+                          </p>
+
+                          {/* Day 2 Navigation Tabs */}
+                          <div className="interactive-tabs-row" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '20px' }}>
+                            {[
+                              { id: 'anchor', label: 'Anchor <a>' },
+                              { id: 'image', label: 'Image <img>' },
+                              { id: 'audio', label: 'Audio <audio>' },
+                              { id: 'video', label: 'Video <video>' },
+                              { id: 'iframe', label: 'iframe <iframe>' },
+                              { id: 'meta', label: 'Meta Tags' }
+                            ].map(tab => (
+                              <button
+                                key={tab.id}
+                                onClick={() => setActiveDay2Tab(tab.id)}
+                                style={{
+                                  padding: '10px 16px',
+                                  fontSize: '0.8rem',
                                   fontWeight: '700',
                                   borderRadius: '8px',
                                   border: '1px solid',
-                                  borderColor: activeProtocolTab === p.id ? 'var(--primary-cyan)' : 'var(--app-border)',
-                                  background: activeProtocolTab === p.id ? 'rgba(0, 209, 209, 0.1)' : '#0f172a',
-                                  color: activeProtocolTab === p.id ? 'var(--primary-cyan)' : '#cbd5e1',
+                                  borderColor: activeDay2Tab === tab.id ? 'var(--primary-blue)' : 'var(--app-border)',
+                                  background: activeDay2Tab === tab.id ? 'rgba(0, 71, 171, 0.08)' : 'var(--light-secondary)',
+                                  color: activeDay2Tab === tab.id ? 'var(--primary-blue)' : 'var(--app-text-muted)',
                                   cursor: 'pointer',
                                   transition: 'all 0.2s ease'
                                 }}
                               >
-                                {p.id}
+                                {tab.label}
                               </button>
                             ))}
                           </div>
 
-                          <div style={{ background: '#0f172a', border: '1px solid var(--app-border)', padding: '16px', borderRadius: '8px', minHeight: '80px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                            <span style={{ fontSize: '0.8rem', color: 'var(--primary-cyan)', fontWeight: '800', display: 'block', marginBottom: '6px' }}>
-                              {activeProtocolTab} Protocol Details
-                            </span>
-                            <p style={{ margin: 0, fontSize: '0.82rem', color: '#cbd5e1', lineHeight: '1.5' }}>
-                              {[
-                                { id: 'HTTP', desc: 'HTTP (HyperText Transfer Protocol) - Used for transferring web pages between client browsers and web servers.' },
-                                { id: 'HTTPS', desc: 'HTTPS (HyperText Transfer Protocol Secure) - A secure version of HTTP that encrypts data using SSL/TLS.' },
-                                { id: 'TCP', desc: 'TCP (Transmission Control Protocol) - Ensures reliable and ordered delivery of data between systems.' },
-                                { id: 'IP', desc: 'IP (Internet Protocol) - Responsible for identifying devices and routing data packets across networks.' },
-                                { id: 'DNS', desc: 'DNS (Domain Name System) - Converts domain names into IP addresses.' },
-                                { id: 'FTP', desc: 'FTP (File Transfer Protocol) - Used for transferring files between computers and servers.' },
-                                { id: 'SMTP', desc: 'SMTP (Simple Mail Transfer Protocol) - Used for sending emails.' },
-                                { id: 'WebSocket', desc: 'WebSocket - Enables real-time two-way communication between client and server.' }
-                              ].find(item => item.id === activeProtocolTab)?.desc}
-                            </p>
+                          {/* Day 2 Content Details Panel */}
+                          <div style={{ background: 'var(--light-secondary)', border: '1px solid var(--app-border)', padding: '24px', borderRadius: '12px', minHeight: '300px' }}>
+                            {activeDay2Tab === 'anchor' && (
+                              <div className="animate-fade">
+                                <h4 style={{ margin: '0 0 12px 0', color: 'var(--primary-blue)', fontSize: '1.1rem' }}>Anchor Tag & Hyperlink Navigation</h4>
+                                <p style={{ fontSize: '0.85rem', color: 'var(--app-text)', lineHeight: '1.6', marginBottom: '16px' }}>
+                                  The <code>&lt;a&gt;</code> tag defines a hyperlink, which is used to link from one page to another.
+                                  The most important attribute of the <code>&lt;a&gt;</code> element is the <strong>href</strong> attribute, which indicates the link's destination.
+                                </p>
+                                
+                                <div style={{ background: 'rgba(0, 71, 171, 0.05)', borderLeft: '4px solid var(--primary-blue)', padding: '12px 16px', borderRadius: '4px', marginBottom: '20px' }}>
+                                  <span style={{ display: 'block', fontSize: '0.75rem', color: 'var(--primary-blue)', fontWeight: '800', marginBottom: '4px' }}>DEFAULT BROWSER LINK STYLES:</span>
+                                  <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '0.8rem', color: 'var(--app-text-muted)', lineHeight: '1.5' }}>
+                                    <li>An <span style={{ textDecoration: 'underline', color: '#3b82f6' }}>unvisited link</span> is underlined and blue</li>
+                                    <li>A <span style={{ textDecoration: 'underline', color: '#a855f7' }}>visited link</span> is underlined and purple</li>
+                                    <li>An <span style={{ textDecoration: 'underline', color: '#ef4444' }}>active link</span> is underlined and red</li>
+                                    <li>If the <code>&lt;a&gt;</code> tag has no <code>href</code> attribute, it acts as a simple placeholder for a hyperlink.</li>
+                                  </ul>
+                                </div>
+
+                                <h5 style={{ margin: '0 0 8px 0', color: 'var(--app-text)', fontSize: '0.85rem' }}>Syntax Example:</h5>
+                                <pre style={{ background: '#090d16', padding: '12px', borderRadius: '8px', border: '1px solid var(--app-border)', fontSize: '0.8rem', color: '#a5f3fc', fontFamily: 'monospace', overflowX: 'auto', marginBottom: '20px' }}>
+                                  {`<a href="https://www.google.com">Click to open google </a>`}
+                                </pre>
+
+                                <h5 style={{ margin: '0 0 8px 0', color: 'var(--app-text)', fontSize: '0.85rem' }}>Attributes Table:</h5>
+                                <div style={{ overflowX: 'auto' }}>
+                                  <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid var(--app-border)', fontSize: '0.8rem' }}>
+                                    <thead>
+                                      <tr style={{ background: '#e2e8f0', textAlign: 'left', borderBottom: '1px solid var(--app-border)' }}>
+                                        <th style={{ padding: '8px 12px', color: 'var(--app-text)' }}>Attribute</th>
+                                        <th style={{ padding: '8px 12px', color: 'var(--app-text)' }}>Value</th>
+                                        <th style={{ padding: '8px 12px', color: 'var(--app-text)' }}>Description</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                        <td style={{ padding: '8px 12px', color: 'var(--primary-blue)', fontWeight: 'bold' }}>download</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>filename</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Specifies that the target will be downloaded when a user clicks on the hyperlink.</td>
+                                      </tr>
+                                      <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                        <td style={{ padding: '8px 12px', color: 'var(--primary-blue)', fontWeight: 'bold' }}>href</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>URL</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Specifies the URL of the page the link goes to.</td>
+                                      </tr>
+                                      <tr>
+                                        <td style={{ padding: '8px 12px', color: 'var(--primary-blue)', fontWeight: 'bold' }}>target</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>_blank | _parent | _self | _top</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Specifies where to open the linked document.</td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+                            )}
+
+                            {activeDay2Tab === 'image' && (
+                              <div className="animate-fade">
+                                <h4 style={{ margin: '0 0 12px 0', color: 'var(--primary-blue)', fontSize: '1.1rem' }}>Image Embed Tag</h4>
+                                <p style={{ fontSize: '0.85rem', color: 'var(--app-text)', lineHeight: '1.6', marginBottom: '16px' }}>
+                                  The <code>&lt;img&gt;</code> tag is used to embed an image in an HTML page. Images are not technically inserted into a web page; images are linked to web pages. The <code>&lt;img&gt;</code> tag creates a holding space for the referenced image.
+                                </p>
+
+                                <h5 style={{ margin: '0 0 8px 0', color: 'var(--app-text)', fontSize: '0.85rem' }}>Syntax Example:</h5>
+                                <pre style={{ background: '#090d16', padding: '12px', borderRadius: '8px', border: '1px solid var(--app-border)', fontSize: '0.8rem', color: '#a5f3fc', fontFamily: 'monospace', overflowX: 'auto', marginBottom: '20px' }}>
+                                  {`<img src="image2.jpg" alt="Image is not found" width="100" height="132">`}
+                                </pre>
+
+                                <h5 style={{ margin: '0 0 8px 0', color: 'var(--app-text)', fontSize: '0.85rem' }}>Image as a Link Syntax:</h5>
+                                <pre style={{ background: '#090d16', padding: '12px', borderRadius: '8px', border: '1px solid var(--app-border)', fontSize: '0.8rem', color: '#a5f3fc', fontFamily: 'monospace', overflowX: 'auto', marginBottom: '20px' }}>
+                                  {`<a href="https://www.w3schools.com">\n  <img src="image2.jpg" alt="image is not found" width="100" height="132">\n</a>`}
+                                </pre>
+
+                                <h5 style={{ margin: '0 0 8px 0', color: 'var(--app-text)', fontSize: '0.85rem' }}>Attributes Table:</h5>
+                                <div style={{ overflowX: 'auto' }}>
+                                  <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid var(--app-border)', fontSize: '0.8rem' }}>
+                                    <thead>
+                                      <tr style={{ background: '#e2e8f0', textAlign: 'left', borderBottom: '1px solid var(--app-border)' }}>
+                                        <th style={{ padding: '8px 12px', color: 'var(--app-text)' }}>Attribute</th>
+                                        <th style={{ padding: '8px 12px', color: 'var(--app-text)' }}>Value</th>
+                                        <th style={{ padding: '8px 12px', color: 'var(--app-text)' }}>Description</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                        <td style={{ padding: '8px 12px', color: 'var(--primary-blue)', fontWeight: 'bold' }}>src</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>URL</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Specifies the path to the image.</td>
+                                      </tr>
+                                      <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                        <td style={{ padding: '8px 12px', color: 'var(--primary-blue)', fontWeight: 'bold' }}>alt</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>text</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Specifies an alternate text for the image, if the image for some reason cannot be displayed.</td>
+                                      </tr>
+                                      <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                        <td style={{ padding: '8px 12px', color: 'var(--primary-blue)', fontWeight: 'bold' }}>width</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>pixels</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Specifies the width of the image.</td>
+                                      </tr>
+                                      <tr>
+                                        <td style={{ padding: '8px 12px', color: 'var(--primary-blue)', fontWeight: 'bold' }}>height</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>pixels</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Specifies the height of the image.</td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+                            )}
+
+                            {activeDay2Tab === 'audio' && (
+                              <div className="animate-fade">
+                                <h4 style={{ margin: '0 0 12px 0', color: 'var(--primary-blue)', fontSize: '1.1rem' }}>Audio Element Playback</h4>
+                                <p style={{ fontSize: '0.85rem', color: 'var(--app-text)', lineHeight: '1.6', marginBottom: '16px' }}>
+                                  The <code>&lt;audio&gt;</code> tag is used to embed sound content in a document, such as music or other audio streams. Currently, there are 3 supported file formats for the <code>&lt;audio&gt;</code> element: <strong>MP3, WAV, and OGG</strong>.
+                                </p>
+
+                                <h5 style={{ margin: '0 0 8px 0', color: 'var(--app-text)', fontSize: '0.85rem' }}>Syntax Example:</h5>
+                                <pre style={{ background: '#090d16', padding: '12px', borderRadius: '8px', border: '1px solid var(--app-border)', fontSize: '0.8rem', color: '#a5f3fc', fontFamily: 'monospace', overflowX: 'auto', marginBottom: '20px' }}>
+                                  {`<audio autoplay controls loop muted preload="auto" src="./example_audio.mp3" type="audio/mp3">\n  Your browser does not support the audio element.\n</audio>`}
+                                </pre>
+
+                                <h5 style={{ margin: '0 0 8px 0', color: 'var(--app-text)', fontSize: '0.85rem' }}>Attributes Table:</h5>
+                                <div style={{ overflowX: 'auto' }}>
+                                  <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid var(--app-border)', fontSize: '0.8rem' }}>
+                                    <thead>
+                                      <tr style={{ background: '#e2e8f0', textAlign: 'left', borderBottom: '1px solid var(--app-border)' }}>
+                                        <th style={{ padding: '8px 12px', color: 'var(--app-text)' }}>Attribute</th>
+                                        <th style={{ padding: '8px 12px', color: 'var(--app-text)' }}>Value</th>
+                                        <th style={{ padding: '8px 12px', color: 'var(--app-text)' }}>Description</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                        <td style={{ padding: '8px 12px', color: 'var(--primary-blue)', fontWeight: 'bold' }}>autoplay</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>autoplay</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Specifies that the audio will start playing as soon as it is ready.</td>
+                                      </tr>
+                                      <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                        <td style={{ padding: '8px 12px', color: 'var(--primary-blue)', fontWeight: 'bold' }}>controls</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>controls</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Specifies that audio controls should be displayed (such as a play/pause button etc).</td>
+                                      </tr>
+                                      <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                        <td style={{ padding: '8px 12px', color: 'var(--primary-blue)', fontWeight: 'bold' }}>loop</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>loop</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Specifies that the audio will start over again, every time it is finished.</td>
+                                      </tr>
+                                      <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                        <td style={{ padding: '8px 12px', color: 'var(--primary-blue)', fontWeight: 'bold' }}>muted</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>muted</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Specifies that the audio output should be muted.</td>
+                                      </tr>
+                                      <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                        <td style={{ padding: '8px 12px', color: 'var(--primary-blue)', fontWeight: 'bold' }}>preload</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>auto | metadata | none</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Specifies if and how the author thinks the audio should be loaded when the page loads.</td>
+                                      </tr>
+                                      <tr>
+                                        <td style={{ padding: '8px 12px', color: 'var(--primary-blue)', fontWeight: 'bold' }}>src</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>URL</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Specifies the URL of the audio file.</td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+                            )}
+
+                            {activeDay2Tab === 'video' && (
+                              <div className="animate-fade">
+                                <h4 style={{ margin: '0 0 12px 0', color: 'var(--primary-blue)', fontSize: '1.1rem' }}>Video Element Playback</h4>
+                                <p style={{ fontSize: '0.85rem', color: 'var(--app-text)', lineHeight: '1.6', marginBottom: '16px' }}>
+                                  The <code>&lt;video&gt;</code> tag is used to embed video content in a document, such as a movie clip or other video streams. Currently, there are 3 supported video formats for the <code>&lt;video&gt;</code> element: <strong>MP4, WebM, and OGG</strong>.
+                                </p>
+
+                                <h5 style={{ margin: '0 0 8px 0', color: 'var(--app-text)', fontSize: '0.85rem' }}>Syntax Example:</h5>
+                                <pre style={{ background: '#090d16', padding: '12px', borderRadius: '8px', border: '1px solid var(--app-border)', fontSize: '0.8rem', color: '#a5f3fc', fontFamily: 'monospace', overflowX: 'auto', marginBottom: '20px' }}>
+                                  {`<video autoplay controls loop muted preload="auto" src="./hero-bg.mp4" type="video/mp4">\n  Your browser does not support the video tag.\n</video>`}
+                                </pre>
+
+                                <h5 style={{ margin: '0 0 8px 0', color: 'var(--app-text)', fontSize: '0.85rem' }}>Attributes Table:</h5>
+                                <div style={{ overflowX: 'auto' }}>
+                                  <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid var(--app-border)', fontSize: '0.8rem' }}>
+                                    <thead>
+                                      <tr style={{ background: '#e2e8f0', textAlign: 'left', borderBottom: '1px solid var(--app-border)' }}>
+                                        <th style={{ padding: '8px 12px', color: 'var(--app-text)' }}>Attribute</th>
+                                        <th style={{ padding: '8px 12px', color: 'var(--app-text)' }}>Value</th>
+                                        <th style={{ padding: '8px 12px', color: 'var(--app-text)' }}>Description</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                        <td style={{ padding: '8px 12px', color: 'var(--primary-blue)', fontWeight: 'bold' }}>autoplay</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>autoplay</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Specifies that the video will start playing as soon as it is ready.</td>
+                                      </tr>
+                                      <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                        <td style={{ padding: '8px 12px', color: 'var(--primary-blue)', fontWeight: 'bold' }}>controls</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>controls</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Specifies that video controls should be displayed (such as a play/pause button etc).</td>
+                                      </tr>
+                                      <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                        <td style={{ padding: '8px 12px', color: 'var(--primary-blue)', fontWeight: 'bold' }}>loop</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>loop</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Specifies that the video will start over again, every time it is finished.</td>
+                                      </tr>
+                                      <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                        <td style={{ padding: '8px 12px', color: 'var(--primary-blue)', fontWeight: 'bold' }}>muted</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>muted</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Specifies that the video output should be muted.</td>
+                                      </tr>
+                                      <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                        <td style={{ padding: '8px 12px', color: 'var(--primary-blue)', fontWeight: 'bold' }}>preload</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>auto | metadata | none</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Specifies if and how the author thinks the video should be loaded when the page loads.</td>
+                                      </tr>
+                                      <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                        <td style={{ padding: '8px 12px', color: 'var(--primary-blue)', fontWeight: 'bold' }}>src</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>URL</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Specifies the URL of the video file.</td>
+                                      </tr>
+                                      <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                        <td style={{ padding: '8px 12px', color: 'var(--primary-blue)', fontWeight: 'bold' }}>width</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>pixels</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Sets the width of the video player.</td>
+                                      </tr>
+                                      <tr>
+                                        <td style={{ padding: '8px 12px', color: 'var(--primary-blue)', fontWeight: 'bold' }}>height</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>pixels</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Sets the height of the video player.</td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+                            )}
+
+                            {activeDay2Tab === 'iframe' && (
+                              <div className="animate-fade">
+                                <h4 style={{ margin: '0 0 12px 0', color: 'var(--primary-blue)', fontSize: '1.1rem' }}>iframe Element (Inline Frame)</h4>
+                                <p style={{ fontSize: '0.85rem', color: 'var(--app-text)', lineHeight: '1.6', marginBottom: '16px' }}>
+                                  An <code>&lt;iframe&gt;</code> (inline frame) is used to embed another document within the current HTML document. It creates a nested browsing context.
+                                </p>
+
+                                <h5 style={{ margin: '0 0 8px 0', color: 'var(--app-text)', fontSize: '0.85rem' }}>Syntax Example:</h5>
+                                <pre style={{ background: '#090d16', padding: '12px', borderRadius: '8px', border: '1px solid var(--app-border)', fontSize: '0.8rem', color: '#a5f3fc', fontFamily: 'monospace', overflowX: 'auto', marginBottom: '20px' }}>
+                                  {`<iframe src="https://www.wikipedia.org" width="600" height="400" title="Wikipedia Homepage" loading="lazy" allowfullscreen></iframe>`}
+                                </pre>
+
+                                <h5 style={{ margin: '0 0 8px 0', color: 'var(--app-text)', fontSize: '0.85rem' }}>Attributes Table:</h5>
+                                <div style={{ overflowX: 'auto' }}>
+                                  <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid var(--app-border)', fontSize: '0.8rem' }}>
+                                    <thead>
+                                      <tr style={{ background: '#e2e8f0', textAlign: 'left', borderBottom: '1px solid var(--app-border)' }}>
+                                        <th style={{ padding: '8px 12px', color: 'var(--app-text)' }}>Attribute</th>
+                                        <th style={{ padding: '8px 12px', color: 'var(--app-text)' }}>Value</th>
+                                        <th style={{ padding: '8px 12px', color: 'var(--app-text)' }}>Description</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                        <td style={{ padding: '8px 12px', color: 'var(--primary-blue)', fontWeight: 'bold' }}>loading</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>eager | lazy</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Specifies whether a browser should load an iframe immediately (eager) or defer loading until it is near the viewport (lazy).</td>
+                                      </tr>
+                                      <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                        <td style={{ padding: '8px 12px', color: 'var(--primary-blue)', fontWeight: 'bold' }}>allowfullscreen</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>true | false</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Set to true if the iframe can activate fullscreen mode.</td>
+                                      </tr>
+                                      <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                        <td style={{ padding: '8px 12px', color: 'var(--primary-blue)', fontWeight: 'bold' }}>src</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>URL</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Specifies the address of the document to embed in the iframe.</td>
+                                      </tr>
+                                      <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                        <td style={{ padding: '8px 12px', color: 'var(--primary-blue)', fontWeight: 'bold' }}>width</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>pixels</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Specifies the width of the iframe.</td>
+                                      </tr>
+                                      <tr>
+                                        <td style={{ padding: '8px 12px', color: 'var(--primary-blue)', fontWeight: 'bold' }}>height</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>pixels</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Specifies the height of the iframe.</td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+                            )}
+
+                            {activeDay2Tab === 'meta' && (
+                              <div className="animate-fade" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                                <div>
+                                  <h4 style={{ margin: '0 0 12px 0', color: 'var(--primary-blue)', fontSize: '1.1rem' }}>Understanding HTML Meta Tags</h4>
+                                  <p style={{ fontSize: '0.85rem', color: 'var(--app-text)', lineHeight: '1.6', margin: '0 0 12px 0' }}>
+                                    Meta tags in HTML provide metadata about the HTML document. Metadata is data (information) about data. They are placed inside the <code>&lt;head&gt;</code> element, are self-closing, and are not displayed on the page but are parsed by browsers, search engines, and web services.
+                                  </p>
+                                  <pre style={{ background: '#090d16', padding: '12px', borderRadius: '8px', border: '1px solid var(--app-border)', fontSize: '0.8rem', color: '#a5f3fc', fontFamily: 'monospace', overflowX: 'auto', margin: '0 0 16px 0' }}>
+                                    {`<meta attribute="value">`}
+                                  </pre>
+                                </div>
+
+                                <div style={{ borderTop: '1px solid var(--app-border)', paddingTop: '16px' }}>
+                                  <h5 style={{ color: 'var(--app-text)', fontSize: '0.9rem', marginBottom: '12px' }}>Most Important Meta Tags:</h5>
+                                  
+                                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                                    <div style={{ background: '#ffffff', padding: '16px', borderRadius: '8px', border: '1px solid var(--app-border)' }}>
+                                      <strong style={{ color: 'var(--primary-blue)', fontSize: '0.85rem', display: 'block', marginBottom: '6px' }}>1. Charset Meta Tag: &lt;meta charset="UTF-8"&gt;</strong>
+                                      <p style={{ margin: '0 0 8px 0', fontSize: '0.8rem', color: 'var(--app-text-muted)', lineHeight: '1.4' }}>
+                                        <strong>Purpose:</strong> Defines character encoding for the HTML document.
+                                        <br /><strong>Why Important:</strong> Ensures all characters, symbols, emojis, and international texts render correctly.
+                                        <br /><strong>Without it:</strong> Browsers might misinterpret file bytes, rendering corrupted glyphs or broken text block symbols.
+                                      </p>
+                                    </div>
+
+                                    <div style={{ background: '#ffffff', padding: '16px', borderRadius: '8px', border: '1px solid var(--app-border)' }}>
+                                      <strong style={{ color: 'var(--primary-blue)', fontSize: '0.85rem', display: 'block', marginBottom: '6px' }}>2. Viewport Meta Tag: &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</strong>
+                                      <p style={{ margin: '0 0 8px 0', fontSize: '0.8rem', color: 'var(--app-text-muted)', lineHeight: '1.4' }}>
+                                        <strong>Purpose:</strong> Configures scaling behavior across mobile viewports for responsive grids.
+                                        <br /><strong>width=device-width:</strong> Instructs the window width to match the physical width of the mobile device.
+                                        <br /><strong>initial-scale=1.0:</strong> Sets the initial zoom factor when first rendering.
+                                        <br /><strong>Without it:</strong> Mobile browsers assume a standard desktop dimension, scaling web content down into micro, tiny, unreadable structures.
+                                      </p>
+                                    </div>
+
+                                    <div style={{ background: '#ffffff', padding: '16px', borderRadius: '8px', border: '1px solid var(--app-border)' }}>
+                                      <strong style={{ color: 'var(--primary-blue)', fontSize: '0.85rem', display: 'block', marginBottom: '6px' }}>3. Description Meta Tag: &lt;meta name="description" content="..."&gt;</strong>
+                                      <p style={{ margin: '0 0 8px 0', fontSize: '0.8rem', color: 'var(--app-text-muted)', lineHeight: '1.4' }}>
+                                        <strong>Purpose:</strong> Supplies a search result synopsis of the page content.
+                                        <br /><strong>Used by:</strong> Google, Bing, and social cards when presenting previews.
+                                        <br /><strong>SEO Benefit:</strong> Direct impact on Click-Through-Rate (CTR) of organic search listings.
+                                      </p>
+                                    </div>
+
+                                    <div style={{ background: '#ffffff', padding: '16px', borderRadius: '8px', border: '1px solid var(--app-border)' }}>
+                                      <strong style={{ color: 'var(--primary-blue)', fontSize: '0.85rem', display: 'block', marginBottom: '6px' }}>4. Keywords Meta Tag: &lt;meta name="keywords" content="..."&gt;</strong>
+                                      <p style={{ margin: '0 0 8px 0', fontSize: '0.8rem', color: 'var(--app-text-muted)', lineHeight: '1.4' }}>
+                                        <strong>Purpose:</strong> A comma-separated list of keywords.
+                                        <br /><strong>Note:</strong> Major modern search engines (like Google) ignore this tag for indexing, but some local enterprise search systems still parse it.
+                                      </p>
+                                    </div>
+
+                                    <div style={{ background: '#ffffff', padding: '16px', borderRadius: '8px', border: '1px solid var(--app-border)' }}>
+                                      <strong style={{ color: 'var(--primary-blue)', fontSize: '0.85rem', display: 'block', marginBottom: '6px' }}>5. Author Meta Tag: &lt;meta name="author" content="Venkatesh"&gt;</strong>
+                                      <p style={{ margin: '0 0 8px 0', fontSize: '0.8rem', color: 'var(--app-text-muted)', lineHeight: '1.4' }}>
+                                        <strong>Purpose:</strong> Declares the primary author, designer, or copyright holder.
+                                      </p>
+                                    </div>
+
+                                    <div style={{ background: '#ffffff', padding: '16px', borderRadius: '8px', border: '1px solid var(--app-border)' }}>
+                                      <strong style={{ color: 'var(--primary-blue)', fontSize: '0.85rem', display: 'block', marginBottom: '6px' }}>6. Refresh Meta Tag: &lt;meta http-equiv="refresh" content="5"&gt;</strong>
+                                      <p style={{ margin: '0 0 8px 0', fontSize: '0.8rem', color: 'var(--app-text-muted)', lineHeight: '1.4' }}>
+                                        <strong>Purpose:</strong> Forces the browser window to automatically reload after N seconds.
+                                        <br /><strong>Redirect Syntax:</strong> <code>{`<meta http-equiv="refresh" content="5; url=https://google.com">`}</code> redirects after 5 seconds.
+                                      </p>
+                                    </div>
+
+                                    <div style={{ background: '#ffffff', padding: '16px', borderRadius: '8px', border: '1px solid var(--app-border)' }}>
+                                      <strong style={{ color: 'var(--primary-blue)', fontSize: '0.85rem', display: 'block', marginBottom: '6px' }}>7. Robots Meta Tag: &lt;meta name="robots" content="index, follow"&gt;</strong>
+                                      <p style={{ margin: '0 0 8px 0', fontSize: '0.8rem', color: 'var(--app-text-muted)', lineHeight: '1.4' }}>
+                                        <strong>Purpose:</strong> Instructs crawlers whether to index this page or crawl links inside it.
+                                      </p>
+                                      
+                                      <div style={{ overflowX: 'auto', marginTop: '10px' }}>
+                                        <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid var(--app-border)', fontSize: '0.75rem' }}>
+                                          <thead>
+                                            <tr style={{ background: '#e2e8f0', textAlign: 'left', borderBottom: '1px solid var(--app-border)' }}>
+                                              <th style={{ padding: '6px 10px', color: 'var(--app-text)' }}>Directive Value</th>
+                                              <th style={{ padding: '6px 10px', color: 'var(--app-text)' }}>Crawler Action</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                              <td style={{ padding: '6px 10px', color: 'var(--primary-blue)', fontWeight: 'bold' }}>index, follow</td>
+                                              <td style={{ padding: '6px 10px', color: 'var(--app-text-muted)' }}>Save the page in search indices and traverse outgoing anchor href links. (Default)</td>
+                                            </tr>
+                                            <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                              <td style={{ padding: '6px 10px', color: 'var(--primary-blue)', fontWeight: 'bold' }}>noindex, nofollow</td>
+                                              <td style={{ padding: '6px 10px', color: 'var(--app-text-muted)' }}>Do not save this page, and do not crawl any internal page links.</td>
+                                            </tr>
+                                            <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                              <td style={{ padding: '6px 10px', color: 'var(--primary-blue)', fontWeight: 'bold' }}>index, nofollow</td>
+                                              <td style={{ padding: '6px 10px', color: 'var(--app-text-muted)' }}>Index this page but do not follow outgoing page pathways.</td>
+                                            </tr>
+                                            <tr>
+                                              <td style={{ padding: '6px 10px', color: 'var(--primary-blue)', fontWeight: 'bold' }}>noindex, follow</td>
+                                              <td style={{ padding: '6px 10px', color: 'var(--app-text-muted)' }}>Do not index this page, but crawl page pathways. (Useful for site maps)</td>
+                                            </tr>
+                                          </tbody>
+                                        </table>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div style={{ borderTop: '1px solid var(--app-border)', paddingTop: '16px' }}>
+                                  <h5 style={{ color: 'var(--app-text)', fontSize: '0.9rem', marginBottom: '12px' }}>Complete Boilerplate Example:</h5>
+                                  <pre style={{ background: '#090d16', padding: '12px', borderRadius: '8px', border: '1px solid var(--app-border)', fontSize: '0.8rem', color: '#a5f3fc', fontFamily: 'monospace', overflowX: 'auto', lineHeight: '1.4' }}>
+{`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="This is an educational meta tags example.">
+  <meta name="keywords" content="HTML, CSS, Javascript, Web Development">
+  <meta name="author" content="Venkatesh">
+  <meta name="robots" content="index, follow">
+  <title>Meta Tags Tutorial</title>
+</head>
+<body>
+  <h1>Understanding HTML Meta Tags</h1>
+</body>
+</html>`}
+                                  </pre>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Day 2 Interview Point Section */}
+                            <div style={{ marginTop: '32px', borderTop: '1px solid var(--app-border)', paddingTop: '24px' }}>
+                              <h4 style={{ color: 'var(--app-text)', fontSize: '1.1rem', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <ShieldCheck size={18} color="var(--primary-blue)" /> Key Interview Point
+                              </h4>
+
+                              <div style={{ background: 'var(--light-secondary)', border: '1px solid var(--app-border)', borderRadius: '12px', padding: '20px' }}>
+                                <h5 style={{ margin: '0 0 12px 0', fontSize: '0.95rem', color: 'var(--app-text)' }}>Difference between Meta Tags and Normal HTML Tags</h5>
+                                
+                                <div style={{ overflowX: 'auto' }}>
+                                  <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid var(--app-border)', fontSize: '0.8rem' }}>
+                                    <thead>
+                                      <tr style={{ background: '#e2e8f0', textAlign: 'left', borderBottom: '1px solid var(--app-border)' }}>
+                                        <th style={{ padding: '10px 14px', color: 'var(--app-text)', fontWeight: 'bold' }}>Feature</th>
+                                        <th style={{ padding: '10px 14px', color: 'var(--primary-blue)', fontWeight: 'bold' }}>Meta Tags (<code style={{ color: 'inherit' }}>&lt;meta&gt;</code>)</th>
+                                        <th style={{ padding: '10px 14px', color: '#a855f7', fontWeight: 'bold' }}>Normal Tags (e.g. <code style={{ color: 'inherit' }}>&lt;h1&gt;, &lt;p&gt;, &lt;div&gt;</code>)</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                        <td style={{ padding: '10px 14px', color: 'var(--app-text)', fontWeight: 'bold' }}>Placement</td>
+                                        <td style={{ padding: '10px 14px', color: 'var(--app-text-muted)' }}>Inside the <code>&lt;head&gt;</code> section.</td>
+                                        <td style={{ padding: '10px 14px', color: 'var(--app-text-muted)' }}>Inside the <code>&lt;body&gt;</code> section.</td>
+                                      </tr>
+                                      <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                        <td style={{ padding: '10px 14px', color: 'var(--app-text)', fontWeight: 'bold' }}>Visibility</td>
+                                        <td style={{ padding: '10px 14px', color: 'var(--app-text-muted)' }}>Not visible to users on the page.</td>
+                                        <td style={{ padding: '10px 14px', color: 'var(--app-text-muted)' }}>Directly visible and interactive on the viewport.</td>
+                                      </tr>
+                                      <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                        <td style={{ padding: '10px 14px', color: 'var(--app-text)', fontWeight: 'bold' }}>Structure</td>
+                                        <td style={{ padding: '10px 14px', color: 'var(--app-text-muted)' }}>Self-closing, no content wrapper needed.</td>
+                                        <td style={{ padding: '10px 14px', color: 'var(--app-text-muted)' }}>Standard open and close tags wrapping text/nodes.</td>
+                                      </tr>
+                                      <tr>
+                                        <td style={{ padding: '10px 14px', color: 'var(--app-text)', fontWeight: 'bold' }}>Purpose</td>
+                                        <td style={{ padding: '10px 14px', color: 'var(--app-text-muted)' }}>Supplies page information to search engines, browsers, and bots.</td>
+                                        <td style={{ padding: '10px 14px', color: 'var(--app-text-muted)' }}>Defines visual layout, structure, and media components of the page.</td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
-
-                      {/* Section 4: IP Address & DNS Phonebook Resolution */}
-                      <div className="syllabus-note-block" style={{ borderTop: '1px solid var(--app-border)', paddingTop: '32px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-                          <span style={{ background: 'rgba(0, 209, 209, 0.1)', color: 'var(--primary-cyan)', padding: '6px 12px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 800 }}>CONCEPT 04</span>
-                          <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: 'white' }}>IP Addresses & The DNS “Phonebook”</h3>
-                        </div>
-
-                        <p className="docs-paragraph" style={{ marginBottom: '20px' }}>
-                          An <strong>IP Address</strong> (Internet Protocol Address) is a unique numerical identifier assigned to each device connected to a network. It helps devices identify and communicate with each other.
-                          <strong>DNS</strong> (Domain Name System) translates human-readable domain names into numeric IP addresses that computers can route.
-                        </p>
-
-                        <div style={{ background: 'var(--light-secondary)', border: '1px solid var(--app-border)', borderRadius: '12px', padding: '24px' }}>
-                          <h4 style={{ margin: '0 0 16px 0', fontSize: '0.9rem', color: 'white' }}>Interactive DNS Phonebook Translation Simulator</h4>
-
-                          <div style={{ display: 'flex', gap: '12px', marginBottom: '16px', maxWidth: '480px' }}>
-                            <select
-                              value={dnsSearchInput}
-                              onChange={(e) => {
-                                setDnsSearchInput(e.target.value);
-                                const ipMap = {
-                                  'google.com': '142.250.183.14',
-                                  'wikipedia.org': '208.80.154.224',
-                                  'github.com': '140.82.113.3',
-                                  'wemade.logix': '192.168.1.1'
-                                };
-                                setDnsResolvedIp(ipMap[e.target.value] || '0.0.0.0');
-                              }}
-                              style={{
-                                flex: 1,
-                                padding: '10px 16px',
-                                fontSize: '0.85rem',
-                                background: '#0f172a',
-                                border: '1px solid var(--app-border)',
-                                borderRadius: '8px',
-                                color: 'white',
-                                outline: 'none'
-                              }}
-                            >
-                              <option value="google.com">google.com</option>
-                              <option value="wikipedia.org">wikipedia.org</option>
-                              <option value="github.com">github.com</option>
-                              <option value="wemade.logix">wemade.logix</option>
-                            </select>
-                          </div>
-
-                          <div style={{ background: '#0f172a', border: '1px solid var(--app-border)', padding: '20px', borderRadius: '8px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', justify_content: 'space-between', borderBottom: '1px dashed var(--app-border)', paddingBottom: '10px' }}>
-                              <span style={{ fontSize: '0.8rem', color: '#cbd5e1' }}>1. Domain Target Request:</span>
-                              <strong style={{ fontSize: '0.85rem', color: 'var(--primary-cyan)' }}>{dnsSearchInput}</strong>
-                            </div>
-
-                            <div style={{ display: 'flex', alignItems: 'center', justify_content: 'space-between', borderBottom: '1px dashed var(--app-border)', paddingBottom: '10px' }}>
-                              <span style={{ fontSize: '0.8rem', color: '#cbd5e1' }}>2. DNS lookup action:</span>
-                              <span style={{ fontSize: '0.75rem', background: 'rgba(168, 85, 247, 0.1)', color: '#a855f7', padding: '2px 8px', borderRadius: '4px', fontWeight: '700' }}>
-                                Translating via DNS "Phonebook"...
-                              </span>
-                            </div>
-
-                            <div style={{ display: 'flex', alignItems: 'center', justify_content: 'space-between' }}>
-                              <span style={{ fontSize: '0.8rem', color: '#cbd5e1' }}>3. Resolved Server IP:</span>
-                              <strong style={{ fontSize: '0.95rem', color: '#10b981', letterSpacing: '0.5px' }}>{dnsResolvedIp}</strong>
-                            </div>
-                          </div>
-
-                          <div style={{ marginTop: '16px', display: 'flex', gap: '8px', fontSize: '0.72rem', color: '#94a3b8' }}>
-                            <span style={{ padding: '2px 6px', background: 'rgba(255,255,255,0.03)', borderRadius: '4px', border: '1px solid var(--app-border)', color: '#cbd5e1' }}>Static IP: Address never changes</span>
-                            <span style={{ padding: '2px 6px', background: 'rgba(255,255,255,0.03)', borderRadius: '4px', border: '1px solid var(--app-border)', color: '#cbd5e1' }}>Dynamic IP: Changes periodically</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Section 5: HTML Word Deconstruction */}
-                      <div className="syllabus-note-block" style={{ borderTop: '1px solid var(--app-border)', paddingTop: '32px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-                          <span style={{ background: 'rgba(168, 85, 247, 0.1)', color: '#a855f7', padding: '6px 12px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 800 }}>CONCEPT 05</span>
-                          <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: 'white' }}>Deconstructing HTML (HyperText Markup Language)</h3>
-                        </div>
-
-                        <p className="docs-paragraph" style={{ marginBottom: '20px' }}>
-                          Let's deconstruct the core components of the foundational structural layout standard: <strong>HTML</strong>.
-                        </p>
-
-                        <div style={{ background: 'var(--light-secondary)', border: '1px solid var(--app-border)', borderRadius: '12px', padding: '24px' }}>
-                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '20px' }}>
-                            {[
-                              { id: 'HYPER', tag: 'H', label: 'HyperText' },
-                              { id: 'TEXT', tag: 'T', label: 'Text' },
-                              { id: 'MARKUP', tag: 'M', label: 'Markup' },
-                              { id: 'LANGUAGE', tag: 'L', label: 'Language' }
-                            ].map(btn => (
-                              <button
-                                key={btn.id}
-                                onClick={() => setHtmlActiveDeconstruct(btn.id)}
-                                style={{
-                                  padding: '16px 8px',
-                                  borderRadius: '10px',
-                                  border: '1px solid',
-                                  borderColor: htmlActiveDeconstruct === btn.id ? '#a855f7' : 'var(--app-border)',
-                                  background: htmlActiveDeconstruct === btn.id ? 'rgba(168, 85, 247, 0.1)' : '#0f172a',
-                                  cursor: 'pointer',
-                                  transition: 'all 0.2s ease',
-                                  textAlign: 'center'
-                                }}
-                              >
-                                <span style={{ display: 'block', fontSize: '1.5rem', fontWeight: '900', color: htmlActiveDeconstruct === btn.id ? '#a855f7' : 'white' }}>{btn.tag}</span>
-                                <span style={{ display: 'block', fontSize: '0.65rem', color: htmlActiveDeconstruct === btn.id ? '#a855f7' : '#cbd5e1', marginTop: '4px' }}>{btn.label}</span>
-                              </button>
-                            ))}
-                          </div>
-
-                          <div style={{ background: '#0f172a', border: '1px solid var(--app-border)', padding: '20px', borderRadius: '8px' }}>
-                            {htmlActiveDeconstruct === 'HYPER' && (
-                              <div>
-                                <span style={{ fontSize: '0.8rem', color: '#a855f7', fontWeight: '800', display: 'block', marginBottom: '6px' }}>HYPER (More + Fast + Connected)</span>
-                                <p style={{ margin: 0, fontSize: '0.82rem', color: '#cbd5e1', lineHeight: '1.6' }}>
-                                  <strong>Hyper</strong> means jumping from one page to another quickly. When you click a link on a website and it opens another page — that jumping action is hyper.
-                                </p>
-                              </div>
-                            )}
-
-                            {htmlActiveDeconstruct === 'TEXT' && (
-                              <div>
-                                <span style={{ fontSize: '0.8rem', color: '#a855f7', fontWeight: '800', display: 'block', marginBottom: '6px' }}>TEXT (Words, Letters, and Characters)</span>
-                                <p style={{ margin: 0, fontSize: '0.82rem', color: '#cbd5e1', lineHeight: '1.6' }}>
-                                  <strong>Text</strong> means standard alphabetical characters and symbols. Anything typed on a computer — like "Hello", "Welcome", or "About Us" — is text.
-                                </p>
-                              </div>
-                            )}
-
-                            {htmlActiveDeconstruct === 'MARKUP' && (
-                              <div>
-                                <span style={{ fontSize: '0.8rem', color: '#a855f7', fontWeight: '800', display: 'block', marginBottom: '6px' }}>MARKUP (Tags for Formatting Structure)</span>
-                                <p style={{ margin: 0, fontSize: '0.82rem', color: '#cbd5e1', lineHeight: '1.6' }}>
-                                  <strong>Markup</strong> means giving special instructions using tags to tell the computer: This is a heading <code style={{ color: '#c084fc', background: 'rgba(168, 85, 247, 0.1)', padding: '2px 6px', borderRadius: '4px', border: '1px solid rgba(168, 85, 247, 0.2)', fontSize: '0.78rem', fontFamily: 'monospace' }}>&lt;h1&gt;</code>, this is a paragraph <code style={{ color: '#c084fc', background: 'rgba(168, 85, 247, 0.1)', padding: '2px 6px', borderRadius: '4px', border: '1px solid rgba(168, 85, 247, 0.2)', fontSize: '0.78rem', fontFamily: 'monospace' }}>&lt;p&gt;</code>, this is an image <code style={{ color: '#c084fc', background: 'rgba(168, 85, 247, 0.1)', padding: '2px 6px', borderRadius: '4px', border: '1px solid rgba(168, 85, 247, 0.2)', fontSize: '0.78rem', fontFamily: 'monospace' }}>&lt;img&gt;</code>, or this is a link <code style={{ color: '#c084fc', background: 'rgba(168, 85, 247, 0.1)', padding: '2px 6px', borderRadius: '4px', border: '1px solid rgba(168, 85, 247, 0.2)', fontSize: '0.78rem', fontFamily: 'monospace' }}>&lt;a&gt;</code>.
-                                </p>
-                              </div>
-                            )}
-
-                            {htmlActiveDeconstruct === 'LANGUAGE' && (
-                              <div>
-                                <span style={{ fontSize: '0.8rem', color: '#a855f7', fontWeight: '800', display: 'block', marginBottom: '6px' }}>LANGUAGE (Browser Communication standard)</span>
-                                <p style={{ margin: 0, fontSize: '0.82rem', color: '#cbd5e1', lineHeight: '1.6' }}>
-                                  <strong>Language</strong> means a language used to communicate with the computer. Just like we speak English, Telugu, or Hindi, we use HTML to tell the browser what to show, where to show, and how.
-                                </p>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-
-                    </div>
+                    )}
                   </div>
                 )}
 
@@ -727,64 +1245,188 @@ const MainContent = () => {
                       </span>
                     </div>
 
-                    <div className="pdf-paper-page inline-paper-page" style={{ padding: '0', background: 'transparent', color: 'var(--app-text)', boxShadow: 'none' }}>
-                      <div className="paper-header" style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: 'var(--app-text-muted)', borderBottom: '1px solid var(--app-border)', paddingBottom: '8px', marginBottom: '24px' }}>
-                        <span>Wemade Logix Educational Deck Series</span>
-                        <span>Doc-Ref #49821</span>
-                      </div>
-
-                      <h2 style={{ fontSize: '1.8rem', fontWeight: 800, margin: '0 0 6px 0', color: 'white' }}>{selectedResourceName}</h2>
-
-                      <div className="paper-divider" style={{ height: '1px', background: 'var(--app-border)', margin: '16px 0' }}></div>
-
-                      <div className="paper-section-body" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                        <h3 style={{ color: 'white', borderLeft: '3px solid var(--primary-cyan)', paddingLeft: '8px', fontSize: '1.1rem', margin: '20px 0 10px 0', fontWeight: '700' }}>1. Context & Introduction</h3>
-                        <p className="docs-paragraph" style={{ margin: 0, fontSize: '0.98rem', lineHeight: '1.6', color: 'var(--app-text-muted)' }}>
-                          This document serves as the official educational reference for today's curricular targets. Master standard structural standards and lexical parsing techniques to facilitate frictionless integration with future backend systems.
-                        </p>
-
-                        <h3 style={{ color: 'white', borderLeft: '3px solid var(--primary-cyan)', paddingLeft: '8px', fontSize: '1.1rem', margin: '20px 0 10px 0', fontWeight: '700' }}>2. Essential Terminology Matrix</h3>
-                        <div className="table-responsive" style={{ overflowX: 'auto', margin: '14px 0' }}>
-                          <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid var(--app-border)', fontSize: '0.85rem' }}>
-                            <thead>
-                              <tr style={{ background: 'var(--light-secondary)', textAlign: 'left', borderBottom: '1px solid var(--app-border)' }}>
-                                <th style={{ padding: '12px', color: 'white', fontWeight: '700' }}>Term</th>
-                                <th style={{ padding: '12px', color: 'white', fontWeight: '700' }}>Definition</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
-                                <td style={{ padding: '12px', fontWeight: '700', color: 'var(--primary-cyan)' }}>HyperText</td>
-                                <td style={{ padding: '12px', color: 'var(--app-text-muted)' }}>Linked document networks forming hyper-media pipelines across isolated machines.</td>
-                              </tr>
-                              <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
-                                <td style={{ padding: '12px', fontWeight: '700', color: 'var(--primary-cyan)' }}>Markup Language</td>
-                                <td style={{ padding: '12px', color: 'var(--app-text-muted)' }}>Syntactical tags mapping string values directly into browser visual models (DOM).</td>
-                              </tr>
-                              <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
-                                <td style={{ padding: '12px', fontWeight: '700', color: 'var(--primary-cyan)' }}>Boilerplate</td>
-                                <td style={{ padding: '12px', color: 'var(--app-text-muted)' }}>The minimum grammatical elements required to boot standards-compliant render streams.</td>
-                              </tr>
-                            </tbody>
-                          </table>
+                    {selectedResourceName === "Multimedia Lab Guide & Assets Worksheet (PDF)" ? (
+                      <div className="pdf-paper-page inline-paper-page" style={{ padding: '0', background: 'transparent', color: 'var(--app-text)', boxShadow: 'none' }}>
+                        <div className="paper-header" style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: 'var(--app-text-muted)', borderBottom: '1px solid var(--app-border)', paddingBottom: '8px', marginBottom: '24px' }}>
+                          <span>Wemade Logix Educational Deck Series</span>
+                          <span>Doc-Ref #49822</span>
                         </div>
 
-                        <div className="paper-diagram-mock" style={{ background: '#0f172a', border: '1px solid var(--app-border)', borderRadius: '12px', padding: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', margin: '20px 0' }}>
-                          <div className="mock-diagram-circle" style={{ background: 'rgba(0, 209, 209, 0.08)', border: '1px solid rgba(0, 209, 209, 0.2)', width: '72px', height: '72px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800', color: 'var(--primary-cyan)' }}>DOM</div>
-                          <span className="arrow-flow" style={{ fontSize: '1.2rem', fontWeight: '800', color: 'var(--text-neutral)' }}>→</span>
-                          <div className="mock-diagram-circle" style={{ background: 'rgba(168, 85, 247, 0.08)', border: '1px solid rgba(168, 85, 247, 0.2)', width: '72px', height: '72px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800', color: '#a855f7' }}>RENDER</div>
+                        <h2 style={{ fontSize: '1.8rem', fontWeight: 800, margin: '0 0 6px 0', color: 'var(--app-text)' }}>{selectedResourceName}</h2>
+                        <p style={{ margin: '4px 0 16px 0', fontSize: '0.9rem', color: 'var(--app-text-muted)', fontStyle: 'italic' }}>
+                          Interactive guide to integrating images, video players, local audio commentators, and nested sandboxed frames.
+                        </p>
+
+                        <div className="paper-divider" style={{ height: '1px', background: 'var(--app-border)', margin: '16px 0' }}></div>
+
+                        <div className="paper-section-body" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                          <div>
+                            <h3 style={{ color: 'var(--app-text)', borderLeft: '3px solid var(--primary-blue)', paddingLeft: '8px', fontSize: '1.1rem', margin: '0 0 10px 0', fontWeight: '700' }}>1. Lab Core Objectives</h3>
+                            <p style={{ margin: 0, fontSize: '0.85rem', lineHeight: '1.6', color: 'var(--app-text-muted)' }}>
+                              Students must configure a modern, responsive HTML page incorporating multi-format assets. Ensure all assets load securely and contain descriptive fallbacks to maximize usability, responsiveness, and accessibility compliance.
+                            </p>
+                          </div>
+
+                          <div>
+                            <h3 style={{ color: 'var(--app-text)', borderLeft: '3px solid var(--primary-blue)', paddingLeft: '8px', fontSize: '1.1rem', margin: '20px 0 10px 0', fontWeight: '700' }}>2. High-Density Assets Directory (Copyable Resources)</h3>
+                            <p style={{ margin: '0 0 12px 0', fontSize: '0.85rem', color: 'var(--app-text-muted)' }}>
+                              Utilize these tested public endpoints inside your HTML source code to preview layouts:
+                            </p>
+                            
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                              <div style={{ background: '#ffffff', border: '1px solid var(--app-border)', borderRadius: '8px', padding: '12px' }}>
+                                <strong style={{ fontSize: '0.8rem', color: 'var(--primary-blue)', display: 'block', marginBottom: '4px' }}>Placeholder Developer Portrait (Image)</strong>
+                                <code style={{ fontSize: '0.75rem', wordBreak: 'break-all', display: 'block', background: '#f8fafc', padding: '6px', borderRadius: '4px', border: '1px solid var(--app-border)', margin: '4px 0', color: 'var(--app-text)' }}>
+                                  https://picsum.photos/300/200?random=1
+                                </code>
+                                <small style={{ fontSize: '0.7rem', color: 'var(--app-text-muted)' }}>
+                                  Attributes: Use <code>width="300"</code>, <code>height="200"</code>, and <code>alt="Jane Developer professional headshot"</code>.
+                                </small>
+                              </div>
+
+                              <div style={{ background: '#ffffff', border: '1px solid var(--app-border)', borderRadius: '8px', padding: '12px' }}>
+                                <strong style={{ fontSize: '0.8rem', color: 'var(--primary-blue)', display: 'block', marginBottom: '4px' }}>Educational Audio Lecture (Audio MP3)</strong>
+                                <code style={{ fontSize: '0.75rem', wordBreak: 'break-all', display: 'block', background: '#f8fafc', padding: '6px', borderRadius: '4px', border: '1px solid var(--app-border)', margin: '4px 0', color: 'var(--app-text)' }}>
+                                  https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3
+                                </code>
+                                <small style={{ fontSize: '0.7rem', color: 'var(--app-text-muted)' }}>
+                                  Attributes: Add <code>controls</code> to expose play, volume, and time scrubbing controls.
+                                </small>
+                              </div>
+
+                              <div style={{ background: '#ffffff', border: '1px solid var(--app-border)', borderRadius: '8px', padding: '12px' }}>
+                                <strong style={{ fontSize: '0.8rem', color: 'var(--primary-blue)', display: 'block', marginBottom: '4px' }}>Sample Technology Demonstration (Video MP4)</strong>
+                                <code style={{ fontSize: '0.75rem', wordBreak: 'break-all', display: 'block', background: '#f8fafc', padding: '6px', borderRadius: '4px', border: '1px solid var(--app-border)', margin: '4px 0', color: 'var(--app-text)' }}>
+                                  https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4
+                                </code>
+                                <small style={{ fontSize: '0.7rem', color: 'var(--app-text-muted)' }}>
+                                  Attributes: Use <code>controls width="320" height="240" loop muted</code> for automatic responsive boundaries.
+                                </small>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div>
+                            <h3 style={{ color: 'var(--app-text)', borderLeft: '3px solid var(--primary-blue)', paddingLeft: '8px', fontSize: '1.1rem', margin: '20px 0 10px 0', fontWeight: '700' }}>3. Visual Pipeline & Execution Flows</h3>
+                            
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', margin: '12px 0', minWidth: '0' }}>
+                              <div style={{ background: 'rgba(56, 189, 248, 0.04)', border: '1px dashed var(--primary-blue)', padding: '16px', borderRadius: '8px', textAlign: 'center' }}>
+                                <strong style={{ fontSize: '0.85rem', color: 'var(--primary-blue)', display: 'block', marginBottom: '8px' }}>Image Loading & Alt Fallback</strong>
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', fontSize: '0.75rem', color: 'var(--app-text-muted)' }}>
+                                  <div style={{ background: '#e2e8f0', color: 'var(--app-text)', padding: '4px 8px', borderRadius: '4px', fontWeight: 'bold' }}>Fetch Image URL</div>
+                                  <span>↓ (Network Fails / Timeout)</span>
+                                  <div style={{ background: '#fef08a', color: '#854d0e', padding: '4px 8px', borderRadius: '4px', fontWeight: 'bold' }}>Render Alt String Text</div>
+                                </div>
+                              </div>
+
+                              <div style={{ background: 'rgba(168, 85, 247, 0.04)', border: '1px dashed #a855f7', padding: '16px', borderRadius: '8px', textAlign: 'center' }}>
+                                <strong style={{ fontSize: '0.85rem', color: '#a855f7', display: 'block', marginBottom: '8px' }}>Audio/Video Node Compilation</strong>
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', fontSize: '0.75rem', color: 'var(--app-text-muted)' }}>
+                                  <div style={{ background: '#e2e8f0', color: 'var(--app-text)', padding: '4px 8px', borderRadius: '4px', fontWeight: 'bold' }}>Source Tag Match</div>
+                                  <span>↓ (Check Support)</span>
+                                  <div style={{ background: '#bbf7d0', color: '#166534', padding: '4px 8px', borderRadius: '4px', fontWeight: 'bold' }}>Execute Controls Hook</div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div>
+                            <h3 style={{ color: 'var(--app-text)', borderLeft: '3px solid var(--primary-blue)', paddingLeft: '8px', fontSize: '1.1rem', margin: '20px 0 10px 0', fontWeight: '700' }}>4. Attribute Reference Mapping</h3>
+                            <div className="table-responsive" style={{ overflowX: 'auto', margin: '10px 0' }}>
+                              <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid var(--app-border)', fontSize: '0.8rem' }}>
+                                <thead>
+                                  <tr style={{ background: '#e2e8f0', textAlign: 'left', borderBottom: '1px solid var(--app-border)' }}>
+                                    <th style={{ padding: '10px 12px', color: 'var(--app-text)', fontWeight: 'bold' }}>Tag</th>
+                                    <th style={{ padding: '10px 12px', color: 'var(--app-text)', fontWeight: 'bold' }}>Attribute</th>
+                                    <th style={{ padding: '10px 12px', color: 'var(--app-text)', fontWeight: 'bold' }}>Purpose</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                    <td style={{ padding: '10px 12px', fontWeight: 'bold', color: 'var(--app-text)' }}>&lt;img&gt;</td>
+                                    <td style={{ padding: '10px 12px', color: 'var(--primary-blue)' }}>loading="lazy"</td>
+                                    <td style={{ padding: '10px 12px', color: 'var(--app-text-muted)' }}>Delays off-screen image decoding to boost performance.</td>
+                                  </tr>
+                                  <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                    <td style={{ padding: '10px 12px', fontWeight: 'bold', color: 'var(--app-text)' }}>&lt;video&gt;</td>
+                                    <td style={{ padding: '10px 12px', color: 'var(--primary-blue)' }}>poster="url"</td>
+                                    <td style={{ padding: '10px 12px', color: 'var(--app-text-muted)' }}>Sets a temporary background graphic until play occurs.</td>
+                                  </tr>
+                                  <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                    <td style={{ padding: '10px 12px', fontWeight: 'bold', color: 'var(--app-text)' }}>&lt;iframe&gt;</td>
+                                    <td style={{ padding: '10px 12px', color: 'var(--primary-blue)' }}>sandbox</td>
+                                    <td style={{ padding: '10px 12px', color: 'var(--app-text-muted)' }}>Enforces security restrictions (disables scripts, forms, popups).</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
                         </div>
 
-                        <h3 style={{ color: 'white', borderLeft: '3px solid var(--primary-cyan)', paddingLeft: '8px', fontSize: '1.1rem', margin: '20px 0 10px 0', fontWeight: '700' }}>3. Practical Labs & Exercises</h3>
-                        <p className="docs-paragraph" style={{ margin: 0, fontSize: '0.98rem', lineHeight: '1.6', color: 'var(--app-text-muted)' }}>
-                          Construct, compile, and validate offline HTML structures using live debugger inspections. Always check entity escape parameters to guarantee safe glyph rendering under different localization sets.
-                        </p>
+                        <div className="paper-footer" style={{ marginTop: '30px', borderTop: '1px solid var(--app-border)', paddingTop: '16px', display: 'flex', justifyContent: 'center', fontSize: '0.7rem', color: 'var(--text-neutral)' }}>
+                          <span>Wemade Logix Interactive Lab Resources • Page 1 of 1</span>
+                        </div>
                       </div>
+                    ) : (
+                      <div className="pdf-paper-page inline-paper-page" style={{ padding: '0', background: 'transparent', color: 'var(--app-text)', boxShadow: 'none' }}>
+                        <div className="paper-header" style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: 'var(--app-text-muted)', borderBottom: '1px solid var(--app-border)', paddingBottom: '8px', marginBottom: '24px' }}>
+                          <span>Wemade Logix Educational Deck Series</span>
+                          <span>Doc-Ref #49821</span>
+                        </div>
 
-                      <div className="paper-footer" style={{ marginTop: '30px', borderTop: '1px solid var(--app-border)', paddingTop: '16px', display: 'flex', justifyContent: 'center', fontSize: '0.7rem', color: 'var(--text-neutral)' }}>
-                        <span>Secure Learning Platform Courseware • Page 1 of 12</span>
+                        <h2 style={{ fontSize: '1.8rem', fontWeight: 800, margin: '0 0 6px 0', color: 'var(--app-text)' }}>{selectedResourceName}</h2>
+
+                        <div className="paper-divider" style={{ height: '1px', background: 'var(--app-border)', margin: '16px 0' }}></div>
+
+                        <div className="paper-section-body" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                          <h3 style={{ color: 'var(--app-text)', borderLeft: '3px solid var(--primary-blue)', paddingLeft: '8px', fontSize: '1.1rem', margin: '20px 0 10px 0', fontWeight: '700' }}>1. Context & Introduction</h3>
+                          <p className="docs-paragraph" style={{ margin: 0, fontSize: '0.98rem', lineHeight: '1.6', color: 'var(--app-text-muted)' }}>
+                            This document serves as the official educational reference for today's curricular targets. Master standard structural standards and lexical parsing techniques to facilitate frictionless integration with future backend systems.
+                          </p>
+
+                          <h3 style={{ color: 'var(--app-text)', borderLeft: '3px solid var(--primary-blue)', paddingLeft: '8px', fontSize: '1.1rem', margin: '20px 0 10px 0', fontWeight: '700' }}>2. Essential Terminology Matrix</h3>
+                          <div className="table-responsive" style={{ overflowX: 'auto', margin: '14px 0' }}>
+                            <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid var(--app-border)', fontSize: '0.85rem' }}>
+                              <thead>
+                                <tr style={{ background: '#e2e8f0', textAlign: 'left', borderBottom: '1px solid var(--app-border)' }}>
+                                  <th style={{ padding: '12px', color: 'var(--app-text)', fontWeight: '700' }}>Term</th>
+                                  <th style={{ padding: '12px', color: 'var(--app-text)', fontWeight: '700' }}>Definition</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                  <td style={{ padding: '12px', fontWeight: '700', color: 'var(--primary-blue)' }}>HyperText</td>
+                                  <td style={{ padding: '12px', color: 'var(--app-text-muted)' }}>Linked document networks forming hyper-media pipelines across isolated machines.</td>
+                                </tr>
+                                <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                  <td style={{ padding: '12px', fontWeight: '700', color: 'var(--primary-blue)' }}>Markup Language</td>
+                                  <td style={{ padding: '12px', color: 'var(--app-text-muted)' }}>Syntactical tags mapping string values directly into browser visual models (DOM).</td>
+                                </tr>
+                                <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                  <td style={{ padding: '12px', fontWeight: '700', color: 'var(--primary-blue)' }}>Boilerplate</td>
+                                  <td style={{ padding: '12px', color: 'var(--app-text-muted)' }}>The minimum grammatical elements required to boot standards-compliant render streams.</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+
+                          <div className="paper-diagram-mock" style={{ background: 'var(--light-secondary)', border: '1px solid var(--app-border)', borderRadius: '12px', padding: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', margin: '20px 0' }}>
+                            <div className="mock-diagram-circle" style={{ background: 'rgba(56, 189, 248, 0.08)', border: '1px solid rgba(56, 189, 248, 0.2)', width: '72px', height: '72px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800', color: 'var(--primary-blue)' }}>DOM</div>
+                            <span className="arrow-flow" style={{ fontSize: '1.2rem', fontWeight: '800', color: 'var(--text-neutral)' }}>→</span>
+                            <div className="mock-diagram-circle" style={{ background: 'rgba(168, 85, 247, 0.08)', border: '1px solid rgba(168, 85, 247, 0.2)', width: '72px', height: '72px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800', color: '#a855f7' }}>RENDER</div>
+                          </div>
+
+                          <h3 style={{ color: 'var(--app-text)', borderLeft: '3px solid var(--primary-blue)', paddingLeft: '8px', fontSize: '1.1rem', margin: '20px 0 10px 0', fontWeight: '700' }}>3. Practical Labs & Exercises</h3>
+                          <p className="docs-paragraph" style={{ margin: 0, fontSize: '0.98rem', lineHeight: '1.6', color: 'var(--app-text-muted)' }}>
+                            Construct, compile, and validate offline HTML structures using live debugger inspections. Always check entity escape parameters to guarantee safe glyph rendering under different localization sets.
+                          </p>
+                        </div>
+
+                        <div className="paper-footer" style={{ marginTop: '30px', borderTop: '1px solid var(--app-border)', paddingTop: '16px', display: 'flex', justifyContent: 'center', fontSize: '0.7rem', color: 'var(--text-neutral)' }}>
+                          <span>Secure Learning Platform Courseware • Page 1 of 12</span>
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
                 )}
 
@@ -884,7 +1526,7 @@ const MainContent = () => {
                         textAlign: 'center',
                         textShadow: '0 2px 10px rgba(0,0,0,0.5)'
                       }}>
-                        CONFIDENTIAL
+                        WEMADE MATERIAL
                       </span>
                     </div>
 
