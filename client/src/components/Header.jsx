@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { logout, reset } from '../features/auth/authSlice';
-import { Sun, Moon, Menu, Search, Bell, User, LogOut, Users, Shield, GraduationCap, ChevronDown, ClipboardCheck, MessageSquare } from 'lucide-react';
+import { Sun, Moon, Menu, Search, Bell, User, LogOut, Users, Shield, GraduationCap, ChevronDown, ClipboardCheck, MessageSquare, Eye, EyeOff } from 'lucide-react';
 import { useCourse } from '../context/CourseContext';
 
 const Header = () => {
@@ -14,6 +14,7 @@ const Header = () => {
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [passwordData, setPasswordData] = useState({ current: '', new: '', confirm: '' });
   const [passwordStatus, setPasswordStatus] = useState({ type: '', message: '' });
+  const [showPasswordFields, setShowPasswordFields] = useState({ current: false, new: false, confirm: false });
   const [notifications, setNotifications] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
@@ -319,30 +320,45 @@ const Header = () => {
               )}
               <div className="form-group">
                 <label>Current Password</label>
-                <input 
-                  type="password" 
-                  value={passwordData.current}
-                  onChange={e => setPasswordData({...passwordData, current: e.target.value})}
-                  required 
-                />
+                <div className="password-input-wrapper">
+                  <input 
+                    type={showPasswordFields.current ? "text" : "password"} 
+                    value={passwordData.current}
+                    onChange={e => setPasswordData({...passwordData, current: e.target.value})}
+                    required 
+                  />
+                  <button type="button" className="password-toggle-btn" onClick={() => setShowPasswordFields(prev => ({...prev, current: !prev.current}))}>
+                    {showPasswordFields.current ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
               </div>
               <div className="form-group">
                 <label>New Password</label>
-                <input 
-                  type="password" 
-                  value={passwordData.new}
-                  onChange={e => setPasswordData({...passwordData, new: e.target.value})}
-                  required 
-                />
+                <div className="password-input-wrapper">
+                  <input 
+                    type={showPasswordFields.new ? "text" : "password"} 
+                    value={passwordData.new}
+                    onChange={e => setPasswordData({...passwordData, new: e.target.value})}
+                    required 
+                  />
+                  <button type="button" className="password-toggle-btn" onClick={() => setShowPasswordFields(prev => ({...prev, new: !prev.new}))}>
+                    {showPasswordFields.new ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
               </div>
               <div className="form-group">
                 <label>Confirm New Password</label>
-                <input 
-                  type="password" 
-                  value={passwordData.confirm}
-                  onChange={e => setPasswordData({...passwordData, confirm: e.target.value})}
-                  required 
-                />
+                <div className="password-input-wrapper">
+                  <input 
+                    type={showPasswordFields.confirm ? "text" : "password"} 
+                    value={passwordData.confirm}
+                    onChange={e => setPasswordData({...passwordData, confirm: e.target.value})}
+                    required 
+                  />
+                  <button type="button" className="password-toggle-btn" onClick={() => setShowPasswordFields(prev => ({...prev, confirm: !prev.confirm}))}>
+                    {showPasswordFields.confirm ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
               </div>
               <div className="modal-actions">
                 <button type="button" className="btn-secondary" onClick={() => setShowPasswordModal(false)}>Cancel</button>
@@ -798,6 +814,33 @@ const Header = () => {
           font-size: 0.95rem;
           transition: all 0.2s ease;
           background: var(--light-secondary);
+        }
+        .password-input-wrapper {
+          position: relative;
+          width: 100%;
+        }
+        .password-input-wrapper input {
+          padding-right: 48px;
+        }
+        .password-toggle-btn {
+          position: absolute;
+          right: 12px;
+          top: 50%;
+          transform: translateY(-50%);
+          background: transparent;
+          border: none;
+          color: var(--text-neutral);
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 4px;
+          border-radius: 50%;
+          transition: all 0.2s;
+        }
+        .password-toggle-btn:hover {
+          color: var(--primary-cyan);
+          background: rgba(0, 209, 209, 0.05);
         }
         .form-group input:focus {
           outline: none;
