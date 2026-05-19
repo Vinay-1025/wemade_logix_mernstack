@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useCourse } from '../context/CourseContext';
 import CodeEditor from './CodeEditor';
-import { FileEdit, Lightbulb, ClipboardCheck, ArrowUpRight, ArrowLeft, ArrowRight, CheckCircle2, XCircle, ShieldCheck, FileText, Clock, Lock, Unlock, BookOpen, Download, CheckSquare, Key, Laptop, Server, Layers, Globe } from 'lucide-react';
+import { FileEdit, Lightbulb, ClipboardCheck, ArrowUpRight, ArrowLeft, ArrowRight, CheckCircle2, XCircle, ShieldCheck, FileText, Clock, Lock, Unlock, BookOpen, Download, CheckSquare, Key, Laptop, Server, Layers, Globe, ChevronDown } from 'lucide-react';
 import Day1MernPdf from '../assets/Material/Day1_MERN.pdf';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
