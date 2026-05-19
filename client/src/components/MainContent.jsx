@@ -3369,11 +3369,8 @@ const MainContent = () => {
               overflow: hidden;
               width: 100%;
             }
-            .docs-section-card iframe {
-              max-width: 100%;
-              height: 480px !important;
-            }
             .tutor-material-iframe {
+              max-width: 100%;
               height: 480px !important;
             }
             .video-player-container {
@@ -3437,9 +3434,6 @@ const MainContent = () => {
             }
             .pdf-main-scroll-pane {
               padding: 12px;
-            }
-            .docs-section-card iframe {
-              height: 380px !important;
             }
             .tutor-material-iframe {
               height: 380px !important;
