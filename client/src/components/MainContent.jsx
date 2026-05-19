@@ -895,7 +895,7 @@ const MainContent = () => {
                       right: '0',
                       width: '60px',
                       height: '60px',
-                      background: 'white',
+                      background: 'transparent',
                       zIndex: 5,
                       borderTopRightRadius: '12px'
                     }}></div>
