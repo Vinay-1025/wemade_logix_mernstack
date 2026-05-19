@@ -1007,7 +1007,7 @@ const MainContent = () => {
            }
            .content-footer { 
              margin-top: 24px; 
-             padding: 24px 0; 
+            //  padding: 24px 0; 
              text-align: center; 
              font-size: 0.8rem; 
              color: #64748b; 
