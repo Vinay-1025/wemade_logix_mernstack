@@ -897,8 +897,21 @@ const MainContent = () => {
                       height: '40px',
                       background: 'white',
                       zIndex: 5,
-                      borderRadius: '4px'
-                    }}></div>
+                      borderRadius: '4px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <img 
+                        src="/fav_icon.png" 
+                        alt="Wemade Logix Logo" 
+                        style={{ 
+                          width: '24px', 
+                          height: '24px', 
+                          objectFit: 'contain' 
+                        }} 
+                      />
+                    </div>
 
                     <iframe
                       src={`https://drive.google.com/file/d/1RAebtVTnHmXbcQs0OOKjkcyK3jH-nWFr/preview?rm=minimal`}
