@@ -200,6 +200,34 @@ const MainContent = () => {
   }, [activeVideoUrl]);
 
   useEffect(() => {
+    const handleFullscreenChange = () => {
+      const isFullscreen = document.fullscreenElement || 
+                           document.webkitFullscreenElement || 
+                           document.mozFullScreenElement || 
+                           document.msFullscreenElement;
+      if (!isFullscreen && screen.orientation && screen.orientation.unlock) {
+        try {
+          screen.orientation.unlock();
+        } catch (e) {
+          console.error('Unlock failed:', e);
+        }
+      }
+    };
+    
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+    
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
+    };
+  }, []);
+
+  useEffect(() => {
     setActiveVideoUrl(null);
     setActiveVideoTitle('');
 
@@ -1787,21 +1815,36 @@ const MainContent = () => {
                               {activeVideoTitle}
                             </span>
                           </div>
-                          <div style={{ display: 'flex', alignItems: 'center' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                             <button 
-                              onClick={() => {
+                              onClick={async () => {
                                 const iframe = document.getElementById('video-player-iframe');
                                 const video = document.getElementById('video-player-element');
                                 const target = iframe || video;
                                 if (target) {
-                                  if (target.requestFullscreen) {
-                                    target.requestFullscreen();
-                                  } else if (target.webkitRequestFullscreen) {
-                                    target.webkitRequestFullscreen();
-                                  } else if (target.msRequestFullscreen) {
-                                    target.msRequestFullscreen();
-                                  } else if (target.mozRequestFullScreen) {
-                                    target.mozRequestFullScreen();
+                                  try {
+                                    if (target.requestFullscreen) {
+                                      await target.requestFullscreen();
+                                    } else if (target.webkitRequestFullscreen) {
+                                      await target.webkitRequestFullscreen();
+                                    } else if (target.msRequestFullscreen) {
+                                      await target.msRequestFullscreen();
+                                    } else if (target.mozRequestFullScreen) {
+                                      await target.mozRequestFullScreen();
+                                    }
+
+                                    // Lock orientation to landscape after entering fullscreen
+                                    if (screen.orientation && screen.orientation.lock) {
+                                      setTimeout(async () => {
+                                        try {
+                                          await screen.orientation.lock('landscape');
+                                        } catch (e) {
+                                          console.log('Orientation lock ignored:', e);
+                                        }
+                                      }, 300);
+                                    }
+                                  } catch (err) {
+                                    console.error('Fullscreen failed:', err);
                                   }
                                 }
                               }}
@@ -1817,11 +1860,46 @@ const MainContent = () => {
                                 cursor: 'pointer',
                                 background: 'var(--primary-cyan)',
                                 borderColor: 'var(--primary-cyan)',
-                                marginRight: '12px',
                                 border: 'none'
                               }}
                             >
                               Fullscreen ↗
+                            </button>
+                            <button 
+                              onClick={async () => {
+                                try {
+                                  if (screen.orientation && screen.orientation.lock) {
+                                    if (screen.orientation.type.startsWith('landscape')) {
+                                      await screen.orientation.lock('portrait');
+                                      showSnackbar('Switched to Portrait mode', 'success');
+                                    } else {
+                                      await screen.orientation.lock('landscape');
+                                      showSnackbar('Switched to Landscape mode', 'success');
+                                    }
+                                  } else {
+                                    showSnackbar('Please rotate your device physically.', 'info');
+                                  }
+                                } catch (err) {
+                                  console.error('Manual rotation lock failed:', err);
+                                  showSnackbar('Please enter Fullscreen mode first to rotate screen.', 'info');
+                                }
+                              }}
+                              className="primary-btn"
+                              style={{ 
+                                display: 'inline-flex', 
+                                alignItems: 'center', 
+                                gap: '6px', 
+                                padding: '6px 12px', 
+                                borderRadius: '10px', 
+                                fontSize: '0.75rem', 
+                                fontWeight: '750', 
+                                cursor: 'pointer',
+                                background: 'rgba(14, 165, 233, 0.1)',
+                                color: 'var(--primary-cyan)',
+                                border: '1px solid rgba(14, 165, 233, 0.3)'
+                              }}
+                            >
+                              Rotate 🔄
                             </button>
                             <button 
                               onClick={() => { setActiveVideoUrl(null); setActiveVideoTitle(''); }}
