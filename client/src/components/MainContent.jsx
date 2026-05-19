@@ -217,6 +217,20 @@ const MainContent = () => {
     };
 
     fetchRecording();
+
+    const handleForceRefresh = () => {
+      fetchRecording();
+      const savedSection = localStorage.getItem('activeResourcesSection');
+      if (savedSection) {
+        setActiveResourcesSection(savedSection);
+        localStorage.removeItem('activeResourcesSection');
+      }
+    };
+
+    window.addEventListener('refresh-recording-links', handleForceRefresh);
+    return () => {
+      window.removeEventListener('refresh-recording-links', handleForceRefresh);
+    };
   }, [selectedTopic?.id, currentDayData?.dayId, loggedInUser?.token]);
 
   const getEmbedUrl = (url) => {

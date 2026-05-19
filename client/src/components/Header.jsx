@@ -117,6 +117,7 @@ const Header = () => {
       if (foundTopic) {
         localStorage.setItem('activeResourcesSection', 'recording');
         setSelectedTopic(foundTopic);
+        window.dispatchEvent(new CustomEvent('refresh-recording-links'));
       }
       navigate('/');
     }
