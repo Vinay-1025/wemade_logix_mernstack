@@ -891,13 +891,13 @@ const MainContent = () => {
                     {/* Hide Google Drive External Link Icon Overlay */}
                     <div style={{
                       position: 'absolute',
-                      top: '0',
-                      right: '0',
-                      width: '60px',
-                      height: '60px',
-                      background: 'transparent',
+                      top: '8px',
+                      right: '10px',
+                      width: '40px',
+                      height: '40px',
+                      background: 'white',
                       zIndex: 5,
-                      borderTopRightRadius: '12px'
+                      borderRadius: '4px'
                     }}></div>
 
                     <iframe
