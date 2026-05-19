@@ -56,7 +56,7 @@ const MainContent = () => {
   const [tutorGuideUnlocked, setTutorGuideUnlocked] = useState(false);
   const [tutorPasswordInput, setTutorPasswordInput] = useState('');
   const [activePdfPreview, setActivePdfPreview] = useState(null);
-  
+
   // Interactive Overview widgets state
   const [activeProtocolTab, setActiveProtocolTab] = useState('HTTP');
   const [dnsSearchInput, setDnsSearchInput] = useState('google.com');
@@ -395,7 +395,7 @@ const MainContent = () => {
 
                     {/* Add Premium Web Fundamentals Syllabus Notes */}
                     <div className="syllabus-notes-container" style={{ marginTop: '40px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
-                      
+
                       {/* Section 1: Web Development Breakdown */}
                       <div className="syllabus-note-block" style={{ borderTop: '1px solid var(--app-border)', paddingTop: '32px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
@@ -405,7 +405,7 @@ const MainContent = () => {
                         <p className="docs-paragraph" style={{ marginBottom: '20px' }}>
                           Web Development is the process of creating, building, and maintaining websites or web applications that run on the internet. It involves designing the user interface, developing server-side functionality, managing databases, and ensuring smooth communication between different systems.
                         </p>
-                        
+
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
                           <div className="objective-mini-card" style={{ borderLeft: '3px solid var(--primary-cyan)' }}>
                             <h4 style={{ color: 'var(--primary-cyan)', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
@@ -415,7 +415,7 @@ const MainContent = () => {
                               Focuses on the visual part of a website that users interact with using technologies like HTML, CSS, and JavaScript.
                             </p>
                           </div>
-                          
+
                           <div className="objective-mini-card" style={{ borderLeft: '3px solid #a855f7' }}>
                             <h4 style={{ color: '#a855f7', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                               <Server size={16} /> Backend Development
@@ -424,7 +424,7 @@ const MainContent = () => {
                               Handles server-side logic, databases, authentication, and APIs using technologies like Node.js, Python, Java, PHP, etc.
                             </p>
                           </div>
-                          
+
                           <div className="objective-mini-card" style={{ borderLeft: '3px solid #10b981' }}>
                             <h4 style={{ color: '#10b981', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                               <Layers size={16} /> Full Stack Development
@@ -450,7 +450,7 @@ const MainContent = () => {
                           <h4 style={{ margin: '0 0 16px 0', fontSize: '0.9rem', color: 'white', display: 'flex', alignItems: 'center', gap: '8px' }}>
                             <Globe size={16} /> Classification & Coverage Range Comparison
                           </h4>
-                          
+
                           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
                             {[
                               { type: 'PAN', name: 'Personal Area Network', range: '1 to 10 meters', ex: 'Bluetooth, Hotspot', col: '#00d1d1' },
@@ -480,13 +480,13 @@ const MainContent = () => {
                           <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: 'white' }}>The Internet & Communication Protocols</h3>
                         </div>
                         <p className="docs-paragraph" style={{ marginBottom: '20px' }}>
-                          The <strong>Internet</strong> is a global network of interconnected computers and devices that communicate using standardized protocols. 
+                          The <strong>Internet</strong> is a global network of interconnected computers and devices that communicate using standardized protocols.
                           A <strong>Protocol</strong> is a strict set of rules and standards defining how data is formatted, transmitted, and validated across a network.
                         </p>
 
                         <div style={{ background: 'var(--light-secondary)', borderRadius: '12px', border: '1px solid var(--app-border)', padding: '24px' }}>
                           <h4 style={{ margin: '0 0 16px 0', fontSize: '0.9rem', color: 'white' }}>Common Protocols in Web Development (Click to Learn)</h4>
-                          
+
                           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '20px' }}>
                             {[
                               { id: 'HTTP' },
@@ -498,7 +498,7 @@ const MainContent = () => {
                               { id: 'SMTP' },
                               { id: 'WebSocket' }
                             ].map(p => (
-                              <button 
+                              <button
                                 key={p.id}
                                 onClick={() => setActiveProtocolTab(p.id)}
                                 style={{
@@ -545,17 +545,17 @@ const MainContent = () => {
                           <span style={{ background: 'rgba(0, 209, 209, 0.1)', color: 'var(--primary-cyan)', padding: '6px 12px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 800 }}>CONCEPT 04</span>
                           <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: 'white' }}>IP Addresses & The DNS “Phonebook”</h3>
                         </div>
-                        
+
                         <p className="docs-paragraph" style={{ marginBottom: '20px' }}>
-                          An <strong>IP Address</strong> (Internet Protocol Address) is a unique numerical identifier assigned to each device connected to a network. It helps devices identify and communicate with each other. 
+                          An <strong>IP Address</strong> (Internet Protocol Address) is a unique numerical identifier assigned to each device connected to a network. It helps devices identify and communicate with each other.
                           <strong>DNS</strong> (Domain Name System) translates human-readable domain names into numeric IP addresses that computers can route.
                         </p>
 
                         <div style={{ background: 'var(--light-secondary)', border: '1px solid var(--app-border)', borderRadius: '12px', padding: '24px' }}>
                           <h4 style={{ margin: '0 0 16px 0', fontSize: '0.9rem', color: 'white' }}>Interactive DNS Phonebook Translation Simulator</h4>
-                          
+
                           <div style={{ display: 'flex', gap: '12px', marginBottom: '16px', maxWidth: '480px' }}>
-                            <select 
+                            <select
                               value={dnsSearchInput}
                               onChange={(e) => {
                                 setDnsSearchInput(e.target.value);
@@ -590,7 +590,7 @@ const MainContent = () => {
                               <span style={{ fontSize: '0.8rem', color: '#cbd5e1' }}>1. Domain Target Request:</span>
                               <strong style={{ fontSize: '0.85rem', color: 'var(--primary-cyan)' }}>{dnsSearchInput}</strong>
                             </div>
-                            
+
                             <div style={{ display: 'flex', alignItems: 'center', justify_content: 'space-between', borderBottom: '1px dashed var(--app-border)', paddingBottom: '10px' }}>
                               <span style={{ fontSize: '0.8rem', color: '#cbd5e1' }}>2. DNS lookup action:</span>
                               <span style={{ fontSize: '0.75rem', background: 'rgba(168, 85, 247, 0.1)', color: '#a855f7', padding: '2px 8px', borderRadius: '4px', fontWeight: '700' }}>
@@ -603,7 +603,7 @@ const MainContent = () => {
                               <strong style={{ fontSize: '0.95rem', color: '#10b981', letterSpacing: '0.5px' }}>{dnsResolvedIp}</strong>
                             </div>
                           </div>
-                          
+
                           <div style={{ marginTop: '16px', display: 'flex', gap: '8px', fontSize: '0.72rem', color: '#94a3b8' }}>
                             <span style={{ padding: '2px 6px', background: 'rgba(255,255,255,0.03)', borderRadius: '4px', border: '1px solid var(--app-border)', color: '#cbd5e1' }}>Static IP: Address never changes</span>
                             <span style={{ padding: '2px 6px', background: 'rgba(255,255,255,0.03)', borderRadius: '4px', border: '1px solid var(--app-border)', color: '#cbd5e1' }}>Dynamic IP: Changes periodically</span>
@@ -617,7 +617,7 @@ const MainContent = () => {
                           <span style={{ background: 'rgba(168, 85, 247, 0.1)', color: '#a855f7', padding: '6px 12px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 800 }}>CONCEPT 05</span>
                           <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: 'white' }}>Deconstructing HTML (HyperText Markup Language)</h3>
                         </div>
-                        
+
                         <p className="docs-paragraph" style={{ marginBottom: '20px' }}>
                           Let's deconstruct the core components of the foundational structural layout standard: <strong>HTML</strong>.
                         </p>
@@ -825,7 +825,7 @@ const MainContent = () => {
 
                 {activeResourcesSection === 'tutor' && (
                   <div className="docs-section-card animate-fade" style={{ padding: 0, background: 'transparent', boxShadow: 'none', position: 'relative', overflow: 'hidden', borderRadius: '12px' }}>
-                    
+
                     {/* Secure Watermark Overlay */}
                     <div className="secure-watermark-overlay" style={{
                       position: 'absolute',
@@ -844,20 +844,20 @@ const MainContent = () => {
                       transform: 'rotate(-25deg)',
                       transformOrigin: 'center center'
                     }}>
-                      <img 
-                        src="/fav_icon.png" 
-                        alt="Watermark Logo" 
-                        style={{ 
-                          width: '150px', 
-                          height: '150px', 
+                      <img
+                        src="/fav_icon.png"
+                        alt="Watermark Logo"
+                        style={{
+                          width: '150px',
+                          height: '150px',
                           marginBottom: '16px',
                           objectFit: 'contain'
-                        }} 
+                        }}
                       />
-                      <span style={{ 
-                        fontSize: '3.2rem', 
-                        fontWeight: '900', 
-                        letterSpacing: '8px', 
+                      <span style={{
+                        fontSize: '3.2rem',
+                        fontWeight: '900',
+                        letterSpacing: '8px',
                         color: 'white',
                         textTransform: 'uppercase',
                         textAlign: 'center',
@@ -867,10 +867,10 @@ const MainContent = () => {
                       </span>
                     </div>
 
-                    <iframe 
-                      src={`${Day1MernPdf}#toolbar=0&navpanes=0&scrollbar=0`} 
-                      width="100%" 
-                      height="750px" 
+                    <iframe
+                      src={`${Day1MernPdf}#toolbar=0&navpanes=0&scrollbar=0`}
+                      width="100%"
+                      height="750px"
                       style={{ border: 'none', borderRadius: '12px', background: 'white', display: 'block' }}
                       title="Instructor Deck Preview"
                     ></iframe>
@@ -2290,7 +2290,7 @@ const MainContent = () => {
               </div>
 
               <div className="reference-framework" style={{ background: 'var(--app-card-bg)', borderRadius: '16px', border: '1px solid var(--app-border)', padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                
+
                 {/* Summary Statement */}
                 <div className="ref-summary-box" style={{ borderLeft: '4px solid var(--primary-cyan)', paddingLeft: '16px', background: 'rgba(0, 209, 209, 0.02)', padding: '16px 20px', borderRadius: '0 12px 12px 0' }}>
                   <h4 style={{ margin: '0 0 8px 0', fontSize: '0.9rem', fontWeight: 800, color: 'var(--primary-cyan)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
@@ -2308,8 +2308,8 @@ const MainContent = () => {
                   </h4>
                   <div className="concepts-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
                     {selectedTopic.detailedReference.keyConcepts.map((concept, cIdx) => (
-                      <div 
-                        key={cIdx} 
+                      <div
+                        key={cIdx}
                         className="concept-ref-card"
                         style={{
                           background: 'rgba(255, 255, 255, 0.02)',
@@ -2342,7 +2342,7 @@ const MainContent = () => {
                   </h4>
                   <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     {selectedTopic.detailedReference.bestPractices.map((bp, bpIdx) => (
-                      <li 
+                      <li
                         key={bpIdx}
                         style={{
                           display: 'flex',
@@ -2357,11 +2357,11 @@ const MainContent = () => {
                           border: '1px solid rgba(255,255,255,0.03)'
                         }}
                       >
-                        <span style={{ 
-                          width: '6px', 
-                          height: '6px', 
-                          borderRadius: '50%', 
-                          background: 'var(--primary-cyan)', 
+                        <span style={{
+                          width: '6px',
+                          height: '6px',
+                          borderRadius: '50%',
+                          background: 'var(--primary-cyan)',
                           marginTop: '8px',
                           boxShadow: '0 0 8px var(--primary-cyan)',
                           flexShrink: 0
@@ -2376,33 +2376,33 @@ const MainContent = () => {
             </motion.section>
           )}
 
-          {(selectedTopic.visualization || selectedTopic.customComponent) && 
-           !(selectedTopic.title.toLowerCase().includes('mini project') || selectedTopic.title.toLowerCase().includes('assignment task')) && (
-            <motion.section
-              className="visualization-section"
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-            >
-              <div className="section-title">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-cyan)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-image"><rect width="18" height="18" x="3" y="3" rx="2" ry="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" /></svg>
-                <h2>Interactive Visualization</h2>
-              </div>
-              <div className="viz-container">
-                {selectedTopic.customComponent ? (
-                  CustomVisuals[selectedTopic.customComponent]
-                ) : (
-                  <>
-                    <img src={selectedTopic.visualization} alt="Topic Visualization" className="viz-image" />
-                    <div className="viz-overlay">
-                      <span className="pulsing-dot"></span>
-                      <p>Study this visual to understand the core logic</p>
-                    </div>
-                  </>
-                )}
-              </div>
-            </motion.section>
-          )}
+          {(selectedTopic.visualization || selectedTopic.customComponent) &&
+            !(selectedTopic.title.toLowerCase().includes('mini project') || selectedTopic.title.toLowerCase().includes('assignment task')) && (
+              <motion.section
+                className="visualization-section"
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+              >
+                <div className="section-title">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-cyan)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-image"><rect width="18" height="18" x="3" y="3" rx="2" ry="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" /></svg>
+                  <h2>Interactive Visualization</h2>
+                </div>
+                <div className="viz-container">
+                  {selectedTopic.customComponent ? (
+                    CustomVisuals[selectedTopic.customComponent]
+                  ) : (
+                    <>
+                      <img src={selectedTopic.visualization} alt="Topic Visualization" className="viz-image" />
+                      <div className="viz-overlay">
+                        <span className="pulsing-dot"></span>
+                        <p>Study this visual to understand the core logic</p>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </motion.section>
+            )}
 
           {selectedTopic.title.toLowerCase().includes('mini project') || selectedTopic.title.toLowerCase().includes('assignment task') ? (
             <section className="goal-section card-3d">
