@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { login, reset } from '../features/auth/authSlice';
-import { ArrowRight, Plus, UserCircle, Eye, EyeOff } from 'lucide-react';
+import { ArrowRight, Plus, UserCircle, Eye, EyeOff, CheckCircle2, AlertCircle } from 'lucide-react';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -20,9 +20,16 @@ const Login = () => {
     (state) => state.auth
   );
 
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', type: 'success' });
+
+  const showSnackbar = (message, type = 'success') => {
+    setSnackbar({ open: true, message, type });
+    setTimeout(() => setSnackbar(prev => ({ ...prev, open: false })), 4000);
+  };
+
   useEffect(() => {
     if (isError) {
-      alert(message);
+      showSnackbar(message || 'Login failed', 'error');
     }
 
     if (isSuccess || user) {
@@ -144,6 +151,12 @@ const Login = () => {
           </div>
         </div>
       </div>
+      {snackbar.open && (
+        <div className={`snackbar-notification ${snackbar.type} card-3d`}>
+          {snackbar.type === 'success' ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
+          <span>{snackbar.message}</span>
+        </div>
+      )}
     </div>
   );
 };

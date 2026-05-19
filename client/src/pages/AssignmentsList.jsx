@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CheckCircle2, XCircle, Clock, Search, ExternalLink, MessageSquare, Code } from 'lucide-react';
+import { CheckCircle2, XCircle, Clock, Search, ExternalLink, MessageSquare, Code, AlertCircle } from 'lucide-react';
 import MainLayout from '../components/MainLayout';
 import CodeEditor from '../components/CodeEditor';
 import { useLocation } from 'react-router-dom';
@@ -19,6 +19,12 @@ const AssignmentsList = () => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [isChangingAction, setIsChangingAction] = useState(false);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', type: 'success' });
+
+  const showSnackbar = (message, type = 'success') => {
+    setSnackbar({ open: true, message, type });
+    setTimeout(() => setSnackbar(prev => ({ ...prev, open: false })), 4000);
+  };
 
   useEffect(() => {
     fetchAssignments();
@@ -61,7 +67,7 @@ const AssignmentsList = () => {
     if (!selectedAssignment) return;
 
     if (requiresReason && (!feedback.trim() || feedback.trim() === (selectedAssignment.feedback || '').trim())) {
-      alert('Please specify why you are changing the status and provide a comment/reason.');
+      showSnackbar('Please specify why you are changing the status and provide a comment/reason.', 'error');
       return;
     }
 
@@ -76,14 +82,14 @@ const AssignmentsList = () => {
       });
 
       if (response.status === 200) {
-        alert(`Assignment ${status} successfully`);
+        showSnackbar(`Assignment ${status} successfully`, 'success');
         setSelectedAssignment(null);
         setFeedback('');
         setIsChangingAction(false);
         fetchAssignments();
       }
     } catch (err) {
-      alert('Action failed');
+      showSnackbar('Action failed', 'error');
     }
   };
 
@@ -427,6 +433,12 @@ const AssignmentsList = () => {
           .btn-accept:hover { background: #15803d; transform: translateY(-2px); }
           .btn-reject:hover { background: #fee2e2; transform: translateY(-2px); }
         `}} />
+        {snackbar.open && (
+          <div className={`snackbar-notification ${snackbar.type} card-3d`}>
+            {snackbar.type === 'success' ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
+            <span>{snackbar.message}</span>
+          </div>
+        )}
       </div>
     </MainLayout>
   );
