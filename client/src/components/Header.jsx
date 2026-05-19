@@ -712,56 +712,94 @@ const Header = () => {
           font-size: 0.9rem;
         }
         .password-modal {
-          max-width: 400px;
+          max-width: 420px;
+          background: var(--app-bg) !important;
+          border-radius: 24px !important;
+          border: 1px solid var(--light-tertiary) !important;
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+          padding: 32px !important;
+        }
+        .modal-header h3 {
+          font-size: 1.5rem;
+          font-weight: 800;
+          color: var(--text-primary);
+          margin: 0;
+          letter-spacing: -0.5px;
         }
         .password-form {
           display: flex;
           flex-direction: column;
-          gap: 16px;
-          padding-top: 16px;
+          gap: 20px;
+          padding-top: 24px;
         }
         .form-group label {
           display: block;
-          margin-bottom: 6px;
+          margin-bottom: 8px;
           font-size: 0.85rem;
           color: var(--text-secondary);
-          font-weight: 600;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
         }
         .form-group input {
           width: 100%;
-          padding: 10px 12px;
-          border: 1px solid var(--light-tertiary);
-          border-radius: 8px;
+          padding: 14px 16px;
+          border: 2px solid var(--light-tertiary);
+          border-radius: 12px;
           font-family: inherit;
+          font-size: 0.95rem;
+          transition: all 0.2s ease;
+          background: var(--light-secondary);
+        }
+        .form-group input:focus {
+          outline: none;
+          border-color: var(--primary-cyan);
+          background: white;
+          box-shadow: 0 0 0 4px rgba(0, 209, 209, 0.1);
         }
         .modal-actions {
           display: flex;
           justify-content: flex-end;
-          gap: 12px;
-          margin-top: 8px;
+          gap: 16px;
+          margin-top: 16px;
         }
         .btn-secondary {
-          padding: 10px 16px;
-          border-radius: 8px;
-          border: 1px solid var(--light-tertiary);
+          padding: 12px 20px;
+          border-radius: 12px;
+          border: 2px solid var(--light-tertiary);
           background: transparent;
+          color: var(--text-secondary);
           cursor: pointer;
-          font-weight: 600;
+          font-weight: 700;
+          transition: all 0.2s ease;
+        }
+        .btn-secondary:hover {
+          background: var(--light-tertiary);
+          color: var(--text-primary);
         }
         .btn-primary {
-          padding: 10px 16px;
-          border-radius: 8px;
+          padding: 12px 24px;
+          border-radius: 12px;
           border: none;
-          background: var(--primary-cyan);
+          background: var(--brand-gradient);
           color: white;
           cursor: pointer;
-          font-weight: 600;
+          font-weight: 700;
+          box-shadow: 0 4px 12px rgba(0, 209, 209, 0.3);
+          transition: all 0.2s ease;
+        }
+        .btn-primary:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 16px rgba(0, 209, 209, 0.4);
         }
         .status-message {
-          padding: 10px;
-          border-radius: 8px;
-          font-size: 0.85rem;
+          padding: 12px 16px;
+          border-radius: 12px;
+          font-size: 0.9rem;
           font-weight: 600;
+          display: flex;
+          align-items: center;
+          gap: 8px;
         }
         .status-message.error {
           background: #fef2f2;

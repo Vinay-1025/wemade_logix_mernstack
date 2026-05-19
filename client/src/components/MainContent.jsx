@@ -2639,7 +2639,10 @@ const MainContent = () => {
           </div>
 
           <footer className="content-footer">
-            <p>© 2024 MERN Training Platform. Interactive Learning Experience.</p>
+            <div className="footer-content">
+              <span className="footer-brand">Wemade Logix MERN Stack</span>
+              <span className="footer-copyright">© {new Date().getFullYear()} All Rights Reserved.</span>
+            </div>
           </footer>
         </motion.div>
       </AnimatePresence>
@@ -2769,17 +2772,79 @@ const MainContent = () => {
         .snackbar.error { border-left: 4px solid #dc2626; }
         .snackbar span { font-size: 0.9rem; font-weight: 500; }
 
-        .navigation-footer { display: flex; justify-content: space-between; gap: var(--space-4); margin-top: var(--space-8); padding: var(--space-8) 0; border-top: 1px solid var(--app-border); }
-        .nav-btn { flex: 1; display: flex; align-items: center; gap: var(--space-4); padding: var(--space-4); background: var(--app-card-bg); border: 1px solid var(--app-border); border-radius: var(--radius-lg); cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); text-align: left; max-width: 380px; position: relative; overflow: hidden; }
-        .nav-btn:hover { background: var(--brand-gradient); border-color: transparent; transform: translateY(-4px); box-shadow: var(--glow); }
-        .nav-btn:hover .nav-label, .nav-btn:hover .nav-title, .nav-btn:hover .nav-icon { color: white; }
-        .nav-btn:hover .nav-icon { background: rgba(255, 255, 255, 0.2); }
+        .navigation-footer { 
+          position: sticky;
+          bottom: 24px;
+          margin: 40px auto 0;
+          display: flex; 
+          justify-content: space-between; 
+          align-items: center;
+          gap: 16px; 
+          background: rgba(255,255,255,0.9);
+          backdrop-filter: blur(12px);
+          padding: 8px; 
+          border: 1px solid var(--app-border); 
+          border-radius: 100px;
+          box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+          width: fit-content;
+          min-width: 320px;
+          max-width: 600px;
+          z-index: 100;
+        }
+        [data-theme='dark'] .navigation-footer {
+          background: rgba(15, 23, 42, 0.85);
+        }
+        .nav-btn { 
+          flex: 1; 
+          display: flex; 
+          align-items: center; 
+          gap: 12px; 
+          padding: 8px 16px; 
+          background: transparent; 
+          border: none; 
+          border-radius: 100px; 
+          cursor: pointer; 
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+          text-align: left; 
+        }
+        .nav-btn:hover { 
+          background: rgba(0, 209, 209, 0.1); 
+        }
         .nav-btn.next { text-align: right; justify-content: flex-end; }
-        .nav-text { display: flex; flex-direction: column; overflow: hidden; z-index: 1; }
-        .nav-label { font-size: 0.7rem; text-transform: uppercase; color: var(--primary-cyan); font-weight: 700; letter-spacing: 1px; margin-bottom: 4px; transition: color 0.3s; }
-        .nav-title { font-size: 1.1rem; font-weight: 600; color: var(--app-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color 0.3s; }
-        .nav-icon { width: 48px; height: 48px; background: rgba(0, 209, 209, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--primary-cyan); flex-shrink: 0; transition: all 0.3s; z-index: 1; }
-        .content-footer { margin-top: var(--space-4); padding: var(--space-4) 0; text-align: center; font-size: 0.8rem; color: var(--text-neutral); border-top: 1px solid var(--app-border); }
+        .nav-btn.next:hover {
+          background: var(--brand-gradient);
+        }
+        .nav-btn.next:hover .nav-label, .nav-btn.next:hover .nav-title, .nav-btn.next:hover .nav-icon {
+          color: white;
+        }
+        .nav-text { display: flex; flex-direction: column; overflow: hidden; }
+        .nav-label { font-size: 0.65rem; text-transform: uppercase; color: var(--text-neutral); font-weight: 800; letter-spacing: 0.5px; margin-bottom: 2px; }
+        .nav-title { font-size: 0.9rem; font-weight: 700; color: var(--app-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
+        .nav-icon { display: flex; align-items: center; justify-content: center; color: var(--text-secondary); transition: all 0.3s; }
+        
+        .content-footer { 
+          margin-top: 60px; 
+          padding: 24px 0; 
+          border-top: 1px solid var(--app-border); 
+          display: flex;
+          justify-content: center;
+        }
+        .footer-content {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 8px;
+        }
+        .footer-brand {
+          font-weight: 800;
+          font-size: 0.95rem;
+          color: var(--app-text);
+          letter-spacing: -0.5px;
+        }
+        .footer-copyright {
+          font-size: 0.8rem;
+          color: var(--text-neutral);
+        }
 
         /* Responsive Fixes for Submission Section */
         @media (max-width: 1024px) {
@@ -2789,6 +2854,19 @@ const MainContent = () => {
         }
 
         @media (max-width: 768px) {
+          .interactive-illustration-pane {
+            flex-direction: column !important;
+            gap: 16px;
+            padding: 20px;
+            text-align: center;
+          }
+          .animated-pipeline {
+            transform: rotate(90deg);
+            margin: 40px auto !important;
+          }
+          .objective-cards-grid {
+            grid-template-columns: 1fr !important;
+          }
           .mission-header { flex-direction: column; gap: 20px; }
           .mission-stats { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
           .stat-pill { min-width: 0; }
@@ -2796,8 +2874,12 @@ const MainContent = () => {
           .submission-info { justify-content: center; }
           .launch-btn { width: 100%; }
           .mission-name { font-size: 1.25rem; }
-          .navigation-footer { flex-direction: column; }
-          .nav-btn { max-width: none; }
+          .navigation-footer { 
+            width: calc(100% - 32px);
+            min-width: 0;
+            margin: 40px 16px 0; 
+          }
+          .nav-title { max-width: 100px; }
         }
 
         @media (max-width: 480px) {
