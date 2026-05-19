@@ -90,10 +90,10 @@ const sendWelcomeEmail = async (to, name, password, role) => {
       EMAILJS_PUBLIC_KEY,
       EMAILJS_PRIVATE_KEY,
       {
-        to_email: to,
-        to_name: name,
-        user_password: password,
-        user_role: role,
+        email: to,
+        name: name,
+        password: password,
+        role: role,
         login_url: 'https://wemade-logix-mernstack.web.app'
       }
     );
