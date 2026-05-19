@@ -327,7 +327,28 @@ const MainContent = () => {
               {/* Left Navigation Sidebar */}
               <aside className="docs-nav-sidebar">
                 <div className="sidebar-group-title">Table of Contents</div>
-                <ul className="sidebar-nav-list">
+                
+                {/* Mobile Dropdown */}
+                <div className="mobile-toc-dropdown">
+                  <select 
+                    value={activeResourcesSection}
+                    onChange={(e) => setActiveResourcesSection(e.target.value)}
+                    className="toc-select"
+                  >
+                    {sections.map(sec => {
+                      const isRestricted = sec.id === 'tutor' && !isTutorOrAdmin && !tutorGuideUnlocked;
+                      return (
+                        <option key={sec.id} value={sec.id} disabled={isRestricted}>
+                          {sec.title} {isRestricted ? '(Locked)' : ''}
+                        </option>
+                      );
+                    })}
+                  </select>
+                  <div className="toc-select-icon"><ChevronDown size={16} /></div>
+                </div>
+
+                {/* Desktop List */}
+                <ul className="sidebar-nav-list desktop-toc-list">
                   {sections.map((sec) => {
                     const isActive = activeResourcesSection === sec.id;
                     const isRestricted = sec.id === 'tutor' && !isTutorOrAdmin && !tutorGuideUnlocked;
@@ -867,8 +888,20 @@ const MainContent = () => {
                       </span>
                     </div>
 
+                    {/* Hide Google Drive External Link Icon Overlay */}
+                    <div style={{
+                      position: 'absolute',
+                      top: '0',
+                      right: '0',
+                      width: '60px',
+                      height: '60px',
+                      background: 'white',
+                      zIndex: 5,
+                      borderTopRightRadius: '12px'
+                    }}></div>
+
                     <iframe
-                      src={`https://drive.google.com/file/d/1RAebtVTnHmXbcQs0OOKjkcyK3jH-nWFr/preview`}
+                      src={`https://drive.google.com/file/d/1RAebtVTnHmXbcQs0OOKjkcyK3jH-nWFr/preview?rm=minimal`}
                       width="100%"
                       height="750px"
                       style={{ border: 'none', borderRadius: '12px', background: 'white', display: 'block' }}
@@ -1139,6 +1172,40 @@ const MainContent = () => {
           .lock-badge {
             color: var(--text-neutral);
             opacity: 0.6;
+            display: flex;
+            align-items: center;
+          }
+          
+          /* Mobile TOC Dropdown */
+          .mobile-toc-dropdown {
+            display: none;
+            position: relative;
+            width: 100%;
+          }
+          .toc-select {
+            width: 100%;
+            appearance: none;
+            background: rgba(0, 209, 209, 0.05);
+            border: 1px solid rgba(0, 209, 209, 0.2);
+            color: var(--primary-cyan);
+            font-size: 0.95rem;
+            font-weight: 700;
+            padding: 12px 40px 12px 16px;
+            border-radius: 12px;
+            outline: none;
+            cursor: pointer;
+          }
+          .toc-select option {
+            background: var(--app-bg);
+            color: var(--app-text);
+          }
+          .toc-select-icon {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-cyan);
+            pointer-events: none;
             display: flex;
             align-items: center;
           }
@@ -2125,16 +2192,11 @@ const MainContent = () => {
               width: 100%;
               overflow: hidden;
             }
-            .sidebar-nav-list {
-              flex-direction: row;
-              overflow-x: auto;
-              padding-bottom: 4px;
-              scrollbar-width: none;
-              -webkit-overflow-scrolling: touch;
-              max-width: 100%;
+            .desktop-toc-list {
+              display: none !important;
             }
-            .sidebar-nav-list::-webkit-scrollbar {
-              display: none;
+            .mobile-toc-dropdown {
+              display: block;
             }
             .sidebar-nav-item {
               white-space: nowrap;
