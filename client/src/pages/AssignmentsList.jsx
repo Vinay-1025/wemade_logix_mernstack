@@ -14,6 +14,11 @@ const AssignmentsList = () => {
   const [feedback, setFeedback] = useState('');
   const [loading, setLoading] = useState(true);
 
+  // New filtering states
+  const [selectedStudentFilter, setSelectedStudentFilter] = useState('all');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+
   useEffect(() => {
     fetchAssignments();
   }, []);
@@ -74,11 +79,43 @@ const AssignmentsList = () => {
     }
   };
 
+  // Get unique list of students from loaded assignments
+  const studentsList = Array.isArray(assignments) 
+    ? [...new Map(assignments.map(a => [a.student?._id || a.student?.email, a.student])).values()].filter(Boolean)
+    : [];
+
   const filteredAssignments = Array.isArray(assignments) ? assignments.filter(asn => {
+    // 1. Search term match
     const matchesSearch = asn.student?.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           asn.topicTitle?.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    // 2. Status filter match
     const matchesFilter = filter === 'all' || asn.status === filter;
-    return matchesSearch && matchesFilter;
+    
+    // 3. Student dropdown filter match
+    const studentId = asn.student?._id || asn.student?.email;
+    const matchesStudent = selectedStudentFilter === 'all' || studentId === selectedStudentFilter;
+    
+    // 4. Date calendar filter match
+    let matchesDate = true;
+    if (asn.submittedAt) {
+      const submittedDate = new Date(asn.submittedAt);
+      submittedDate.setHours(0, 0, 0, 0); // Normalize time to start of day for comparison
+      
+      if (startDate) {
+        const start = new Date(startDate);
+        start.setHours(0, 0, 0, 0);
+        if (submittedDate < start) matchesDate = false;
+      }
+      
+      if (endDate) {
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+        if (submittedDate > end) matchesDate = false;
+      }
+    }
+    
+    return matchesSearch && matchesFilter && matchesStudent && matchesDate;
   }) : [];
 
   // Helper to parse code if it's stringified JSON
@@ -116,16 +153,61 @@ const AssignmentsList = () => {
               <Search size={18} />
               <input 
                 type="text" 
-                placeholder="Search students or topics..." 
+                placeholder="Search topics..." 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
+            </div>
+
+            {/* Student Dropdown and Date Range Filters */}
+            <div className="advanced-filters" style={{ padding: '16px', borderBottom: '1px solid var(--light-tertiary)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div className="filter-field">
+                <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 800, color: 'var(--text-neutral)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '6px' }}>Filter by Student</label>
+                <select 
+                  value={selectedStudentFilter} 
+                  onChange={(e) => setSelectedStudentFilter(e.target.value)}
+                  style={{ width: '100%', padding: '8px 12px', borderRadius: '10px', border: '1px solid var(--light-tertiary)', fontSize: '0.85rem', outline: 'none', background: 'white', color: 'var(--text-primary)', fontWeight: 600, cursor: 'pointer' }}
+                >
+                  <option value="all">All Students</option>
+                  {studentsList.map(s => (
+                    <option key={s._id || s.email} value={s._id || s.email}>{s.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="filter-field">
+                <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 800, color: 'var(--text-neutral)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '6px' }}>Filter by Calendar Range</label>
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <input 
+                    type="date" 
+                    value={startDate} 
+                    onChange={(e) => setStartDate(e.target.value)}
+                    style={{ flex: 1, padding: '8px 10px', borderRadius: '10px', border: '1px solid var(--light-tertiary)', fontSize: '0.8rem', color: 'var(--text-primary)', outline: 'none' }}
+                  />
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-neutral)' }}>to</span>
+                  <input 
+                    type="date" 
+                    value={endDate} 
+                    onChange={(e) => setEndDate(e.target.value)}
+                    style={{ flex: 1, padding: '8px 10px', borderRadius: '10px', border: '1px solid var(--light-tertiary)', fontSize: '0.8rem', color: 'var(--text-primary)', outline: 'none' }}
+                  />
+                </div>
+                {(startDate || endDate) && (
+                  <button 
+                    onClick={() => { setStartDate(''); setEndDate(''); }}
+                    style={{ background: 'transparent', border: 'none', color: '#dc2626', fontSize: '0.75rem', cursor: 'pointer', padding: '6px 0 0', fontWeight: 700, textAlign: 'left', width: 'fit-content' }}
+                  >
+                    Clear Calendar Filter
+                  </button>
+                )}
+              </div>
             </div>
 
             <div className="filter-tabs">
               <button className={filter === 'all' ? 'active' : ''} onClick={() => setFilter('all')}>All</button>
               <button className={filter === 'pending' ? 'active' : ''} onClick={() => setFilter('pending')}>Pending</button>
               <button className={filter === 'accepted' ? 'active' : ''} onClick={() => setFilter('accepted')}>Accepted</button>
+              <button className={filter === 'rejected' ? 'active' : ''} onClick={() => setFilter('rejected')}>Rejected</button>
             </div>
 
             <div className="submissions-list">
