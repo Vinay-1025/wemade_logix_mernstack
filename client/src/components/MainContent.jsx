@@ -2818,7 +2818,7 @@ const MainContent = () => {
         }
         .nav-text { display: flex; flex-direction: column; overflow: hidden; }
         .nav-label { font-size: 0.65rem; text-transform: uppercase; color: var(--text-neutral); font-weight: 800; letter-spacing: 0.5px; margin-bottom: 2px; }
-        .nav-title { font-size: 0.9rem; font-weight: 700; color: var(--app-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
+        .nav-title { font-size: 0.9rem; font-weight: 700; color: var(--app-text); max-width: 100%; }
         .nav-icon { display: flex; align-items: center; justify-content: center; color: var(--text-secondary); transition: all 0.3s; }
         
         .content-footer { 
@@ -2876,7 +2876,7 @@ const MainContent = () => {
             min-width: 0;
             margin: 40px 16px 0; 
           }
-          .nav-title { max-width: 100px; }
+          .nav-title { white-space: normal; line-height: 1.2; font-size: 0.8rem; }
         }
 
         @media (max-width: 480px) {
