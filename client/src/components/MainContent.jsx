@@ -888,7 +888,8 @@ const MainContent = () => {
                   <div className="nav-icon"><ArrowLeft size={20} /></div>
                   <div className="nav-text">
                     <span className="nav-label">Previous Topic</span>
-                    <span className="nav-title">{prevTopic.title}</span>
+                    <span className="nav-title full-title">{prevTopic.title}</span>
+                    <span className="nav-title short-title">{prevTopic.id.toUpperCase()}</span>
                   </div>
                 </button>
               ) : <div />}
@@ -897,7 +898,8 @@ const MainContent = () => {
                 <button className="nav-btn next" onClick={() => setSelectedTopic(nextTopic)}>
                   <div className="nav-text">
                     <span className="nav-label">Next Topic</span>
-                    <span className="nav-title">{nextTopic.title}</span>
+                    <span className="nav-title full-title">{nextTopic.title}</span>
+                    <span className="nav-title short-title">{nextTopic.id.toUpperCase()}</span>
                   </div>
                   <div className="nav-icon"><ArrowRight size={20} /></div>
                 </button>
@@ -986,6 +988,7 @@ const MainContent = () => {
              text-overflow: ellipsis; 
              transition: color 0.3s; 
            }
+           .nav-title.short-title { display: none; }
            .nav-icon { 
              width: 48px;
              height: 48px;
@@ -1015,8 +1018,12 @@ const MainContent = () => {
            }
 
            @media (max-width: 768px) {
-             .navigation-footer { flex-direction: column; gap: 16px; }
-             .nav-btn { max-width: none; }
+             .navigation-footer { flex-direction: row; gap: 12px; }
+             .nav-btn { max-width: none; padding: 12px; }
+             .nav-label { display: none; }
+             .nav-title.full-title { display: none; }
+             .nav-title.short-title { display: block; font-size: 0.8rem; letter-spacing: 1px; }
+             .nav-icon { width: 36px; height: 36px; }
            }
 
            .docs-layout-wrapper {

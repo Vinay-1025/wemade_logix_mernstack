@@ -16,6 +16,7 @@ const Sidebar = () => {
     isSidebarOpen, 
     isSidebarCollapsed, 
     toggleSidebarCollapse,
+    toggleSidebar,
     userAssignments 
   } = useCourse();
   const [expandedWeeks, setExpandedWeeks] = useState(['w1']);
