@@ -204,6 +204,9 @@ const Sidebar = () => {
                               className={`topic-btn ${selectedTopic.id === topic.id ? 'active' : ''}`}
                               onClick={() => {
                                 setSelectedTopic(topic);
+                                if (window.innerWidth <= 768 && isSidebarOpen) {
+                                  toggleSidebar();
+                                }
                                 if (location.pathname !== '/') {
                                   navigate('/');
                                 }

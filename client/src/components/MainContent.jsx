@@ -868,7 +868,7 @@ const MainContent = () => {
                     </div>
 
                     <iframe
-                      src={`${Day1MernPdf}#toolbar=0&navpanes=0&scrollbar=0`}
+                      src={`https://drive.google.com/file/d/1RAebtVTnHmXbcQs0OOKjkcyK3jH-nWFr/preview`}
                       width="100%"
                       height="750px"
                       style={{ border: 'none', borderRadius: '12px', background: 'white', display: 'block' }}
@@ -1006,8 +1006,8 @@ const MainContent = () => {
              border-color: transparent !important;
            }
            .content-footer { 
-             margin-top: 24px; 
-            //  padding: 24px 0; 
+             margin-top: auto; 
+             padding: 16px 0; 
              text-align: center; 
              font-size: 0.8rem; 
              color: #64748b; 
@@ -2145,8 +2145,22 @@ const MainContent = () => {
             .docs-layout-wrapper {
               padding: 20px 12px;
             }
+            .interactive-illustration-pane {
+              flex-direction: column;
+              padding: 20px 12px;
+              gap: 20px;
+            }
+            .animated-pipeline {
+              width: 4px !important;
+              height: 60px !important;
+              margin: 10px 0 !important;
+            }
+            .pipeline-label {
+              display: none;
+            }
             .tech-node {
-              width: 100px;
+              width: 100%;
+              max-width: 200px;
               padding: 10px;
             }
             .tech-node-icon {
@@ -2157,20 +2171,17 @@ const MainContent = () => {
               width: 18px;
               height: 18px;
             }
-            .animated-pipeline {
-              margin: 0 10px;
-            }
-            .pipeline-label {
-              font-size: 0.55rem;
-            }
             .pdf-reader-window {
-              height: 95vh;
+              height: 85vh;
             }
             .pdf-paper-page {
               padding: 20px;
             }
             .pdf-main-scroll-pane {
               padding: 12px;
+            }
+            .docs-section-card iframe {
+              height: 500px !important;
             }
           }
         `}} />
@@ -2822,8 +2833,8 @@ const MainContent = () => {
         .nav-icon { display: flex; align-items: center; justify-content: center; color: var(--text-secondary); transition: all 0.3s; }
         
         .content-footer { 
-          margin-top: 60px; 
-          padding: 24px 0; 
+          margin-top: auto; 
+          padding: 16px 0; 
           border-top: 1px solid var(--app-border); 
         }
         .footer-content {
