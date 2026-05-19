@@ -218,6 +218,8 @@ const MainContent = () => {
 
     fetchRecording();
 
+    const intervalId = setInterval(fetchRecording, 8000);
+
     const handleForceRefresh = () => {
       fetchRecording();
       const savedSection = localStorage.getItem('activeResourcesSection');
@@ -229,6 +231,7 @@ const MainContent = () => {
 
     window.addEventListener('refresh-recording-links', handleForceRefresh);
     return () => {
+      clearInterval(intervalId);
       window.removeEventListener('refresh-recording-links', handleForceRefresh);
     };
   }, [selectedTopic?.id, currentDayData?.dayId, loggedInUser?.token]);

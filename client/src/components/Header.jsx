@@ -52,7 +52,7 @@ const Header = () => {
   useEffect(() => {
     if (user) {
       fetchNotifications();
-      const interval = setInterval(fetchNotifications, 30000); // Poll every 30s
+      const interval = setInterval(fetchNotifications, 8000); // Poll every 8s
       return () => clearInterval(interval);
     }
   }, [user]);
