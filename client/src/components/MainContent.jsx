@@ -2826,14 +2826,12 @@ const MainContent = () => {
           margin-top: 60px; 
           padding: 24px 0; 
           border-top: 1px solid var(--app-border); 
-          display: flex;
-          justify-content: center;
         }
         .footer-content {
           display: flex;
-          flex-direction: column;
+          justify-content: space-between;
           align-items: center;
-          gap: 8px;
+          width: 100%;
         }
         .footer-brand {
           font-weight: 800;

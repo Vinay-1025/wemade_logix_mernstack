@@ -711,13 +711,59 @@ const Header = () => {
           font-weight: 500;
           font-size: 0.9rem;
         }
+        .modal-overlay {
+          position: fixed;
+          top: 0; left: 0; right: 0; bottom: 0;
+          background: rgba(15, 23, 42, 0.6);
+          backdrop-filter: blur(6px);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 9999;
+          animation: fadeInOverlay 0.2s ease-out;
+        }
+        @keyframes fadeInOverlay {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
         .password-modal {
-          max-width: 420px;
+          width: 100%;
+          max-width: 440px;
           background: var(--app-bg) !important;
           border-radius: 24px !important;
           border: 1px solid var(--light-tertiary) !important;
           box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
           padding: 32px !important;
+          margin: 20px;
+          animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes modalPop {
+          0% { transform: scale(0.95); opacity: 0; }
+          100% { transform: scale(1); opacity: 1; }
+        }
+        .modal-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 8px;
+        }
+        .close-btn {
+          background: transparent;
+          border: none;
+          font-size: 1.5rem;
+          color: var(--text-neutral);
+          cursor: pointer;
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.2s;
+        }
+        .close-btn:hover {
+          background: var(--light-tertiary);
+          color: var(--text-primary);
         }
         .modal-header h3 {
           font-size: 1.5rem;
@@ -759,9 +805,10 @@ const Header = () => {
         }
         .modal-actions {
           display: flex;
-          justify-content: flex-end;
+          justify-content: space-between;
+          align-items: center;
           gap: 16px;
-          margin-top: 16px;
+          margin-top: 24px;
         }
         .btn-secondary {
           padding: 12px 20px;
