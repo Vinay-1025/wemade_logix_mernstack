@@ -2116,16 +2116,22 @@ const MainContent = () => {
             .docs-main-container {
               grid-template-columns: 1fr;
               gap: 24px;
+              min-width: 0;
             }
             .docs-nav-sidebar {
               position: static;
               padding: 12px;
+              min-width: 0;
+              width: 100%;
+              overflow: hidden;
             }
             .sidebar-nav-list {
               flex-direction: row;
               overflow-x: auto;
               padding-bottom: 4px;
               scrollbar-width: none;
+              -webkit-overflow-scrolling: touch;
+              max-width: 100%;
             }
             .sidebar-nav-list::-webkit-scrollbar {
               display: none;
@@ -2133,9 +2139,16 @@ const MainContent = () => {
             .sidebar-nav-item {
               white-space: nowrap;
               width: auto;
+              flex-shrink: 0;
             }
             .docs-section-card {
               padding: 20px;
+              min-width: 0;
+              overflow: hidden;
+              width: 100%;
+            }
+            .docs-section-card iframe {
+              max-width: 100%;
             }
             .docs-page-header h1 {
               font-size: 1.75rem;

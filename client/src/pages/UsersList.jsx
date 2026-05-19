@@ -410,7 +410,7 @@ const UsersList = () => {
                 </button>
               </div>
 
-              <div className="excel-workflow" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div className="excel-workflow" style={{ display: 'flex', flexDirection: 'column', gap: '20px', maxHeight: '55vh', overflowY: 'auto', paddingRight: '8px' }}>
                 
                 {/* Step 1: Download Template */}
                 <div className="workflow-step" style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
