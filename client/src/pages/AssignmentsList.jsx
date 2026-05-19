@@ -18,6 +18,7 @@ const AssignmentsList = () => {
   const [selectedStudentFilter, setSelectedStudentFilter] = useState('all');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [isChangingAction, setIsChangingAction] = useState(false);
 
   useEffect(() => {
     fetchAssignments();
@@ -47,6 +48,7 @@ const AssignmentsList = () => {
         if (target) {
           setSelectedAssignment(target);
           setFeedback(target.feedback || '');
+          setIsChangingAction(false);
         }
       }
     } catch (err) {
@@ -55,8 +57,13 @@ const AssignmentsList = () => {
     }
   };
 
-  const handleAction = async (status) => {
+  const handleAction = async (status, requiresReason = false) => {
     if (!selectedAssignment) return;
+
+    if (requiresReason && (!feedback.trim() || feedback.trim() === (selectedAssignment.feedback || '').trim())) {
+      alert('Please specify why you are changing the status and provide a comment/reason.');
+      return;
+    }
 
     try {
       const userData = JSON.parse(localStorage.getItem('user'));
@@ -72,6 +79,7 @@ const AssignmentsList = () => {
         alert(`Assignment ${status} successfully`);
         setSelectedAssignment(null);
         setFeedback('');
+        setIsChangingAction(false);
         fetchAssignments();
       }
     } catch (err) {
@@ -222,6 +230,7 @@ const AssignmentsList = () => {
                     onClick={() => {
                       setSelectedAssignment(asn);
                       setFeedback(asn.feedback || '');
+                      setIsChangingAction(false);
                     }}
                   >
                     <div className="item-main">
@@ -270,24 +279,75 @@ const AssignmentsList = () => {
                   />
                 </div>
 
-                <div className="feedback-section">
-                  <div className="section-label">
-                    <MessageSquare size={18} /> <span>Instructor Feedback</span>
+                {selectedAssignment.status === 'pending' || isChangingAction ? (
+                  <div className="feedback-section" style={{ background: isChangingAction ? '#fefce8' : 'white', border: isChangingAction ? '1px solid #fef3c7' : 'none', padding: isChangingAction ? '24px' : '0', borderRadius: isChangingAction ? '16px' : '0' }}>
+                    <div className="section-label" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <MessageSquare size={18} /> 
+                        <span>{isChangingAction ? 'Reason for Status Change & New Feedback' : 'Instructor Feedback'}</span>
+                      </span>
+                      {isChangingAction && <span style={{ fontSize: '0.75rem', color: '#b45309', fontWeight: 800 }}>CHANGING PREVIOUS DECISION</span>}
+                    </div>
+                    <textarea 
+                      placeholder={isChangingAction ? 'Please detail the reason for changing the decision and include new feedback...' : 'Add your comments here...'}
+                      value={feedback}
+                      onChange={(e) => setFeedback(e.target.value)}
+                      style={{ border: isChangingAction ? '1px solid #fde68a' : '1px solid var(--light-tertiary)' }}
+                    />
+                    <div className="action-buttons">
+                      <button className="btn btn-reject" onClick={() => handleAction('rejected', isChangingAction)}>
+                        <XCircle size={18} /> Reject Submission
+                      </button>
+                      <button className="btn btn-accept" onClick={() => handleAction('accepted', isChangingAction)}>
+                        <CheckCircle2 size={18} /> Accept & Approve
+                      </button>
+                      {isChangingAction && (
+                        <button 
+                          className="btn" 
+                          type="button"
+                          onClick={() => {
+                            setIsChangingAction(false);
+                            setFeedback(selectedAssignment.feedback || '');
+                          }}
+                          style={{ background: 'white', color: '#475569', border: '1px solid #cbd5e1', cursor: 'pointer' }}
+                        >
+                          Cancel
+                        </button>
+                      )}
+                    </div>
                   </div>
-                  <textarea 
-                    placeholder="Add your comments here..."
-                    value={feedback}
-                    onChange={(e) => setFeedback(e.target.value)}
-                  />
-                  <div className="action-buttons">
-                    <button className="btn btn-reject" onClick={() => handleAction('rejected')}>
-                      <XCircle size={18} /> Reject Submission
-                    </button>
-                    <button className="btn btn-accept" onClick={() => handleAction('accepted')}>
-                      <CheckCircle2 size={18} /> Accept & Approve
-                    </button>
+                ) : (
+                  <div className="feedback-section" style={{ background: '#f8fafc', padding: '24px', borderRadius: '16px', border: '1px solid var(--light-tertiary)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ fontSize: '0.9rem', fontWeight: 800 }}>Decision Status:</span>
+                        <div className={`status-tag ${selectedAssignment.status}`}>
+                          {selectedAssignment.status === 'accepted' && <CheckCircle2 size={12} />}
+                          {selectedAssignment.status === 'rejected' && <XCircle size={12} />}
+                          <span>{selectedAssignment.status}</span>
+                        </div>
+                      </div>
+                      <button 
+                        className="btn btn-secondary" 
+                        type="button"
+                        onClick={() => setIsChangingAction(true)}
+                        style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(0, 71, 171, 0.05)', color: 'var(--primary-blue)', border: '1px solid rgba(0, 71, 171, 0.1)', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '0.8rem' }}
+                      >
+                        Change Action
+                      </button>
+                    </div>
+                    {selectedAssignment.feedback ? (
+                      <div>
+                        <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-neutral)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Current Feedback</span>
+                        <p style={{ margin: '8px 0 0', fontSize: '0.9rem', color: 'var(--text-primary)', background: 'white', padding: '12px 16px', borderRadius: '10px', border: '1px solid var(--light-tertiary)', whiteSpace: 'pre-wrap' }}>
+                          {selectedAssignment.feedback}
+                        </p>
+                      </div>
+                    ) : (
+                      <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-neutral)', fontStyle: 'italic' }}>No feedback was left for this decision.</p>
+                    )}
                   </div>
-                </div>
+                )}
               </div>
             ) : (
               <div className="no-selection">
