@@ -421,7 +421,7 @@ const UsersList = () => {
               <div className="excel-workflow" style={{ display: 'flex', flexDirection: 'column', gap: '20px', maxHeight: '55vh', overflowY: 'auto', paddingRight: '8px' }}>
                 
                 {/* Step 1: Download Template */}
-                <div className="workflow-step" style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div className="workflow-step" style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
                   <div>
                     <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700 }}>1. Get Configuration Spreadsheet</h4>
                     <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: '#64748b' }}>Download our prepared template containing required user schemas.</p>
@@ -438,7 +438,7 @@ const UsersList = () => {
                 </div>
 
                 {/* Step 2: Drag and Drop Zone */}
-                <div className="workflow-step">
+                <div className="workflow-step" style={{ flexShrink: 0 }}>
                   <h4 style={{ margin: '0 0 10px', fontSize: '0.95rem', fontWeight: 700 }}>2. Upload Populated Template</h4>
                   
                   <div 
@@ -486,7 +486,7 @@ const UsersList = () => {
 
                 {/* Step 3: parsed preview */}
                 {excelUsers.length > 0 && (
-                  <div className="parsed-preview-container" style={{ border: '1px solid #e2e8f0', borderRadius: '16px', overflow: 'hidden' }}>
+                  <div className="parsed-preview-container" style={{ border: '1px solid #e2e8f0', borderRadius: '16px', overflow: 'hidden', flexShrink: 0 }}>
                     <div style={{ background: '#f8fafc', padding: '10px 16px', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <span style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: '#64748b', letterSpacing: '0.5px' }}>Data Schema Preview</span>
                       <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--primary-cyan)' }}>Total: {excelUsers.length}</span>
@@ -527,7 +527,7 @@ const UsersList = () => {
 
                 {/* Import Status Progress */}
                 {isImporting && (
-                  <div className="import-progress-container" style={{ background: '#f8fafc', padding: '16px', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+                  <div className="import-progress-container" style={{ background: '#f8fafc', padding: '16px', borderRadius: '16px', border: '1px solid #e2e8f0', flexShrink: 0 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', fontWeight: 700, marginBottom: '8px' }}>
                       <span style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--primary-cyan)' }}>
                         <Database size={16} />
@@ -1007,8 +1007,8 @@ const UsersList = () => {
         .empty-state p { margin-top: 16px; font-size: 1rem; }
 
         /* Modal Redesign (Light Theme) */
-        .users-page .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; animation: fadeIn 0.3s ease; }
-        .users-page .modal-content { background: white; border: 1px solid rgba(0,0,0,0.05); border-radius: 24px; width: 100%; max-width: 500px; padding: 40px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); color: #1e293b; }
+        .users-page .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); display: flex; align-items: flex-start; justify-content: center; z-index: 1000; padding: 40px 20px; overflow-y: auto; animation: fadeIn 0.3s ease; }
+        .users-page .modal-content { background: white; border: 1px solid rgba(0,0,0,0.05); border-radius: 24px; width: 100%; max-width: 500px; padding: 40px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); color: #1e293b; margin: auto; }
         .users-page .modal-header { display: flex; align-items: center; gap: 16px; margin-bottom: 32px; position: relative; }
         .users-page .modal-icon { width: 48px; height: 48px; background: rgba(0, 209, 209, 0.1); color: #00d1d1; border-radius: 14px; display: flex; align-items: center; justify-content: center; }
         .users-page .modal-header h3 { font-size: 1.5rem; font-weight: 800; margin: 0; color: #1e293b; letter-spacing: -0.5px; }
