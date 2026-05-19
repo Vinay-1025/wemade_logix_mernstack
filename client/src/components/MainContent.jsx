@@ -177,6 +177,7 @@ const MainContent = () => {
   const [isIframeLoading, setIsIframeLoading] = useState(false);
 
   useEffect(() => {
+    let timer;
     if (activeVideoUrl) {
       if (isDirectVideo(activeVideoUrl)) {
         setIsVideoLoading(true);
@@ -184,11 +185,18 @@ const MainContent = () => {
       } else {
         setIsVideoLoading(false);
         setIsIframeLoading(true);
+        // Bulletproof fallback to clear loader after 3.5s
+        timer = setTimeout(() => {
+          setIsIframeLoading(false);
+        }, 3500);
       }
     } else {
       setIsVideoLoading(false);
       setIsIframeLoading(false);
     }
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
   }, [activeVideoUrl]);
 
   useEffect(() => {
@@ -1788,7 +1796,7 @@ const MainContent = () => {
                           </button>
                         </div>
                         
-                        <div style={{ position: 'relative', width: '100%', paddingTop: '56.25%', borderRadius: '12px', overflow: 'hidden', background: '#000' }}>
+                        <div className="video-player-wrapper">
                           {(isVideoLoading || isIframeLoading) && (
                             <div style={{
                               position: 'absolute',
@@ -1804,7 +1812,8 @@ const MainContent = () => {
                               alignItems: 'center',
                               zIndex: 10,
                               gap: '12px',
-                              color: '#fff'
+                              color: '#fff',
+                              pointerEvents: 'none'
                             }}>
                               <div className="spinner-mini" style={{
                                 width: '36px',
@@ -3318,6 +3327,15 @@ const MainContent = () => {
             color: #94a3b8;
           }
 
+          .video-player-wrapper {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+            border-radius: 12px;
+            overflow: hidden;
+            background: #000;
+          }
+
           /* General animation helper classes */
           .animate-fade {
             animation: fadeIn 0.35s ease-out;
@@ -3379,6 +3397,9 @@ const MainContent = () => {
               margin-top: 12px !important;
               margin-bottom: 20px !important;
             }
+            .video-player-wrapper {
+              padding-top: 75% !important; /* 4:3 Aspect Ratio for tablets */
+            }
             .docs-section-card table {
               display: block;
               width: 100%;
@@ -3437,6 +3458,9 @@ const MainContent = () => {
             }
             .tutor-material-iframe {
               height: 380px !important;
+            }
+            .video-player-wrapper {
+              padding-top: 85% !important; /* Taller Aspect Ratio for mobile viewports */
             }
           }
         `}} />
