@@ -7,7 +7,7 @@ const logAction = require('../utils/auditLogger');
 // @route   POST /api/assignments
 // @access  Private (Student)
 const submitAssignment = async (req, res) => {
-  const { topicId, topicTitle, code } = req.body;
+  const { topicId, topicTitle, dayTitle, weekTitle, code } = req.body;
 
   if (!topicId || !topicTitle || !code) {
     return res.status(400).json({ message: 'Please provide all required fields' });
@@ -18,6 +18,8 @@ const submitAssignment = async (req, res) => {
       student: req.user._id,
       topicId,
       topicTitle,
+      dayTitle,
+      weekTitle,
       code,
     });
 

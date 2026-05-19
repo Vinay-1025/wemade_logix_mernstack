@@ -14,6 +14,12 @@ const assignmentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  dayTitle: {
+    type: String,
+  },
+  weekTitle: {
+    type: String,
+  },
   code: {
     type: String,
     required: true,

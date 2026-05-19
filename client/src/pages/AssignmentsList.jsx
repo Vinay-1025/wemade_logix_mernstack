@@ -226,7 +226,10 @@ const AssignmentsList = () => {
                   >
                     <div className="item-main">
                       <p className="topic-name">{asn.topicTitle}</p>
-                      <p className="student-name">{asn.student.name}</p>
+                      <p className="student-name" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+                        <span>{asn.student.name}</span>
+                        {asn.dayTitle && <span style={{ fontSize: '0.75rem', color: 'var(--primary-blue)', fontWeight: 700, opacity: 0.85 }}>{asn.dayTitle.split(':')[0]}</span>}
+                      </p>
                     </div>
                     <div className={`status-tag ${asn.status}`}>
                       {asn.status === 'pending' && <Clock size={12} />}
@@ -254,6 +257,7 @@ const AssignmentsList = () => {
                   <div className="submission-meta">
                     <p>Submitted on: {new Date(selectedAssignment.submittedAt).toLocaleDateString()}</p>
                     <p>Topic: {selectedAssignment.topicTitle}</p>
+                    {selectedAssignment.dayTitle && <p style={{ color: 'var(--primary-blue)', fontWeight: 700 }}>{selectedAssignment.dayTitle}</p>}
                   </div>
                 </div>
 

@@ -2680,9 +2680,27 @@ const MainContent = () => {
                           const user = JSON.parse(localStorage.getItem('user'));
                           const token = user?.token;
 
+                          let dayTitle = '';
+                          let weekTitle = '';
+                          if (Array.isArray(courseData)) {
+                            for (const week of courseData) {
+                              if (Array.isArray(week.days)) {
+                                for (const day of week.days) {
+                                  if (Array.isArray(day.topics) && day.topics.some(t => t.id === selectedTopic.id)) {
+                                    dayTitle = day.dayTitle;
+                                    weekTitle = week.weekTitle;
+                                    break;
+                                  }
+                                }
+                              }
+                            }
+                          }
+
                           const response = await axios.post('/api/assignments', {
                             topicId: selectedTopic.id,
                             topicTitle: selectedTopic.title,
+                            dayTitle,
+                            weekTitle,
                             code: finalCode
                           }, {
                             headers: {
