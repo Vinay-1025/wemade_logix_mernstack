@@ -2640,7 +2640,8 @@ const MainContent = () => {
                 <div className="nav-icon"><ArrowLeft size={20} /></div>
                 <div className="nav-text">
                   <span className="nav-label">Previous Topic</span>
-                  <span className="nav-title">{prevTopic.title}</span>
+                  <span className="nav-title full-title">{prevTopic.title}</span>
+                  <span className="nav-title short-title">{prevTopic.id.split('-').pop().toUpperCase()}</span>
                 </div>
               </button>
             ) : <div />}
@@ -2649,7 +2650,8 @@ const MainContent = () => {
               <button className="nav-btn next" onClick={() => setSelectedTopic(nextTopic)}>
                 <div className="nav-text">
                   <span className="nav-label">Next Topic</span>
-                  <span className="nav-title">{nextTopic.title}</span>
+                  <span className="nav-title full-title">{nextTopic.title}</span>
+                  <span className="nav-title short-title">{nextTopic.id.split('-').pop().toUpperCase()}</span>
                 </div>
                 <div className="nav-icon"><ArrowRight size={20} /></div>
               </button>
@@ -2834,10 +2836,11 @@ const MainContent = () => {
         .nav-btn.next:hover .nav-label, .nav-btn.next:hover .nav-title, .nav-btn.next:hover .nav-icon {
           color: white;
         }
-        .nav-text { display: flex; flex-direction: column; overflow: hidden; }
+        .nav-text { display: flex; flex-direction: column; overflow: hidden; z-index: 1; }
         .nav-label { font-size: 0.65rem; text-transform: uppercase; color: var(--text-neutral); font-weight: 800; letter-spacing: 0.5px; margin-bottom: 2px; }
-        .nav-title { font-size: 0.9rem; font-weight: 700; color: var(--app-text); max-width: 100%; }
-        .nav-icon { display: flex; align-items: center; justify-content: center; color: var(--text-secondary); transition: all 0.3s; }
+        .nav-title { font-size: 0.9rem; font-weight: 700; color: var(--app-text); max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .nav-title.short-title { display: none; }
+        .nav-icon { display: flex; align-items: center; justify-content: center; color: var(--text-secondary); transition: all 0.3s; z-index: 1; flex-shrink: 0; }
         
         .content-footer { 
           margin-top: auto; 
@@ -2892,9 +2895,15 @@ const MainContent = () => {
           .navigation-footer { 
             width: calc(100% - 32px);
             min-width: 0;
-            margin: 40px 16px 0; 
+            margin: 40px 16px 0;
+            flex-direction: row; 
+            gap: 12px; 
           }
-          .nav-title { white-space: normal; line-height: 1.2; font-size: 0.8rem; }
+          .nav-btn { max-width: none; padding: 12px; }
+          .nav-label { display: none; }
+          .nav-title.full-title { display: none; }
+          .nav-title.short-title { display: block; font-size: 0.8rem; letter-spacing: 1px; white-space: normal; line-height: 1.2; }
+          .nav-icon { width: 36px; height: 36px; }
         }
 
         @media (max-width: 480px) {
