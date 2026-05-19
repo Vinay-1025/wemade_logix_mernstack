@@ -1787,13 +1787,50 @@ const MainContent = () => {
                               {activeVideoTitle}
                             </span>
                           </div>
-                          <button 
-                            onClick={() => { setActiveVideoUrl(null); setActiveVideoTitle(''); }}
-                            style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-neutral)', fontSize: '1.2rem', padding: '4px' }}
-                            title="Close Player"
-                          >
-                            ✕
-                          </button>
+                          <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <button 
+                              onClick={() => {
+                                const iframe = document.getElementById('video-player-iframe');
+                                const video = document.getElementById('video-player-element');
+                                const target = iframe || video;
+                                if (target) {
+                                  if (target.requestFullscreen) {
+                                    target.requestFullscreen();
+                                  } else if (target.webkitRequestFullscreen) {
+                                    target.webkitRequestFullscreen();
+                                  } else if (target.msRequestFullscreen) {
+                                    target.msRequestFullscreen();
+                                  } else if (target.mozRequestFullScreen) {
+                                    target.mozRequestFullScreen();
+                                  }
+                                }
+                              }}
+                              className="primary-btn"
+                              style={{ 
+                                display: 'inline-flex', 
+                                alignItems: 'center', 
+                                gap: '6px', 
+                                padding: '6px 12px', 
+                                borderRadius: '10px', 
+                                fontSize: '0.75rem', 
+                                fontWeight: '750', 
+                                cursor: 'pointer',
+                                background: 'var(--primary-cyan)',
+                                borderColor: 'var(--primary-cyan)',
+                                marginRight: '12px',
+                                border: 'none'
+                              }}
+                            >
+                              Fullscreen ↗
+                            </button>
+                            <button 
+                              onClick={() => { setActiveVideoUrl(null); setActiveVideoTitle(''); }}
+                              style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-neutral)', fontSize: '1.2rem', padding: '4px' }}
+                              title="Close Player"
+                            >
+                              ✕
+                            </button>
+                          </div>
                         </div>
                         
                         <div className="video-player-wrapper">
@@ -1830,6 +1867,7 @@ const MainContent = () => {
                           )}
                           {isDirectVideo(activeVideoUrl) ? (
                             <video 
+                              id="video-player-element"
                               src={activeVideoUrl}
                               controls
                               controlsList="nodownload"
@@ -1845,6 +1883,7 @@ const MainContent = () => {
                           ) : (
                             <>
                               <iframe
+                                id="video-player-iframe"
                                 src={getEmbedUrl(activeVideoUrl)}
                                 onLoad={() => setIsIframeLoading(false)}
                                 style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
