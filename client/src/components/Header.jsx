@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { logout, reset } from '../features/auth/authSlice';
-import { Sun, Moon, Menu, Search, Bell, User, LogOut, Users, Shield, GraduationCap, ChevronDown, ClipboardCheck, MessageSquare, Eye, EyeOff } from 'lucide-react';
+import { Sun, Moon, Menu, Search, Bell, User, LogOut, Users, Shield, GraduationCap, ChevronDown, ClipboardCheck, MessageSquare, Eye, EyeOff, X } from 'lucide-react';
 import { useCourse } from '../context/CourseContext';
 
 const Header = () => {
@@ -203,6 +203,7 @@ const Header = () => {
                       key={notif._id} 
                       className={`notification-item ${!notif.isRead ? 'unread' : ''}`}
                       onClick={() => handleNotifClick(notif)}
+                      style={{ position: 'relative', paddingRight: '40px' }}
                     >
                       <div className="notif-icon">
                         {notif.type === 'assignment_submission' ? <ClipboardCheck size={16} /> : <MessageSquare size={16} />}
@@ -211,6 +212,32 @@ const Header = () => {
                         <p className="notif-message">{notif.message}</p>
                         <span className="notif-time">{new Date(notif.createdAt).toLocaleTimeString()}</span>
                       </div>
+                      <button
+                        className="notif-delete-btn"
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          await markAsRead(notif._id);
+                        }}
+                        style={{
+                          position: 'absolute',
+                          right: '12px',
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          background: 'transparent',
+                          border: 'none',
+                          color: 'var(--text-neutral)',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          padding: '6px',
+                          borderRadius: '50%',
+                          transition: 'all 0.2s',
+                        }}
+                        title="Dismiss"
+                      >
+                        <X size={14} />
+                      </button>
                     </div>
                   ))
                 )}
@@ -661,6 +688,7 @@ const Header = () => {
         }
         .notification-item:hover { background: var(--light-secondary); }
         .notification-item.unread { background: rgba(0, 71, 171, 0.03); }
+        .notif-delete-btn:hover { background: rgba(239, 68, 68, 0.1) !important; color: #ef4444 !important; }
         .notif-icon {
           width: 32px;
           height: 32px;

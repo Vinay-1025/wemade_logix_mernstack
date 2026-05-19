@@ -34,7 +34,7 @@ const AssignmentsList = () => {
     try {
       const userData = JSON.parse(localStorage.getItem('user'));
       const token = userData?.token;
-      
+
       const response = await axios.get('/api/assignments', {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -94,41 +94,41 @@ const AssignmentsList = () => {
   };
 
   // Get unique list of students from loaded assignments
-  const studentsList = Array.isArray(assignments) 
+  const studentsList = Array.isArray(assignments)
     ? [...new Map(assignments.map(a => [a.student?._id || a.student?.email, a.student])).values()].filter(Boolean)
     : [];
 
   const filteredAssignments = Array.isArray(assignments) ? assignments.filter(asn => {
     // 1. Search term match
-    const matchesSearch = asn.student?.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          asn.topicTitle?.toLowerCase().includes(searchTerm.toLowerCase());
-    
+    const matchesSearch = asn.student?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      asn.topicTitle?.toLowerCase().includes(searchTerm.toLowerCase());
+
     // 2. Status filter match
     const matchesFilter = filter === 'all' || asn.status === filter;
-    
+
     // 3. Student dropdown filter match
     const studentId = asn.student?._id || asn.student?.email;
     const matchesStudent = selectedStudentFilter === 'all' || studentId === selectedStudentFilter;
-    
+
     // 4. Date calendar filter match
     let matchesDate = true;
     if (asn.submittedAt) {
       const submittedDate = new Date(asn.submittedAt);
       submittedDate.setHours(0, 0, 0, 0); // Normalize time to start of day for comparison
-      
+
       if (startDate) {
         const start = new Date(startDate);
         start.setHours(0, 0, 0, 0);
         if (submittedDate < start) matchesDate = false;
       }
-      
+
       if (endDate) {
         const end = new Date(endDate);
         end.setHours(23, 59, 59, 999);
         if (submittedDate > end) matchesDate = false;
       }
     }
-    
+
     return matchesSearch && matchesFilter && matchesStudent && matchesDate;
   }) : [];
 
@@ -165,9 +165,9 @@ const AssignmentsList = () => {
           <div className="assignments-sidebar">
             <div className="search-bar">
               <Search size={18} />
-              <input 
-                type="text" 
-                placeholder="Search topics..." 
+              <input
+                type="text"
+                placeholder="Search topics..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -177,8 +177,8 @@ const AssignmentsList = () => {
             <div className="advanced-filters" style={{ padding: '16px', borderBottom: '1px solid var(--light-tertiary)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <div className="filter-field">
                 <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 800, color: 'var(--text-neutral)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '6px' }}>Filter by Student</label>
-                <select 
-                  value={selectedStudentFilter} 
+                <select
+                  value={selectedStudentFilter}
                   onChange={(e) => setSelectedStudentFilter(e.target.value)}
                   style={{ width: '100%', padding: '8px 12px', borderRadius: '10px', border: '1px solid var(--light-tertiary)', fontSize: '0.85rem', outline: 'none', background: 'white', color: 'var(--text-primary)', fontWeight: 600, cursor: 'pointer' }}
                 >
@@ -192,22 +192,22 @@ const AssignmentsList = () => {
               <div className="filter-field">
                 <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 800, color: 'var(--text-neutral)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '6px' }}>Filter by Calendar Range</label>
                 <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                  <input 
-                    type="date" 
-                    value={startDate} 
+                  <input
+                    type="date"
+                    value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
                     style={{ flex: 1, padding: '8px 10px', borderRadius: '10px', border: '1px solid var(--light-tertiary)', fontSize: '0.8rem', color: 'var(--text-primary)', outline: 'none' }}
                   />
                   <span style={{ fontSize: '0.75rem', color: 'var(--text-neutral)' }}>to</span>
-                  <input 
-                    type="date" 
-                    value={endDate} 
+                  <input
+                    type="date"
+                    value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
                     style={{ flex: 1, padding: '8px 10px', borderRadius: '10px', border: '1px solid var(--light-tertiary)', fontSize: '0.8rem', color: 'var(--text-primary)', outline: 'none' }}
                   />
                 </div>
                 {(startDate || endDate) && (
-                  <button 
+                  <button
                     onClick={() => { setStartDate(''); setEndDate(''); }}
                     style={{ background: 'transparent', border: 'none', color: '#dc2626', fontSize: '0.75rem', cursor: 'pointer', padding: '6px 0 0', fontWeight: 700, textAlign: 'left', width: 'fit-content' }}
                   >
@@ -230,8 +230,8 @@ const AssignmentsList = () => {
                 <div className="empty">No submissions found</div>
               ) : (
                 filteredAssignments.map(asn => (
-                  <div 
-                    key={asn._id} 
+                  <div
+                    key={asn._id}
                     className={`submission-item ${selectedAssignment?._id === asn._id ? 'active' : ''}`}
                     onClick={() => {
                       setSelectedAssignment(asn);
@@ -280,8 +280,8 @@ const AssignmentsList = () => {
                   <div className="section-label">
                     <Code size={18} /> <span>Submitted Code & Live Preview</span>
                   </div>
-                  <CodeEditor 
-                    initialCode={getParsedCode(selectedAssignment.code)} 
+                  <CodeEditor
+                    initialCode={getParsedCode(selectedAssignment.code)}
                   />
                 </div>
 
@@ -289,12 +289,12 @@ const AssignmentsList = () => {
                   <div className="feedback-section" style={{ background: isChangingAction ? '#fefce8' : 'white', border: isChangingAction ? '1px solid #fef3c7' : 'none', padding: isChangingAction ? '24px' : '0', borderRadius: isChangingAction ? '16px' : '0' }}>
                     <div className="section-label" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <MessageSquare size={18} /> 
+                        <MessageSquare size={18} />
                         <span>{isChangingAction ? 'Reason for Status Change & New Feedback' : 'Instructor Feedback'}</span>
                       </span>
                       {isChangingAction && <span style={{ fontSize: '0.75rem', color: '#b45309', fontWeight: 800 }}>CHANGING PREVIOUS DECISION</span>}
                     </div>
-                    <textarea 
+                    <textarea
                       placeholder={isChangingAction ? 'Please detail the reason for changing the decision and include new feedback...' : 'Add your comments here...'}
                       value={feedback}
                       onChange={(e) => setFeedback(e.target.value)}
@@ -308,8 +308,8 @@ const AssignmentsList = () => {
                         <CheckCircle2 size={18} /> Accept & Approve
                       </button>
                       {isChangingAction && (
-                        <button 
-                          className="btn" 
+                        <button
+                          className="btn"
                           type="button"
                           onClick={() => {
                             setIsChangingAction(false);
@@ -333,8 +333,8 @@ const AssignmentsList = () => {
                           <span>{selectedAssignment.status}</span>
                         </div>
                       </div>
-                      <button 
-                        className="btn btn-secondary" 
+                      <button
+                        className="btn btn-secondary"
                         type="button"
                         onClick={() => setIsChangingAction(true)}
                         style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(0, 71, 171, 0.05)', color: 'var(--primary-blue)', border: '1px solid rgba(0, 71, 171, 0.1)', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '0.8rem' }}
@@ -364,8 +364,9 @@ const AssignmentsList = () => {
           </div>
         </div>
 
-        <style dangerouslySetInnerHTML={{ __html: `
-          .assignments-page { padding: 40px; height: calc(100vh - 85px); display: flex; flex-direction: column; overflow: hidden; }
+        <style dangerouslySetInnerHTML={{
+          __html: `
+          .assignments-page { padding: 40px; height: calc(120vh - 10px); display: flex; flex-direction: column; overflow: hidden; }
           .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
           .header-info h1 { font-size: 2rem; font-weight: 800; margin-bottom: 4px; }
           .header-info p { color: var(--text-neutral); }
