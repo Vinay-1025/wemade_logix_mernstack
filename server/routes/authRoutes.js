@@ -9,12 +9,14 @@ const {
   deleteUser,
   updateUserStatus,
   updateUser,
+  updatePassword,
 } = require('../controllers/authController');
 const { protect, admin } = require('../middleware/authMiddleware');
 
 router.post('/register', registerUser);
 router.post('/login', loginUser);
 router.get('/profile', protect, getUserProfile);
+router.put('/password', protect, updatePassword);
 router.get('/users', protect, admin, getUsers);
 router.post('/users', protect, admin, createUser);
 router.delete('/users/:id', protect, admin, deleteUser);

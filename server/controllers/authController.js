@@ -254,6 +254,30 @@ const updateUser = async (req, res) => {
   }
 };
 
+// @desc    Update user password
+// @route   PUT /api/auth/password
+// @access  Private
+const updatePassword = async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (user && (await user.matchPassword(currentPassword))) {
+      user.password = newPassword;
+      await user.save();
+      
+      await logAction(req.user, 'Security Update', `Password changed successfully`, user._id, 'User');
+      
+      res.json({ message: 'Password updated successfully' });
+    } else {
+      res.status(401).json({ message: 'Invalid current password' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
@@ -263,4 +287,5 @@ module.exports = {
   deleteUser,
   updateUserStatus,
   updateUser,
+  updatePassword,
 };

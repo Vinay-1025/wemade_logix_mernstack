@@ -17,7 +17,8 @@ app.use(cors({
     'https://wemade-logix-mernstack.web.app',
     'https://wemade-logix-mernstack.firebaseapp.com',
     'http://localhost:5173',
-    'http://localhost:5175'
+    'http://localhost:5175',
+    'http://localhost:5176'
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],

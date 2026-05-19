@@ -2471,7 +2471,7 @@ const MainContent = () => {
                       </h2>
                       <p className="mission-subtitle">
                         {hasSubmission
-                          ? `Submission Status: ${submittedAssignment.status.toUpperCase()} (last update: ${new Date(submittedAssignment.createdAt).toLocaleDateString()})`
+                          ? `Submission Status: ${submittedAssignment.status.toUpperCase()} (last update: ${new Date(submittedAssignment.submittedAt || submittedAssignment.updatedAt || Date.now()).toLocaleDateString()})`
                           : 'Apply your knowledge to unlock the next level'}
                       </p>
                     </div>

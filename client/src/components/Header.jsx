@@ -10,6 +10,9 @@ const Header = () => {
   const { theme, toggleTheme, toggleSidebar } = useCourse();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [passwordData, setPasswordData] = useState({ current: '', new: '', confirm: '' });
+  const [passwordStatus, setPasswordStatus] = useState({ type: '', message: '' });
   const [notifications, setNotifications] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
@@ -101,6 +104,37 @@ const Header = () => {
     dispatch(logout());
     dispatch(reset());
     navigate('/login');
+  };
+
+  const handlePasswordReset = async (e) => {
+    e.preventDefault();
+    if (passwordData.new !== passwordData.confirm) {
+      setPasswordStatus({ type: 'error', message: 'New passwords do not match' });
+      return;
+    }
+    if (passwordData.new.length < 6) {
+      setPasswordStatus({ type: 'error', message: 'Password must be at least 6 characters' });
+      return;
+    }
+
+    try {
+      const userData = JSON.parse(localStorage.getItem('user'));
+      await axios.put('/api/auth/password', {
+        currentPassword: passwordData.current,
+        newPassword: passwordData.new
+      }, {
+        headers: { 'Authorization': `Bearer ${userData.token}` }
+      });
+
+      setPasswordStatus({ type: 'success', message: 'Password updated successfully!' });
+      setTimeout(() => {
+        setShowPasswordModal(false);
+        setPasswordStatus({ type: '', message: '' });
+        setPasswordData({ current: '', new: '', confirm: '' });
+      }, 2000);
+    } catch (err) {
+      setPasswordStatus({ type: 'error', message: err.response?.data?.message || 'Failed to update password' });
+    }
   };
 
   const isAdminView = location.pathname.startsWith('/admin');
@@ -201,8 +235,15 @@ const Header = () => {
           {showProfileMenu && (
             <div className="profile-dropdown" onClick={(e) => e.stopPropagation()}>
               <div className="dropdown-header">
-                <p className="dropdown-user-name">{user?.name}</p>
-                <p className="dropdown-user-email">{user?.email}</p>
+                <div className="dropdown-user-info">
+                  <div className="dropdown-avatar-large">
+                    {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                  </div>
+                  <div className="dropdown-user-details">
+                    <p className="dropdown-user-name">{user?.name}</p>
+                    <p className="dropdown-user-email">{user?.email}</p>
+                  </div>
+                </div>
               </div>
               
               <div className="dropdown-divider"></div>
@@ -232,6 +273,17 @@ const Header = () => {
               <button 
                 className="dropdown-item" 
                 onClick={() => {
+                  setShowPasswordModal(true);
+                  setShowProfileMenu(false);
+                }}
+              >
+                <Shield size={18} />
+                <span>Reset Password</span>
+              </button>
+
+              <button 
+                className="dropdown-item" 
+                onClick={() => {
                   navigate('/profile');
                   setShowProfileMenu(false);
                 }}
@@ -250,6 +302,55 @@ const Header = () => {
           )}
         </div>
       </div>
+
+      {showPasswordModal && (
+        <div className="modal-overlay" onClick={() => setShowPasswordModal(false)}>
+          <div className="modal-content password-modal" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Reset Password</h3>
+              <button className="close-btn" onClick={() => setShowPasswordModal(false)}>×</button>
+            </div>
+            <form onSubmit={handlePasswordReset} className="password-form">
+              {passwordStatus.message && (
+                <div className={`status-message ${passwordStatus.type}`}>
+                  {passwordStatus.message}
+                </div>
+              )}
+              <div className="form-group">
+                <label>Current Password</label>
+                <input 
+                  type="password" 
+                  value={passwordData.current}
+                  onChange={e => setPasswordData({...passwordData, current: e.target.value})}
+                  required 
+                />
+              </div>
+              <div className="form-group">
+                <label>New Password</label>
+                <input 
+                  type="password" 
+                  value={passwordData.new}
+                  onChange={e => setPasswordData({...passwordData, new: e.target.value})}
+                  required 
+                />
+              </div>
+              <div className="form-group">
+                <label>Confirm New Password</label>
+                <input 
+                  type="password" 
+                  value={passwordData.confirm}
+                  onChange={e => setPasswordData({...passwordData, confirm: e.target.value})}
+                  required 
+                />
+              </div>
+              <div className="modal-actions">
+                <button type="button" className="btn-secondary" onClick={() => setShowPasswordModal(false)}>Cancel</button>
+                <button type="submit" className="btn-primary">Update Password</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       <style dangerouslySetInnerHTML={{ __html: `
         .app-header {
@@ -378,16 +479,43 @@ const Header = () => {
           to { opacity: 1; transform: translateY(0); }
         }
         .dropdown-header {
-          padding: 12px 16px;
+          padding: 16px;
+        }
+        .dropdown-user-info {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+        .dropdown-avatar-large {
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          background: var(--brand-gradient);
+          color: white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.2rem;
+          font-weight: 700;
+        }
+        .dropdown-user-details {
+          overflow: hidden;
         }
         .dropdown-user-name {
           font-weight: 700;
           color: var(--text-primary);
-          margin-bottom: 2px;
+          margin: 0 0 2px 0;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
         .dropdown-user-email {
           font-size: 0.8rem;
           color: var(--text-neutral);
+          margin: 0;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
         .dropdown-divider {
           height: 1px;
@@ -582,6 +710,68 @@ const Header = () => {
         .user-name {
           font-weight: 500;
           font-size: 0.9rem;
+        }
+        .password-modal {
+          max-width: 400px;
+        }
+        .password-form {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+          padding-top: 16px;
+        }
+        .form-group label {
+          display: block;
+          margin-bottom: 6px;
+          font-size: 0.85rem;
+          color: var(--text-secondary);
+          font-weight: 600;
+        }
+        .form-group input {
+          width: 100%;
+          padding: 10px 12px;
+          border: 1px solid var(--light-tertiary);
+          border-radius: 8px;
+          font-family: inherit;
+        }
+        .modal-actions {
+          display: flex;
+          justify-content: flex-end;
+          gap: 12px;
+          margin-top: 8px;
+        }
+        .btn-secondary {
+          padding: 10px 16px;
+          border-radius: 8px;
+          border: 1px solid var(--light-tertiary);
+          background: transparent;
+          cursor: pointer;
+          font-weight: 600;
+        }
+        .btn-primary {
+          padding: 10px 16px;
+          border-radius: 8px;
+          border: none;
+          background: var(--primary-cyan);
+          color: white;
+          cursor: pointer;
+          font-weight: 600;
+        }
+        .status-message {
+          padding: 10px;
+          border-radius: 8px;
+          font-size: 0.85rem;
+          font-weight: 600;
+        }
+        .status-message.error {
+          background: #fef2f2;
+          color: #ef4444;
+          border: 1px solid #fecaca;
+        }
+        .status-message.success {
+          background: #f0fdf4;
+          color: #16a34a;
+          border: 1px solid #bbf7d0;
         }
         @media (max-width: 768px) {
           .menu-btn { display: block; }

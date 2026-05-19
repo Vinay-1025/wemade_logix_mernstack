@@ -31,9 +31,9 @@ const Sidebar = () => {
     });
 
     if (!dayData) return { isSubmitted: false, isAccepted: false };
-
-    const miniProjectTopic = dayData.topics[dayData.topics.length - 1];
-    const assignment = userAssignments.find(a => a.topicId === miniProjectTopic.id);
+    
+    const assignmentTopic = dayData.topics.find(t => t.title.toLowerCase().includes('assignment')) || [...dayData.topics].reverse().find(t => !t.isResources) || dayData.topics[dayData.topics.length - 1];
+    const assignment = userAssignments.find(a => a.topicId === assignmentTopic.id);
 
     return {
       isSubmitted: !!assignment,
