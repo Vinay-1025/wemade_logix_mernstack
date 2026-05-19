@@ -4,6 +4,7 @@ import axios from 'axios';
 import { User, Mail, Shield, Calendar, Search, ArrowLeft, Plus, X, UserPlus, ChevronLeft, ChevronRight, MoreVertical, Trash2, UserCheck, Edit2, Ban, Bell, AlertCircle, CheckCircle, Filter, RotateCcw, FileSpreadsheet, Upload, Download, Database } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import MainLayout from '../components/MainLayout';
+import { sendWelcomeEmailJS } from '../utils/emailService';
 
 const UsersList = () => {
   const [users, setUsers] = useState([]);
@@ -155,6 +156,9 @@ const UsersList = () => {
       try {
         await axios.post('/api/auth/users', userToCreate, config);
         successCount++;
+        
+        // Dispatch email directly from client-side via EmailJS
+        sendWelcomeEmailJS(userToCreate.email, userToCreate.name, userToCreate.password, userToCreate.role);
       } catch (err) {
         console.error('Import failure:', userToCreate.email, err);
         failCount++;
@@ -284,6 +288,10 @@ const UsersList = () => {
         },
       };
       await axios.post('/api/auth/users', newUser, config);
+      
+      // Dispatch email directly from client-side via EmailJS
+      sendWelcomeEmailJS(newUser.email, newUser.name, newUser.password, newUser.role);
+      
       setIsAddModalOpen(false);
       setNewUser({ name: '', email: '', password: '', role: 'student' });
       fetchUsers();
