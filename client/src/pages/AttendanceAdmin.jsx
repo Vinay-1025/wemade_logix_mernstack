@@ -466,11 +466,12 @@ const AttendanceAdmin = () => {
 
       <style dangerouslySetInnerHTML={{ __html: `
         .attendance-admin-container {
-          max-width: 1400px;
+          max-width: 100%;
           margin: 0 auto;
           padding: 40px 30px;
           animation: fadeIn 0.5s ease;
           min-height: calc(100vh - 64px);
+          box-sizing: border-box;
         }
         .admin-header-card {
           display: flex;
@@ -482,6 +483,8 @@ const AttendanceAdmin = () => {
           padding: 32px;
           margin-bottom: 32px;
           box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04);
+          box-sizing: border-box;
+          width: 100%;
         }
         .admin-page-title {
           font-size: 2rem;
@@ -576,9 +579,10 @@ const AttendanceAdmin = () => {
         }
         .attendance-grid {
           display: grid;
-          grid-template-columns: 380px 1fr;
+          grid-template-columns: 350px 1fr;
           gap: 32px;
           align-items: start;
+          width: 100%;
         }
         .control-card, .audit-card {
           background: #ffffff;
@@ -586,6 +590,10 @@ const AttendanceAdmin = () => {
           border-radius: 24px;
           padding: 32px;
           box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04);
+          min-width: 0;
+          overflow: hidden;
+          width: 100%;
+          box-sizing: border-box;
         }
         .card-header-premium {
           display: flex;
@@ -679,6 +687,7 @@ const AttendanceAdmin = () => {
           justify-content: center;
           overflow: hidden;
           width: 100%;
+          box-sizing: border-box;
         }
         .qr-image-container {
           position: relative;
@@ -718,6 +727,7 @@ const AttendanceAdmin = () => {
           border-radius: 10px;
           width: 100%;
           text-align: center;
+          box-sizing: border-box;
         }
         .code-text {
           font-family: monospace;
@@ -779,6 +789,7 @@ const AttendanceAdmin = () => {
           align-items: center;
           text-align: center;
           padding: 10px 0;
+          width: 100%;
         }
         .inactive-badge {
           display: flex;
@@ -867,6 +878,7 @@ const AttendanceAdmin = () => {
           display: flex;
           flex-direction: column;
           gap: 16px;
+          width: 100%;
         }
         .search-bar-wrapper {
           position: relative;
@@ -888,6 +900,7 @@ const AttendanceAdmin = () => {
           color: var(--text-primary);
           font-size: 0.9rem;
           transition: all 0.2s ease;
+          box-sizing: border-box;
         }
         .search-input-card:focus {
           outline: none;
@@ -897,8 +910,8 @@ const AttendanceAdmin = () => {
         }
         .filter-selectors-grid {
           display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 12px;
+          grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+          gap: 16px;
           width: 100%;
         }
         .filter-select-wrapper {
@@ -924,6 +937,7 @@ const AttendanceAdmin = () => {
           font-weight: 600;
           outline: none;
           transition: all 0.2s ease;
+          box-sizing: border-box;
         }
         .filter-select-input:focus, .filter-date-input:focus {
           border-color: var(--primary-cyan);
@@ -935,11 +949,13 @@ const AttendanceAdmin = () => {
           -webkit-overflow-scrolling: touch;
           border: 1px solid var(--app-border);
           border-radius: 16px;
+          width: 100%;
         }
         .premium-admin-table {
           width: 100%;
           border-collapse: collapse;
           text-align: left;
+          min-width: 750px;
         }
         .premium-admin-table th {
           padding: 16px 20px;
@@ -1097,13 +1113,10 @@ const AttendanceAdmin = () => {
         }
 
         /* Responsive Media Queries */
-        @media (max-width: 1200px) {
+        @media (max-width: 1350px) {
           .attendance-grid {
             grid-template-columns: 1fr;
             gap: 28px;
-          }
-          .filter-selectors-grid {
-            grid-template-columns: repeat(2, 1fr);
           }
         }
         @media (max-width: 768px) {
