@@ -2057,19 +2057,19 @@ const MainContent = () => {
                                   </p>
                                 </div>
 
-                                <div style={{ background: '#0f172a', padding: '16px', borderRadius: '10px', border: '1px solid var(--app-border)' }}>
-                                  <h5 style={{ margin: '0 0 8px 0', color: 'white', fontSize: '0.85rem' }}>🏠 Real-Life Analogy: Naming Rooms</h5>
-                                  <p style={{ margin: 0, fontSize: '0.8rem', color: '#cbd5e1', lineHeight: '1.5' }}>
+                                <div style={{ background: 'var(--app-card-bg)', padding: '16px', borderRadius: '10px', border: '1px solid var(--app-border)' }}>
+                                  <h5 style={{ margin: '0 0 8px 0', color: 'var(--app-text)', fontSize: '0.85rem' }}>🏠 Real-Life Analogy: Naming Rooms</h5>
+                                  <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--app-text-muted)', lineHeight: '1.5' }}>
                                     Imagine constructing a house. Instead of labeling every room as "Room1", "Room2", and "Room3", you label them "Kitchen", "Bedroom", and "Hall". Now, anyone entering understands the room's purpose immediately. Semantic HTML works exactly like this.
                                   </p>
                                 </div>
 
                                 <div style={{ borderTop: '1px solid var(--app-border)', paddingTop: '16px' }}>
-                                  <h5 style={{ margin: '0 0 12px 0', color: 'white', fontSize: '0.9rem' }}>Before vs. After Semantic HTML</h5>
+                                  <h5 style={{ margin: '0 0 12px 0', color: 'var(--app-text)', fontSize: '0.9rem' }}>Before vs. After Semantic HTML</h5>
                                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                                     <div style={{ background: 'rgba(220, 38, 38, 0.03)', border: '1px solid rgba(220, 38, 38, 0.2)', padding: '12px', borderRadius: '8px' }}>
                                       <strong style={{ color: '#f87171', fontSize: '0.75rem', display: 'block', marginBottom: '8px' }}>Before (Generic "Div Soup"):</strong>
-                                      <pre style={{ margin: 0, fontSize: '0.7rem', color: '#cbd5e1', fontFamily: 'monospace' }}>
+                                      <pre style={{ margin: 0, fontSize: '0.7rem', color: 'var(--app-text)', fontFamily: 'monospace' }}>
 {`<div id="header">Logo</div>
 <div id="menu">Links</div>
 <div id="content">Article</div>
@@ -2078,7 +2078,7 @@ const MainContent = () => {
                                     </div>
                                     <div style={{ background: 'rgba(16, 185, 129, 0.03)', border: '1px solid rgba(16, 185, 129, 0.2)', padding: '12px', borderRadius: '8px' }}>
                                       <strong style={{ color: '#34d399', fontSize: '0.75rem', display: 'block', marginBottom: '8px' }}>With Semantic HTML (Clean & Standard):</strong>
-                                      <pre style={{ margin: 0, fontSize: '0.7rem', color: '#cbd5e1', fontFamily: 'monospace' }}>
+                                      <pre style={{ margin: 0, fontSize: '0.7rem', color: 'var(--app-text)', fontFamily: 'monospace' }}>
 {`<header>Logo</header>
 <nav>Links</nav>
 <main>Article</main>
@@ -2096,7 +2096,7 @@ const MainContent = () => {
                                 <div style={{ overflowX: 'auto', marginBottom: '24px' }}>
                                   <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid var(--app-border)', fontSize: '0.8rem' }}>
                                     <thead>
-                                      <tr style={{ background: '#e2e8f0', textAlign: 'left', borderBottom: '1px solid var(--app-border)' }}>
+                                      <tr style={{ background: 'var(--light-secondary)', textAlign: 'left', borderBottom: '1px solid var(--app-border)' }}>
                                         <th style={{ padding: '8px 12px', color: 'var(--app-text)' }}>Tag</th>
                                         <th style={{ padding: '8px 12px', color: 'var(--app-text)' }}>Purpose</th>
                                         <th style={{ padding: '8px 12px', color: 'var(--app-text)' }}>Example Syntax</th>
@@ -2106,62 +2106,62 @@ const MainContent = () => {
                                       <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
                                         <td style={{ padding: '8px 12px', color: 'var(--primary-cyan)', fontWeight: 'bold' }}>&lt;header&gt;</td>
                                         <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Top section. Usually contains logo, website title, or main navigation.</td>
-                                        <td style={{ padding: '8px 12px', fontFamily: 'monospace', color: '#cbd5e1' }}>&lt;header&gt;&lt;h1&gt;WeMade&lt;/h1&gt;&lt;/header&gt;</td>
+                                        <td style={{ padding: '8px 12px', fontFamily: 'monospace', color: 'var(--app-text-muted)' }}>&lt;header&gt;&lt;h1&gt;WeMade&lt;/h1&gt;&lt;/header&gt;</td>
                                       </tr>
                                       <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
                                         <td style={{ padding: '8px 12px', color: 'var(--primary-cyan)', fontWeight: 'bold' }}>&lt;nav&gt;</td>
                                         <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Navigation links. Tells screen readers: "These are main links."</td>
-                                        <td style={{ padding: '8px 12px', fontFamily: 'monospace', color: '#cbd5e1' }}>&lt;nav&gt;&lt;a href=""&gt;Home&lt;/a&gt;&lt;/nav&gt;</td>
+                                        <td style={{ padding: '8px 12px', fontFamily: 'monospace', color: 'var(--app-text-muted)' }}>&lt;nav&gt;&lt;a href=""&gt;Home&lt;/a&gt;&lt;/nav&gt;</td>
                                       </tr>
                                       <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
                                         <td style={{ padding: '8px 12px', color: 'var(--primary-cyan)', fontWeight: 'bold' }}>&lt;main&gt;</td>
                                         <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Main content of the page. Only ONE &lt;main&gt; tag should exist per page.</td>
-                                        <td style={{ padding: '8px 12px', fontFamily: 'monospace', color: '#cbd5e1' }}>&lt;main&gt;&lt;h2&gt;Frontend&lt;/h2&gt;&lt;/main&gt;</td>
+                                        <td style={{ padding: '8px 12px', fontFamily: 'monospace', color: 'var(--app-text-muted)' }}>&lt;main&gt;&lt;h2&gt;Frontend&lt;/h2&gt;&lt;/main&gt;</td>
                                       </tr>
                                       <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
                                         <td style={{ padding: '8px 12px', color: 'var(--primary-cyan)', fontWeight: 'bold' }}>&lt;section&gt;</td>
                                         <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Group of related content. Think of it as a content container with a specific topic.</td>
-                                        <td style={{ padding: '8px 12px', fontFamily: 'monospace', color: '#cbd5e1' }}>&lt;section&gt;&lt;h2&gt;Courses&lt;/h2&gt;&lt;/section&gt;</td>
+                                        <td style={{ padding: '8px 12px', fontFamily: 'monospace', color: 'var(--app-text-muted)' }}>&lt;section&gt;&lt;h2&gt;Courses&lt;/h2&gt;&lt;/section&gt;</td>
                                       </tr>
                                       <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
                                         <td style={{ padding: '8px 12px', color: 'var(--primary-cyan)', fontWeight: 'bold' }}>&lt;article&gt;</td>
                                         <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Independent, self-contained content (e.g. blog post, product card).</td>
-                                        <td style={{ padding: '8px 12px', fontFamily: 'monospace', color: '#cbd5e1' }}>&lt;article&gt;&lt;h3&gt;HTML Basics&lt;/h3&gt;&lt;/article&gt;</td>
+                                        <td style={{ padding: '8px 12px', fontFamily: 'monospace', color: 'var(--app-text-muted)' }}>&lt;article&gt;&lt;h3&gt;HTML Basics&lt;/h3&gt;&lt;/article&gt;</td>
                                       </tr>
                                       <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
                                         <td style={{ padding: '8px 12px', color: 'var(--primary-cyan)', fontWeight: 'bold' }}>&lt;aside&gt;</td>
                                         <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Sidebar content (e.g., related posts, ads, secondary callouts).</td>
-                                        <td style={{ padding: '8px 12px', fontFamily: 'monospace', color: '#cbd5e1' }}>&lt;aside&gt;Related Tutorials&lt;/aside&gt;</td>
+                                        <td style={{ padding: '8px 12px', fontFamily: 'monospace', color: 'var(--app-text-muted)' }}>&lt;aside&gt;Related Tutorials&lt;/aside&gt;</td>
                                       </tr>
                                       <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
                                         <td style={{ padding: '8px 12px', color: 'var(--primary-cyan)', fontWeight: 'bold' }}>&lt;footer&gt;</td>
                                         <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Bottom section. Usually contains copyright, contact info, and social links.</td>
-                                        <td style={{ padding: '8px 12px', fontFamily: 'monospace', color: '#cbd5e1' }}>&lt;footer&gt;&copy; 2026 WeMade&lt;/footer&gt;</td>
+                                        <td style={{ padding: '8px 12px', fontFamily: 'monospace', color: 'var(--app-text-muted)' }}>&lt;footer&gt;&copy; 2026 WeMade&lt;/footer&gt;</td>
                                       </tr>
                                       <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
                                         <td style={{ padding: '8px 12px', color: 'var(--primary-cyan)', fontWeight: 'bold' }}>&lt;figure&gt; / &lt;figcaption&gt;</td>
                                         <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Media container (image, diagram) and its caption.</td>
-                                        <td style={{ padding: '8px 12px', fontFamily: 'monospace', color: '#cbd5e1' }}>&lt;figure&gt;&lt;img src=""&gt;&lt;figcaption&gt;Caption&lt;/figcaption&gt;&lt;/figure&gt;</td>
+                                        <td style={{ padding: '8px 12px', fontFamily: 'monospace', color: 'var(--app-text-muted)' }}>&lt;figure&gt;&lt;img src=""&gt;&lt;figcaption&gt;Caption&lt;/figcaption&gt;&lt;/figure&gt;</td>
                                       </tr>
                                       <tr>
                                         <td style={{ padding: '8px 12px', color: 'var(--primary-cyan)', fontWeight: 'bold' }}>&lt;details&gt; / &lt;summary&gt;</td>
                                         <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Interactive expandable content widget and its trigger title.</td>
-                                        <td style={{ padding: '8px 12px', fontFamily: 'monospace', color: '#cbd5e1' }}>&lt;details&gt;&lt;summary&gt;Title&lt;/summary&gt;&lt;p&gt;Body&lt;/p&gt;&lt;/details&gt;</td>
+                                        <td style={{ padding: '8px 12px', fontFamily: 'monospace', color: 'var(--app-text-muted)' }}>&lt;details&gt;&lt;summary&gt;Title&lt;/summary&gt;&lt;p&gt;Body&lt;/p&gt;&lt;/details&gt;</td>
                                       </tr>
                                     </tbody>
                                   </table>
                                 </div>
 
-                                <div style={{ background: '#0f172a', border: '1px solid var(--app-border)', padding: '16px', borderRadius: '8px' }}>
+                                <div style={{ background: 'var(--app-card-bg)', border: '1px solid var(--app-border)', padding: '16px', borderRadius: '8px' }}>
                                   <span style={{ fontSize: '0.8rem', color: 'var(--primary-cyan)', fontWeight: '800', display: 'block', marginBottom: '8px' }}>Difference Between &lt;section&gt; and &lt;article&gt;:</span>
                                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', fontSize: '0.8rem' }}>
-                                    <div style={{ background: 'rgba(255, 255, 255, 0.02)', padding: '12px', borderRadius: '6px', border: '1px solid var(--app-border)' }}>
+                                    <div style={{ background: 'var(--light-secondary)', padding: '12px', borderRadius: '6px', border: '1px solid var(--app-border)' }}>
                                       <strong style={{ color: 'var(--primary-cyan)', display: 'block', marginBottom: '4px' }}>Section:</strong>
-                                      <p style={{ margin: 0, color: '#cbd5e1' }}>Groups related content. Represents a part of a webpage and cannot stand alone.</p>
+                                      <p style={{ margin: 0, color: 'var(--app-text-muted)' }}>Groups related content. Represents a part of a webpage and cannot stand alone.</p>
                                     </div>
-                                    <div style={{ background: 'rgba(255, 255, 255, 0.02)', padding: '12px', borderRadius: '6px', border: '1px solid var(--app-border)' }}>
+                                    <div style={{ background: 'var(--light-secondary)', padding: '12px', borderRadius: '6px', border: '1px solid var(--app-border)' }}>
                                       <strong style={{ color: '#10b981', display: 'block', marginBottom: '4px' }}>Article:</strong>
-                                      <p style={{ margin: 0, color: '#cbd5e1' }}>Independent, self-contained content that can stand alone (e.g. blog post, product card).</p>
+                                      <p style={{ margin: 0, color: 'var(--app-text-muted)' }}>Independent, self-contained content that can stand alone (e.g. blog post, product card).</p>
                                     </div>
                                   </div>
                                 </div>
@@ -2180,7 +2180,7 @@ const MainContent = () => {
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                                   <div style={{ background: 'rgba(239, 68, 68, 0.03)', border: '1px solid rgba(239, 68, 68, 0.15)', padding: '16px', borderRadius: '10px' }}>
                                     <strong style={{ color: '#ef4444', fontSize: '0.8rem', display: 'block', marginBottom: '6px' }}>Without Semantic Tags:</strong>
-                                    <p style={{ margin: '0 0 8px 0', fontSize: '0.75rem', color: '#cbd5e1' }}>
+                                    <p style={{ margin: '0 0 8px 0', fontSize: '0.75rem', color: 'var(--app-text)' }}>
                                       Using generic <code>&lt;div&gt;Menu&lt;/div&gt;</code> and <code>&lt;div&gt;Content&lt;/div&gt;</code>.
                                     </p>
                                     <span style={{ fontSize: '0.75rem', color: '#f87171' }}>⚠️ Screen reader gets confused and reads everything as generic flat text.</span>
@@ -2188,16 +2188,16 @@ const MainContent = () => {
 
                                   <div style={{ background: 'rgba(16, 185, 129, 0.03)', border: '1px solid rgba(16, 185, 129, 0.15)', padding: '16px', borderRadius: '10px' }}>
                                     <strong style={{ color: '#10b981', fontSize: '0.8rem', display: 'block', marginBottom: '6px' }}>With Semantic Tags:</strong>
-                                    <p style={{ margin: '0 0 8px 0', fontSize: '0.75rem', color: '#cbd5e1' }}>
+                                    <p style={{ margin: '0 0 8px 0', fontSize: '0.75rem', color: 'var(--app-text)' }}>
                                       Using explicit landmarks like <code>&lt;nav&gt;Menu&lt;/nav&gt;</code> and <code>&lt;main&gt;Content&lt;/main&gt;</code>.
                                     </p>
                                     <span style={{ fontSize: '0.75rem', color: '#34d399' }}>✅ Screen reader announces: "Navigation Landmark" and "Main Content", letting users jump straight to the content.</span>
                                   </div>
                                 </div>
 
-                                <div style={{ background: 'var(--light-secondary)', border: '1px solid var(--app-border)', padding: '16px', borderRadius: '8px' }}>
-                                  <h5 style={{ margin: '0 0 10px 0', color: 'white', fontSize: '0.85rem' }}>🚀 Why Search Engines Love Semantic HTML (SEO):</h5>
-                                  <p style={{ margin: 0, fontSize: '0.8rem', color: '#cbd5e1', lineHeight: '1.5' }}>
+                                <div style={{ background: 'var(--app-card-bg)', border: '1px solid var(--app-border)', padding: '16px', borderRadius: '8px' }}>
+                                  <h5 style={{ margin: '0 0 10px 0', color: 'var(--app-text)', fontSize: '0.85rem' }}>🚀 Why Search Engines Love Semantic HTML (SEO):</h5>
+                                  <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--app-text-muted)', lineHeight: '1.5' }}>
                                     Search engine bots (like Googlebot) crawl your HTML code to index it. Using semantic landmarks and a clean heading outline helps bots immediately identify page keywords, main articles, and headers, boosting your indexing quality and organic rankings.
                                   </p>
                                 </div>
@@ -2285,7 +2285,7 @@ const MainContent = () => {
                                   {/* Pitfalls */}
                                   <div style={{ background: 'rgba(239, 68, 68, 0.02)', border: '1px solid rgba(239, 68, 68, 0.1)', padding: '16px', borderRadius: '8px' }}>
                                     <strong style={{ color: '#ef4444', fontSize: '0.85rem', display: 'block', marginBottom: '10px' }}>❌ Common Beginner Mistakes:</strong>
-                                    <ul style={{ paddingLeft: '18px', margin: 0, fontSize: '0.78rem', color: '#cbd5e1', lineHeight: '1.5', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                                    <ul style={{ paddingLeft: '18px', margin: 0, fontSize: '0.78rem', color: 'var(--app-text-muted)', lineHeight: '1.5', display: 'flex', flexDirection: 'column', gap: '6px' }}>
                                       <li><strong>Div Soup:</strong> Relying exclusively on generic <code>&lt;div&gt;</code> tags for visual borders or dividers.</li>
                                       <li><strong>Multiple Main Elements:</strong> Placing more than one <code>&lt;main&gt;</code> landmark per page block.</li>
                                       <li><strong>Purposeless Semantics:</strong> Wrapping trivial elements in landmark tags without standard outline structure.</li>
@@ -2298,12 +2298,12 @@ const MainContent = () => {
                                     <strong style={{ color: '#10b981', fontSize: '0.85rem', display: 'block', marginBottom: '10px' }}>💬 Key Interview Questions:</strong>
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.78rem' }}>
                                       <div>
-                                        <strong style={{ color: 'white', display: 'block' }}>Q1: What is Semantic HTML?</strong>
-                                        <span style={{ color: '#cbd5e1' }}>Semantic HTML uses meaningful tags (like <code>&lt;header&gt;</code>, <code>&lt;article&gt;</code>) that clearly describe the content purpose to machines, browsers, and screen readers.</span>
+                                        <strong style={{ color: 'var(--app-text)', display: 'block' }}>Q1: What is Semantic HTML?</strong>
+                                        <span style={{ color: 'var(--app-text-muted)' }}>Semantic HTML uses meaningful tags (like <code>&lt;header&gt;</code>, <code>&lt;article&gt;</code>) that clearly describe the content purpose to machines, browsers, and screen readers.</span>
                                       </div>
                                       <div>
-                                        <strong style={{ color: 'white', display: 'block' }}>Q2: Why is Semantic HTML important?</strong>
-                                        <span style={{ color: '#cbd5e1' }}>It dramatically improves website SEO rankings, ensures screen reader accessibility, and yields cleaner, highly maintainable code.</span>
+                                        <strong style={{ color: 'var(--app-text)', display: 'block' }}>Q2: Why is Semantic HTML important?</strong>
+                                        <span style={{ color: 'var(--app-text-muted)' }}>It dramatically improves website SEO rankings, ensures screen reader accessibility, and yields cleaner, highly maintainable code.</span>
                                       </div>
                                     </div>
                                   </div>
