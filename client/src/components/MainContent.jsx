@@ -3442,7 +3442,7 @@ const MainContent = () => {
             color: #94a3b8;
           }
 
-          .video-player-wrapper {
+           .video-player-wrapper {
             position: relative;
             width: 100%;
             padding-top: 56.25%; /* 16:9 Aspect Ratio */
@@ -3458,6 +3458,14 @@ const MainContent = () => {
             height: 100% !important;
             border: none !important;
             z-index: 2 !important;
+          }
+          .tutor-material-iframe {
+            width: 100%;
+            height: 750px;
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            background: #fff;
           }
 
           /* General animation helper classes */
