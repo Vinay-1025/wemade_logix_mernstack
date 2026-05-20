@@ -26,8 +26,11 @@ const AttendanceAdmin = () => {
   );
 
   const getDayLabel = (dayId) => {
+    if (!dayId) return 'General / Unassigned';
     const day = allDays.find(d => d.dayId === dayId);
-    return day ? day.dayTitle : (dayId ? `Day ID: ${dayId}` : 'General / Unassigned');
+    if (day) return day.dayTitle;
+    if (/^\d+$/.test(dayId)) return `Day ${dayId}`;
+    return dayId;
   };
 
   // Filter States
@@ -164,7 +167,11 @@ const AttendanceAdmin = () => {
       sessionCode.toLowerCase().includes(query);
 
     const sessionDayId = r.session?.dayId || '';
-    const matchesDay = !filterDayId || sessionDayId === filterDayId;
+    const resolvedLabel = getDayLabel(sessionDayId).toLowerCase();
+    const filterQuery = filterDayId.toLowerCase();
+    const matchesDay = !filterDayId || 
+                       sessionDayId.toLowerCase().includes(filterQuery) || 
+                       resolvedLabel.includes(filterQuery);
 
     const markedDate = new Date(r.markedAt);
 
@@ -296,19 +303,15 @@ const AttendanceAdmin = () => {
                 </div>
 
                 <div className="select-day-wrapper">
-                  <label className="select-day-label">Select Class Day</label>
-                  <select
+                  <label className="select-day-label">Class Day Number (Optional)</label>
+                  <input
+                    type="number"
+                    min="1"
+                    placeholder="e.g. 4"
                     value={selectedDayId}
                     onChange={e => setSelectedDayId(e.target.value)}
                     className="select-day-input"
-                  >
-                    <option value="">-- General / Unassigned --</option>
-                    {allDays.map(day => (
-                      <option key={day.dayId} value={day.dayId}>
-                        {day.dayTitle}
-                      </option>
-                    ))}
-                  </select>
+                  />
                 </div>
 
                 <p className="inactive-description">
@@ -357,18 +360,13 @@ const AttendanceAdmin = () => {
               <div className="filter-selectors-grid">
                 <div className="filter-select-wrapper">
                   <label className="filter-label">Class Day</label>
-                  <select
+                  <input
+                    type="text"
+                    placeholder="e.g. 4"
                     value={filterDayId}
                     onChange={e => setFilterDayId(e.target.value)}
                     className="filter-select-input"
-                  >
-                    <option value="">All Days</option>
-                    {allDays.map(day => (
-                      <option key={day.dayId} value={day.dayId}>
-                        {day.dayTitle}
-                      </option>
-                    ))}
-                  </select>
+                  />
                 </div>
 
                 <div className="filter-select-wrapper">
