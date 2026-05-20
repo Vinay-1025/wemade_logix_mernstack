@@ -1690,10 +1690,49 @@ const MainContent = () => {
                           </span>
                         </div>
 
+                        {/* Top Utility Header Bar */}
+                        <div style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          padding: '12px 16px',
+                          background: '#0f172a',
+                          border: '1px solid var(--app-border)',
+                          borderBottom: 'none',
+                          borderTopLeftRadius: '12px',
+                          borderTopRightRadius: '12px'
+                        }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <ShieldCheck size={16} style={{ color: 'var(--primary-cyan)' }} />
+                            <span style={{ fontSize: '0.85rem', fontWeight: '850', color: 'var(--app-text)' }}>Wemade Lecture Slides / Document</span>
+                          </div>
+                          <a 
+                            href={recording.tutorMaterialLink} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            style={{ 
+                              display: 'inline-flex', 
+                              alignItems: 'center', 
+                              gap: '6px', 
+                              padding: '6px 12px', 
+                              borderRadius: '8px', 
+                              fontSize: '0.75rem', 
+                              fontWeight: '750', 
+                              textDecoration: 'none',
+                              cursor: 'pointer',
+                              background: 'rgba(0, 209, 209, 0.1)',
+                              color: 'var(--primary-cyan)',
+                              border: '1px solid rgba(0, 209, 209, 0.3)'
+                            }}
+                          >
+                            Open in New Tab ↗
+                          </a>
+                        </div>
+
                         {/* Hide Google Drive External Link Icon Overlay */}
                         <div style={{
                           position: 'absolute',
-                          top: '8px',
+                          top: '54px',
                           right: '8px',
                           width: '110px',
                           height: '40px',
@@ -1719,6 +1758,11 @@ const MainContent = () => {
                         <iframe
                           src={getEmbedUrl(recording.tutorMaterialLink)}
                           className="tutor-material-iframe"
+                          style={{
+                            borderTopLeftRadius: 0,
+                            borderTopRightRadius: 0,
+                            border: '1px solid var(--app-border)'
+                          }}
                           title="Instructor Deck Preview"
                         ></iframe>
                       </div>
