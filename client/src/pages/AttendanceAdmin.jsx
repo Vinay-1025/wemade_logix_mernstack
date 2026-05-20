@@ -7,16 +7,16 @@ import { courseData } from '../data/mockData';
 
 const AttendanceAdmin = () => {
   const { user: currentUser } = useSelector((state) => state.auth);
-  
+
   const [activeSession, setActiveSession] = useState(null);
   const [records, setRecords] = useState([]);
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(true);
   const [recordsLoading, setRecordsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  
+
   // Flatten days from courseData for selecting and filtering
-  const allDays = courseData.flatMap(week => 
+  const allDays = courseData.flatMap(week =>
     week.days.map(day => ({
       dayId: day.dayId,
       dayTitle: day.dayTitle,
@@ -130,7 +130,7 @@ const AttendanceAdmin = () => {
 
   const handleExportCSV = () => {
     if (records.length === 0) return;
-    
+
     const headers = ['Student Name', 'Student Email', 'Session Code', 'Class Day', 'Marked At'];
     const rows = records.map(r => [
       r.student?.name || 'N/A',
@@ -140,9 +140,9 @@ const AttendanceAdmin = () => {
       new Date(r.markedAt).toLocaleString()
     ]);
 
-    const csvContent = "data:text/csv;charset=utf-8," 
+    const csvContent = "data:text/csv;charset=utf-8,"
       + [headers.join(','), ...rows.map(e => e.map(val => `"${val.replace(/"/g, '""')}"`).join(','))].join('\n');
-      
+
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
@@ -158,15 +158,15 @@ const AttendanceAdmin = () => {
     const studentEmail = r.student?.email || '';
     const sessionCode = r.session?.code || '';
     const query = searchQuery.toLowerCase();
-    const matchesSearch = studentName.toLowerCase().includes(query) || 
-                          studentEmail.toLowerCase().includes(query) || 
-                          sessionCode.toLowerCase().includes(query);
+    const matchesSearch = studentName.toLowerCase().includes(query) ||
+      studentEmail.toLowerCase().includes(query) ||
+      sessionCode.toLowerCase().includes(query);
 
     const sessionDayId = r.session?.dayId || '';
     const matchesDay = !filterDayId || sessionDayId === filterDayId;
 
     const markedDate = new Date(r.markedAt);
-    
+
     let matchesStartDate = true;
     if (startDate) {
       const start = new Date(startDate);
@@ -202,11 +202,9 @@ const AttendanceAdmin = () => {
             <p className="admin-page-subtitle">Dynamically control class registration, generate secure QR keys, and audit student check-ins.</p>
           </div>
           <div className="header-actions-block">
-            <button className="icon-btn-action" onClick={initializeData} title="Refresh Dashboard">
-              <RefreshCw size={16} className={recordsLoading ? 'spin' : ''} />
-            </button>
-            <button 
-              className="action-btn-secondary" 
+
+            <button
+              className="action-btn-secondary"
               onClick={handleExportCSV}
               disabled={records.length === 0}
             >
@@ -240,16 +238,16 @@ const AttendanceAdmin = () => {
                   <div className="active-session-left">
                     <div className="qr-code-wrapper">
                       <div className="qr-image-container">
-                        <img 
-                          src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${activeSession.code}&color=0047ab&bgcolor=ffffff`} 
+                        <img
+                          src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${activeSession.code}&color=0047ab&bgcolor=ffffff`}
                           alt="Attendance QR Code"
                           className="qr-image"
                         />
                       </div>
                       <div className="qr-code-overlay">
                         <span className="code-text">{activeSession.code}</span>
-                        <button 
-                          className="copy-code-btn" 
+                        <button
+                          className="copy-code-btn"
                           onClick={handleCopyCode}
                           title={copied ? "Copied!" : "Copy Code"}
                         >
@@ -292,11 +290,11 @@ const AttendanceAdmin = () => {
                   <span className="inactive-dot"></span>
                   <span className="inactive-text">NO ACTIVE SESSION</span>
                 </div>
-                
+
                 <div className="select-day-wrapper">
                   <label className="select-day-label">Select Class Day</label>
-                  <select 
-                    value={selectedDayId} 
+                  <select
+                    value={selectedDayId}
                     onChange={e => setSelectedDayId(e.target.value)}
                     className="select-day-input"
                   >
@@ -330,22 +328,33 @@ const AttendanceAdmin = () => {
             </div>
 
             <div className="filters-container">
-              <div className="search-bar-wrapper">
-                <Search size={16} className="search-icon-card" />
-                <input 
-                  type="text" 
-                  placeholder="Search by student name, email, or session token..." 
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                  className="search-input-card"
-                />
+              <div className="search-and-refresh-row" style={{ display: 'flex', gap: '12px', alignItems: 'center', width: '100%' }}>
+                <div className="search-bar-wrapper" style={{ flex: 1 }}>
+                  <Search size={16} className="search-icon-card" />
+                  <input
+                    type="text"
+                    placeholder="Search by student name, email, or session token..."
+                    value={searchQuery}
+                    onChange={e => setSearchQuery(e.target.value)}
+                    className="search-input-card"
+                    style={{ height: '48px' }}
+                  />
+                </div>
+                <button 
+                  className="icon-btn-action" 
+                  onClick={initializeData} 
+                  title="Refresh Dashboard"
+                  style={{ flexShrink: 0, height: '48px', width: '48px' }}
+                >
+                  <RefreshCw size={16} className={recordsLoading ? 'spin' : ''} />
+                </button>
               </div>
 
               <div className="filter-selectors-grid">
                 <div className="filter-select-wrapper">
                   <label className="filter-label">Class Day</label>
-                  <select 
-                    value={filterDayId} 
+                  <select
+                    value={filterDayId}
                     onChange={e => setFilterDayId(e.target.value)}
                     className="filter-select-input"
                   >
@@ -360,8 +369,8 @@ const AttendanceAdmin = () => {
 
                 <div className="filter-select-wrapper">
                   <label className="filter-label">Start Date</label>
-                  <input 
-                    type="date" 
+                  <input
+                    type="date"
                     value={startDate}
                     onChange={e => setStartDate(e.target.value)}
                     className="filter-date-input"
@@ -370,8 +379,8 @@ const AttendanceAdmin = () => {
 
                 <div className="filter-select-wrapper">
                   <label className="filter-label">End Date</label>
-                  <input 
-                    type="date" 
+                  <input
+                    type="date"
                     value={endDate}
                     onChange={e => setEndDate(e.target.value)}
                     className="filter-date-input"
@@ -380,8 +389,8 @@ const AttendanceAdmin = () => {
 
                 <div className="filter-select-wrapper">
                   <label className="filter-label">Rows per Page</label>
-                  <select 
-                    value={recordsPerPage} 
+                  <select
+                    value={recordsPerPage}
                     onChange={e => setRecordsPerPage(Number(e.target.value))}
                     className="filter-select-input"
                   >
@@ -446,17 +455,17 @@ const AttendanceAdmin = () => {
                 <div className="pagination-info">
                   Showing <span className="bold">{indexOfFirstRecord + 1}</span> to <span className="bold">{Math.min(indexOfLastRecord, filteredRecords.length)}</span> of <span className="bold">{filteredRecords.length}</span> records
                 </div>
-                
+
                 {totalPages > 1 && (
                   <div className="page-navigation">
-                    <button 
+                    <button
                       disabled={currentPage === 1}
                       onClick={() => paginate(currentPage - 1)}
                       className="page-btn"
                     >
                       <ChevronLeft size={18} />
                     </button>
-                    
+
                     <div className="page-numbers">
                       {[...Array(totalPages)].map((_, index) => (
                         <button
@@ -469,7 +478,7 @@ const AttendanceAdmin = () => {
                       ))}
                     </div>
 
-                    <button 
+                    <button
                       disabled={currentPage === totalPages}
                       onClick={() => paginate(currentPage + 1)}
                       className="page-btn"
@@ -484,7 +493,8 @@ const AttendanceAdmin = () => {
         </div>
       </div>
 
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         .attendance-admin-container {
           max-width: 100%;
           margin: 0 auto;
