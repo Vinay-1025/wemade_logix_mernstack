@@ -4,6 +4,7 @@ import MainLayout from '../components/MainLayout';
 import axios from 'axios';
 import { Play, Square, QrCode, Search, RefreshCw, CheckCircle, Clock, Calendar, Download, ChevronLeft, ChevronRight, Copy, Check } from 'lucide-react';
 import { courseData } from '../data/mockData';
+import { QRCodeSVG } from 'qrcode.react';
 
 const AttendanceAdmin = () => {
   const { user: currentUser } = useSelector((state) => state.auth);
@@ -238,9 +239,12 @@ const AttendanceAdmin = () => {
                   <div className="active-session-left">
                     <div className="qr-code-wrapper">
                       <div className="qr-image-container">
-                        <img
-                          src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${activeSession.code}&color=0047ab&bgcolor=ffffff`}
-                          alt="Attendance QR Code"
+                        <QRCodeSVG
+                          value={activeSession.code}
+                          size={200}
+                          bgColor={"#ffffff"}
+                          fgColor={"#0047ab"}
+                          level={"H"}
                           className="qr-image"
                         />
                       </div>
