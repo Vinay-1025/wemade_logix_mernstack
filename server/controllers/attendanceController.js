@@ -113,6 +113,9 @@ const scanQR = async (req, res) => {
     });
   } catch (error) {
     console.error('Error scanning QR code:', error);
+    if (error.code === 11000) {
+      return res.status(400).json({ message: 'Attendance already marked for this session' });
+    }
     res.status(500).json({ message: 'Server error while marking attendance' });
   }
 };

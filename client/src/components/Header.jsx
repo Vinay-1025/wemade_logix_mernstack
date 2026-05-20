@@ -24,7 +24,7 @@ const Header = () => {
   const [scannerError, setScannerError] = useState('');
   const [scanSuccessMessage, setScanSuccessMessage] = useState('');
   const [manualCode, setManualCode] = useState('');
-  const [manualSubmitting, setManualSubmitting] = useState(false);
+  const [attendanceSubmitting, setAttendanceSubmitting] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -77,11 +77,15 @@ const Header = () => {
   }, [showScannerModal, scanSuccessMessage]);
 
   const handleMarkAttendance = async (code) => {
+    if (attendanceSubmitting) return;
+    setAttendanceSubmitting(true);
+    setScannerError('');
     try {
       const userData = JSON.parse(localStorage.getItem('user'));
       const token = userData?.token;
       if (!token) {
         setScannerError("Authentication token not found. Please log in again.");
+        setAttendanceSubmitting(false);
         return;
       }
 
@@ -96,11 +100,13 @@ const Header = () => {
         setTimeout(() => {
           setShowScannerModal(false);
           setScanSuccessMessage('');
+          setAttendanceSubmitting(false);
         }, 1500);
       }
     } catch (err) {
       const msg = err.response?.data?.message || "Failed to mark attendance. Invalid QR code.";
       setScannerError(msg);
+      setAttendanceSubmitting(false);
       setTimeout(() => {
         setScannerError('');
         setShowScannerModal(false);
@@ -111,14 +117,15 @@ const Header = () => {
 
   const handleManualCodeSubmit = async (e) => {
     e.preventDefault();
-    if (!manualCode.trim()) return;
-    setManualSubmitting(true);
+    if (!manualCode.trim() || attendanceSubmitting) return;
+    setAttendanceSubmitting(true);
     setScannerError('');
     try {
       const userData = JSON.parse(localStorage.getItem('user'));
       const token = userData?.token;
       if (!token) {
         setScannerError("Authentication token not found. Please log in again.");
+        setAttendanceSubmitting(false);
         return;
       }
 
@@ -134,13 +141,13 @@ const Header = () => {
         setTimeout(() => {
           setShowScannerModal(false);
           setScanSuccessMessage('');
+          setAttendanceSubmitting(false);
         }, 1500);
       }
     } catch (err) {
       const msg = err.response?.data?.message || "Failed to mark attendance. Invalid code.";
       setScannerError(msg);
-    } finally {
-      setManualSubmitting(false);
+      setAttendanceSubmitting(false);
     }
   };
 
@@ -550,15 +557,15 @@ const Header = () => {
                       value={manualCode}
                       onChange={e => setManualCode(e.target.value)}
                       maxLength={10}
-                      disabled={manualSubmitting}
+                      disabled={attendanceSubmitting}
                       className="manual-code-input"
                     />
                     <button 
                       type="submit" 
-                      disabled={manualSubmitting || !manualCode.trim()} 
+                      disabled={attendanceSubmitting || !manualCode.trim()} 
                       className="manual-code-btn"
                     >
-                      {manualSubmitting ? 'Submitting...' : 'Submit'}
+                      {attendanceSubmitting ? 'Submitting...' : 'Submit'}
                     </button>
                   </form>
                 </>
