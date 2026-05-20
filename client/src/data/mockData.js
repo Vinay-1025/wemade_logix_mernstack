@@ -1555,8 +1555,7 @@ export const courseData = [
               "content": "Talking points, advanced grid spanning diagrams, security guidelines for forms validation, and structural solutions.",
               "duration": "15 mins",
               "resources": [
-                "Student Interactive Lab & Schedules Worksheet (PDF)",
-                "Wemade Registration Portal Solution File (HTML)"
+                "Student Interactive Lab & Schedules Worksheet (PDF)"
               ]
             }
           }

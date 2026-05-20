@@ -63,6 +63,21 @@ const MainContent = () => {
   const [dnsResolvedIp, setDnsResolvedIp] = useState('142.250.183.14');
   const [htmlActiveDeconstruct, setHtmlActiveDeconstruct] = useState('HYPER');
   const [activeDay2Tab, setActiveDay2Tab] = useState('anchor');
+  const [activeDay3Tab, setActiveDay3Tab] = useState('lists');
+  const [ulTypeSelect, setUlTypeSelect] = useState('square');
+  const [olTypeSelect, setOlTypeSelect] = useState('1');
+  const [olStartSelect, setOlStartSelect] = useState(10);
+  const [formDataPreview, setFormDataPreview] = useState(null);
+  const [formInputs, setFormInputs] = useState({
+    name: '',
+    email: '',
+    password: '',
+    dob: '',
+    gender: 'male',
+    hobbies: [],
+    country: '',
+    bio: ''
+  });
 
   useEffect(() => {
     const savedSection = localStorage.getItem('activeResourcesSection');
@@ -73,6 +88,21 @@ const MainContent = () => {
       setActiveResourcesSection('overview');
     }
     setActiveDay2Tab('anchor');
+    setActiveDay3Tab('lists');
+    setUlTypeSelect('square');
+    setOlTypeSelect('1');
+    setOlStartSelect(10);
+    setFormDataPreview(null);
+    setFormInputs({
+      name: '',
+      email: '',
+      password: '',
+      dob: '',
+      gender: 'male',
+      hobbies: [],
+      country: '',
+      bio: ''
+    });
     setTutorGuideUnlocked(false);
     setTutorPasswordInput('');
     setActivePdfPreview(null);
@@ -1385,6 +1415,580 @@ const MainContent = () => {
                                 </div>
                               </div>
                             </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {dayId === 'w1-d3' && (
+                      <div className="syllabus-notes-container" style={{ marginTop: '40px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                        <div style={{ borderTop: '1px solid var(--app-border)', paddingTop: '32px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+                            <span style={{ background: 'rgba(236, 72, 153, 0.08)', color: '#ec4899', padding: '6px 12px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 800 }}>DAY 3 RESOURCE</span>
+                            <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: 'var(--app-text)' }}>Lists, Tables & Forms</h3>
+                          </div>
+
+                          <p className="docs-paragraph" style={{ marginBottom: '20px' }}>
+                            Master advanced HTML structures to organize information and build interactive data-collection interfaces. Learn list variations, data tables with grid spanning, and semantic forms with robust input controls.
+                          </p>
+
+                          {/* Day 3 Navigation Tabs */}
+                          <div className="interactive-tabs-row" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '20px' }}>
+                            {[
+                              { id: 'lists', label: 'HTML Lists' },
+                              { id: 'tables', label: 'HTML Tables' },
+                              { id: 'forms', label: 'HTML Forms' }
+                            ].map(tab => (
+                              <button
+                                key={tab.id}
+                                onClick={() => setActiveDay3Tab(tab.id)}
+                                style={{
+                                  padding: '10px 16px',
+                                  fontSize: '0.8rem',
+                                  fontWeight: '700',
+                                  borderRadius: '8px',
+                                  border: '1px solid',
+                                  borderColor: activeDay3Tab === tab.id ? '#ec4899' : 'var(--app-border)',
+                                  background: activeDay3Tab === tab.id ? 'rgba(236, 72, 153, 0.08)' : 'var(--light-secondary)',
+                                  color: activeDay3Tab === tab.id ? '#ec4899' : 'var(--app-text-muted)',
+                                  cursor: 'pointer',
+                                  transition: 'all 0.2s ease'
+                                }}
+                              >
+                                {tab.label}
+                              </button>
+                            ))}
+                          </div>
+
+                          {/* Day 3 Content Details Panel */}
+                          <div style={{ background: 'var(--light-secondary)', border: '1px solid var(--app-border)', padding: '24px', borderRadius: '12px', minHeight: '300px' }}>
+                            {activeDay3Tab === 'lists' && (
+                              <div className="animate-fade" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                                <div>
+                                  <h4 style={{ margin: '0 0 12px 0', color: '#ec4899', fontSize: '1.1rem' }}>HTML Lists & Hierarchies</h4>
+                                  <p style={{ fontSize: '0.85rem', color: 'var(--app-text)', lineHeight: '1.6', marginBottom: '16px' }}>
+                                    HTML lists allow web developers to group a set of related items in lists. There are three core list types: unordered lists for item groups, ordered lists for sequential steps, and description lists for key-value terms.
+                                  </p>
+                                </div>
+
+                                {/* 1. Unordered Lists */}
+                                <div style={{ borderTop: '1px solid var(--app-border)', paddingTop: '20px' }}>
+                                  <h5 style={{ color: 'var(--app-text)', fontSize: '0.95rem', marginBottom: '8px', fontWeight: '700' }}>Unordered HTML List (&lt;ul&gt;, &lt;li&gt;)</h5>
+                                  <p style={{ fontSize: '0.8rem', color: 'var(--app-text-muted)', lineHeight: '1.5', marginBottom: '12px' }}>
+                                    An unordered list starts with the <code>&lt;ul&gt;</code> tag. Each list item starts with the <code>&lt;li&gt;</code> tag. The list items will be marked with bullets (small black circles) by default. The <code>type</code> attribute changes the bullet style.
+                                  </p>
+
+                                  {/* Interactive Unordered List Selector & Preview */}
+                                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '20px', background: '#0f172a', padding: '20px', borderRadius: '10px', border: '1px solid var(--app-border)' }}>
+                                    <div>
+                                      <span style={{ fontSize: '0.75rem', fontWeight: '800', color: '#ec4899', display: 'block', marginBottom: '8px' }}>SELECT BULLET TYPE:</span>
+                                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                                        {['disc', 'circle', 'square', 'none'].map(t => (
+                                          <button
+                                            key={t}
+                                            onClick={() => setUlTypeSelect(t)}
+                                            style={{
+                                              padding: '6px 12px',
+                                              fontSize: '0.7rem',
+                                              fontWeight: '700',
+                                              borderRadius: '6px',
+                                              border: '1px solid',
+                                              borderColor: ulTypeSelect === t ? '#ec4899' : 'rgba(255,255,255,0.1)',
+                                              background: ulTypeSelect === t ? 'rgba(236,72,153,0.15)' : 'rgba(255,255,255,0.03)',
+                                              color: ulTypeSelect === t ? '#ec4899' : '#cbd5e1',
+                                              cursor: 'pointer'
+                                            }}
+                                          >
+                                            {t === 'disc' ? 'disc (default)' : t}
+                                          </button>
+                                        ))}
+                                      </div>
+                                      
+                                      <pre style={{ marginTop: '16px', background: '#090d16', padding: '12px', borderRadius: '6px', fontSize: '0.75rem', color: '#a5f3fc', fontFamily: 'monospace', overflowX: 'auto', marginHorizontal: 0 }}>
+{`<ul type="${ulTypeSelect}">
+  <li>Frontend Developer</li>
+  <li>Backend Developer</li>
+  <li>UI/UX Developer</li>
+</ul>`}
+                                      </pre>
+                                    </div>
+
+                                    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', borderLeft: '1px dashed rgba(255,255,255,0.1)', paddingLeft: '20px' }}>
+                                      <span style={{ fontSize: '0.75rem', fontWeight: '800', color: '#cbd5e1', display: 'block', marginBottom: '12px' }}>LIVE PREVIEW:</span>
+                                      <ul style={{ listStyleType: ulTypeSelect, paddingLeft: ulTypeSelect === 'none' ? '0' : '20px', color: 'white', fontSize: '0.85rem', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                        <li>Frontend Developer</li>
+                                        <li>Backend Developer</li>
+                                        <li>UI/UX Developer</li>
+                                      </ul>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* 2. Ordered Lists */}
+                                <div style={{ borderTop: '1px solid var(--app-border)', paddingTop: '20px' }}>
+                                  <h5 style={{ color: 'var(--app-text)', fontSize: '0.95rem', marginBottom: '8px', fontWeight: '700' }}>Ordered HTML List (&lt;ol&gt;, &lt;li&gt;)</h5>
+                                  <p style={{ fontSize: '0.8rem', color: 'var(--app-text-muted)', lineHeight: '1.5', marginBottom: '12px' }}>
+                                    The HTML <code>&lt;ol&gt;</code> tag defines an ordered list. An ordered list can be numerical or alphabetical. The list items will be marked with numbers by default. The <code>start</code> attribute defines the starting index value (works with numeric values only).
+                                  </p>
+
+                                  {/* Interactive Ordered List Selector & Preview */}
+                                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '20px', background: '#0f172a', padding: '20px', borderRadius: '10px', border: '1px solid var(--app-border)' }}>
+                                    <div>
+                                      <span style={{ fontSize: '0.75rem', fontWeight: '800', color: '#ec4899', display: 'block', marginBottom: '8px' }}>SELECT ORDER TYPE & START:</span>
+                                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '10px' }}>
+                                        {[
+                                          { val: '1', label: '1 (Numbers)' },
+                                          { val: 'A', label: 'A (Letters)' },
+                                          { val: 'a', label: 'a (Letters)' },
+                                          { val: 'I', label: 'I (Roman)' },
+                                          { val: 'i', label: 'i (Roman)' }
+                                        ].map(o => (
+                                          <button
+                                            key={o.val}
+                                            onClick={() => setOlTypeSelect(o.val)}
+                                            style={{
+                                              padding: '6px 10px',
+                                              fontSize: '0.7rem',
+                                              fontWeight: '700',
+                                              borderRadius: '6px',
+                                              border: '1px solid',
+                                              borderColor: olTypeSelect === o.val ? '#ec4899' : 'rgba(255,255,255,0.1)',
+                                              background: olTypeSelect === o.val ? 'rgba(236,72,153,0.15)' : 'rgba(255,255,255,0.03)',
+                                              color: olTypeSelect === o.val ? '#ec4899' : '#cbd5e1',
+                                              cursor: 'pointer'
+                                            }}
+                                          >
+                                            {o.label}
+                                          </button>
+                                        ))}
+                                      </div>
+                                      
+                                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <span style={{ fontSize: '0.7rem', color: '#cbd5e1', fontWeight: '700' }}>START VALUE:</span>
+                                        <input
+                                          type="number"
+                                          value={olStartSelect}
+                                          onChange={(e) => setOlStartSelect(Math.max(1, parseInt(e.target.value) || 1))}
+                                          style={{
+                                            width: '60px',
+                                            background: '#090d16',
+                                            border: '1px solid rgba(255,255,255,0.15)',
+                                            color: 'white',
+                                            padding: '4px 8px',
+                                            borderRadius: '4px',
+                                            fontSize: '0.75rem',
+                                            outline: 'none'
+                                          }}
+                                        />
+                                      </div>
+
+                                      <pre style={{ marginTop: '16px', background: '#090d16', padding: '12px', borderRadius: '6px', fontSize: '0.75rem', color: '#a5f3fc', fontFamily: 'monospace', overflowX: 'auto', marginHorizontal: 0 }}>
+{`<ol type="${olTypeSelect}" start="${olStartSelect}">
+  <li>Frontend Developer</li>
+  <li>Backend Developer</li>
+  <li>UI/UX Developer</li>
+</ol>`}
+                                      </pre>
+                                    </div>
+
+                                    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', borderLeft: '1px dashed rgba(255,255,255,0.1)', paddingLeft: '20px' }}>
+                                      <span style={{ fontSize: '0.75rem', fontWeight: '800', color: '#cbd5e1', display: 'block', marginBottom: '12px' }}>LIVE PREVIEW:</span>
+                                      <ol type={olTypeSelect} start={olStartSelect} style={{ paddingLeft: '20px', color: 'white', fontSize: '0.85rem', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                        <li>Frontend Developer</li>
+                                        <li>Backend Developer</li>
+                                        <li>UI/UX Developer</li>
+                                      </ol>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* 3. Description Lists */}
+                                <div style={{ borderTop: '1px solid var(--app-border)', paddingTop: '20px' }}>
+                                  <h5 style={{ color: 'var(--app-text)', fontSize: '0.95rem', marginBottom: '8px', fontWeight: '700' }}>Description List (&lt;dl&gt;, &lt;dt&gt;, &lt;dd&gt;)</h5>
+                                  <p style={{ fontSize: '0.8rem', color: 'var(--app-text-muted)', lineHeight: '1.5', marginBottom: '12px' }}>
+                                    A Description List is a list of definition terms (<code>&lt;dt&gt;</code>) and corresponding definition descriptions (<code>&lt;dd&gt;</code>) rendered on a indented new line. To create a definition list, start with a <code>&lt;dl&gt;</code> element, followed by pairs of <code>&lt;dt&gt;</code> and <code>&lt;dd&gt;</code> elements.
+                                  </p>
+
+                                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '20px', background: '#0f172a', padding: '20px', borderRadius: '10px', border: '1px solid var(--app-border)' }}>
+                                    <div>
+                                      <span style={{ fontSize: '0.75rem', fontWeight: '800', color: '#ec4899', display: 'block', marginBottom: '8px' }}>CODE SYNTAX:</span>
+                                      <pre style={{ background: '#090d16', padding: '12px', borderRadius: '6px', fontSize: '0.75rem', color: '#a5f3fc', fontFamily: 'monospace', overflowX: 'auto', marginHorizontal: 0, marginVertical: 0 }}>
+{`<dl>
+  <dt>HTML</dt>
+  <dd>HYPERTEXT MARKUP LANGUAGE</dd>
+</dl>`}
+                                      </pre>
+                                    </div>
+
+                                    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', borderLeft: '1px dashed rgba(255,255,255,0.1)', paddingLeft: '20px' }}>
+                                      <span style={{ fontSize: '0.75rem', fontWeight: '800', color: '#cbd5e1', display: 'block', marginBottom: '12px' }}>LIVE PREVIEW:</span>
+                                      <dl style={{ color: 'white', fontSize: '0.85rem' }}>
+                                        <dt style={{ fontWeight: 'bold', color: '#ec4899' }}>HTML</dt>
+                                        <dd style={{ marginLeft: '20px', color: '#cbd5e1', marginTop: '4px' }}>HYPERTEXT MARKUP LANGUAGE</dd>
+                                      </dl>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Nested List Practice Banner */}
+                                <div style={{ borderTop: '1px dashed var(--app-border)', paddingTop: '20px', display: 'flex', alignItems: 'center', gap: '12px', background: 'rgba(236,72,153,0.03)', padding: '16px', borderRadius: '8px' }}>
+                                  <Lightbulb size={20} color="#ec4899" />
+                                  <p style={{ margin: 0, fontSize: '0.8rem', color: '#cbd5e1' }}>
+                                    <strong>Nested List Challenge:</strong> You can build nested structures by placing an entire list element (<code>&lt;ul&gt;</code> or <code>&lt;ol&gt;</code>) inside a list item (<code>&lt;li&gt;</code>) wrapper! Give it a try inside the code editor!
+                                  </p>
+                                </div>
+                              </div>
+                            )}
+
+                            {activeDay3Tab === 'tables' && (
+                              <div className="animate-fade" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                                <div>
+                                  <h4 style={{ margin: '0 0 12px 0', color: '#ec4899', fontSize: '1.1rem' }}>HTML Tables & Tabular Layouts</h4>
+                                  <p style={{ fontSize: '0.85rem', color: 'var(--app-text)', lineHeight: '1.6', marginBottom: '16px' }}>
+                                    The <code>&lt;table&gt;</code> tag is used to display structured datasets in clear rows and columns. Learn the elements and attributes used to construct and style academic and administrative grids.
+                                  </p>
+                                </div>
+
+                                {/* Table Elements Grid */}
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px' }}>
+                                  {[
+                                    { tag: '<table>', desc: 'Defines the root table boundary container itself.' },
+                                    { tag: '<tr>', desc: 'Defines a table row (contains cells).' },
+                                    { tag: '<th>', desc: 'Defines a bold, centered header cell.' },
+                                    { tag: '<td>', desc: 'Defines a normal data cell containing text or nodes.' }
+                                  ].map(item => (
+                                    <div key={item.tag} style={{ background: '#0f172a', border: '1px solid var(--app-border)', padding: '16px', borderRadius: '8px' }}>
+                                      <strong style={{ color: '#ec4899', fontSize: '0.85rem', display: 'block', marginBottom: '6px', fontFamily: 'monospace' }}>{item.tag}</strong>
+                                      <span style={{ fontSize: '0.78rem', color: '#cbd5e1', lineHeight: '1.4' }}>{item.desc}</span>
+                                    </div>
+                                  ))}
+                                </div>
+
+                                {/* Table Attributes Reference */}
+                                <div style={{ borderTop: '1px solid var(--app-border)', paddingTop: '20px' }}>
+                                  <h5 style={{ color: 'var(--app-text)', fontSize: '0.95rem', marginBottom: '12px', fontWeight: '700' }}>Table Attributes Reference</h5>
+                                  <div style={{ overflowX: 'auto' }}>
+                                    <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid var(--app-border)', fontSize: '0.8rem' }}>
+                                      <thead>
+                                        <tr style={{ background: '#e2e8f0', textAlign: 'left', borderBottom: '1px solid var(--app-border)' }}>
+                                          <th style={{ padding: '8px 12px', color: 'var(--app-text)', fontWeight: 'bold' }}>Attribute</th>
+                                          <th style={{ padding: '8px 12px', color: 'var(--app-text)', fontWeight: 'bold' }}>Description</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                          <td style={{ padding: '8px 12px', color: '#ec4899', fontWeight: 'bold', fontFamily: 'monospace' }}>cellpadding</td>
+                                          <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Defines the padding space inside each individual cell wrapper.</td>
+                                        </tr>
+                                        <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                          <td style={{ padding: '8px 12px', color: '#ec4899', fontWeight: 'bold', fontFamily: 'monospace' }}>cellspacing</td>
+                                          <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Defines the spacing gap between neighboring cells.</td>
+                                        </tr>
+                                        <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                          <td style={{ padding: '8px 12px', color: '#ec4899', fontWeight: 'bold', fontFamily: 'monospace' }}>colspan</td>
+                                          <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Instructs one cell to span across multiple columns horizontally.</td>
+                                        </tr>
+                                        <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                          <td style={{ padding: '8px 12px', color: '#ec4899', fontWeight: 'bold', fontFamily: 'monospace' }}>rowspan</td>
+                                          <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Instructs one cell to span across multiple rows vertically.</td>
+                                        </tr>
+                                        <tr>
+                                          <td style={{ padding: '8px 12px', color: '#ec4899', fontWeight: 'bold', fontFamily: 'monospace' }}>border</td>
+                                          <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Specifies the thickness of the outer table and inner grid cell borders.</td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </div>
+
+                                {/* Table Syntax & Code Preview */}
+                                <div style={{ borderTop: '1px solid var(--app-border)', paddingTop: '20px' }}>
+                                  <h5 style={{ color: 'var(--app-text)', fontSize: '0.95rem', marginBottom: '12px', fontWeight: '700' }}>Developer Roles Table Sample</h5>
+                                  
+                                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '20px', background: '#0f172a', padding: '20px', borderRadius: '10px', border: '1px solid var(--app-border)' }}>
+                                    <div>
+                                      <span style={{ fontSize: '0.75rem', fontWeight: '800', color: '#ec4899', display: 'block' }}>CODE SYNTAX:</span>
+                                      <pre style={{ background: '#090d16', padding: '12px', borderRadius: '6px', fontSize: '0.7rem', color: '#a5f3fc', fontFamily: 'monospace', overflowX: 'auto', marginHorizontal: 0, marginVertical: 0, maxHeight: '250px' }}>
+{`<h2>Developer Roles</h2>
+<table border="1" cellpadding="10" cellspacing="0">
+  <caption><strong>Team Structure</strong></caption>
+  <tr>
+    <th>Role</th>
+    <th>Name</th>
+    <th>Experience (Years)</th>
+  </tr>
+  <tr>
+    <td>Frontend Developer</td>
+    <td>Venky</td>
+    <td>3</td>
+  </tr>
+  <tr>
+    <td>Backend Developer</td>
+    <td>Mohan</td>
+    <td>4</td>
+  </tr>
+  <tr>
+    <td>UI/UX Designer</td>
+    <td>Vinay</td>
+    <td>2</td>
+  </tr>
+</table>`}
+                                      </pre>
+                                    </div>
+
+                                    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', borderLeft: '1px dashed rgba(255,255,255,0.1)', paddingLeft: '20px', overflowX: 'auto' }}>
+                                      <span style={{ fontSize: '0.75rem', fontWeight: '800', color: '#cbd5e1', display: 'block', marginBottom: '12px' }}>LIVE PREVIEW:</span>
+                                      <div style={{ background: '#ffffff', color: '#0f172a', padding: '16px', borderRadius: '8px' }}>
+                                        <h4 style={{ margin: '0 0 10px 0', fontSize: '0.95rem', color: '#0f172a', fontWeight: '700' }}>Developer Roles</h4>
+                                        <table border="1" cellPadding="10" cellSpacing="0" style={{ borderCollapse: 'collapse', width: '100%', fontSize: '0.8rem', border: '1px solid #cbd5e1' }}>
+                                          <caption style={{ fontSize: '0.75rem', marginBottom: '4px', color: '#475569' }}><strong>Team Structure</strong></caption>
+                                          <thead style={{ background: '#f1f5f9' }}>
+                                            <tr>
+                                              <th style={{ border: '1px solid #cbd5e1', padding: '8px 10px', textAlign: 'left', fontWeight: 'bold' }}>Role</th>
+                                              <th style={{ border: '1px solid #cbd5e1', padding: '8px 10px', textAlign: 'left', fontWeight: 'bold' }}>Name</th>
+                                              <th style={{ border: '1px solid #cbd5e1', padding: '8px 10px', textAlign: 'left', fontWeight: 'bold' }}>Experience (Years)</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            <tr>
+                                              <td style={{ border: '1px solid #cbd5e1', padding: '8px 10px' }}>Frontend Developer</td>
+                                              <td style={{ border: '1px solid #cbd5e1', padding: '8px 10px' }}>Venky</td>
+                                              <td style={{ border: '1px solid #cbd5e1', padding: '8px 10px' }}>3</td>
+                                            </tr>
+                                            <tr>
+                                              <td style={{ border: '1px solid #cbd5e1', padding: '8px 10px' }}>Backend Developer</td>
+                                              <td style={{ border: '1px solid #cbd5e1', padding: '8px 10px' }}>Mohan</td>
+                                              <td style={{ border: '1px solid #cbd5e1', padding: '8px 10px' }}>4</td>
+                                            </tr>
+                                            <tr>
+                                              <td style={{ border: '1px solid #cbd5e1', padding: '8px 10px' }}>UI/UX Designer</td>
+                                              <td style={{ border: '1px solid #cbd5e1', padding: '8px 10px' }}>Vinay</td>
+                                              <td style={{ border: '1px solid #cbd5e1', padding: '8px 10px' }}>2</td>
+                                            </tr>
+                                          </tbody>
+                                        </table>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            {activeDay3Tab === 'forms' && (
+                              <div className="animate-fade" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                                <div>
+                                  <h4 style={{ margin: '0 0 12px 0', color: '#ec4899', fontSize: '1.1rem' }}>HTML Forms & Input Submissions</h4>
+                                  <p style={{ fontSize: '0.85rem', color: 'var(--app-text)', lineHeight: '1.6', marginBottom: '16px' }}>
+                                    The <code>&lt;form&gt;</code> element encapsulates interactive inputs, selections, checkboxes, and triggers to package and deliver student information cleanly to database backends.
+                                  </p>
+                                </div>
+
+                                {/* Form tags and Attributes */}
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
+                                  
+                                  {/* Form tags */}
+                                  <div style={{ background: '#0f172a', border: '1px solid var(--app-border)', padding: '16px', borderRadius: '8px' }}>
+                                    <span style={{ fontSize: '0.75rem', fontWeight: '800', color: '#ec4899', display: 'block', marginBottom: '10px' }}>FORM STRUCTURE TAGS:</span>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.75rem' }}>
+                                      <div><code style={{ color: '#f472b6' }}>&lt;form&gt;</code>: Starts form, defines action/method</div>
+                                      <div><code style={{ color: '#f472b6' }}>&lt;label&gt;</code>: Provides accessibility link text for inputs</div>
+                                      <div><code style={{ color: '#f472b6' }}>&lt;input&gt;</code>: Multi-purpose data collection tag</div>
+                                      <div><code style={{ color: '#f472b6' }}>&lt;textarea&gt;</code>: Multi-line description field</div>
+                                      <div><code style={{ color: '#f472b6' }}>&lt;select&gt;</code>: Options selection dropdown root</div>
+                                      <div><code style={{ color: '#f472b6' }}>&lt;button&gt;</code>: Triggers validation & post handlers</div>
+                                    </div>
+                                  </div>
+
+                                  {/* Form Attributes */}
+                                  <div style={{ background: '#0f172a', border: '1px solid var(--app-border)', padding: '16px', borderRadius: '8px' }}>
+                                    <span style={{ fontSize: '0.75rem', fontWeight: '800', color: '#ec4899', display: 'block', marginBottom: '10px' }}>FORM ATTRIBUTES:</span>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.75rem' }}>
+                                      <div><strong style={{ color: '#cbd5e1' }}>action</strong> (url): Target endpoint for form payload</div>
+                                      <div><strong style={{ color: '#cbd5e1' }}>method</strong> (get/post): Protocol transport format</div>
+                                      <div><strong style={{ color: '#cbd5e1' }}>target</strong> (_blank/_self): Window context for reply</div>
+                                      <div><strong style={{ color: '#cbd5e1' }}>novalidate</strong>: Disables browser parsing controls</div>
+                                    </div>
+                                  </div>
+
+                                  {/* Input Attributes */}
+                                  <div style={{ background: '#0f172a', border: '1px solid var(--app-border)', padding: '16px', borderRadius: '8px' }}>
+                                    <span style={{ fontSize: '0.75rem', fontWeight: '800', color: '#ec4899', display: 'block', marginBottom: '10px' }}>INPUT ATTRIBUTES:</span>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.75rem' }}>
+                                      <div><strong style={{ color: '#cbd5e1' }}>type</strong>: text, email, password, checkbox, etc.</div>
+                                      <div><strong style={{ color: '#cbd5e1' }}>name</strong>: Target key mapping submitted to server</div>
+                                      <div><strong style={{ color: '#cbd5e1' }}>placeholder</strong>: Inline prompt inside empty frames</div>
+                                      <div><strong style={{ color: '#cbd5e1' }}>required</strong>: Demands mandatory input values</div>
+                                      <div><strong style={{ color: '#cbd5e1' }}>checked</strong>: Pre-selects checkbox/radio targets</div>
+                                    </div>
+                                  </div>
+
+                                </div>
+
+                                {/* Form Syntax & Live Simulator */}
+                                <div style={{ borderTop: '1px solid var(--app-border)', paddingTop: '20px' }}>
+                                  <h5 style={{ color: 'var(--app-text)', fontSize: '0.95rem', marginBottom: '12px', fontWeight: '700' }}>User Registration Form Simulator</h5>
+                                  
+                                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px', background: '#0f172a', padding: '20px', borderRadius: '10px', border: '1px solid var(--app-border)' }}>
+                                    
+                                    {/* Left: Code syntax box */}
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                      <span style={{ fontSize: '0.75rem', fontWeight: '800', color: '#ec4899', display: 'block' }}>CODE STRUCTURE:</span>
+                                      <pre style={{ background: '#090d16', padding: '12px', borderRadius: '6px', fontSize: '0.68rem', color: '#a5f3fc', fontFamily: 'monospace', overflowX: 'auto', maxHeight: '350px' }}>
+{`<form action="/submit" method="post">
+  <label for="name">Full Name:</label>
+  <input type="text" id="name" required>
+
+  <label for="email">Email:</label>
+  <input type="email" id="email" required>
+
+  <label>Gender:</label>
+  <input type="radio" name="gender" value="male" checked> Male
+  <input type="radio" name="gender" value="female"> Female
+
+  <label>Hobbies:</label>
+  <input type="checkbox" name="hobbies" value="reading"> Reading
+  <input type="checkbox" name="hobbies" value="coding"> Coding
+
+  <label for="country">Country:</label>
+  <select id="country">
+    <option value="india">India</option>
+    <option value="usa">USA</option>
+  </select>
+
+  <input type="submit" value="Register">
+</form>`}
+                                      </pre>
+                                    </div>
+
+                                    {/* Right: Live Interactive Form */}
+                                    <div style={{ borderLeft: '1px dashed rgba(255,255,255,0.1)', paddingLeft: '20px' }}>
+                                      <span style={{ fontSize: '0.75rem', fontWeight: '800', color: '#cbd5e1', display: 'block', marginBottom: '12px' }}>LIVE FORM INTERACTIVE PREVIEW:</span>
+                                      
+                                      <form 
+                                        onSubmit={(e) => {
+                                          e.preventDefault();
+                                          setFormDataPreview(formInputs);
+                                        }}
+                                        style={{ background: '#ffffff', color: '#1f2937', padding: '20px', borderRadius: '8px', fontSize: '0.8rem', display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '400px', overflowY: 'auto' }}
+                                      >
+                                        <div>
+                                          <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '4px', color: '#374151' }}>Full Name:</label>
+                                          <input 
+                                            type="text" 
+                                            value={formInputs.name}
+                                            onChange={(e) => setFormInputs(prev => ({ ...prev, name: e.target.value }))}
+                                            placeholder="Enter your full name" 
+                                            required 
+                                            style={{ width: '100%', padding: '6px 8px', borderRadius: '4px', border: '1px solid #d1d5db', outline: 'none', background: 'white', color: '#1f2937' }}
+                                          />
+                                        </div>
+
+                                        <div>
+                                          <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '4px', color: '#374151' }}>Email:</label>
+                                          <input 
+                                            type="email" 
+                                            value={formInputs.email}
+                                            onChange={(e) => setFormInputs(prev => ({ ...prev, email: e.target.value }))}
+                                            placeholder="Enter your email" 
+                                            required 
+                                            style={{ width: '100%', padding: '6px 8px', borderRadius: '4px', border: '1px solid #d1d5db', outline: 'none', background: 'white', color: '#1f2937' }}
+                                          />
+                                        </div>
+
+                                        <div>
+                                          <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '2px', color: '#374151' }}>Gender:</label>
+                                          <div style={{ display: 'flex', gap: '12px' }}>
+                                            <label style={{ cursor: 'pointer', color: '#4b5563', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                              <input 
+                                                type="radio" 
+                                                name="gender" 
+                                                value="male" 
+                                                checked={formInputs.gender === 'male'}
+                                                onChange={(e) => setFormInputs(prev => ({ ...prev, gender: e.target.value }))}
+                                              /> Male
+                                            </label>
+                                            <label style={{ cursor: 'pointer', color: '#4b5563', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                              <input 
+                                                type="radio" 
+                                                name="gender" 
+                                                value="female" 
+                                                checked={formInputs.gender === 'female'}
+                                                onChange={(e) => setFormInputs(prev => ({ ...prev, gender: e.target.value }))}
+                                              /> Female
+                                            </label>
+                                          </div>
+                                        </div>
+
+                                        <div>
+                                          <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '2px', color: '#374151' }}>Hobbies:</label>
+                                          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                                            {['reading', 'sports', 'coding'].map(hob => (
+                                              <label key={hob} style={{ cursor: 'pointer', textTransform: 'capitalize', color: '#4b5563', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                <input 
+                                                  type="checkbox" 
+                                                  value={hob} 
+                                                  checked={formInputs.hobbies.includes(hob)}
+                                                  onChange={(e) => {
+                                                    const checked = e.target.checked;
+                                                    setFormInputs(prev => ({
+                                                      ...prev,
+                                                      hobbies: checked 
+                                                        ? [...prev.hobbies, hob] 
+                                                        : prev.hobbies.filter(x => x !== hob)
+                                                    }));
+                                                  }}
+                                                /> {hob}
+                                              </label>
+                                            ))}
+                                          </div>
+                                        </div>
+
+                                        <div>
+                                          <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '4px', color: '#374151' }}>Country:</label>
+                                          <select 
+                                            value={formInputs.country}
+                                            onChange={(e) => setFormInputs(prev => ({ ...prev, country: e.target.value }))}
+                                            style={{ width: '100%', padding: '6px 8px', borderRadius: '4px', border: '1px solid #d1d5db', background: 'white', color: '#1f2937', outline: 'none' }}
+                                          >
+                                            <option value="">--Select--</option>
+                                            <option value="india">India</option>
+                                            <option value="usa">USA</option>
+                                            <option value="uk">UK</option>
+                                          </select>
+                                        </div>
+
+                                        <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
+                                          <input 
+                                            type="submit" 
+                                            value="Register" 
+                                            style={{ flex: 1, padding: '8px 16px', background: '#ec4899', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', fontSize: '0.8rem' }} 
+                                          />
+                                          <input 
+                                            type="button" 
+                                            value="Clear" 
+                                            onClick={() => {
+                                              setFormInputs({ name: '', email: '', password: '', dob: '', gender: 'male', hobbies: [], country: '', bio: '' });
+                                              setFormDataPreview(null);
+                                            }}
+                                            style={{ padding: '8px 16px', background: '#e5e7eb', color: '#374151', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', fontSize: '0.8rem' }} 
+                                          />
+                                        </div>
+                                      </form>
+
+                                      {formDataPreview && (
+                                        <div style={{ marginTop: '16px', background: 'rgba(236,72,153,0.06)', border: '1px solid rgba(236,72,153,0.2)', padding: '12px', borderRadius: '6px', color: 'white' }}>
+                                          <span style={{ display: 'block', fontSize: '0.75rem', fontWeight: '800', color: '#ec4899', marginBottom: '6px' }}>SUBMITTED DATA PAYLOAD:</span>
+                                          <pre style={{ fontSize: '0.7rem', margin: 0, fontFamily: 'monospace', color: '#cbd5e1', overflowX: 'auto' }}>
+                                            {JSON.stringify(formDataPreview, null, 2)}
+                                          </pre>
+                                        </div>
+                                      )}
+                                    </div>
+
+                                  </div>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>
