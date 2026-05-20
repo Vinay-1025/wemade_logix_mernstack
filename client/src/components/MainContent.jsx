@@ -3552,23 +3552,26 @@ const MainContent = () => {
             .docs-layout-wrapper {
               padding: 20px 12px;
             }
+            .docs-section-card {
+              padding: 16px !important;
+            }
             .interactive-illustration-pane {
-              flex-direction: column;
-              padding: 20px 12px;
-              gap: 20px;
+              flex-direction: column !important;
+              padding: 20px 10px !important;
+              gap: 16px !important;
             }
             .animated-pipeline {
               width: 4px !important;
               height: 60px !important;
-              margin: 10px 0 !important;
+              margin: 10px auto !important;
             }
             .pipeline-label {
-              display: none;
+              display: none !important;
             }
             .tech-node {
-              width: 100%;
-              max-width: 200px;
-              padding: 10px;
+              width: 100% !important;
+              max-width: 180px !important;
+              padding: 10px !important;
             }
             .tech-node-icon {
               width: 36px;
@@ -3577,6 +3580,54 @@ const MainContent = () => {
             .tech-node-icon svg {
               width: 18px;
               height: 18px;
+            }
+            .packet-request {
+              animation: packetFlowDown 2.5s infinite linear !important;
+              left: -2px !important;
+              top: 0% !important;
+            }
+            .packet-response {
+              animation: packetFlowUp 2.5s infinite linear !important;
+              animation-delay: 1.25s !important;
+              left: -2px !important;
+              bottom: 0% !important;
+            }
+            @keyframes packetFlowDown {
+              0% { top: 0%; opacity: 0; }
+              10% { opacity: 1; }
+              90% { opacity: 1; }
+              100% { top: 100%; opacity: 0; }
+            }
+            @keyframes packetFlowUp {
+              0% { bottom: 0%; opacity: 0; }
+              10% { opacity: 1; }
+              90% { opacity: 1; }
+              100% { bottom: 100%; opacity: 0; }
+            }
+            .dom-node-mock {
+              font-size: 0.72rem !important;
+              padding-left: 10px !important;
+              max-width: 100% !important;
+            }
+            .dom-node-mock.tag-html {
+              padding-left: 0 !important;
+            }
+            .objective-cards-grid {
+              grid-template-columns: 1fr !important;
+              gap: 12px !important;
+            }
+            .objective-mini-card {
+              padding: 12px !important;
+            }
+            .objective-mini-card h4 {
+              font-size: 0.85rem !important;
+            }
+            .objective-mini-card p {
+              font-size: 0.78rem !important;
+            }
+            .docs-paragraph {
+              font-size: 0.9rem !important;
+              line-height: 1.55 !important;
             }
             .pdf-reader-window {
               height: 85vh;
