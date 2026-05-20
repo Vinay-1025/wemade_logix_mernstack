@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import MainLayout from '../components/MainLayout';
 import axios from 'axios';
-import { Play, Square, QrCode, Search, RefreshCw, CheckCircle, Clock, Calendar, Download, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Play, Square, QrCode, Search, RefreshCw, CheckCircle, Clock, Calendar, Download, ChevronLeft, ChevronRight, Copy, Check } from 'lucide-react';
 import { courseData } from '../data/mockData';
 
 const AttendanceAdmin = () => {
@@ -10,6 +10,7 @@ const AttendanceAdmin = () => {
   
   const [activeSession, setActiveSession] = useState(null);
   const [records, setRecords] = useState([]);
+  const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(true);
   const [recordsLoading, setRecordsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -118,6 +119,13 @@ const AttendanceAdmin = () => {
     } catch (err) {
       setStatusMessage({ type: 'error', text: err.response?.data?.message || 'Failed to end session' });
     }
+  };
+
+  const handleCopyCode = () => {
+    if (!activeSession?.code) return;
+    navigator.clipboard.writeText(activeSession.code);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   const handleExportCSV = () => {
@@ -237,10 +245,16 @@ const AttendanceAdmin = () => {
                           alt="Attendance QR Code"
                           className="qr-image"
                         />
-                        <div className="scan-laser"></div>
                       </div>
                       <div className="qr-code-overlay">
                         <span className="code-text">{activeSession.code}</span>
+                        <button 
+                          className="copy-code-btn" 
+                          onClick={handleCopyCode}
+                          title={copied ? "Copied!" : "Copy Code"}
+                        >
+                          {copied ? <Check size={14} /> : <Copy size={14} />}
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -732,22 +746,6 @@ const AttendanceAdmin = () => {
           object-fit: contain;
           border-radius: 12px;
         }
-        .scan-laser {
-          position: absolute;
-          left: 0;
-          top: 0;
-          width: 100%;
-          height: 3px;
-          background: linear-gradient(90deg, transparent, var(--primary-cyan), transparent);
-          box-shadow: 0 0 8px var(--primary-cyan);
-          animation: laserAnim 2.5s infinite ease-in-out;
-          pointer-events: none;
-        }
-        @keyframes laserAnim {
-          0% { top: 0%; }
-          50% { top: 100%; }
-          100% { top: 0%; }
-        }
         .qr-code-overlay {
           margin-top: 16px;
           background: rgba(0, 209, 209, 0.08);
@@ -757,6 +755,26 @@ const AttendanceAdmin = () => {
           width: 100%;
           text-align: center;
           box-sizing: border-box;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+        }
+        .copy-code-btn {
+          background: transparent;
+          border: none;
+          color: var(--primary-cyan);
+          cursor: pointer;
+          padding: 4px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 4px;
+          transition: all 0.2s ease;
+        }
+        .copy-code-btn:hover {
+          background: rgba(0, 209, 209, 0.15);
+          color: var(--primary-cyan);
         }
         .code-text {
           font-family: monospace;
