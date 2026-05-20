@@ -201,10 +201,10 @@ const MainContent = () => {
 
   useEffect(() => {
     const handleFullscreenChange = () => {
-      const isFullscreen = document.fullscreenElement || 
-                           document.webkitFullscreenElement || 
-                           document.mozFullScreenElement || 
-                           document.msFullscreenElement;
+      const isFullscreen = document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.mozFullScreenElement ||
+        document.msFullscreenElement;
       if (!isFullscreen && screen.orientation && screen.orientation.unlock) {
         try {
           screen.orientation.unlock();
@@ -213,12 +213,12 @@ const MainContent = () => {
         }
       }
     };
-    
+
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
     document.addEventListener('mozfullscreenchange', handleFullscreenChange);
     document.addEventListener('MSFullscreenChange', handleFullscreenChange);
-    
+
     return () => {
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
       document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
@@ -277,7 +277,7 @@ const MainContent = () => {
 
   const getEmbedUrl = (url) => {
     if (!url) return '';
-    
+
     // Google Drive
     if (url.includes('drive.google.com')) {
       const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
@@ -285,7 +285,7 @@ const MainContent = () => {
         return `https://drive.google.com/file/d/${match[1]}/preview`;
       }
     }
-    
+
     // YouTube
     if (url.includes('youtube.com') || url.includes('youtu.be')) {
       let videoId = '';
@@ -299,7 +299,7 @@ const MainContent = () => {
         return `https://www.youtube.com/embed/${videoId}`;
       }
     }
-    
+
     return url;
   };
 
@@ -488,10 +488,10 @@ const MainContent = () => {
               {/* Left Navigation Sidebar */}
               <aside className="docs-nav-sidebar">
                 <div className="sidebar-group-title">Table of Contents</div>
-                
+
                 {/* Mobile Dropdown */}
                 <div className="mobile-toc-dropdown">
-                  <select 
+                  <select
                     value={activeResourcesSection}
                     onChange={(e) => setActiveResourcesSection(e.target.value)}
                     className="toc-select"
@@ -884,7 +884,7 @@ const MainContent = () => {
                             <span style={{ background: 'rgba(0, 71, 171, 0.08)', color: 'var(--primary-blue)', padding: '6px 12px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 800 }}>DAY 2 RESOURCE</span>
                             <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: 'var(--app-text)' }}>Text, Media Tags & Meta Tags</h3>
                           </div>
-                          
+
                           <p className="docs-paragraph" style={{ marginBottom: '20px' }}>
                             Explore standard HTML tags for hyperlinks, media embedding (images, audio, video), inline documents (iframes), and document metadata tags that control SEO, mobile viewports, and page indexing.
                           </p>
@@ -929,7 +929,7 @@ const MainContent = () => {
                                   The <code>&lt;a&gt;</code> tag defines a hyperlink, which is used to link from one page to another.
                                   The most important attribute of the <code>&lt;a&gt;</code> element is the <strong>href</strong> attribute, which indicates the link's destination.
                                 </p>
-                                
+
                                 <div style={{ background: 'rgba(0, 71, 171, 0.05)', borderLeft: '4px solid var(--primary-blue)', padding: '12px 16px', borderRadius: '4px', marginBottom: '20px' }}>
                                   <span style={{ display: 'block', fontSize: '0.75rem', color: 'var(--primary-blue)', fontWeight: '800', marginBottom: '4px' }}>DEFAULT BROWSER LINK STYLES:</span>
                                   <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '0.8rem', color: 'var(--app-text-muted)', lineHeight: '1.5' }}>
@@ -1227,7 +1227,7 @@ const MainContent = () => {
 
                                 <div style={{ borderTop: '1px solid var(--app-border)', paddingTop: '16px' }}>
                                   <h5 style={{ color: 'var(--app-text)', fontSize: '0.9rem', marginBottom: '12px' }}>Most Important Meta Tags:</h5>
-                                  
+
                                   <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                                     <div style={{ background: '#ffffff', padding: '16px', borderRadius: '8px', border: '1px solid var(--app-border)' }}>
                                       <strong style={{ color: 'var(--primary-blue)', fontSize: '0.85rem', display: 'block', marginBottom: '6px' }}>1. Charset Meta Tag: &lt;meta charset="UTF-8"&gt;</strong>
@@ -1285,7 +1285,7 @@ const MainContent = () => {
                                       <p style={{ margin: '0 0 8px 0', fontSize: '0.8rem', color: 'var(--app-text-muted)', lineHeight: '1.4' }}>
                                         <strong>Purpose:</strong> Instructs crawlers whether to index this page or crawl links inside it.
                                       </p>
-                                      
+
                                       <div style={{ overflowX: 'auto', marginTop: '10px' }}>
                                         <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid var(--app-border)', fontSize: '0.75rem' }}>
                                           <thead>
@@ -1321,7 +1321,7 @@ const MainContent = () => {
                                 <div style={{ borderTop: '1px solid var(--app-border)', paddingTop: '16px' }}>
                                   <h5 style={{ color: 'var(--app-text)', fontSize: '0.9rem', marginBottom: '12px' }}>Complete Boilerplate Example:</h5>
                                   <pre style={{ background: '#090d16', padding: '12px', borderRadius: '8px', border: '1px solid var(--app-border)', fontSize: '0.8rem', color: '#a5f3fc', fontFamily: 'monospace', overflowX: 'auto', lineHeight: '1.4' }}>
-{`<!DOCTYPE html>
+                                    {`<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -1349,7 +1349,7 @@ const MainContent = () => {
 
                               <div style={{ background: 'var(--light-secondary)', border: '1px solid var(--app-border)', borderRadius: '12px', padding: '20px' }}>
                                 <h5 style={{ margin: '0 0 12px 0', fontSize: '0.95rem', color: 'var(--app-text)' }}>Difference between Meta Tags and Normal HTML Tags</h5>
-                                
+
                                 <div style={{ overflowX: 'auto' }}>
                                   <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid var(--app-border)', fontSize: '0.8rem' }}>
                                     <thead>
@@ -1431,7 +1431,7 @@ const MainContent = () => {
                             <p style={{ margin: '0 0 12px 0', fontSize: '0.85rem', color: 'var(--app-text-muted)' }}>
                               Utilize these tested public endpoints inside your HTML source code to preview layouts:
                             </p>
-                            
+
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                               <div style={{ background: '#ffffff', border: '1px solid var(--app-border)', borderRadius: '8px', padding: '12px' }}>
                                 <strong style={{ fontSize: '0.8rem', color: 'var(--primary-blue)', display: 'block', marginBottom: '4px' }}>Placeholder Developer Portrait (Image)</strong>
@@ -1467,7 +1467,7 @@ const MainContent = () => {
 
                           <div>
                             <h3 style={{ color: 'var(--app-text)', borderLeft: '3px solid var(--primary-blue)', paddingLeft: '8px', fontSize: '1.1rem', margin: '20px 0 10px 0', fontWeight: '700' }}>3. Visual Pipeline & Execution Flows</h3>
-                            
+
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', margin: '12px 0', minWidth: '0' }}>
                               <div style={{ background: 'rgba(56, 189, 248, 0.04)', border: '1px dashed var(--primary-blue)', padding: '16px', borderRadius: '8px', textAlign: 'center' }}>
                                 <strong style={{ fontSize: '0.85rem', color: 'var(--primary-blue)', display: 'block', marginBottom: '8px' }}>Image Loading & Alt Fallback</strong>
@@ -1690,49 +1690,10 @@ const MainContent = () => {
                           </span>
                         </div>
 
-                        {/* Top Utility Header Bar */}
-                        <div style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                          padding: '12px 16px',
-                          background: '#0f172a',
-                          border: '1px solid var(--app-border)',
-                          borderBottom: 'none',
-                          borderTopLeftRadius: '12px',
-                          borderTopRightRadius: '12px'
-                        }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <ShieldCheck size={16} style={{ color: 'var(--primary-cyan)' }} />
-                            <span style={{ fontSize: '0.85rem', fontWeight: '850', color: 'var(--app-text)' }}>Wemade Lecture Slides / Document</span>
-                          </div>
-                          <a 
-                            href={recording.tutorMaterialLink} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            style={{ 
-                              display: 'inline-flex', 
-                              alignItems: 'center', 
-                              gap: '6px', 
-                              padding: '6px 12px', 
-                              borderRadius: '8px', 
-                              fontSize: '0.75rem', 
-                              fontWeight: '750', 
-                              textDecoration: 'none',
-                              cursor: 'pointer',
-                              background: 'rgba(0, 209, 209, 0.1)',
-                              color: 'var(--primary-cyan)',
-                              border: '1px solid rgba(0, 209, 209, 0.3)'
-                            }}
-                          >
-                            Open in New Tab ↗
-                          </a>
-                        </div>
-
                         {/* Hide Google Drive External Link Icon Overlay */}
                         <div style={{
                           position: 'absolute',
-                          top: '54px',
+                          top: '8px',
                           right: '8px',
                           width: '110px',
                           height: '40px',
@@ -1747,9 +1708,9 @@ const MainContent = () => {
                           boxShadow: '0 2px 8px rgba(0,0,0,0.5)',
                           gap: '8px'
                         }}>
-                          <img 
-                            src="/fav_icon.png" 
-                            alt="Wemade Logo" 
+                          <img
+                            src="/fav_icon.png"
+                            alt="Wemade Logo"
                             style={{ width: '16px', height: '16px', objectFit: 'contain' }}
                           />
                           <span style={{ color: '#fff', fontSize: '0.75rem', fontWeight: '800', letterSpacing: '0.5px' }}>WEMADE</span>
@@ -1758,11 +1719,6 @@ const MainContent = () => {
                         <iframe
                           src={getEmbedUrl(recording.tutorMaterialLink)}
                           className="tutor-material-iframe"
-                          style={{
-                            borderTopLeftRadius: 0,
-                            borderTopRightRadius: 0,
-                            border: '1px solid var(--app-border)'
-                          }}
                           title="Instructor Deck Preview"
                         ></iframe>
                       </div>
@@ -1789,11 +1745,11 @@ const MainContent = () => {
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                           <div>
                             <label style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--text-primary)', display: 'block', marginBottom: '4px' }}>Wemade Material URL</label>
-                            <input 
-                              type="text" 
-                              value={tutorMaterialLinkInput} 
-                              onChange={(e) => setTutorMaterialLinkInput(e.target.value)} 
-                              placeholder="e.g. https://drive.google.com/file/d/.../view" 
+                            <input
+                              type="text"
+                              value={tutorMaterialLinkInput}
+                              onChange={(e) => setTutorMaterialLinkInput(e.target.value)}
+                              placeholder="e.g. https://drive.google.com/file/d/.../view"
                               style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--app-border)', background: 'var(--app-bg)', color: 'var(--text-primary)', fontSize: '0.85rem' }}
                             />
                           </div>
@@ -1860,7 +1816,7 @@ const MainContent = () => {
                             </span>
                           </div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <button 
+                            <button
                               onClick={async () => {
                                 const iframe = document.getElementById('video-player-iframe');
                                 const video = document.getElementById('video-player-element');
@@ -1893,14 +1849,14 @@ const MainContent = () => {
                                 }
                               }}
                               className="primary-btn"
-                              style={{ 
-                                display: 'inline-flex', 
-                                alignItems: 'center', 
-                                gap: '6px', 
-                                padding: '6px 12px', 
-                                borderRadius: '10px', 
-                                fontSize: '0.75rem', 
-                                fontWeight: '750', 
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                padding: '6px 12px',
+                                borderRadius: '10px',
+                                fontSize: '0.75rem',
+                                fontWeight: '750',
                                 cursor: 'pointer',
                                 background: 'var(--primary-cyan)',
                                 borderColor: 'var(--primary-cyan)',
@@ -1909,7 +1865,7 @@ const MainContent = () => {
                             >
                               Fullscreen ↗
                             </button>
-                            <button 
+                            <button
                               onClick={async () => {
                                 try {
                                   if (screen.orientation && screen.orientation.lock) {
@@ -1929,14 +1885,14 @@ const MainContent = () => {
                                 }
                               }}
                               className="primary-btn"
-                              style={{ 
-                                display: 'inline-flex', 
-                                alignItems: 'center', 
-                                gap: '6px', 
-                                padding: '6px 12px', 
-                                borderRadius: '10px', 
-                                fontSize: '0.75rem', 
-                                fontWeight: '750', 
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                padding: '6px 12px',
+                                borderRadius: '10px',
+                                fontSize: '0.75rem',
+                                fontWeight: '750',
                                 cursor: 'pointer',
                                 background: 'rgba(14, 165, 233, 0.1)',
                                 color: 'var(--primary-cyan)',
@@ -1945,7 +1901,7 @@ const MainContent = () => {
                             >
                               Rotate 🔄
                             </button>
-                            <button 
+                            <button
                               onClick={() => { setActiveVideoUrl(null); setActiveVideoTitle(''); }}
                               style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-neutral)', fontSize: '1.2rem', padding: '4px' }}
                               title="Close Player"
@@ -1954,7 +1910,7 @@ const MainContent = () => {
                             </button>
                           </div>
                         </div>
-                        
+
                         <div className="video-player-wrapper">
                           {(isVideoLoading || isIframeLoading) && (
                             <div style={{
@@ -1986,7 +1942,7 @@ const MainContent = () => {
                             </div>
                           )}
                           {isDirectVideo(activeVideoUrl) ? (
-                            <video 
+                            <video
                               id="video-player-element"
                               src={activeVideoUrl}
                               controls
@@ -2028,9 +1984,9 @@ const MainContent = () => {
                                 boxShadow: '0 2px 8px rgba(0,0,0,0.5)',
                                 gap: '8px'
                               }}>
-                                <img 
-                                  src="/fav_icon.png" 
-                                  alt="Wemade Logo" 
+                                <img
+                                  src="/fav_icon.png"
+                                  alt="Wemade Logo"
                                   style={{ width: '16px', height: '16px', objectFit: 'contain' }}
                                 />
                                 <span style={{ color: '#fff', fontSize: '0.75rem', fontWeight: '800', letterSpacing: '0.5px' }}>WEMADE</span>
@@ -2067,12 +2023,12 @@ const MainContent = () => {
                             </p>
                           </div>
                           {recording?.morningLink && (
-                            <button 
+                            <button
                               onClick={() => {
                                 setActiveVideoUrl(recording.morningLink);
                                 setActiveVideoTitle('Morning Session - Concept & Theory Lecture');
                               }}
-                              className="primary-btn" 
+                              className="primary-btn"
                               style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '10px 16px', borderRadius: '10px', fontSize: '0.85rem', fontWeight: '750', marginTop: '16px', width: '100%', border: 'none', cursor: 'pointer' }}
                             >
                               Watch Recording <ArrowUpRight size={14} />
@@ -2106,12 +2062,12 @@ const MainContent = () => {
                             </p>
                           </div>
                           {recording?.eveningLink && (
-                            <button 
+                            <button
                               onClick={() => {
                                 setActiveVideoUrl(recording.eveningLink);
                                 setActiveVideoTitle('Evening Session - Lab Review & Q&A');
                               }}
-                              className="primary-btn" 
+                              className="primary-btn"
                               style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '10px 16px', borderRadius: '10px', fontSize: '0.85rem', fontWeight: '750', marginTop: '16px', background: '#16a34a', borderColor: '#16a34a', width: '100%', border: 'none', cursor: 'pointer' }}
                             >
                               Watch Recording <ArrowUpRight size={14} />
@@ -2145,12 +2101,12 @@ const MainContent = () => {
                             </p>
                           </div>
                           {recording?.commonLink && (
-                            <button 
+                            <button
                               onClick={() => {
                                 setActiveVideoUrl(recording.commonLink);
                                 setActiveVideoTitle('Common Session - Full Day Lecture & Lab');
                               }}
-                              className="primary-btn" 
+                              className="primary-btn"
                               style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '10px 16px', borderRadius: '10px', fontSize: '0.85rem', fontWeight: '750', marginTop: '16px', background: 'var(--primary-cyan)', borderColor: 'var(--primary-cyan)', width: '100%', border: 'none', cursor: 'pointer' }}
                             >
                               Watch Full Session <ArrowUpRight size={14} />
@@ -2173,31 +2129,31 @@ const MainContent = () => {
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                           <div>
                             <label style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--text-primary)', display: 'block', marginBottom: '4px' }}>Morning Session URL</label>
-                            <input 
-                              type="text" 
-                              value={morningLinkInput} 
-                              onChange={(e) => setMorningLinkInput(e.target.value)} 
-                              placeholder="e.g. https://drive.google.com/... or https://youtube.com/..." 
+                            <input
+                              type="text"
+                              value={morningLinkInput}
+                              onChange={(e) => setMorningLinkInput(e.target.value)}
+                              placeholder="e.g. https://drive.google.com/... or https://youtube.com/..."
                               style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--app-border)', background: 'var(--app-bg)', color: 'var(--text-primary)', fontSize: '0.85rem' }}
                             />
                           </div>
                           <div>
                             <label style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--text-primary)', display: 'block', marginBottom: '4px' }}>Evening Session URL</label>
-                            <input 
-                              type="text" 
-                              value={eveningLinkInput} 
-                              onChange={(e) => setEveningLinkInput(e.target.value)} 
-                              placeholder="e.g. https://drive.google.com/... or https://youtube.com/..." 
+                            <input
+                              type="text"
+                              value={eveningLinkInput}
+                              onChange={(e) => setEveningLinkInput(e.target.value)}
+                              placeholder="e.g. https://drive.google.com/... or https://youtube.com/..."
                               style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--app-border)', background: 'var(--app-bg)', color: 'var(--text-primary)', fontSize: '0.85rem' }}
                             />
                           </div>
                           <div>
                             <label style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--text-primary)', display: 'block', marginBottom: '4px' }}>Common Session URL (Fallback / Full Day)</label>
-                            <input 
-                              type="text" 
-                              value={commonLinkInput} 
-                              onChange={(e) => setCommonLinkInput(e.target.value)} 
-                              placeholder="e.g. https://drive.google.com/... or https://youtube.com/..." 
+                            <input
+                              type="text"
+                              value={commonLinkInput}
+                              onChange={(e) => setCommonLinkInput(e.target.value)}
+                              placeholder="e.g. https://drive.google.com/... or https://youtube.com/..."
                               style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--app-border)', background: 'var(--app-bg)', color: 'var(--text-primary)', fontSize: '0.85rem' }}
                             />
                           </div>
