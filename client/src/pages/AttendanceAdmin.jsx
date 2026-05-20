@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import MainLayout from '../components/MainLayout';
 import axios from 'axios';
 import { Play, Square, QrCode, Search, RefreshCw, CheckCircle, Clock, Calendar, Download } from 'lucide-react';
 
 const AttendanceAdmin = () => {
+  const { user: currentUser } = useSelector((state) => state.auth);
+  
   const [activeSession, setActiveSession] = useState(null);
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -12,10 +15,10 @@ const AttendanceAdmin = () => {
   const [statusMessage, setStatusMessage] = useState({ type: '', text: '' });
 
   const fetchActiveSession = async () => {
+    if (!currentUser?.token) return;
     try {
-      const userData = JSON.parse(localStorage.getItem('user'));
       const response = await axios.get('/api/attendance/session/active', {
-        headers: { 'Authorization': `Bearer ${userData?.token}` }
+        headers: { 'Authorization': `Bearer ${currentUser.token}` }
       });
       if (response.data?.success) {
         setActiveSession(response.data.session);
@@ -26,11 +29,11 @@ const AttendanceAdmin = () => {
   };
 
   const fetchRecords = async () => {
+    if (!currentUser?.token) return;
     setRecordsLoading(true);
     try {
-      const userData = JSON.parse(localStorage.getItem('user'));
       const response = await axios.get('/api/attendance/records', {
-        headers: { 'Authorization': `Bearer ${userData?.token}` }
+        headers: { 'Authorization': `Bearer ${currentUser.token}` }
       });
       if (response.data?.success) {
         setRecords(response.data.records);
@@ -43,20 +46,23 @@ const AttendanceAdmin = () => {
   };
 
   const initializeData = async () => {
+    if (!currentUser?.token) return;
     setLoading(true);
     await Promise.all([fetchActiveSession(), fetchRecords()]);
     setLoading(false);
   };
 
   useEffect(() => {
-    initializeData();
-  }, []);
+    if (currentUser?.token) {
+      initializeData();
+    }
+  }, [currentUser]);
 
   const handleStartSession = async () => {
+    if (!currentUser?.token) return;
     try {
-      const userData = JSON.parse(localStorage.getItem('user'));
       const response = await axios.post('/api/attendance/session', {}, {
-        headers: { 'Authorization': `Bearer ${userData?.token}` }
+        headers: { 'Authorization': `Bearer ${currentUser.token}` }
       });
       if (response.data?.success) {
         setActiveSession(response.data.session);
@@ -69,10 +75,10 @@ const AttendanceAdmin = () => {
   };
 
   const handleEndSession = async () => {
+    if (!currentUser?.token) return;
     try {
-      const userData = JSON.parse(localStorage.getItem('user'));
       const response = await axios.put('/api/attendance/session/end', {}, {
-        headers: { 'Authorization': `Bearer ${userData?.token}` }
+        headers: { 'Authorization': `Bearer ${currentUser.token}` }
       });
       if (response.data?.success) {
         setActiveSession(null);
@@ -167,7 +173,7 @@ const AttendanceAdmin = () => {
 
                 <div className="qr-code-wrapper">
                   <img 
-                    src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${activeSession.code}&color=00d1d1&bgcolor=0f172a`} 
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${activeSession.code}&color=0047ab&bgcolor=ffffff`} 
                     alt="Attendance QR Code"
                     className="qr-image"
                   />
@@ -282,22 +288,22 @@ const AttendanceAdmin = () => {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+          background: #ffffff;
           border: 1px solid var(--app-border);
           border-radius: 20px;
           padding: 24px;
           margin-bottom: 24px;
-          box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+          box-shadow: 0 4px 20px rgba(0,0,0,0.05);
         }
         .admin-page-title {
           font-size: 1.75rem;
           font-weight: 850;
-          color: #fff;
+          color: var(--text-primary);
           margin: 0 0 6px 0;
           letter-spacing: -0.5px;
         }
         .admin-page-subtitle {
-          color: #94a3b8;
+          color: var(--text-secondary);
           font-size: 0.9rem;
           margin: 0;
         }
@@ -314,14 +320,15 @@ const AttendanceAdmin = () => {
           height: 42px;
           border-radius: 12px;
           border: 1px solid var(--app-border);
-          background: rgba(255,255,255,0.03);
-          color: var(--app-text);
+          background: #f8fafc;
+          color: var(--text-primary);
           cursor: pointer;
           transition: all 0.2s;
         }
         .icon-btn-action:hover {
-          background: rgba(255,255,255,0.08);
+          background: #f1f5f9;
           color: var(--primary-cyan);
+          border-color: var(--primary-cyan);
         }
         .action-btn-secondary {
           display: flex;
@@ -330,15 +337,15 @@ const AttendanceAdmin = () => {
           padding: 12px 20px;
           border-radius: 12px;
           border: 1px solid var(--app-border);
-          background: rgba(255,255,255,0.03);
-          color: #fff;
+          background: #f8fafc;
+          color: var(--text-primary);
           font-weight: 700;
           font-size: 0.85rem;
           cursor: pointer;
           transition: all 0.2s;
         }
         .action-btn-secondary:hover:not(:disabled) {
-          background: rgba(255,255,255,0.08);
+          background: #f1f5f9;
           border-color: var(--primary-cyan);
           color: var(--primary-cyan);
         }
@@ -385,10 +392,11 @@ const AttendanceAdmin = () => {
           }
         }
         .control-card, .audit-card {
-          background: #1e293b;
+          background: var(--app-card-bg);
           border: 1px solid var(--app-border);
           border-radius: 20px;
           padding: 24px;
+          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
         }
         .card-header-premium {
           display: flex;
@@ -401,7 +409,7 @@ const AttendanceAdmin = () => {
           margin: 0;
           font-size: 1.1rem;
           font-weight: 800;
-          color: #fff;
+          color: var(--text-primary);
         }
         .header-icon-green { color: #10b981; }
         .header-icon-cyan { color: var(--primary-cyan); }
@@ -452,11 +460,11 @@ const AttendanceAdmin = () => {
         }
         .qr-code-wrapper {
           position: relative;
-          background: #0f172a;
+          background: #f8fafc;
           padding: 16px;
           border-radius: 16px;
           border: 1px solid var(--app-border);
-          box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+          box-shadow: 0 4px 15px rgba(0,0,0,0.05);
           margin-bottom: 20px;
         }
         .qr-image {
@@ -491,18 +499,18 @@ const AttendanceAdmin = () => {
           justify-content: space-between;
           align-items: center;
           padding: 12px 16px;
-          background: rgba(15, 23, 42, 0.4);
+          background: #ffffff;
           font-size: 0.85rem;
         }
         .detail-item:not(:last-child) {
           border-bottom: 1px solid var(--app-border);
         }
         .detail-label {
-          color: #94a3b8;
+          color: var(--text-secondary);
           font-weight: 600;
         }
         .detail-value {
-          color: #fff;
+          color: var(--text-primary);
           font-weight: 750;
         }
         .btn-stop-session {
@@ -557,7 +565,7 @@ const AttendanceAdmin = () => {
         }
         .inactive-description {
           font-size: 0.85rem;
-          color: #94a3b8;
+          color: var(--text-secondary);
           line-height: 1.5;
           margin-bottom: 24px;
         }
@@ -599,14 +607,15 @@ const AttendanceAdmin = () => {
           padding: 12px 16px 12px 42px;
           border: 1px solid var(--app-border);
           border-radius: 12px;
-          background: #0f172a;
-          color: #fff;
+          background: #f8fafc;
+          color: var(--text-primary);
           font-size: 0.875rem;
           transition: all 0.2s;
         }
         .search-input-card:focus {
           outline: none;
           border-color: var(--primary-cyan);
+          background: #ffffff;
           box-shadow: 0 0 10px rgba(0,209,209,0.1);
         }
         .table-responsive-container {
@@ -621,19 +630,20 @@ const AttendanceAdmin = () => {
           padding: 12px 16px;
           font-size: 0.75rem;
           font-weight: 750;
-          color: #64748b;
+          color: var(--text-secondary);
           text-transform: uppercase;
           border-bottom: 2px solid var(--app-border);
+          background: #f8fafc;
           letter-spacing: 0.5px;
         }
         .premium-admin-table td {
           padding: 14px 16px;
           border-bottom: 1px solid var(--app-border);
           font-size: 0.875rem;
-          color: #cbd5e1;
+          color: var(--text-primary);
         }
         .table-row-hover:hover {
-          background: rgba(255,255,255,0.02);
+          background: #f8fafc;
         }
         .user-info-cell {
           display: flex;
@@ -641,19 +651,19 @@ const AttendanceAdmin = () => {
         }
         .user-cell-name {
           font-weight: 700;
-          color: #fff;
+          color: var(--text-primary);
         }
         .user-cell-email {
           font-size: 0.75rem;
-          color: #64748b;
+          color: var(--text-secondary);
         }
         .token-cell {
           font-size: 0.8rem;
-          background: rgba(255,255,255,0.03);
+          background: #f1f5f9;
           border: 1px solid var(--app-border);
           padding: 4px 8px;
           border-radius: 6px;
-          color: #94a3b8;
+          color: var(--text-secondary);
         }
         .time-cell {
           display: flex;
@@ -661,11 +671,11 @@ const AttendanceAdmin = () => {
         }
         .time-cell-main {
           font-weight: 650;
-          color: #fff;
+          color: var(--text-primary);
         }
         .time-cell-sub {
           font-size: 0.75rem;
-          color: #64748b;
+          color: var(--text-secondary);
         }
         .status-badge-verified {
           background: rgba(16, 185, 129, 0.08);
@@ -680,13 +690,13 @@ const AttendanceAdmin = () => {
         .loading-state-card {
           padding: 40px;
           text-align: center;
-          color: #94a3b8;
+          color: var(--text-neutral);
           font-size: 0.9rem;
         }
         .empty-records-card {
           padding: 40px;
           text-align: center;
-          color: #64748b;
+          color: var(--text-neutral);
           font-size: 0.9rem;
         }
         .spin {
