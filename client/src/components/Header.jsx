@@ -963,6 +963,40 @@ const Header = () => {
           margin: 20px;
           animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
+        .scanner-modal {
+          width: 100%;
+          max-width: 440px;
+          background: #ffffff !important;
+          border-radius: 24px !important;
+          border: 1px solid #e2e8f0 !important;
+          box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.15) !important;
+          padding: 24px !important;
+          margin: 20px;
+          animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+          color: #1e293b !important;
+        }
+        .scanner-modal .modal-header h3 {
+          color: #1e293b !important;
+        }
+        .scanner-modal .close-btn {
+          color: #64748b !important;
+        }
+        .scanner-modal .close-btn:hover {
+          background: #f1f5f9 !important;
+          color: #1e293b !important;
+        }
+        .scanner-modal p {
+          color: #64748b !important;
+        }
+        .scanner-modal .btn-secondary {
+          background: #f1f5f9 !important;
+          border: 1px solid #e2e8f0 !important;
+          color: #475569 !important;
+        }
+        .scanner-modal .btn-secondary:hover {
+          background: #e2e8f0 !important;
+          color: #1e293b !important;
+        }
         @keyframes modalPop {
           0% { transform: scale(0.95); opacity: 0; }
           100% { transform: scale(1); opacity: 1; }
