@@ -18,11 +18,13 @@ const Header = () => {
   const [passwordStatus, setPasswordStatus] = useState({ type: '', message: '' });
   const [showPasswordFields, setShowPasswordFields] = useState({ current: false, new: false, confirm: false });
   const [notifications, setNotifications] = useState([]);
-  
+
   // QR Scanner States
   const [showScannerModal, setShowScannerModal] = useState(false);
   const [scannerError, setScannerError] = useState('');
   const [scanSuccessMessage, setScanSuccessMessage] = useState('');
+  const [manualCode, setManualCode] = useState('');
+  const [manualSubmitting, setManualSubmitting] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -31,7 +33,7 @@ const Header = () => {
 
   useEffect(() => {
     let html5QrCode;
-    
+
     if (showScannerModal && !scanSuccessMessage) {
       setScannerError('');
       const initTimeout = setTimeout(() => {
@@ -83,7 +85,7 @@ const Header = () => {
         return;
       }
 
-      const response = await axios.post('/api/attendance/scan', 
+      const response = await axios.post('/api/attendance/scan',
         { code },
         { headers: { 'Authorization': `Bearer ${token}` } }
       );
@@ -107,6 +109,41 @@ const Header = () => {
     }
   };
 
+  const handleManualCodeSubmit = async (e) => {
+    e.preventDefault();
+    if (!manualCode.trim()) return;
+    setManualSubmitting(true);
+    setScannerError('');
+    try {
+      const userData = JSON.parse(localStorage.getItem('user'));
+      const token = userData?.token;
+      if (!token) {
+        setScannerError("Authentication token not found. Please log in again.");
+        return;
+      }
+
+      const response = await axios.post('/api/attendance/scan',
+        { code: manualCode.trim().toUpperCase() },
+        { headers: { 'Authorization': `Bearer ${token}` } }
+      );
+
+      if (response.data?.success) {
+        setScanSuccessMessage("🎉 Attendance marked successfully!");
+        alert("Attendance Marked successfully!");
+        setManualCode('');
+        setTimeout(() => {
+          setShowScannerModal(false);
+          setScanSuccessMessage('');
+        }, 1500);
+      }
+    } catch (err) {
+      const msg = err.response?.data?.message || "Failed to mark attendance. Invalid code.";
+      setScannerError(msg);
+    } finally {
+      setManualSubmitting(false);
+    }
+  };
+
   const fetchNotifications = async () => {
     try {
       const userData = JSON.parse(localStorage.getItem('user'));
@@ -118,7 +155,7 @@ const Header = () => {
           'Authorization': `Bearer ${token}`
         }
       });
-      
+
       if (Array.isArray(response.data)) {
         setNotifications(response.data);
       } else {
@@ -146,7 +183,7 @@ const Header = () => {
     try {
       const userData = JSON.parse(localStorage.getItem('user'));
       const token = userData?.token;
-      
+
       await axios.put(`/api/notifications/${id}`, {}, {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -198,7 +235,7 @@ const Header = () => {
         }
         if (foundTopic) break;
       }
-      
+
       if (foundTopic) {
         localStorage.setItem('activeResourcesSection', 'recording');
         setSelectedTopic(foundTopic);
@@ -280,11 +317,12 @@ const Header = () => {
 
       <div className="header-actions">
         {user && (
-          <button 
+          <button
             className="icon-btn"
             onClick={() => {
               setScanSuccessMessage('');
               setScannerError('');
+              setManualCode('');
               setShowScannerModal(true);
             }}
             title="Scan Attendance QR"
@@ -294,8 +332,8 @@ const Header = () => {
           </button>
         )}
         <div className="notification-container">
-          <button 
-            className="icon-btn" 
+          <button
+            className="icon-btn"
             onClick={(e) => {
               e.stopPropagation();
               setShowNotifications(!showNotifications);
@@ -321,8 +359,8 @@ const Header = () => {
                   <div className="empty-notifications">No notifications yet</div>
                 ) : (
                   notifications.map(notif => (
-                    <div 
-                      key={notif._id} 
+                    <div
+                      key={notif._id}
                       className={`notification-item ${!notif.isRead ? 'unread' : ''}`}
                       onClick={() => handleNotifClick(notif)}
                       style={{ position: 'relative', paddingRight: '40px' }}
@@ -367,10 +405,10 @@ const Header = () => {
             </div>
           )}
         </div>
-        
+
         <div className="user-profile-container">
-          <div 
-            className="user-profile" 
+          <div
+            className="user-profile"
             onClick={(e) => {
               e.stopPropagation();
               setShowProfileMenu(!showProfileMenu);
@@ -396,12 +434,12 @@ const Header = () => {
                   </div>
                 </div>
               </div>
-              
+
               <div className="dropdown-divider"></div>
 
               {user && (user.role === 'admin' || user.role === 'superadmin') && (
-                <button 
-                  className="dropdown-item mode-switch" 
+                <button
+                  className="dropdown-item mode-switch"
                   onClick={() => {
                     navigate(isAdminView ? '/' : '/admin/users');
                     setShowProfileMenu(false);
@@ -421,8 +459,8 @@ const Header = () => {
                 </button>
               )}
 
-              <button 
-                className="dropdown-item" 
+              <button
+                className="dropdown-item"
                 onClick={() => {
                   setShowPasswordModal(true);
                   setShowProfileMenu(false);
@@ -432,8 +470,8 @@ const Header = () => {
                 <span>Reset Password</span>
               </button>
 
-              <button 
-                className="dropdown-item" 
+              <button
+                className="dropdown-item"
                 onClick={() => {
                   navigate('/profile');
                   setShowProfileMenu(false);
@@ -464,12 +502,12 @@ const Header = () => {
               </div>
               <button className="close-btn" onClick={() => setShowScannerModal(false)}>×</button>
             </div>
-            
+
             <div className="scanner-body" style={{ marginTop: '16px', textAlign: 'center' }}>
               <p style={{ fontSize: '0.85rem', color: 'var(--text-neutral)', marginBottom: '16px', lineHeight: '1.4' }}>
                 Position the tutor's dynamic QR code inside the scanner box below to mark your attendance.
               </p>
-              
+
               {scannerError ? (
                 <div className="status-message error" style={{ marginBottom: '16px', fontSize: '0.85rem' }}>
                   {scannerError}
@@ -481,27 +519,52 @@ const Header = () => {
                   {scanSuccessMessage}
                 </div>
               ) : (
-                <div style={{ position: 'relative', width: '100%', maxWidth: '280px', margin: '0 auto', background: '#000', borderRadius: '16px', overflow: 'hidden', border: '2px solid var(--primary-cyan)', boxShadow: '0 0 15px rgba(0,209,209,0.2)' }}>
-                  <div id="qr-reader" style={{ width: '100%', height: '260px' }}></div>
-                  
-                  {/* Scanner target box overlay */}
-                  <div style={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    width: '180px',
-                    height: '180px',
-                    border: '2px dashed var(--primary-cyan)',
-                    borderRadius: '12px',
-                    pointerEvents: 'none',
-                    zIndex: 2,
-                    boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.4)'
-                  }}></div>
-                </div>
+                <>
+                  <div style={{ position: 'relative', width: '100%', maxWidth: '280px', margin: '0 auto', borderRadius: '16px', overflow: 'hidden', border: '2px solid var(--primary-cyan)', boxShadow: '0 0 15px rgba(0,209,209,0.2)' }}>
+                    <div id="qr-reader" style={{ width: '100%', height: '260px' }}></div>
+
+                    {/* Scanner target box overlay */}
+                    <div style={{
+                      position: 'absolute',
+                      top: '50%',
+                      left: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      width: '220px',
+                      height: '220px',
+                      border: '2px dashed var(--primary-cyan)',
+                      borderRadius: '12px',
+                      pointerEvents: 'none',
+                      zIndex: 2,
+                      boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.4)'
+                    }}></div>
+                  </div>
+
+                  <div className="scanner-divider">
+                    <span>OR</span>
+                  </div>
+
+                  <form onSubmit={handleManualCodeSubmit} className="manual-code-form">
+                    <input 
+                      type="text" 
+                      placeholder="Enter session code" 
+                      value={manualCode}
+                      onChange={e => setManualCode(e.target.value)}
+                      maxLength={10}
+                      disabled={manualSubmitting}
+                      className="manual-code-input"
+                    />
+                    <button 
+                      type="submit" 
+                      disabled={manualSubmitting || !manualCode.trim()} 
+                      className="manual-code-btn"
+                    >
+                      {manualSubmitting ? 'Submitting...' : 'Submit'}
+                    </button>
+                  </form>
+                </>
               )}
             </div>
-            
+
             <div className="modal-actions" style={{ justifyContent: 'center', marginTop: '20px' }}>
               <button className="btn-secondary" onClick={() => setShowScannerModal(false)} style={{ padding: '8px 16px', fontSize: '0.85rem' }}>
                 Close Scanner
@@ -528,13 +591,13 @@ const Header = () => {
               <div className="form-group">
                 <label>Current Password</label>
                 <div className="password-input-wrapper">
-                  <input 
-                    type={showPasswordFields.current ? "text" : "password"} 
+                  <input
+                    type={showPasswordFields.current ? "text" : "password"}
                     value={passwordData.current}
-                    onChange={e => setPasswordData({...passwordData, current: e.target.value})}
-                    required 
+                    onChange={e => setPasswordData({ ...passwordData, current: e.target.value })}
+                    required
                   />
-                  <button type="button" className="password-toggle-btn" onClick={() => setShowPasswordFields(prev => ({...prev, current: !prev.current}))}>
+                  <button type="button" className="password-toggle-btn" onClick={() => setShowPasswordFields(prev => ({ ...prev, current: !prev.current }))}>
                     {showPasswordFields.current ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
@@ -542,13 +605,13 @@ const Header = () => {
               <div className="form-group">
                 <label>New Password</label>
                 <div className="password-input-wrapper">
-                  <input 
-                    type={showPasswordFields.new ? "text" : "password"} 
+                  <input
+                    type={showPasswordFields.new ? "text" : "password"}
                     value={passwordData.new}
-                    onChange={e => setPasswordData({...passwordData, new: e.target.value})}
-                    required 
+                    onChange={e => setPasswordData({ ...passwordData, new: e.target.value })}
+                    required
                   />
-                  <button type="button" className="password-toggle-btn" onClick={() => setShowPasswordFields(prev => ({...prev, new: !prev.new}))}>
+                  <button type="button" className="password-toggle-btn" onClick={() => setShowPasswordFields(prev => ({ ...prev, new: !prev.new }))}>
                     {showPasswordFields.new ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
@@ -556,13 +619,13 @@ const Header = () => {
               <div className="form-group">
                 <label>Confirm New Password</label>
                 <div className="password-input-wrapper">
-                  <input 
-                    type={showPasswordFields.confirm ? "text" : "password"} 
+                  <input
+                    type={showPasswordFields.confirm ? "text" : "password"}
                     value={passwordData.confirm}
-                    onChange={e => setPasswordData({...passwordData, confirm: e.target.value})}
-                    required 
+                    onChange={e => setPasswordData({ ...passwordData, confirm: e.target.value })}
+                    required
                   />
-                  <button type="button" className="password-toggle-btn" onClick={() => setShowPasswordFields(prev => ({...prev, confirm: !prev.confirm}))}>
+                  <button type="button" className="password-toggle-btn" onClick={() => setShowPasswordFields(prev => ({ ...prev, confirm: !prev.confirm }))}>
                     {showPasswordFields.confirm ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
@@ -577,7 +640,8 @@ const Header = () => {
         document.body
       )}
 
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         .app-header {
           display: flex;
           align-items: center;
@@ -996,6 +1060,75 @@ const Header = () => {
         .scanner-modal .btn-secondary:hover {
           background: #e2e8f0 !important;
           color: #1e293b !important;
+        }
+        .scanner-divider {
+          display: flex;
+          align-items: center;
+          text-align: center;
+          margin: 16px 0;
+          color: #94a3b8;
+          font-size: 0.75rem;
+          font-weight: 700;
+        }
+        .scanner-divider::before,
+        .scanner-divider::after {
+          content: '';
+          flex: 1;
+          border-bottom: 1px solid #e2e8f0;
+        }
+        .scanner-divider:not(:empty)::before {
+          margin-right: 12px;
+        }
+        .scanner-divider:not(:empty)::after {
+          margin-left: 12px;
+        }
+        .manual-code-form {
+          display: flex;
+          gap: 10px;
+          width: 100%;
+          max-width: 320px;
+          margin: 0 auto;
+        }
+        .manual-code-input {
+          flex: 1;
+          background: #f8fafc !important;
+          border: 1px solid #e2e8f0 !important;
+          border-radius: 12px !important;
+          padding: 10px 14px !important;
+          color: #1e293b !important;
+          font-size: 0.9rem !important;
+          outline: none;
+          text-align: center;
+          font-family: monospace;
+          letter-spacing: 1.5px;
+          text-transform: uppercase;
+        }
+        .manual-code-input:focus {
+          border-color: var(--primary-cyan) !important;
+          box-shadow: 0 0 0 3px rgba(0, 209, 209, 0.1) !important;
+          background: white !important;
+        }
+        .manual-code-btn {
+          background: var(--brand-gradient);
+          color: white;
+          border: none;
+          border-radius: 12px;
+          padding: 10px 18px;
+          font-weight: 700;
+          font-size: 0.85rem;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          box-shadow: 0 4px 10px rgba(0, 209, 209, 0.2);
+          white-space: nowrap;
+        }
+        .manual-code-btn:hover:not(:disabled) {
+          transform: translateY(-1px);
+          box-shadow: 0 6px 14px rgba(0, 209, 209, 0.3);
+        }
+        .manual-code-btn:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+          transform: none;
         }
         @keyframes modalPop {
           0% { transform: scale(0.95); opacity: 0; }
