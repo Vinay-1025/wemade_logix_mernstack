@@ -1919,8 +1919,6 @@ const MainContent = () => {
                               left: 0,
                               width: '100%',
                               height: '100%',
-                              background: 'rgba(0, 0, 0, 0.7)',
-                              backdropFilter: 'blur(3px)',
                               display: 'flex',
                               flexDirection: 'column',
                               justifyContent: 'center',
@@ -3530,7 +3528,8 @@ const MainContent = () => {
               margin-bottom: 20px !important;
             }
             .video-player-wrapper {
-              padding-top: 75% !important; /* 4:3 Aspect Ratio for tablets */
+              padding-top: 0 !important;
+              height: 380px !important;
             }
             .docs-section-card table {
               display: block;
@@ -3592,7 +3591,8 @@ const MainContent = () => {
               height: 380px !important;
             }
             .video-player-wrapper {
-              padding-top: 60% !important; /* Perfect fit aspect ratio for mobile viewports */
+              padding-top: 0 !important;
+              height: 280px !important;
             }
           }
         `}} />
