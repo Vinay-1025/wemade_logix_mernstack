@@ -13,11 +13,14 @@ const enableAttendance = async (req, res) => {
     // 2. Generate random 16-character code
     const code = crypto.randomBytes(8).toString('hex').toUpperCase();
 
+    const { dayId } = req.body;
+
     // 3. Create new session
     const session = await AttendanceSession.create({
       code,
       isActive: true,
       createdBy: req.user._id,
+      dayId: dayId || '',
     });
 
     res.status(201).json({
@@ -121,7 +124,7 @@ const getAttendanceRecords = async (req, res) => {
   try {
     const records = await AttendanceRecord.find()
       .populate('student', 'name email')
-      .populate('session', 'code createdAt isActive disabledAt')
+      .populate('session', 'code createdAt isActive disabledAt dayId')
       .sort({ markedAt: -1 });
 
     res.status(200).json({

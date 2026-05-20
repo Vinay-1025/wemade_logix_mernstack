@@ -15,6 +15,10 @@ const attendanceSessionSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
+  dayId: {
+    type: String,
+    default: '',
+  },
   createdAt: {
     type: Date,
     default: Date.now,

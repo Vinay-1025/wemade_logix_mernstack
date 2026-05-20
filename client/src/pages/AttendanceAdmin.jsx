@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import MainLayout from '../components/MainLayout';
 import axios from 'axios';
-import { Play, Square, QrCode, Search, RefreshCw, CheckCircle, Clock, Calendar, Download } from 'lucide-react';
+import { Play, Square, QrCode, Search, RefreshCw, CheckCircle, Clock, Calendar, Download, ChevronLeft, ChevronRight } from 'lucide-react';
+import { courseData } from '../data/mockData';
 
 const AttendanceAdmin = () => {
   const { user: currentUser } = useSelector((state) => state.auth);
@@ -12,7 +13,31 @@ const AttendanceAdmin = () => {
   const [loading, setLoading] = useState(true);
   const [recordsLoading, setRecordsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  
+  // Flatten days from courseData for selecting and filtering
+  const allDays = courseData.flatMap(week => 
+    week.days.map(day => ({
+      dayId: day.dayId,
+      dayTitle: day.dayTitle,
+      weekTitle: week.weekTitle
+    }))
+  );
+
+  const getDayLabel = (dayId) => {
+    const day = allDays.find(d => d.dayId === dayId);
+    return day ? day.dayTitle : (dayId ? `Day ID: ${dayId}` : 'General / Unassigned');
+  };
+
+  // Filter States
+  const [selectedDayId, setSelectedDayId] = useState('');
+  const [filterDayId, setFilterDayId] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [statusMessage, setStatusMessage] = useState({ type: '', text: '' });
+
+  // Pagination States
+  const [currentPage, setCurrentPage] = useState(1);
+  const [recordsPerPage, setRecordsPerPage] = useState(10);
 
   const fetchActiveSession = async () => {
     if (!currentUser?.token) return;
@@ -58,10 +83,15 @@ const AttendanceAdmin = () => {
     }
   }, [currentUser]);
 
+  // Reset pagination when search or filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, filterDayId, startDate, endDate, recordsPerPage]);
+
   const handleStartSession = async () => {
     if (!currentUser?.token) return;
     try {
-      const response = await axios.post('/api/attendance/session', {}, {
+      const response = await axios.post('/api/attendance/session', { dayId: selectedDayId }, {
         headers: { 'Authorization': `Bearer ${currentUser.token}` }
       });
       if (response.data?.success) {
@@ -93,11 +123,12 @@ const AttendanceAdmin = () => {
   const handleExportCSV = () => {
     if (records.length === 0) return;
     
-    const headers = ['Student Name', 'Student Email', 'Session Code', 'Marked At'];
+    const headers = ['Student Name', 'Student Email', 'Session Code', 'Class Day', 'Marked At'];
     const rows = records.map(r => [
       r.student?.name || 'N/A',
       r.student?.email || 'N/A',
       r.session?.code || 'N/A',
+      getDayLabel(r.session?.dayId),
       new Date(r.markedAt).toLocaleString()
     ]);
 
@@ -113,16 +144,45 @@ const AttendanceAdmin = () => {
     document.body.removeChild(link);
   };
 
-  // Filter records based on search query
+  // Filter records based on query, day, and date range
   const filteredRecords = records.filter(r => {
     const studentName = r.student?.name || '';
     const studentEmail = r.student?.email || '';
     const sessionCode = r.session?.code || '';
     const query = searchQuery.toLowerCase();
-    return studentName.toLowerCase().includes(query) || 
-           studentEmail.toLowerCase().includes(query) || 
-           sessionCode.toLowerCase().includes(query);
+    const matchesSearch = studentName.toLowerCase().includes(query) || 
+                          studentEmail.toLowerCase().includes(query) || 
+                          sessionCode.toLowerCase().includes(query);
+
+    const sessionDayId = r.session?.dayId || '';
+    const matchesDay = !filterDayId || sessionDayId === filterDayId;
+
+    const markedDate = new Date(r.markedAt);
+    
+    let matchesStartDate = true;
+    if (startDate) {
+      const start = new Date(startDate);
+      start.setHours(0, 0, 0, 0);
+      matchesStartDate = markedDate >= start;
+    }
+
+    let matchesEndDate = true;
+    if (endDate) {
+      const end = new Date(endDate);
+      end.setHours(23, 59, 59, 999);
+      matchesEndDate = markedDate <= end;
+    }
+
+    return matchesSearch && matchesDay && matchesStartDate && matchesEndDate;
   });
+
+  // Pagination calculations
+  const indexOfLastRecord = currentPage * recordsPerPage;
+  const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
+  const currentRecords = filteredRecords.slice(indexOfFirstRecord, indexOfLastRecord);
+  const totalPages = Math.ceil(filteredRecords.length / recordsPerPage);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
     <MainLayout>
@@ -188,6 +248,10 @@ const AttendanceAdmin = () => {
                     <span className="detail-value">{new Date(activeSession.createdAt).toLocaleTimeString()}</span>
                   </div>
                   <div className="detail-item">
+                    <span className="detail-label">Class Day</span>
+                    <span className="detail-value">{getDayLabel(activeSession.dayId)}</span>
+                  </div>
+                  <div className="detail-item">
                     <span className="detail-label">Authorized Token</span>
                     <span className="detail-value font-mono">{activeSession.code}</span>
                   </div>
@@ -203,6 +267,23 @@ const AttendanceAdmin = () => {
                   <span className="inactive-dot"></span>
                   <span className="inactive-text">NO ACTIVE SESSION</span>
                 </div>
+                
+                <div className="select-day-wrapper">
+                  <label className="select-day-label">Select Class Day</label>
+                  <select 
+                    value={selectedDayId} 
+                    onChange={e => setSelectedDayId(e.target.value)}
+                    className="select-day-input"
+                  >
+                    <option value="">-- General / Unassigned --</option>
+                    {allDays.map(day => (
+                      <option key={day.dayId} value={day.dayId}>
+                        {day.dayTitle}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
                 <p className="inactive-description">
                   Generate a dynamic, temporary session-bound QR key. Students can scan it via their headers to verify attendance. Keys remain valid until manually terminated.
                 </p>
@@ -221,15 +302,69 @@ const AttendanceAdmin = () => {
               <div className="records-count">{filteredRecords.length} records</div>
             </div>
 
-            <div className="search-bar-wrapper">
-              <Search size={16} className="search-icon-card" />
-              <input 
-                type="text" 
-                placeholder="Search by student name, email, or session token..." 
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                className="search-input-card"
-              />
+            <div className="filters-container">
+              <div className="search-bar-wrapper">
+                <Search size={16} className="search-icon-card" />
+                <input 
+                  type="text" 
+                  placeholder="Search by student name, email, or session token..." 
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  className="search-input-card"
+                />
+              </div>
+
+              <div className="filter-selectors-grid">
+                <div className="filter-select-wrapper">
+                  <label className="filter-label">Class Day</label>
+                  <select 
+                    value={filterDayId} 
+                    onChange={e => setFilterDayId(e.target.value)}
+                    className="filter-select-input"
+                  >
+                    <option value="">All Days</option>
+                    {allDays.map(day => (
+                      <option key={day.dayId} value={day.dayId}>
+                        {day.dayTitle}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="filter-select-wrapper">
+                  <label className="filter-label">Start Date</label>
+                  <input 
+                    type="date" 
+                    value={startDate}
+                    onChange={e => setStartDate(e.target.value)}
+                    className="filter-date-input"
+                  />
+                </div>
+
+                <div className="filter-select-wrapper">
+                  <label className="filter-label">End Date</label>
+                  <input 
+                    type="date" 
+                    value={endDate}
+                    onChange={e => setEndDate(e.target.value)}
+                    className="filter-date-input"
+                  />
+                </div>
+
+                <div className="filter-select-wrapper">
+                  <label className="filter-label">Rows per Page</label>
+                  <select 
+                    value={recordsPerPage} 
+                    onChange={e => setRecordsPerPage(Number(e.target.value))}
+                    className="filter-select-input"
+                  >
+                    <option value={5}>5 Rows</option>
+                    <option value={10}>10 Rows</option>
+                    <option value={20}>20 Rows</option>
+                    <option value={50}>50 Rows</option>
+                  </select>
+                </div>
+              </div>
             </div>
 
             <div className="table-responsive-container">
@@ -242,19 +377,23 @@ const AttendanceAdmin = () => {
                   <thead>
                     <tr>
                       <th>Personnel</th>
+                      <th>Class Day</th>
                       <th>Token ID</th>
                       <th>Time Verified</th>
                       <th>Status</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredRecords.map((record) => (
+                    {currentRecords.map((record) => (
                       <tr key={record._id} className="table-row-hover">
                         <td>
                           <div className="user-info-cell">
                             <span className="user-cell-name">{record.student?.name || 'Deleted Account'}</span>
                             <span className="user-cell-email">{record.student?.email || 'N/A'}</span>
                           </div>
+                        </td>
+                        <td>
+                          <span className="day-badge-table">{getDayLabel(record.session?.dayId)}</span>
                         </td>
                         <td>
                           <span className="token-cell font-mono">{record.session?.code || 'Expired'}</span>
@@ -274,6 +413,46 @@ const AttendanceAdmin = () => {
                 </table>
               )}
             </div>
+
+            {filteredRecords.length > 0 && (
+              <div className="audit-pagination">
+                <div className="pagination-info">
+                  Showing <span className="bold">{indexOfFirstRecord + 1}</span> to <span className="bold">{Math.min(indexOfLastRecord, filteredRecords.length)}</span> of <span className="bold">{filteredRecords.length}</span> records
+                </div>
+                
+                {totalPages > 1 && (
+                  <div className="page-navigation">
+                    <button 
+                      disabled={currentPage === 1}
+                      onClick={() => paginate(currentPage - 1)}
+                      className="page-btn"
+                    >
+                      <ChevronLeft size={18} />
+                    </button>
+                    
+                    <div className="page-numbers">
+                      {[...Array(totalPages)].map((_, index) => (
+                        <button
+                          key={index + 1}
+                          onClick={() => paginate(index + 1)}
+                          className={`page-btn ${currentPage === index + 1 ? 'active' : ''}`}
+                        >
+                          {index + 1}
+                        </button>
+                      ))}
+                    </div>
+
+                    <button 
+                      disabled={currentPage === totalPages}
+                      onClick={() => paginate(currentPage + 1)}
+                      className="page-btn"
+                    >
+                      <ChevronRight size={18} />
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -385,11 +564,6 @@ const AttendanceAdmin = () => {
           grid-template-columns: 360px 1fr;
           gap: 24px;
           align-items: start;
-        }
-        @media (max-width: 1024px) {
-          .attendance-grid {
-            grid-template-columns: 1fr;
-          }
         }
         .control-card, .audit-card {
           background: var(--app-card-bg);
@@ -563,6 +737,36 @@ const AttendanceAdmin = () => {
           color: #94a3b8;
           letter-spacing: 0.5px;
         }
+        .select-day-wrapper {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          text-align: left;
+          margin-bottom: 20px;
+        }
+        .select-day-label {
+          font-size: 0.8rem;
+          font-weight: 750;
+          color: var(--text-primary);
+        }
+        .select-day-input {
+          width: 100%;
+          padding: 12px 16px;
+          border: 1px solid var(--app-border);
+          border-radius: 12px;
+          background: #ffffff;
+          color: var(--text-primary);
+          font-size: 0.9rem;
+          font-weight: 650;
+          outline: none;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .select-day-input:focus {
+          border-color: var(--primary-cyan);
+          box-shadow: 0 0 0 3px rgba(0, 209, 209, 0.08);
+        }
         .inactive-description {
           font-size: 0.85rem;
           color: var(--text-secondary);
@@ -590,10 +794,15 @@ const AttendanceAdmin = () => {
           transform: translateY(-1px);
           box-shadow: 0 6px 20px rgba(0, 209, 209, 0.3);
         }
+        .filters-container {
+          margin-bottom: 24px;
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
         .search-bar-wrapper {
           position: relative;
           width: 100%;
-          margin-bottom: 20px;
         }
         .search-icon-card {
           position: absolute;
@@ -618,8 +827,44 @@ const AttendanceAdmin = () => {
           background: #ffffff;
           box-shadow: 0 0 10px rgba(0,209,209,0.1);
         }
+        .filter-selectors-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+          gap: 12px;
+          width: 100%;
+        }
+        .filter-select-wrapper {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+        .filter-label {
+          font-size: 0.75rem;
+          font-weight: 700;
+          color: var(--text-secondary);
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+        .filter-select-input, .filter-date-input {
+          width: 100%;
+          padding: 10px 14px;
+          border: 1px solid var(--app-border);
+          border-radius: 10px;
+          background: #f8fafc;
+          color: var(--text-primary);
+          font-size: 0.85rem;
+          font-weight: 600;
+          outline: none;
+          transition: all 0.2s;
+        }
+        .filter-select-input:focus, .filter-date-input:focus {
+          border-color: var(--primary-cyan);
+          background: #ffffff;
+          box-shadow: 0 0 0 3px rgba(0, 209, 209, 0.08);
+        }
         .table-responsive-container {
           overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
         }
         .premium-admin-table {
           width: 100%;
@@ -641,6 +886,7 @@ const AttendanceAdmin = () => {
           border-bottom: 1px solid var(--app-border);
           font-size: 0.875rem;
           color: var(--text-primary);
+          white-space: nowrap;
         }
         .table-row-hover:hover {
           background: #f8fafc;
@@ -656,6 +902,20 @@ const AttendanceAdmin = () => {
         .user-cell-email {
           font-size: 0.75rem;
           color: var(--text-secondary);
+        }
+        .day-badge-table {
+          background: rgba(0, 209, 209, 0.06);
+          color: var(--primary-cyan);
+          border: 1px solid rgba(0, 209, 209, 0.15);
+          padding: 4px 10px;
+          border-radius: 8px;
+          font-size: 0.75rem;
+          font-weight: 700;
+          display: inline-block;
+          max-width: 180px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
         .token-cell {
           font-size: 0.8rem;
@@ -705,6 +965,101 @@ const AttendanceAdmin = () => {
         @keyframes spin {
           from { transform: rotate(0deg); }
           to { transform: rotate(360deg); }
+        }
+
+        /* Pagination Styles */
+        .audit-pagination {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 16px 0 0;
+          border-top: 1px solid var(--app-border);
+          margin-top: 16px;
+        }
+        .pagination-info {
+          font-size: 0.85rem;
+          color: var(--text-secondary);
+        }
+        .pagination-info .bold {
+          font-weight: 700;
+          color: var(--text-primary);
+        }
+        .page-navigation {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .page-numbers {
+          display: flex;
+          gap: 4px;
+        }
+        .page-btn {
+          min-width: 32px;
+          height: 32px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 8px;
+          border: 1px solid var(--app-border);
+          background: #ffffff;
+          color: var(--text-secondary);
+          font-weight: 700;
+          font-size: 0.8rem;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .page-btn:hover:not(:disabled) {
+          border-color: var(--primary-cyan);
+          color: var(--primary-cyan);
+          background: rgba(0, 209, 209, 0.05);
+        }
+        .page-btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+        .page-btn.active {
+          background: var(--primary-cyan);
+          color: white;
+          border-color: var(--primary-cyan);
+          box-shadow: 0 4px 10px rgba(0, 209, 209, 0.2);
+        }
+
+        /* Mobile Responsiveness Media Queries */
+        @media (max-width: 1024px) {
+          .attendance-grid {
+            grid-template-columns: 1fr;
+          }
+        }
+        @media (max-width: 768px) {
+          .attendance-admin-container {
+            padding: 16px;
+          }
+          .admin-header-card {
+            flex-direction: column;
+            align-items: stretch;
+            text-align: center;
+            padding: 20px;
+            gap: 16px;
+          }
+          .header-actions-block {
+            justify-content: center;
+          }
+          .admin-page-title {
+            font-size: 1.5rem;
+          }
+          .control-card, .audit-card {
+            padding: 16px;
+          }
+          .filter-selectors-grid {
+            grid-template-columns: 1fr;
+            gap: 10px;
+          }
+          .audit-pagination {
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+            text-align: center;
+          }
         }
       `}} />
     </MainLayout>
