@@ -974,10 +974,7 @@ export const courseData = [
               "title": "Tutor Lesson Plan & Reference Guide",
               "content": "Pedagogical goals, interactive visualization walkthrough notes, troubleshooting tips for students, and perfect solution files.",
               "duration": "15 mins",
-              "resources": [
-                "Hands-on Lab Worksheet & Prompts (PDF)",
-                "Perfect Portfolio Reference Key (HTML)"
-              ]
+              "resources": []
             }
           }
         ]
