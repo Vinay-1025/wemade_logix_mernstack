@@ -69,6 +69,7 @@ const MainContent = () => {
   const [htmlActiveDeconstruct, setHtmlActiveDeconstruct] = useState('HYPER');
   const [activeDay2Tab, setActiveDay2Tab] = useState('anchor');
   const [activeDay3Tab, setActiveDay3Tab] = useState('lists');
+  const [activeDay4Tab, setActiveDay4Tab] = useState('intro');
   const [ulTypeSelect, setUlTypeSelect] = useState('square');
   const [olTypeSelect, setOlTypeSelect] = useState('1');
   const [olStartSelect, setOlStartSelect] = useState(10);
@@ -94,6 +95,7 @@ const MainContent = () => {
     }
     setActiveDay2Tab('anchor');
     setActiveDay3Tab('lists');
+    setActiveDay4Tab('intro');
     setUlTypeSelect('square');
     setOlTypeSelect('1');
     setOlStartSelect(10);
@@ -2001,6 +2003,317 @@ const MainContent = () => {
                         </div>
                       </div>
                     )}
+
+                    {dayId === 'w1-d4' && (
+                      <div className="syllabus-notes-container" style={{ marginTop: '40px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                        <div style={{ borderTop: '1px solid var(--app-border)', paddingTop: '32px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+                            <span style={{ background: 'rgba(0, 209, 209, 0.08)', color: 'var(--primary-cyan)', padding: '6px 12px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 800 }}>DAY 4 RESOURCE</span>
+                            <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: 'var(--app-text)' }}>Semantic HTML, Structure & Accessibility</h3>
+                          </div>
+
+                          <p className="docs-paragraph" style={{ marginBottom: '20px' }}>
+                            Master standard semantic structures and web accessibility guidelines. Learn how search engines index landmarks, how assistive screen readers parse DOM trees, and how to configure logical outline hierarchies.
+                          </p>
+
+                          {/* Day 4 Navigation Tabs */}
+                          <div className="interactive-tabs-row" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '20px' }}>
+                            {[
+                              { id: 'intro', label: '1. What & Why' },
+                              { id: 'tags', label: '2. Semantic Tags Map' },
+                              { id: 'a11y', label: '3. Accessibility & SEO' },
+                              { id: 'outline', label: '4. Document Structure' },
+                              { id: 'pitfalls', label: '5. Interview & Pitfalls' }
+                            ].map(tab => (
+                              <button
+                                key={tab.id}
+                                onClick={() => setActiveDay4Tab(tab.id)}
+                                style={{
+                                  padding: '10px 16px',
+                                  fontSize: '0.8rem',
+                                  fontWeight: '700',
+                                  borderRadius: '8px',
+                                  border: '1px solid',
+                                  borderColor: activeDay4Tab === tab.id ? 'var(--primary-cyan)' : 'var(--app-border)',
+                                  background: activeDay4Tab === tab.id ? 'rgba(0, 209, 209, 0.08)' : 'var(--light-secondary)',
+                                  color: activeDay4Tab === tab.id ? 'var(--primary-cyan)' : 'var(--app-text-muted)',
+                                  cursor: 'pointer',
+                                  transition: 'all 0.2s ease'
+                                }}
+                              >
+                                {tab.label}
+                              </button>
+                            ))}
+                          </div>
+
+                          {/* Day 4 Content Details Panel */}
+                          <div style={{ background: 'var(--light-secondary)', border: '1px solid var(--app-border)', padding: '24px', borderRadius: '12px', minHeight: '300px' }}>
+                            {activeDay4Tab === 'intro' && (
+                              <div className="animate-fade" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                                <div>
+                                  <h4 style={{ margin: '0 0 12px 0', color: 'var(--primary-cyan)', fontSize: '1.1rem' }}>What is Semantic HTML?</h4>
+                                  <p style={{ fontSize: '0.85rem', color: 'var(--app-text)', lineHeight: '1.6', marginBottom: '12px' }}>
+                                    Semantic HTML means using HTML tags that <strong>clearly describe the meaning and purpose</strong> of the content to browsers, developers, search engines, and screen readers. Instead of wrapping every layout element in generic, meaningless tags like <code>&lt;div&gt;</code> and <code>&lt;span&gt;</code>, we use tags that explicitly name their role.
+                                  </p>
+                                </div>
+
+                                <div style={{ background: '#0f172a', padding: '16px', borderRadius: '10px', border: '1px solid var(--app-border)' }}>
+                                  <h5 style={{ margin: '0 0 8px 0', color: 'white', fontSize: '0.85rem' }}>🏠 Real-Life Analogy: Naming Rooms</h5>
+                                  <p style={{ margin: 0, fontSize: '0.8rem', color: '#cbd5e1', lineHeight: '1.5' }}>
+                                    Imagine constructing a house. Instead of labeling every room as "Room1", "Room2", and "Room3", you label them "Kitchen", "Bedroom", and "Hall". Now, anyone entering understands the room's purpose immediately. Semantic HTML works exactly like this.
+                                  </p>
+                                </div>
+
+                                <div style={{ borderTop: '1px solid var(--app-border)', paddingTop: '16px' }}>
+                                  <h5 style={{ margin: '0 0 12px 0', color: 'white', fontSize: '0.9rem' }}>Before vs. After Semantic HTML</h5>
+                                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                                    <div style={{ background: 'rgba(220, 38, 38, 0.03)', border: '1px solid rgba(220, 38, 38, 0.2)', padding: '12px', borderRadius: '8px' }}>
+                                      <strong style={{ color: '#f87171', fontSize: '0.75rem', display: 'block', marginBottom: '8px' }}>Before (Generic "Div Soup"):</strong>
+                                      <pre style={{ margin: 0, fontSize: '0.7rem', color: '#cbd5e1', fontFamily: 'monospace' }}>
+{`<div id="header">Logo</div>
+<div id="menu">Links</div>
+<div id="content">Article</div>
+<div id="footer">Copyright</div>`}
+                                      </pre>
+                                    </div>
+                                    <div style={{ background: 'rgba(16, 185, 129, 0.03)', border: '1px solid rgba(16, 185, 129, 0.2)', padding: '12px', borderRadius: '8px' }}>
+                                      <strong style={{ color: '#34d399', fontSize: '0.75rem', display: 'block', marginBottom: '8px' }}>With Semantic HTML (Clean & Standard):</strong>
+                                      <pre style={{ margin: 0, fontSize: '0.7rem', color: '#cbd5e1', fontFamily: 'monospace' }}>
+{`<header>Logo</header>
+<nav>Links</nav>
+<main>Article</main>
+<footer>Copyright</footer>`}
+                                      </pre>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            {activeDay4Tab === 'tags' && (
+                              <div className="animate-fade">
+                                <h4 style={{ margin: '0 0 12px 0', color: 'var(--primary-cyan)', fontSize: '1.1rem' }}>Most Important Semantic Tags</h4>
+                                <div style={{ overflowX: 'auto', marginBottom: '24px' }}>
+                                  <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid var(--app-border)', fontSize: '0.8rem' }}>
+                                    <thead>
+                                      <tr style={{ background: '#e2e8f0', textAlign: 'left', borderBottom: '1px solid var(--app-border)' }}>
+                                        <th style={{ padding: '8px 12px', color: 'var(--app-text)' }}>Tag</th>
+                                        <th style={{ padding: '8px 12px', color: 'var(--app-text)' }}>Purpose</th>
+                                        <th style={{ padding: '8px 12px', color: 'var(--app-text)' }}>Example Syntax</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                        <td style={{ padding: '8px 12px', color: 'var(--primary-cyan)', fontWeight: 'bold' }}>&lt;header&gt;</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Top section. Usually contains logo, website title, or main navigation.</td>
+                                        <td style={{ padding: '8px 12px', fontFamily: 'monospace', color: '#cbd5e1' }}>&lt;header&gt;&lt;h1&gt;WeMade&lt;/h1&gt;&lt;/header&gt;</td>
+                                      </tr>
+                                      <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                        <td style={{ padding: '8px 12px', color: 'var(--primary-cyan)', fontWeight: 'bold' }}>&lt;nav&gt;</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Navigation links. Tells screen readers: "These are main links."</td>
+                                        <td style={{ padding: '8px 12px', fontFamily: 'monospace', color: '#cbd5e1' }}>&lt;nav&gt;&lt;a href=""&gt;Home&lt;/a&gt;&lt;/nav&gt;</td>
+                                      </tr>
+                                      <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                        <td style={{ padding: '8px 12px', color: 'var(--primary-cyan)', fontWeight: 'bold' }}>&lt;main&gt;</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Main content of the page. Only ONE &lt;main&gt; tag should exist per page.</td>
+                                        <td style={{ padding: '8px 12px', fontFamily: 'monospace', color: '#cbd5e1' }}>&lt;main&gt;&lt;h2&gt;Frontend&lt;/h2&gt;&lt;/main&gt;</td>
+                                      </tr>
+                                      <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                        <td style={{ padding: '8px 12px', color: 'var(--primary-cyan)', fontWeight: 'bold' }}>&lt;section&gt;</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Group of related content. Think of it as a content container with a specific topic.</td>
+                                        <td style={{ padding: '8px 12px', fontFamily: 'monospace', color: '#cbd5e1' }}>&lt;section&gt;&lt;h2&gt;Courses&lt;/h2&gt;&lt;/section&gt;</td>
+                                      </tr>
+                                      <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                        <td style={{ padding: '8px 12px', color: 'var(--primary-cyan)', fontWeight: 'bold' }}>&lt;article&gt;</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Independent, self-contained content (e.g. blog post, product card).</td>
+                                        <td style={{ padding: '8px 12px', fontFamily: 'monospace', color: '#cbd5e1' }}>&lt;article&gt;&lt;h3&gt;HTML Basics&lt;/h3&gt;&lt;/article&gt;</td>
+                                      </tr>
+                                      <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                        <td style={{ padding: '8px 12px', color: 'var(--primary-cyan)', fontWeight: 'bold' }}>&lt;aside&gt;</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Sidebar content (e.g., related posts, ads, secondary callouts).</td>
+                                        <td style={{ padding: '8px 12px', fontFamily: 'monospace', color: '#cbd5e1' }}>&lt;aside&gt;Related Tutorials&lt;/aside&gt;</td>
+                                      </tr>
+                                      <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                        <td style={{ padding: '8px 12px', color: 'var(--primary-cyan)', fontWeight: 'bold' }}>&lt;footer&gt;</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Bottom section. Usually contains copyright, contact info, and social links.</td>
+                                        <td style={{ padding: '8px 12px', fontFamily: 'monospace', color: '#cbd5e1' }}>&lt;footer&gt;&copy; 2026 WeMade&lt;/footer&gt;</td>
+                                      </tr>
+                                      <tr style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                        <td style={{ padding: '8px 12px', color: 'var(--primary-cyan)', fontWeight: 'bold' }}>&lt;figure&gt; / &lt;figcaption&gt;</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Media container (image, diagram) and its caption.</td>
+                                        <td style={{ padding: '8px 12px', fontFamily: 'monospace', color: '#cbd5e1' }}>&lt;figure&gt;&lt;img src=""&gt;&lt;figcaption&gt;Caption&lt;/figcaption&gt;&lt;/figure&gt;</td>
+                                      </tr>
+                                      <tr>
+                                        <td style={{ padding: '8px 12px', color: 'var(--primary-cyan)', fontWeight: 'bold' }}>&lt;details&gt; / &lt;summary&gt;</td>
+                                        <td style={{ padding: '8px 12px', color: 'var(--app-text-muted)' }}>Interactive expandable content widget and its trigger title.</td>
+                                        <td style={{ padding: '8px 12px', fontFamily: 'monospace', color: '#cbd5e1' }}>&lt;details&gt;&lt;summary&gt;Title&lt;/summary&gt;&lt;p&gt;Body&lt;/p&gt;&lt;/details&gt;</td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                </div>
+
+                                <div style={{ background: '#0f172a', border: '1px solid var(--app-border)', padding: '16px', borderRadius: '8px' }}>
+                                  <span style={{ fontSize: '0.8rem', color: 'var(--primary-cyan)', fontWeight: '800', display: 'block', marginBottom: '8px' }}>Difference Between &lt;section&gt; and &lt;article&gt;:</span>
+                                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', fontSize: '0.8rem' }}>
+                                    <div style={{ background: 'rgba(255, 255, 255, 0.02)', padding: '12px', borderRadius: '6px', border: '1px solid var(--app-border)' }}>
+                                      <strong style={{ color: 'var(--primary-cyan)', display: 'block', marginBottom: '4px' }}>Section:</strong>
+                                      <p style={{ margin: 0, color: '#cbd5e1' }}>Groups related content. Represents a part of a webpage and cannot stand alone.</p>
+                                    </div>
+                                    <div style={{ background: 'rgba(255, 255, 255, 0.02)', padding: '12px', borderRadius: '6px', border: '1px solid var(--app-border)' }}>
+                                      <strong style={{ color: '#10b981', display: 'block', marginBottom: '4px' }}>Article:</strong>
+                                      <p style={{ margin: 0, color: '#cbd5e1' }}>Independent, self-contained content that can stand alone (e.g. blog post, product card).</p>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            {activeDay4Tab === 'a11y' && (
+                              <div className="animate-fade" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                                <div>
+                                  <h4 style={{ margin: '0 0 12px 0', color: 'var(--primary-cyan)', fontSize: '1.1rem' }}>Web Accessibility (a11y) & SEO</h4>
+                                  <p style={{ fontSize: '0.85rem', color: 'var(--app-text)', lineHeight: '1.6', marginBottom: '12px' }}>
+                                    <strong>Accessibility</strong> means making websites usable for everyone, including people with vision, hearing, physical, or cognitive disabilities. For example, a visually impaired user uses <strong>Screen Reader Software</strong> to read webpage contents aloud.
+                                  </p>
+                                </div>
+
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                                  <div style={{ background: 'rgba(239, 68, 68, 0.03)', border: '1px solid rgba(239, 68, 68, 0.15)', padding: '16px', borderRadius: '10px' }}>
+                                    <strong style={{ color: '#ef4444', fontSize: '0.8rem', display: 'block', marginBottom: '6px' }}>Without Semantic Tags:</strong>
+                                    <p style={{ margin: '0 0 8px 0', fontSize: '0.75rem', color: '#cbd5e1' }}>
+                                      Using generic <code>&lt;div&gt;Menu&lt;/div&gt;</code> and <code>&lt;div&gt;Content&lt;/div&gt;</code>.
+                                    </p>
+                                    <span style={{ fontSize: '0.75rem', color: '#f87171' }}>⚠️ Screen reader gets confused and reads everything as generic flat text.</span>
+                                  </div>
+
+                                  <div style={{ background: 'rgba(16, 185, 129, 0.03)', border: '1px solid rgba(16, 185, 129, 0.15)', padding: '16px', borderRadius: '10px' }}>
+                                    <strong style={{ color: '#10b981', fontSize: '0.8rem', display: 'block', marginBottom: '6px' }}>With Semantic Tags:</strong>
+                                    <p style={{ margin: '0 0 8px 0', fontSize: '0.75rem', color: '#cbd5e1' }}>
+                                      Using explicit landmarks like <code>&lt;nav&gt;Menu&lt;/nav&gt;</code> and <code>&lt;main&gt;Content&lt;/main&gt;</code>.
+                                    </p>
+                                    <span style={{ fontSize: '0.75rem', color: '#34d399' }}>✅ Screen reader announces: "Navigation Landmark" and "Main Content", letting users jump straight to the content.</span>
+                                  </div>
+                                </div>
+
+                                <div style={{ background: 'var(--light-secondary)', border: '1px solid var(--app-border)', padding: '16px', borderRadius: '8px' }}>
+                                  <h5 style={{ margin: '0 0 10px 0', color: 'white', fontSize: '0.85rem' }}>🚀 Why Search Engines Love Semantic HTML (SEO):</h5>
+                                  <p style={{ margin: 0, fontSize: '0.8rem', color: '#cbd5e1', lineHeight: '1.5' }}>
+                                    Search engine bots (like Googlebot) crawl your HTML code to index it. Using semantic landmarks and a clean heading outline helps bots immediately identify page keywords, main articles, and headers, boosting your indexing quality and organic rankings.
+                                  </p>
+                                </div>
+                              </div>
+                            )}
+
+                            {activeDay4Tab === 'outline' && (
+                              <div className="animate-fade" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                                <div>
+                                  <h4 style={{ margin: '0 0 12px 0', color: 'var(--primary-cyan)', fontSize: '1.1rem' }}>Semantic Layout Structure</h4>
+                                  <p style={{ fontSize: '0.85rem', color: 'var(--app-text)', lineHeight: '1.6', marginBottom: '12px' }}>
+                                    Structuring your webpage logically makes code cleaner and guarantees accessibility. Follow this recommended layout tree for a standard structured webpage:
+                                  </p>
+                                </div>
+
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '20px' }}>
+                                  {/* Visual Diagram */}
+                                  <div style={{ background: '#0f172a', padding: '20px', borderRadius: '10px', border: '1px solid var(--app-border)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                    <span style={{ fontSize: '0.75rem', fontWeight: '800', color: 'var(--primary-cyan)' }}>LAYOUT STRUCTURE MAP:</span>
+                                    <div style={{ border: '1px solid #334155', padding: '6px', borderRadius: '4px', textAlign: 'center', fontSize: '0.7rem', color: '#cbd5e1' }}>
+                                      &lt;header&gt;
+                                      <div style={{ border: '1px dashed #475569', padding: '4px', margin: '4px 0', background: 'rgba(255,255,255,0.02)' }}>&lt;nav&gt;&lt;/nav&gt;</div>
+                                    </div>
+                                    <div style={{ border: '1px solid #334155', padding: '8px', borderRadius: '4px', display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '6px', fontSize: '0.7rem', color: '#cbd5e1' }}>
+                                      <div style={{ border: '1px dashed #475569', padding: '6px' }}>
+                                        &lt;main&gt;
+                                        <div style={{ border: '1px solid #00d1d1', padding: '4px', margin: '4px 0', background: 'rgba(0, 209, 209, 0.05)' }}>&lt;section&gt;</div>
+                                        <div style={{ border: '1px solid #10b981', padding: '4px', background: 'rgba(16, 185, 129, 0.05)' }}>&lt;article&gt;</div>
+                                      </div>
+                                      <div style={{ border: '1px dashed #475569', padding: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>&lt;aside&gt;</div>
+                                    </div>
+                                    <div style={{ border: '1px solid #334155', padding: '6px', borderRadius: '4px', textAlign: 'center', fontSize: '0.7rem', color: '#cbd5e1' }}>
+                                      &lt;footer&gt;
+                                    </div>
+                                  </div>
+
+                                  {/* Code Block */}
+                                  <div>
+                                    <span style={{ fontSize: '0.75rem', fontWeight: '800', color: 'var(--primary-cyan)', display: 'block', marginBottom: '8px' }}>COMPLETE STRUCTURE EXAMPLE:</span>
+                                    <pre style={{ background: '#090d16', padding: '12px', borderRadius: '8px', border: '1px solid var(--app-border)', fontSize: '0.7rem', color: '#a5f3fc', fontFamily: 'monospace', overflowX: 'auto', maxHeight: '240px', margin: 0 }}>
+{`<!DOCTYPE html>
+<html>
+<head>
+  <title>Semantic HTML</title>
+</head>
+<body>
+  <header>
+    <h1>WeMade Logix</h1>
+    <nav>
+      <a href="">Home</a>
+      <a href="">Courses</a>
+      <a href="">Contact</a>
+    </nav>
+  </header>
+  <main>
+    <section>
+      <h2>Frontend Development</h2>
+      <article>
+        <h3>HTML Basics</h3>
+        <p>Learn semantic HTML easily.</p>
+      </article>
+    </section>
+    <aside>
+      Related Tutorials
+    </aside>
+  </main>
+  <footer>
+    © 2026 WeMade Logix
+  </footer>
+</body>
+</html>`}
+                                    </pre>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            {activeDay4Tab === 'pitfalls' && (
+                              <div className="animate-fade" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                                <div>
+                                  <h4 style={{ margin: '0 0 12px 0', color: 'var(--primary-cyan)', fontSize: '1.1rem' }}>Interview Questions & Beginner Pitfalls</h4>
+                                </div>
+
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
+                                  {/* Pitfalls */}
+                                  <div style={{ background: 'rgba(239, 68, 68, 0.02)', border: '1px solid rgba(239, 68, 68, 0.1)', padding: '16px', borderRadius: '8px' }}>
+                                    <strong style={{ color: '#ef4444', fontSize: '0.85rem', display: 'block', marginBottom: '10px' }}>❌ Common Beginner Mistakes:</strong>
+                                    <ul style={{ paddingLeft: '18px', margin: 0, fontSize: '0.78rem', color: '#cbd5e1', lineHeight: '1.5', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                                      <li><strong>Div Soup:</strong> Relying exclusively on generic <code>&lt;div&gt;</code> tags for visual borders or dividers.</li>
+                                      <li><strong>Multiple Main Elements:</strong> Placing more than one <code>&lt;main&gt;</code> landmark per page block.</li>
+                                      <li><strong>Purposeless Semantics:</strong> Wrapping trivial elements in landmark tags without standard outline structure.</li>
+                                      <li><strong>Ignoring a11y:</strong> Creating widgets without text labels or focus states.</li>
+                                    </ul>
+                                  </div>
+
+                                  {/* Interview QA */}
+                                  <div style={{ background: 'rgba(16, 185, 129, 0.02)', border: '1px solid rgba(16, 185, 129, 0.1)', padding: '16px', borderRadius: '8px' }}>
+                                    <strong style={{ color: '#10b981', fontSize: '0.85rem', display: 'block', marginBottom: '10px' }}>💬 Key Interview Questions:</strong>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.78rem' }}>
+                                      <div>
+                                        <strong style={{ color: 'white', display: 'block' }}>Q1: What is Semantic HTML?</strong>
+                                        <span style={{ color: '#cbd5e1' }}>Semantic HTML uses meaningful tags (like <code>&lt;header&gt;</code>, <code>&lt;article&gt;</code>) that clearly describe the content purpose to machines, browsers, and screen readers.</span>
+                                      </div>
+                                      <div>
+                                        <strong style={{ color: 'white', display: 'block' }}>Q2: Why is Semantic HTML important?</strong>
+                                        <span style={{ color: '#cbd5e1' }}>It dramatically improves website SEO rankings, ensures screen reader accessibility, and yields cleaner, highly maintainable code.</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -2816,7 +3129,7 @@ const MainContent = () => {
                   <div className="nav-text">
                     <span className="nav-label">Previous Topic</span>
                     <span className="nav-title full-title">{prevTopic.title}</span>
-                    <span className="nav-title short-title">{prevTopic.id.toUpperCase()}</span>
+                    <span className="nav-title short-title">{prevTopic.id.split('-').pop().toUpperCase()}</span>
                   </div>
                 </button>
               ) : <div />}
@@ -2826,7 +3139,7 @@ const MainContent = () => {
                   <div className="nav-text">
                     <span className="nav-label">Next Topic</span>
                     <span className="nav-title full-title">{nextTopic.title}</span>
-                    <span className="nav-title short-title">{nextTopic.id.toUpperCase()}</span>
+                    <span className="nav-title short-title">{nextTopic.id.split('-').pop().toUpperCase()}</span>
                   </div>
                   <div className="nav-icon"><ArrowRight size={20} /></div>
                 </button>
@@ -2849,92 +3162,56 @@ const MainContent = () => {
              margin: 0;
            }
            
-           /* Custom styled bottom navigation footer */
            .navigation-footer { 
+             position: sticky;
+             bottom: 24px;
+             margin: 40px 0 0 auto;
              display: flex; 
              justify-content: space-between; 
-             gap: var(--space-4); 
-             margin-top: var(--space-8); 
-             padding: var(--space-8) 0; 
-             border-top: 1px solid var(--app-border); 
+             align-items: center;
+             gap: 16px; 
+             background: rgba(255,255,255,0.9);
+             backdrop-filter: blur(12px);
+             padding: 8px; 
+             border: 1px solid var(--app-border); 
+             border-radius: 100px;
+             box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+             width: 100%;
+             max-width: 800px;
+             z-index: 100;
+           }
+           [data-theme='dark'] .navigation-footer {
+             background: rgba(15, 23, 42, 0.85);
            }
            .nav-btn { 
              flex: 1; 
              display: flex; 
              align-items: center; 
-             gap: var(--space-4); 
-             padding: var(--space-4); 
-             background: var(--app-card-bg); 
-             border: 1px solid var(--app-border); 
-             border-radius: var(--radius-lg); 
+             gap: 12px; 
+             padding: 8px 16px; 
+             background: transparent; 
+             border: none; 
+             border-radius: 100px; 
              cursor: pointer; 
              transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
              text-align: left; 
-             max-width: 380px; 
-             position: relative; 
-             overflow: hidden; 
            }
            .nav-btn:hover { 
+             background: rgba(0, 209, 209, 0.1); 
+           }
+           .nav-btn.next { text-align: right; justify-content: flex-end; }
+           .nav-btn.next:hover {
              background: var(--brand-gradient);
-             border-color: transparent;
-             transform: translateY(-4px); 
-             box-shadow: var(--glow);
            }
-           .nav-btn:hover .nav-label {
-             color: white !important;
+           .nav-btn.next:hover .nav-label, .nav-btn.next:hover .nav-title, .nav-btn.next:hover .nav-icon {
+             color: white;
            }
-           .nav-btn:hover .nav-title {
-             color: white !important;
-           }
-           .nav-btn.next { 
-             text-align: right; 
-             justify-content: flex-end; 
-             margin-left: auto;
-           }
-           .nav-text { 
-             display: flex; 
-             flex-direction: column; 
-             overflow: hidden; 
-             z-index: 1; 
-           }
-           .nav-label { 
-             font-size: 0.7rem; 
-             text-transform: uppercase; 
-             color: #64748b; 
-             font-weight: 700; 
-             letter-spacing: 1px; 
-             margin-bottom: 4px; 
-             transition: color 0.3s; 
-           }
-           .nav-title { 
-             font-size: 0.95rem; 
-             font-weight: 600; 
-             color: var(--app-text); 
-             white-space: nowrap; 
-             overflow: hidden; 
-             text-overflow: ellipsis; 
-             transition: color 0.3s; 
-           }
+           .nav-text { display: flex; flex-direction: column; overflow: hidden; z-index: 1; }
+           .nav-label { font-size: 0.65rem; text-transform: uppercase; color: var(--text-neutral); font-weight: 800; letter-spacing: 0.5px; margin-bottom: 2px; }
+           .nav-title { font-size: 0.9rem; font-weight: 700; color: var(--app-text); max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
            .nav-title.short-title { display: none; }
-           .nav-icon { 
-             width: 48px;
-             height: 48px;
-             background: rgba(0, 209, 209, 0.1);
-             border: 1px solid var(--app-border);
-             border-radius: 12px;
-             display: flex; 
-             align-items: center; 
-             justify-content: center; 
-             color: var(--primary-cyan);
-             flex-shrink: 0; 
-             transition: all 0.3s; 
-             z-index: 1; 
-           }
-           .nav-btn:hover .nav-icon {
-             background: rgba(255, 255, 255, 0.2) !important;
-             color: white !important;
-             border-color: transparent !important;
-           }
+           .nav-icon { display: flex; align-items: center; justify-content: center; color: var(--text-secondary); transition: all 0.3s; z-index: 1; flex-shrink: 0; }
+
            .content-footer { 
              margin-top: auto; 
              padding: 16px 0; 

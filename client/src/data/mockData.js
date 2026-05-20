@@ -1587,6 +1587,19 @@ export const courseData = [
                 "content": "Tags like <time>, <figure>, and <figcaption> provide metadata and context descriptors, turning flat text into search-engine readable structured markup."
               }
             ],
+            "detailedReference": {
+              "summary": "Semantic HTML is the foundation of structural web design. It uses elements that describe their content's purpose to both humans and machines, ensuring browser agents, screen readers, and search engine crawlers can successfully index page structures.",
+              "keyConcepts": [
+                { "term": "Div Soup Layout", "definition": "The anti-pattern of using generic <div> tags for layout positioning, styling blocks, and structural dividers, stripping all semantic context from the DOM tree." },
+                { "term": "Document Landmarks", "definition": "Standardized tags like <header>, <nav>, <main>, <article>, <section>, <aside>, and <footer> that define logical zones (landmarks) inside a browser's accessibility tree." },
+                { "term": "Section vs Article", "definition": "A <section> groups related content under a specific topic header. An <article> contains an independent, self-contained piece of writing or component that can stand alone." }
+              ],
+              "bestPractices": [
+                "Always place page content within a single main landmark <main> representing the unique content of that document.",
+                "Never use semantic elements strictly for formatting or default styling changes (e.g. using <aside> just to pull text left or right).",
+                "Nest semantic markup hierarchically; do not place <main> inside a <header> or <nav> container."
+              ]
+            },
             "codeTemplate": {
               "html": "<header>\n  <h1>Tech Blog</h1>\n  <nav>\n    <a href='#'>Home</a> | <a href='#'>Articles</a>\n  </nav>\n</header>\n\n<main>\n  <article>\n    <h2>Semantic HTML Guide</h2>\n    <p>Semantic tags improve accessibility and SEO rankings.</p>\n  </article>\n</main>\n\n<footer>\n  <p>&copy; 2026 Developer Portal</p>\n</footer>",
               "css": "header { background: #1e293b; padding: 15px; text-align: center; border-radius: 8px; }\nnav { margin-top: 10px; }\nmain { margin: 20px 0; }\narticle { background: #0f172a; border: 1px solid #334155; padding: 20px; border-radius: 8px; }\nfooter { text-align: center; color: #64748b; padding: 10px; }",
@@ -1616,6 +1629,19 @@ export const courseData = [
                 "content": "Use native HTML buttons instead of div click listeners so focus rings and keyboard Space/Enter triggers work automatically. Use aria-labels to provide spoken context."
               }
             ],
+            "detailedReference": {
+              "summary": "Web Accessibility (a11y) ensures that websites are fully functional and readable for individuals with diverse visual, auditory, motor, or cognitive abilities. Integrating correct HTML tags, label bounds, and ARIA roles is key to building inclusive applications.",
+              "keyConcepts": [
+                { "term": "Screen Readers", "definition": "Software that reads web layouts aloud based on the browser's accessibility tree, relying heavily on proper DOM tagging." },
+                { "term": "Label Input Association", "definition": "Binding form fields to their readable labels using matching for and id tags, which increases input focus targets and announces field names." },
+                { "term": "Keyboard Focus Flow", "definition": "The sequential path users traverse using the Tab key. Navigating through forms, links, and buttons requires focus visual indicators (:focus outline styles)." }
+              ],
+              "bestPractices": [
+                "Always declare alt attributes on all <img> tags (use empty alt=\"\" for layout dividers and pure decorative vectors).",
+                "Never use <div> or <span> for click actions when a native <button> or <a> link is available.",
+                "Ensure focus states have high-contrast visual outlines so keyboard users can track their screen cursor location."
+              ]
+            },
             "codeTemplate": {
               "html": "<!-- Accessible Form Snippet -->\n<form>\n  <label for='user-name'>Full Name:</label>\n  <input type='text' id='user-name' placeholder='Enter your name' required>\n  \n  <button type='submit' aria-label='Submit registration form'>\n    Register\n  </button>\n</form>",
               "css": "form { background: #1e293b; padding: 20px; border-radius: 12px; display: flex; flex-direction: column; gap: 12px; }\nlabel { font-weight: bold; color: #38bdf8; }\ninput { padding: 10px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: white; }\nbutton { background: #0ea5e9; color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; }\nbutton:focus { outline: 2px solid #38bdf8; outline-offset: 2px; }",
@@ -1645,6 +1671,19 @@ export const courseData = [
                 "content": "Assistive tech tools generate navigation tables from headings. Skipping levels causes broken sections and makes keyboard jumps unreliable."
               }
             ],
+            "detailedReference": {
+              "summary": "Logical headings structure creates a clean document tree that defines your page outline. This structure enables search engines and screen readers to crawl and navigate sections sequentially.",
+              "keyConcepts": [
+                { "term": "Sequential Nesting", "definition": "Organizing headings numerically to prevent outline level skipping, keeping section hierarchies intact." },
+                { "term": "Single H1 Directive", "definition": "The SEO and layout rule dictating that each unique web resource has a single primary title heading." },
+                { "term": "Accessibility Outliner", "definition": "A navigation map built by screen readers that reads page headings aloud, allowing users to jump directly to sections." }
+              ],
+              "bestPractices": [
+                "Do not use heading tags (<h1>-<h6>) strictly to change font size or weights. Use CSS rules instead.",
+                "Ensure all primary content sections (e.g. <section>) begin with an appropriate heading tag (<h2>-<h6>) describing the section topic.",
+                "Verify that your document outline tree starts with <h1> and moves sequentially down through <h2>, <h3> etc., without skipping ranks."
+              ]
+            },
             "codeTemplate": {
               "html": "<h1>Developer Resources</h1>\n\n<h2>Frontend Development</h2>\n<h3>HTML Basics</h3>\n<p>Learn core tags.</p>\n\n<h3>CSS Layouts</h3>\n<p>Master Flexbox and Grid.</p>\n\n<h2>Backend Development</h2>\n<h3>NodeJS Core</h3>\n<p>Learn server side logic.</p>",
               "css": "h1 { color: #f43f5e; border-bottom: 2px solid #e11d48; padding-bottom: 10px; }\nh2 { color: #38bdf8; margin-top: 20px; }\nh3 { color: #fbbf24; margin-left: 15px; }\np { margin-left: 15px; color: #94a3b8; }",
@@ -1654,30 +1693,30 @@ export const courseData = [
           },
           {
             "id": "d4-t4",
-            "title": "4. Assignment Task – Accessible Blog Portal",
+            "title": "4. Assignment Task",
             "progression": [
               {
                 "level": "easy",
-                "title": "Accessible Grid Blueprint",
-                "content": "Create a fully responsive semantic layout using correct document outlines and landmark layouts."
+                "title": "Semantic Landmarks Refactoring",
+                "content": "Refactor the outer structure from generic divs into HTML5 semantic containers: <header>, <nav>, <main>, <aside>, and <footer>."
               },
               {
                 "level": "intermediate",
-                "title": "ARIA Attributes & Alt tags",
-                "content": "Ensure every anchor link and image has description strings to guarantee full screen reader compatibility."
+                "title": "Logical Headings Hierarchy",
+                "content": "Reorganize page headings so they follow a strict hierarchy: exactly one <h1> page title, followed sequentially by <h2> and <h3> tags, correcting skipped levels."
               },
               {
                 "level": "advanced",
-                "title": "Semantic Validation Rules",
-                "content": "Run tests inside your layout tree checking that landmarks like <header>, <nav>, <main>, <article>, and <footer> exist in sequence."
+                "title": "Accessible Form & Media Controls",
+                "content": "Add descriptive 'alt' text to all images. Connect the email input field to a proper <label> using matching 'id' and 'for' tags, and add keyboard focus states to button elements."
               }
             ],
             "codeTemplate": {
-              "html": "<!-- TASK: Refactor this generic div outline into an accessible, semantic blog portal -->\n<div id=\"app\">\n  <div class=\"top-bar\">\n    <div class=\"site-logo\">EduBlog Portal</div>\n    <div class=\"navigation-menu\">\n      <a href=\"#home\">Home</a>\n      <a href=\"#tutorials\">Tutorials</a>\n      <a href=\"#about\">About Us</a>\n    </div>\n  </div>\n\n  <div class=\"main-body\">\n    <div class=\"blog-article\">\n      <h2>Mastering Semantic Web Markup</h2>\n      <img src=\"https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=500\" class=\"post-img\">\n      <p>Semantic tags help index your content for SEO and screen-reader accessibility.</p>\n    </div>\n    \n    <div class=\"blog-article\">\n      <h2>Accessibility Best Practices</h2>\n      <img src=\"https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=500\" class=\"post-img\">\n      <p>Using labels and alt tags provides screen readers with context.</p>\n    </div>\n  </div>\n\n  <div class=\"bottom-footer\">\n    <p>&copy; 2026 EduBlog Systems. All Rights Reserved.</p>\n  </div>\n</div>",
-              "css": "#app { font-family: system-ui, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background: #0f172a; color: white; border-radius: 12px; }\n.top-bar { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 15px; }\n.site-logo { font-size: 1.5rem; font-weight: bold; color: #38bdf8; }\n.navigation-menu a { color: #94a3b8; text-decoration: none; margin-left: 15px; }\n.navigation-menu a:hover { color: white; }\n.main-body { margin: 30px 0; display: grid; gap: 24px; }\n.blog-article { background: #1e293b; padding: 20px; border-radius: 8px; border: 1px solid #334155; }\n.blog-article h2 { color: #f59e0b; margin-top: 0; }\n.post-img { width: 100%; height: 200px; object-fit: cover; border-radius: 6px; margin: 10px 0; }\n.bottom-footer { text-align: center; border-top: 1px solid #334155; padding-top: 15px; color: #64748b; font-size: 0.85rem; }",
+              "html": "<!-- TASK: Refactor this inaccessible, generic layout into a semantic & accessible portal -->\n<div id=\"app\">\n  <!-- Logo & Navigation Header -->\n  <div class=\"header-bar\">\n    <div class=\"logo-text\">DevBytes Hub</div>\n    <div class=\"links-list\">\n      <a href=\"#articles\">Articles</a>\n      <a href=\"#newsletter\">Subscribe</a>\n    </div>\n  </div>\n\n  <!-- Main Content & Sidebar -->\n  <div class=\"content-layout\">\n    <div class=\"main-feed\">\n      <!-- Heading error: skipped levels (starts directly at h2) -->\n      <h2>Building a Semantic Web Layout</h2>\n      \n      <!-- Accessibility error: missing image description -->\n      <img src=\"https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=500\" class=\"post-cover\">\n      \n      <p>Using semantic HTML elements helps search engine crawlers understand content structure and improves accessibility.</p>\n      \n      <h4>Key Landmarks to Remember</h4>\n      <p>Modern layouts use header, nav, main, article, aside, and footer sections.</p>\n    </div>\n\n    <!-- Sidebar containing form -->\n    <div class=\"sidebar-aside\">\n      <h3>Join Our Mailing List</h3>\n      <p>Stay up to date with core frontend tutorials.</p>\n      \n      <div class=\"subscribe-box\">\n        <!-- Accessibility error: input has no label or label association -->\n        <input type=\"email\" placeholder=\"Enter your email address\">\n        <button type=\"button\">Join Newsletter</button>\n      </div>\n    </div>\n  </div>\n\n  <!-- Footer Copyright -->\n  <div class=\"footer-block\">\n    <p>Copyright 2026 DevBytes Hub. All rights reserved.</p>\n  </div>\n</div>",
+              "css": "#app { font-family: system-ui, -apple-system, sans-serif; max-width: 850px; margin: 0 auto; padding: 24px; background: #0f172a; color: #e2e8f0; border-radius: 12px; border: 1px solid #1e293b; }\n.header-bar { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1e293b; padding-bottom: 16px; margin-bottom: 24px; }\n.logo-text { font-size: 1.5rem; font-weight: 800; color: #00d1d1; }\n.links-list a { color: #94a3b8; text-decoration: none; margin-left: 16px; font-weight: 600; transition: color 0.2s; }\n.links-list a:hover { color: #00d1d1; }\n.content-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 24px; }\n@media (max-width: 768px) { .content-layout { grid-template-columns: 1fr; } }\n.main-feed { background: #1e293b; padding: 20px; border-radius: 8px; border: 1px solid #334155; }\n.post-cover { width: 100%; height: 200px; object-fit: cover; border-radius: 6px; margin: 12px 0; }\n.sidebar-aside { background: #1a2333; padding: 20px; border-radius: 8px; border: 1px dashed #334155; height: fit-content; }\n.subscribe-box { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }\ninput { padding: 10px 12px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: white; outline: none; }\ninput:focus { border-color: #00d1d1; }\nbutton { background: #00d1d1; color: #0f172a; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: opacity 0.2s; }\nbutton:hover { opacity: 0.9; }\n.footer-block { text-align: center; border-top: 1px solid #1e293b; padding-top: 16px; color: #64748b; font-size: 0.85rem; }",
               "js": ""
             },
-            "assessment": "Final Challenge: Convert the layout to use <header>, <nav>, <main>, <article>, and <footer> tags. Set descriptive alt tags for images."
+            "assessment": "Final Checklist:\n1. Convert outer divs into `<header>`, `<nav>`, `<main>`, `<aside>`, and `<footer>` tags.\n2. Fix heading outline: Add a single `<h1>` representing the page title, then use `<h2>` and `<h3>` tags in order (ensure H4 isn't skipped).\n3. Add a descriptive `alt` attribute to the `<img>` tag.\n4. Add a `<label>` element connected to the email `<input>` via matching `id` and `for` attributes. Add an `aria-label` or descriptive accessible text to the `<button>`."
           },
           {
             "id": "w1-d4-resources",
@@ -1688,11 +1727,7 @@ export const courseData = [
               "title": "Tutor Lesson Plan & Reference Guide",
               "content": "Key visual structures, keyboard accessibility demonstration guidelines, alt text rules, and solutions for the accessible blog challenge.",
               "duration": "15 mins",
-              "resources": [
-                "Semantic Layout Cheat Sheet (PDF)",
-                "Accessibility Audit Checklist (PDF)",
-                "Accessible Blog Solution Code (ZIP)"
-              ]
+              "resources": []
             }
           }
         ]
