@@ -4,9 +4,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { logout, reset } from '../features/auth/authSlice';
-import { Sun, Moon, Menu, Search, Bell, User, LogOut, Users, Shield, GraduationCap, ChevronDown, ClipboardCheck, MessageSquare, Eye, EyeOff, X } from 'lucide-react';
+import { Sun, Moon, Menu, Search, Bell, User, LogOut, Users, Shield, GraduationCap, ChevronDown, ClipboardCheck, MessageSquare, Eye, EyeOff, X, QrCode } from 'lucide-react';
 import { useCourse } from '../context/CourseContext';
 import { courseData } from '../data/mockData';
+import { Html5Qrcode } from 'html5-qrcode';
 
 const Header = () => {
   const { theme, toggleTheme, toggleSidebar, setSelectedTopic } = useCourse();
@@ -17,10 +18,94 @@ const Header = () => {
   const [passwordStatus, setPasswordStatus] = useState({ type: '', message: '' });
   const [showPasswordFields, setShowPasswordFields] = useState({ current: false, new: false, confirm: false });
   const [notifications, setNotifications] = useState([]);
+  
+  // QR Scanner States
+  const [showScannerModal, setShowScannerModal] = useState(false);
+  const [scannerError, setScannerError] = useState('');
+  const [scanSuccessMessage, setScanSuccessMessage] = useState('');
+
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    let html5QrCode;
+    
+    if (showScannerModal && !scanSuccessMessage) {
+      setScannerError('');
+      const initTimeout = setTimeout(() => {
+        try {
+          html5QrCode = new Html5Qrcode("qr-reader");
+          html5QrCode.start(
+            { facingMode: "environment" },
+            {
+              fps: 10,
+              qrbox: 200,
+            },
+            async (decodedText) => {
+              try {
+                await html5QrCode.stop();
+                handleMarkAttendance(decodedText);
+              } catch (stopErr) {
+                console.error("Error stopping scanner on success:", stopErr);
+                handleMarkAttendance(decodedText);
+              }
+            },
+            (errorMessage) => {
+              // Ignore spammy parse errors
+            }
+          ).catch(err => {
+            console.error("Camera start failed:", err);
+            setScannerError("Camera access permission denied or no camera found.");
+          });
+        } catch (err) {
+          console.error("Scanner setup failed:", err);
+          setScannerError("Failed to initialize scanner. Make sure camera is available.");
+        }
+      }, 300);
+
+      return () => {
+        clearTimeout(initTimeout);
+        if (html5QrCode && html5QrCode.isScanning) {
+          html5QrCode.stop().catch(err => console.error("Error stopping scanner on clean-up:", err));
+        }
+      };
+    }
+  }, [showScannerModal, scanSuccessMessage]);
+
+  const handleMarkAttendance = async (code) => {
+    try {
+      const userData = JSON.parse(localStorage.getItem('user'));
+      const token = userData?.token;
+      if (!token) {
+        setScannerError("Authentication token not found. Please log in again.");
+        return;
+      }
+
+      const response = await axios.post('/api/attendance/scan', 
+        { code },
+        { headers: { 'Authorization': `Bearer ${token}` } }
+      );
+
+      if (response.data?.success) {
+        setScanSuccessMessage("🎉 Attendance marked successfully!");
+        alert("Attendance Marked successfully!");
+        setTimeout(() => {
+          setShowScannerModal(false);
+          setScanSuccessMessage('');
+        }, 1500);
+      }
+    } catch (err) {
+      const msg = err.response?.data?.message || "Failed to mark attendance. Invalid QR code.";
+      setScannerError(msg);
+      setTimeout(() => {
+        setScannerError('');
+        setShowScannerModal(false);
+        setTimeout(() => setShowScannerModal(true), 200);
+      }, 3000);
+    }
+  };
 
   const fetchNotifications = async () => {
     try {
@@ -194,6 +279,20 @@ const Header = () => {
       </div>
 
       <div className="header-actions">
+        {user && (
+          <button 
+            className="icon-btn"
+            onClick={() => {
+              setScanSuccessMessage('');
+              setScannerError('');
+              setShowScannerModal(true);
+            }}
+            title="Scan Attendance QR"
+            style={{ marginRight: '4px' }}
+          >
+            <QrCode size={20} />
+          </button>
+        )}
         <div className="notification-container">
           <button 
             className="icon-btn" 
@@ -354,6 +453,64 @@ const Header = () => {
           )}
         </div>
       </div>
+
+      {showScannerModal && createPortal(
+        <div className="modal-overlay" onClick={() => setShowScannerModal(false)}>
+          <div className="modal-content scanner-modal" onClick={e => e.stopPropagation()} style={{ maxWidth: '440px', padding: '24px' }}>
+            <div className="modal-header">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <QrCode size={22} style={{ color: 'var(--primary-cyan)' }} />
+                <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: '800' }}>Scan Attendance QR</h3>
+              </div>
+              <button className="close-btn" onClick={() => setShowScannerModal(false)}>×</button>
+            </div>
+            
+            <div className="scanner-body" style={{ marginTop: '16px', textAlign: 'center' }}>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-neutral)', marginBottom: '16px', lineHeight: '1.4' }}>
+                Position the tutor's dynamic QR code inside the scanner box below to mark your attendance.
+              </p>
+              
+              {scannerError ? (
+                <div className="status-message error" style={{ marginBottom: '16px', fontSize: '0.85rem' }}>
+                  {scannerError}
+                </div>
+              ) : null}
+
+              {scanSuccessMessage ? (
+                <div className="status-message success" style={{ marginBottom: '16px', justifyContent: 'center', fontSize: '0.85rem' }}>
+                  {scanSuccessMessage}
+                </div>
+              ) : (
+                <div style={{ position: 'relative', width: '100%', maxWidth: '280px', margin: '0 auto', background: '#000', borderRadius: '16px', overflow: 'hidden', border: '2px solid var(--primary-cyan)', boxShadow: '0 0 15px rgba(0,209,209,0.2)' }}>
+                  <div id="qr-reader" style={{ width: '100%', height: '260px' }}></div>
+                  
+                  {/* Scanner target box overlay */}
+                  <div style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: '180px',
+                    height: '180px',
+                    border: '2px dashed var(--primary-cyan)',
+                    borderRadius: '12px',
+                    pointerEvents: 'none',
+                    zIndex: 2,
+                    boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.4)'
+                  }}></div>
+                </div>
+              )}
+            </div>
+            
+            <div className="modal-actions" style={{ justifyContent: 'center', marginTop: '20px' }}>
+              <button className="btn-secondary" onClick={() => setShowScannerModal(false)} style={{ padding: '8px 16px', fontSize: '0.85rem' }}>
+                Close Scanner
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
 
       {showPasswordModal && createPortal(
         <div className="modal-overlay" onClick={() => setShowPasswordModal(false)}>

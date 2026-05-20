@@ -6,6 +6,7 @@ import UsersList from './pages/UsersList';
 import AssignmentsList from './pages/AssignmentsList';
 import Profile from './pages/Profile';
 import AuditLogs from './pages/AuditLogs';
+import AttendanceAdmin from './pages/AttendanceAdmin';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
         <Route element={<ProtectedRoute adminOnly={true} />}>
           <Route path="/admin/users" element={<UsersList />} />
           <Route path="/admin/assignments" element={<AssignmentsList />} />
+          <Route path="/admin/attendance" element={<AttendanceAdmin />} />
         </Route>
 
         {/* SuperAdmin Routes */}

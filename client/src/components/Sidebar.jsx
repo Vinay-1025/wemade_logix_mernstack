@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useCourse } from '../context/CourseContext';
 import { courseData } from '../data/mockData';
-import { ChevronDown, ChevronRight, BookOpen, Clock, Calendar, CheckCircle2, PanelLeftClose, PanelLeftOpen, ShieldCheck, ClipboardCheck, Lock, History } from 'lucide-react';
+import { ChevronDown, ChevronRight, BookOpen, Clock, Calendar, CheckCircle2, PanelLeftClose, PanelLeftOpen, ShieldCheck, ClipboardCheck, Lock, History, CheckSquare } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const Sidebar = () => {
@@ -140,6 +140,14 @@ const Sidebar = () => {
                 <div className="btn-content">
                   <ClipboardCheck size={20} color="#00D1D1" />
                   {!isSidebarCollapsed && <span>Assignments</span>}
+                </div>
+              </button>
+            </Link>
+            <Link to="/admin/attendance" style={{ textDecoration: 'none', color: 'inherit', marginTop: '8px', display: 'block' }}>
+              <button className={`sidebar-toggle-btn week-btn admin-btn ${location.pathname === '/admin/attendance' ? 'active' : ''}`}>
+                <div className="btn-content">
+                  <CheckSquare size={20} color="#10b981" />
+                  {!isSidebarCollapsed && <span>Attendance Center</span>}
                 </div>
               </button>
             </Link>
