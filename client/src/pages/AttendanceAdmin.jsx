@@ -228,43 +228,49 @@ const AttendanceAdmin = () => {
               <div className="loading-state-card">Checking active sessions...</div>
             ) : activeSession ? (
               <div className="session-active-view">
-                <div className="pulse-indicator">
-                  <span className="pulse-dot"></span>
-                  <span className="pulse-text">SESSION ACTIVE</span>
-                </div>
+                <div className="active-session-split">
+                  <div className="active-session-left">
+                    <div className="qr-code-wrapper">
+                      <div className="qr-image-container">
+                        <img 
+                          src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${activeSession.code}&color=0047ab&bgcolor=ffffff`} 
+                          alt="Attendance QR Code"
+                          className="qr-image"
+                        />
+                        <div className="scan-laser"></div>
+                      </div>
+                      <div className="qr-code-overlay">
+                        <span className="code-text">{activeSession.code}</span>
+                      </div>
+                    </div>
+                  </div>
 
-                <div className="qr-code-wrapper">
-                  <div className="qr-image-container">
-                    <img 
-                      src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${activeSession.code}&color=0047ab&bgcolor=ffffff`} 
-                      alt="Attendance QR Code"
-                      className="qr-image"
-                    />
-                    <div className="scan-laser"></div>
-                  </div>
-                  <div className="qr-code-overlay">
-                    <span className="code-text">{activeSession.code}</span>
+                  <div className="active-session-right">
+                    <div className="pulse-indicator">
+                      <span className="pulse-dot"></span>
+                      <span className="pulse-text">SESSION ACTIVE</span>
+                    </div>
+
+                    <div className="session-details-list">
+                      <div className="detail-item">
+                        <span className="detail-label">Started At</span>
+                        <span className="detail-value">{new Date(activeSession.createdAt).toLocaleTimeString()}</span>
+                      </div>
+                      <div className="detail-item">
+                        <span className="detail-label">Class Day</span>
+                        <span className="detail-value">{getDayLabel(activeSession.dayId)}</span>
+                      </div>
+                      <div className="detail-item">
+                        <span className="detail-label">Authorized Token</span>
+                        <span className="detail-value font-mono">{activeSession.code}</span>
+                      </div>
+                    </div>
+
+                    <button className="btn-stop-session" onClick={handleEndSession}>
+                      <Square size={16} fill="white" /> End Active Session
+                    </button>
                   </div>
                 </div>
-
-                <div className="session-details-list">
-                  <div className="detail-item">
-                    <span className="detail-label">Started At</span>
-                    <span className="detail-value">{new Date(activeSession.createdAt).toLocaleTimeString()}</span>
-                  </div>
-                  <div className="detail-item">
-                    <span className="detail-label">Class Day</span>
-                    <span className="detail-value">{getDayLabel(activeSession.dayId)}</span>
-                  </div>
-                  <div className="detail-item">
-                    <span className="detail-label">Authorized Token</span>
-                    <span className="detail-value font-mono">{activeSession.code}</span>
-                  </div>
-                </div>
-
-                <button className="btn-stop-session" onClick={handleEndSession}>
-                  <Square size={16} fill="white" /> End Active Session
-                </button>
               </div>
             ) : (
               <div className="session-inactive-view">
@@ -579,7 +585,7 @@ const AttendanceAdmin = () => {
         }
         .attendance-grid {
           display: grid;
-          grid-template-columns: 350px 1fr;
+          grid-template-columns: 560px 1fr;
           gap: 32px;
           align-items: start;
           width: 100%;
@@ -641,8 +647,30 @@ const AttendanceAdmin = () => {
         .session-active-view {
           display: flex;
           flex-direction: column;
+          align-items: stretch;
+          width: 100%;
+        }
+        .active-session-split {
+          display: flex;
+          gap: 28px;
           align-items: center;
-          text-align: center;
+          width: 100%;
+        }
+        .active-session-left {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          min-width: 0;
+        }
+        .active-session-right {
+          flex: 1.2;
+          display: flex;
+          flex-direction: column;
+          align-items: stretch;
+          justify-content: center;
+          min-width: 0;
         }
         .pulse-indicator {
           display: flex;
@@ -652,7 +680,8 @@ const AttendanceAdmin = () => {
           border: 1px solid rgba(16, 185, 129, 0.2);
           padding: 6px 14px;
           border-radius: 20px;
-          margin-bottom: 24px;
+          margin-bottom: 20px;
+          width: fit-content;
         }
         .pulse-dot {
           width: 8px;
@@ -1117,6 +1146,18 @@ const AttendanceAdmin = () => {
           .attendance-grid {
             grid-template-columns: 1fr;
             gap: 28px;
+          }
+        }
+        @media (max-width: 600px) {
+          .active-session-split {
+            flex-direction: column;
+            gap: 20px;
+          }
+          .active-session-left, .active-session-right {
+            width: 100%;
+          }
+          .pulse-indicator {
+            align-self: center;
           }
         }
         @media (max-width: 768px) {
