@@ -1563,212 +1563,135 @@ export const courseData = [
       },
       {
         "dayId": "w1-d4",
-        "dayTitle": "Day 4: Mastering Flexbox Layouts",
+        "dayTitle": "Day 4: Semantic HTML, Structure & Accessibility",
         "topics": [
           {
             "id": "d4-t1",
-            "title": "1. CSS Display Property",
-            "visualization": "/css-display.png",
+            "title": "1. Semantic HTML Layouts",
+            "visualization": "/semantic-tags-map.png",
+            "customComponent": "SemanticLayoutVisualizer",
             "progression": [
               {
                 "level": "easy",
-                "title": "How Elements Occupy Space",
-                "content": "Every HTML element has a default display behavior. 'Block' elements (like <div>) stack on top of each other, while 'Inline' elements (like <span>) sit side-by-side like words in a sentence."
+                "title": "Beyond Div Soup",
+                "content": "A generic <div> tells the browser nothing about the content. Semantic elements like <header>, <main>, <nav>, and <footer> explain their meaning to both browser agents and screen readers."
               },
               {
                 "level": "intermediate",
-                "title": "Inline-Block",
-                "content": "Inline-block is the 'best of both worlds'. Elements sit side-by-side, but you can still give them a specific width, height, margin, and padding."
+                "title": "Content Landmarks",
+                "content": "Use <article> for self-contained components (like blog entries or widgets), <section> for logical groupings with headings, and <aside> for secondary sidebar callouts."
               },
               {
                 "level": "advanced",
-                "title": "The 'Display: None' Trick",
-                "content": "Setting 'display: none' completely removes an element from the page layout. It's not just hidden; it's gone as if it never existed until you turn it back on with JavaScript or CSS."
+                "title": "Text-Level Semantics",
+                "content": "Tags like <time>, <figure>, and <figcaption> provide metadata and context descriptors, turning flat text into search-engine readable structured markup."
               }
             ],
             "codeTemplate": {
-              "html": "<div class='block'>Block 1</div>\n<div class='block'>Block 2</div>\n<span class='inline'>Inline 1</span>\n<span class='inline'>Inline 2</span>",
-              "css": ".block {\n  background: #0ea5e9;\n  color: white;\n  padding: 10px;\n  margin-bottom: 5px;\n}\n.inline {\n  background: #4ade80;\n  padding: 5px;\n}",
+              "html": "<header>\n  <h1>Tech Blog</h1>\n  <nav>\n    <a href='#'>Home</a> | <a href='#'>Articles</a>\n  </nav>\n</header>\n\n<main>\n  <article>\n    <h2>Semantic HTML Guide</h2>\n    <p>Semantic tags improve accessibility and SEO rankings.</p>\n  </article>\n</main>\n\n<footer>\n  <p>&copy; 2026 Developer Portal</p>\n</footer>",
+              "css": "header { background: #1e293b; padding: 15px; text-align: center; border-radius: 8px; }\nnav { margin-top: 10px; }\nmain { margin: 20px 0; }\narticle { background: #0f172a; border: 1px solid #334155; padding: 20px; border-radius: 8px; }\nfooter { text-align: center; color: #64748b; padding: 10px; }",
               "js": ""
             },
-            "assessment": "Convert two block elements into inline-block elements and set their width to 100px."
+            "assessment": "Verify that your semantic layout wraps the main blog content block in a <main> landmark."
           },
           {
             "id": "d4-t2",
-            "title": "2. Flexbox Basics",
-            "visualization": "/flex-axis.png",
+            "title": "2. Web Accessibility & ARIA Basics",
+            "visualization": "/web-a11y.png",
+            "customComponent": "AccessibilityVisualizer",
             "progression": [
               {
                 "level": "easy",
-                "title": "Introduction to Flex",
-                "content": "Flexbox (Flexible Box) is a modern layout system. It's designed to align elements in a row or column, and it can grow or shrink them to fill the available space automatically."
+                "title": "Alternate Text Labels",
+                "content": "Every content image must have an 'alt' attribute describing its visual contents. Decorative images should use empty alt attributes (alt=\"\") to be ignored by screen readers."
               },
               {
                 "level": "intermediate",
-                "title": "Container vs Items",
-                "content": "Flexbox works on a Parent-Child relationship. You turn a parent into a 'Flex Container' using 'display: flex', and its children automatically become 'Flex Items'."
+                "title": "Semantic Form Controls",
+                "content": "Ensure every form <input> has an associated <label> with matching 'for' and 'id' values. This gives screen readers a clear spoken label when the field is selected."
               },
               {
                 "level": "advanced",
-                "title": "The Main vs Cross Axis",
-                "content": "Flexbox has two directions. The Main Axis is where your items flow (usually horizontal), and the Cross Axis is the vertical direction. Understanding this is key to mastering Flexbox."
+                "title": "Keyboard Accessibility & ARIA",
+                "content": "Use native HTML buttons instead of div click listeners so focus rings and keyboard Space/Enter triggers work automatically. Use aria-labels to provide spoken context."
               }
             ],
             "codeTemplate": {
-              "html": "<div class='flex-root'>\n  <div class='item'>1</div>\n  <div class='item'>2</div>\n  <div class='item'>3</div>\n</div>",
-              "css": ".flex-root {\n  display: flex;\n  background: #1e293b;\n  padding: 20px;\n  border-radius: 12px;\n}\n.item {\n  width: 50px;\n  height: 50px;\n  background: #00d1d1;\n  margin: 5px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  color: #0f172a;\n  font-weight: bold;\n}",
+              "html": "<!-- Accessible Form Snippet -->\n<form>\n  <label for='user-name'>Full Name:</label>\n  <input type='text' id='user-name' placeholder='Enter your name' required>\n  \n  <button type='submit' aria-label='Submit registration form'>\n    Register\n  </button>\n</form>",
+              "css": "form { background: #1e293b; padding: 20px; border-radius: 12px; display: flex; flex-direction: column; gap: 12px; }\nlabel { font-weight: bold; color: #38bdf8; }\ninput { padding: 10px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: white; }\nbutton { background: #0ea5e9; color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; }\nbutton:focus { outline: 2px solid #38bdf8; outline-offset: 2px; }",
               "js": ""
             },
-            "assessment": "Explain the difference between the Main Axis and the Cross Axis."
+            "assessment": "Build a form containing a labeled input and an accessible button element with an aria-label."
           },
           {
             "id": "d4-t3",
-            "title": "3. Flexbox Properties (Container)",
-            "customComponent": "FlexboxPlayground",
+            "title": "3. Document Structure & Headings Outline",
+            "visualization": "/headings-hierarchy.png",
+            "customComponent": "StructureVisualizer",
             "progression": [
               {
                 "level": "easy",
-                "title": "Justify Content",
-                "content": "This property aligns items along the Main Axis. You can center them, push them to the ends, or spread them out evenly using 'space-between'."
+                "title": "The Single H1 Rule",
+                "content": "Every web page should have exactly one <h1> element which acts as the main title of the page. Do not use multiple H1s as it confuses site indexing bots."
               },
               {
                 "level": "intermediate",
-                "title": "Align Items",
-                "content": "This handles alignment on the Cross Axis. It's the easiest way to vertically center elements (using 'align-items: center')."
+                "title": "Heading Hierarchy Flow",
+                "content": "Headings must nest sequentially. An <h2> represents a major subsection of <h1>, and <h3> represents subsections of <h2>. Never jump from H1 directly to H4."
               },
               {
                 "level": "advanced",
-                "title": "Flex Direction",
-                "content": "By default, items flow in a row. You can switch the layout to a column or even reverse the order using 'row-reverse' or 'column-reverse'."
+                "title": "Landmarks & Outlines",
+                "content": "Assistive tech tools generate navigation tables from headings. Skipping levels causes broken sections and makes keyboard jumps unreliable."
               }
             ],
             "codeTemplate": {
-              "html": "<div class='flex-container'>\n  <div class='box'>A</div>\n  <div class='box'>B</div>\n</div>",
-              "css": ".flex-container {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  height: 200px;\n  background: #0f172a;\n}\n.box { background: white; padding: 20px; color: black; }",
+              "html": "<h1>Developer Resources</h1>\n\n<h2>Frontend Development</h2>\n<h3>HTML Basics</h3>\n<p>Learn core tags.</p>\n\n<h3>CSS Layouts</h3>\n<p>Master Flexbox and Grid.</p>\n\n<h2>Backend Development</h2>\n<h3>NodeJS Core</h3>\n<p>Learn server side logic.</p>",
+              "css": "h1 { color: #f43f5e; border-bottom: 2px solid #e11d48; padding-bottom: 10px; }\nh2 { color: #38bdf8; margin-top: 20px; }\nh3 { color: #fbbf24; margin-left: 15px; }\np { margin-left: 15px; color: #94a3b8; }",
               "js": ""
             },
-            "assessment": "Use the interactive playground to find the setting that puts space between items."
+            "assessment": "Structure a document outline where subsections are nested using H2 and H3 tags without skipping levels."
           },
           {
             "id": "d4-t4",
-            "title": "4. Flexbox Properties (Items)",
+            "title": "4. Assignment Task – Accessible Blog Portal",
             "progression": [
               {
                 "level": "easy",
-                "title": "Flex-Grow",
-                "content": "Should an item grow to fill extra space? A value of 1 means 'yes, grow!', while 0 means 'stay my size'."
+                "title": "Accessible Grid Blueprint",
+                "content": "Create a fully responsive semantic layout using correct document outlines and landmark layouts."
               },
               {
                 "level": "intermediate",
-                "title": "Flex-Basis",
-                "content": "This sets the initial 'starting' size of an item before the extra space is distributed. It's like a smarter version of 'width'."
+                "title": "ARIA Attributes & Alt tags",
+                "content": "Ensure every anchor link and image has description strings to guarantee full screen reader compatibility."
               },
               {
                 "level": "advanced",
-                "title": "Align-Self",
-                "content": "Sometimes you want one specific item to behave differently from the rest. 'Align-self' lets you override the container's vertical alignment for just that one item."
+                "title": "Semantic Validation Rules",
+                "content": "Run tests inside your layout tree checking that landmarks like <header>, <nav>, <main>, <article>, and <footer> exist in sequence."
               }
             ],
             "codeTemplate": {
-              "html": "<div class='container'>\n  <div class='fixed'>Fixed</div>\n  <div class='growing'>Grows</div>\n</div>",
-              "css": ".container { display: flex; background: #334155; padding: 10px; }\n.fixed { width: 100px; background: #f87171; }\n.growing { flex-grow: 1; background: #4ade80; }",
+              "html": "<!-- TASK: Refactor this generic div outline into an accessible, semantic blog portal -->\n<div id=\"app\">\n  <div class=\"top-bar\">\n    <div class=\"site-logo\">EduBlog Portal</div>\n    <div class=\"navigation-menu\">\n      <a href=\"#home\">Home</a>\n      <a href=\"#tutorials\">Tutorials</a>\n      <a href=\"#about\">About Us</a>\n    </div>\n  </div>\n\n  <div class=\"main-body\">\n    <div class=\"blog-article\">\n      <h2>Mastering Semantic Web Markup</h2>\n      <img src=\"https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=500\" class=\"post-img\">\n      <p>Semantic tags help index your content for SEO and screen-reader accessibility.</p>\n    </div>\n    \n    <div class=\"blog-article\">\n      <h2>Accessibility Best Practices</h2>\n      <img src=\"https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=500\" class=\"post-img\">\n      <p>Using labels and alt tags provides screen readers with context.</p>\n    </div>\n  </div>\n\n  <div class=\"bottom-footer\">\n    <p>&copy; 2026 EduBlog Systems. All Rights Reserved.</p>\n  </div>\n</div>",
+              "css": "#app { font-family: system-ui, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background: #0f172a; color: white; border-radius: 12px; }\n.top-bar { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 15px; }\n.site-logo { font-size: 1.5rem; font-weight: bold; color: #38bdf8; }\n.navigation-menu a { color: #94a3b8; text-decoration: none; margin-left: 15px; }\n.navigation-menu a:hover { color: white; }\n.main-body { margin: 30px 0; display: grid; gap: 24px; }\n.blog-article { background: #1e293b; padding: 20px; border-radius: 8px; border: 1px solid #334155; }\n.blog-article h2 { color: #f59e0b; margin-top: 0; }\n.post-img { width: 100%; height: 200px; object-fit: cover; border-radius: 6px; margin: 10px 0; }\n.bottom-footer { text-align: center; border-top: 1px solid #334155; padding-top: 15px; color: #64748b; font-size: 0.85rem; }",
               "js": ""
             },
-            "assessment": "Create three items where the center item grows twice as much as the others."
-          },
-          {
-            "id": "d4-t5",
-            "title": "5. Spacing & Alignment Techniques",
-            "progression": [
-              {
-                "level": "easy",
-                "title": "The Gap Property",
-                "content": "Traditionally, we used margins to separate items. Now, we use 'gap'. It's much simpler because it only adds space BETWEEN items, not on the outer edges."
-              },
-              {
-                "level": "intermediate",
-                "title": "The Margin Auto Hack",
-                "content": "In Flexbox, 'margin-left: auto' will push an item to the far right. It's a powerful trick for separating navigation links from a logo."
-              },
-              {
-                "level": "advanced",
-                "title": "The Ultimate Centering",
-                "content": "To perfectly center anything inside a parent, just use: 'display: flex', 'justify-content: center', and 'align-items: center'. This is the #1 most used Flexbox pattern."
-              }
-            ],
-            "codeTemplate": {
-              "html": "<div class='full-center'>\n  <div class='modal'>Perfectly Centered Content</div>\n</div>",
-              "css": ".full-center {\n  height: 300px;\n  background: #1e293b;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n.modal {\n  background: white;\n  padding: 40px;\n  border-radius: 20px;\n  color: #0f172a;\n}",
-              "js": ""
-            },
-            "assessment": "Center an H1 tag both vertically and horizontally in a div that is 400px tall."
-          },
-          {
-            "id": "d4-t6",
-            "title": "6. Building Layouts with Flexbox",
-            "progression": [
-              {
-                "level": "easy",
-                "title": "Navigation Bars",
-                "content": "Standard navbars have a logo on the left and links on the right. Using 'justify-content: space-between' makes this layout a breeze."
-              },
-              {
-                "level": "intermediate",
-                "title": "Sticky Footers",
-                "content": "Use 'flex-direction: column' on your body and 'flex-grow: 1' on your main content to push your footer to the very bottom, even on empty pages."
-              },
-              {
-                "level": "advanced",
-                "title": "Flex Wrap & Grids",
-                "content": "Flexbox usually puts everything on one line. Use 'flex-wrap: wrap' to let items fall to the next line when the screen gets narrow (great for image galleries)."
-              }
-            ],
-            "codeTemplate": {
-              "html": "<nav class='navbar'>\n  <div class='logo'>LOGO</div>\n  <ul class='links'>\n    <li>Home</li>\n    <li>Tools</li>\n    <li>Contact</li>\n  </ul>\n</nav>",
-              "css": ".navbar {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  background: #0f172a;\n  padding: 1rem 2rem;\n  color: white;\n}\n.links {\n  display: flex;\n  gap: 20px;\n  list-style: none;\n}",
-              "js": ""
-            },
-            "assessment": "Build a navigation bar with a logo and 3 links spread across the width of the page."
-          },
-          {
-            "id": "d4-t7",
-            "title": "7. Mini Project – Responsive Card Layout",
-            "progression": [
-              {
-                "level": "easy",
-                "title": "The Grid Foundation",
-                "content": "Create a container with 'display: flex' and 'flex-wrap: wrap' to hold several cards."
-              },
-              {
-                "level": "intermediate",
-                "title": "Uniform Card Sizing",
-                "content": "Use 'flex: 1 1 300px' on your cards. This tells them: 'try to be 300px wide, but grow and shrink to fit the containers width'."
-              },
-              {
-                "level": "advanced",
-                "title": "Interactive Polish",
-                "content": "Add transitions and hover effects. Use Flexbox inside the card itself to center images and titles perfectly."
-              }
-            ],
-            "codeTemplate": {
-              "html": "<div class='grid'>\n  <div class='card'>Card 1</div>\n  <div class='card'>Card 2</div>\n  <div class='card'>Card 3</div>\n</div>",
-              "css": ".grid {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 20px;\n  padding: 20px;\n}\n.card {\n  flex: 1 1 200px;\n  background: #1e293b;\n  color: #00d1d1;\n  padding: 40px;\n  border-radius: 15px;\n  text-align: center;\n  border: 1px solid #334155;\n  transition: 0.3s transform;\n}\n.card:hover {\n  transform: translateY(-5px);\n  background: #334155;\n}",
-              "js": ""
-            },
-            "assessment": "Final Challenge: Build a 3-column card grid that drops to 1 column on small screens using what you learned!"
+            "assessment": "Final Challenge: Convert the layout to use <header>, <nav>, <main>, <article>, and <footer> tags. Set descriptive alt tags for images."
           },
           {
             "id": "w1-d4-resources",
             "title": "Tutor Materials & Resources",
             "isResources": true,
-            "explanation": "This section contains the official slide decks, exercises, tutor reference guides, and student worksheets for this session.",
+            "explanation": "This section contains the official slide decks, exercises, tutor reference guides, and student worksheets for the Day 4 session on Semantic HTML, Document Structure, and Web Accessibility.",
             "tutorMaterial": {
               "title": "Tutor Lesson Plan & Reference Guide",
-              "content": "Important talking points, structural timeline, common student pitfalls, and solutions for this session.",
+              "content": "Key visual structures, keyboard accessibility demonstration guidelines, alt text rules, and solutions for the accessible blog challenge.",
               "duration": "15 mins",
               "resources": [
-                "Student Hands-on Lab Worksheet (PDF)",
-                "Reference Code & Solutions (ZIP)"
+                "Semantic Layout Cheat Sheet (PDF)",
+                "Accessibility Audit Checklist (PDF)",
+                "Accessible Blog Solution Code (ZIP)"
               ]
             }
           }

@@ -42,6 +42,11 @@ import {
   HTMLEntitiesInteractive,
   HTMLPortfolioInteractive
 } from './Day1Visualizers';
+import {
+  SemanticLayoutVisualizer,
+  AccessibilityVisualizer,
+  StructureVisualizer
+} from './Day4Visualizers';
 
 
 const EMPTY_CODE = { html: '', css: '', js: '' };
@@ -347,6 +352,9 @@ const MainContent = () => {
   const CustomVisuals = {
     'NetworkAnimation': <NetworkAnimation />,
     'FlexboxPlayground': <FlexboxPlayground />,
+    'SemanticLayoutVisualizer': <SemanticLayoutVisualizer />,
+    'AccessibilityVisualizer': <AccessibilityVisualizer />,
+    'StructureVisualizer': <StructureVisualizer />,
     'ResponsiveSimulator': <ResponsiveSimulator />,
     'GitTerminal': <GitTerminal />,
     'PlanVisualizer': <PlanVisualizer />,
