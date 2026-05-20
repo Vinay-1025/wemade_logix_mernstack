@@ -14,6 +14,10 @@ const attendanceRecordSchema = new mongoose.Schema({
   markedAt: {
     type: Date,
     default: Date.now,
+  },
+  date: {
+    type: String,
+    default: () => new Date().toLocaleDateString('en-CA'),
   }
 });
 

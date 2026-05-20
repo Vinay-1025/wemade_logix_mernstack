@@ -104,6 +104,7 @@ const scanQR = async (req, res) => {
     const record = await AttendanceRecord.create({
       student: req.user._id,
       session: session._id,
+      date: new Date().toLocaleDateString('en-CA'),
     });
 
     res.status(201).json({
