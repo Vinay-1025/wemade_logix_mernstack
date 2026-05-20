@@ -190,7 +190,7 @@ const AttendanceAdmin = () => {
         {/* Header Block */}
         <div className="admin-header-card">
           <div className="header-text-block">
-            <h1 className="admin-page-title">Attendance Control Room</h1>
+            <h1 className="admin-page-title">Attendance Control Center</h1>
             <p className="admin-page-subtitle">Dynamically control class registration, generate secure QR keys, and audit student check-ins.</p>
           </div>
           <div className="header-actions-block">
@@ -218,7 +218,9 @@ const AttendanceAdmin = () => {
           {/* QR Generator Control Card */}
           <div className="control-card shadow-premium">
             <div className="card-header-premium">
-              <QrCode size={20} className="header-icon-green" />
+              <div className="card-icon-box green">
+                <QrCode size={20} />
+              </div>
               <h3>Live Attendance Generator</h3>
             </div>
 
@@ -232,11 +234,14 @@ const AttendanceAdmin = () => {
                 </div>
 
                 <div className="qr-code-wrapper">
-                  <img 
-                    src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${activeSession.code}&color=0047ab&bgcolor=ffffff`} 
-                    alt="Attendance QR Code"
-                    className="qr-image"
-                  />
+                  <div className="qr-image-container">
+                    <img 
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${activeSession.code}&color=0047ab&bgcolor=ffffff`} 
+                      alt="Attendance QR Code"
+                      className="qr-image"
+                    />
+                    <div className="scan-laser"></div>
+                  </div>
                   <div className="qr-code-overlay">
                     <span className="code-text">{activeSession.code}</span>
                   </div>
@@ -297,7 +302,9 @@ const AttendanceAdmin = () => {
           {/* Real-time Audit List */}
           <div className="audit-card shadow-premium">
             <div className="card-header-premium">
-              <CheckCircle size={20} className="header-icon-cyan" />
+              <div className="card-icon-box cyan">
+                <CheckCircle size={20} />
+              </div>
               <h3>Personnel Audit Logs</h3>
               <div className="records-count">{filteredRecords.length} records</div>
             </div>
@@ -459,8 +466,10 @@ const AttendanceAdmin = () => {
 
       <style dangerouslySetInnerHTML={{ __html: `
         .attendance-admin-container {
-          padding: 30px;
-          background: var(--app-bg);
+          max-width: 1400px;
+          margin: 0 auto;
+          padding: 40px 30px;
+          animation: fadeIn 0.5s ease;
           min-height: calc(100vh - 64px);
         }
         .admin-header-card {
@@ -469,51 +478,54 @@ const AttendanceAdmin = () => {
           align-items: center;
           background: #ffffff;
           border: 1px solid var(--app-border);
-          border-radius: 20px;
-          padding: 24px;
-          margin-bottom: 24px;
-          box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+          border-radius: 24px;
+          padding: 32px;
+          margin-bottom: 32px;
+          box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04);
         }
         .admin-page-title {
-          font-size: 1.75rem;
-          font-weight: 850;
+          font-size: 2rem;
+          font-weight: 800;
           color: var(--text-primary);
-          margin: 0 0 6px 0;
+          margin: 0 0 8px 0;
           letter-spacing: -0.5px;
         }
         .admin-page-subtitle {
           color: var(--text-secondary);
-          font-size: 0.9rem;
+          font-size: 0.95rem;
           margin: 0;
+          line-height: 1.5;
         }
         .header-actions-block {
           display: flex;
           align-items: center;
           gap: 12px;
+          flex-shrink: 0;
         }
         .icon-btn-action {
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 42px;
-          height: 42px;
+          width: 44px;
+          height: 44px;
           border-radius: 12px;
           border: 1px solid var(--app-border);
           background: #f8fafc;
           color: var(--text-primary);
           cursor: pointer;
-          transition: all 0.2s;
+          transition: all 0.2s ease;
         }
         .icon-btn-action:hover {
           background: #f1f5f9;
           color: var(--primary-cyan);
           border-color: var(--primary-cyan);
+          transform: translateY(-1px);
         }
         .action-btn-secondary {
           display: flex;
           align-items: center;
           gap: 8px;
-          padding: 12px 20px;
+          padding: 12px 24px;
           border-radius: 12px;
           border: 1px solid var(--app-border);
           background: #f8fafc;
@@ -521,12 +533,14 @@ const AttendanceAdmin = () => {
           font-weight: 700;
           font-size: 0.85rem;
           cursor: pointer;
-          transition: all 0.2s;
+          transition: all 0.2s ease;
+          white-space: nowrap;
         }
         .action-btn-secondary:hover:not(:disabled) {
           background: #f1f5f9;
           border-color: var(--primary-cyan);
           color: var(--primary-cyan);
+          transform: translateY(-1px);
         }
         .action-btn-secondary:disabled {
           opacity: 0.5;
@@ -536,64 +550,83 @@ const AttendanceAdmin = () => {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: 14px 20px;
-          border-radius: 12px;
-          margin-bottom: 24px;
-          font-size: 0.9rem;
+          padding: 16px 24px;
+          border-radius: 16px;
+          margin-bottom: 32px;
+          font-size: 0.95rem;
           font-weight: 650;
         }
         .status-banner.success {
-          background: rgba(16, 185, 129, 0.1);
+          background: rgba(16, 185, 129, 0.08);
           color: #10b981;
-          border: 1px solid rgba(16, 185, 129, 0.2);
+          border: 1px solid rgba(16, 185, 129, 0.15);
         }
         .status-banner.error {
-          background: rgba(239, 68, 68, 0.1);
+          background: rgba(239, 68, 68, 0.08);
           color: #ef4444;
-          border: 1px solid rgba(239, 68, 68, 0.2);
+          border: 1px solid rgba(239, 68, 68, 0.15);
         }
         .close-banner {
           background: transparent;
           border: none;
           color: inherit;
-          font-size: 1.25rem;
+          font-size: 1.5rem;
           cursor: pointer;
+          line-height: 1;
         }
         .attendance-grid {
           display: grid;
-          grid-template-columns: 360px 1fr;
-          gap: 24px;
+          grid-template-columns: 380px 1fr;
+          gap: 32px;
           align-items: start;
         }
         .control-card, .audit-card {
-          background: var(--app-card-bg);
+          background: #ffffff;
           border: 1px solid var(--app-border);
-          border-radius: 20px;
-          padding: 24px;
-          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+          border-radius: 24px;
+          padding: 32px;
+          box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04);
         }
         .card-header-premium {
           display: flex;
           align-items: center;
-          gap: 10px;
-          margin-bottom: 20px;
+          gap: 14px;
+          margin-bottom: 28px;
           position: relative;
         }
         .card-header-premium h3 {
           margin: 0;
-          font-size: 1.1rem;
+          font-size: 1.25rem;
           font-weight: 800;
           color: var(--text-primary);
+          letter-spacing: -0.3px;
         }
-        .header-icon-green { color: #10b981; }
-        .header-icon-cyan { color: var(--primary-cyan); }
+        .card-icon-box {
+          width: 44px;
+          height: 44px;
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+        .card-icon-box.green {
+          background: rgba(16, 185, 129, 0.08);
+          color: #10b981;
+          border: 1px solid rgba(16, 185, 129, 0.15);
+        }
+        .card-icon-box.cyan {
+          background: rgba(0, 209, 209, 0.08);
+          color: var(--primary-cyan);
+          border: 1px solid rgba(0, 209, 209, 0.2);
+        }
         .records-count {
           position: absolute;
           right: 0;
-          background: rgba(0, 209, 209, 0.1);
+          background: rgba(0, 209, 209, 0.08);
           color: var(--primary-cyan);
-          padding: 4px 10px;
-          border-radius: 8px;
+          padding: 6px 12px;
+          border-radius: 10px;
           font-size: 0.75rem;
           font-weight: 750;
         }
@@ -611,7 +644,7 @@ const AttendanceAdmin = () => {
           border: 1px solid rgba(16, 185, 129, 0.2);
           padding: 6px 14px;
           border-radius: 20px;
-          margin-bottom: 20px;
+          margin-bottom: 24px;
         }
         .pulse-dot {
           width: 8px;
@@ -634,45 +667,77 @@ const AttendanceAdmin = () => {
         }
         .qr-code-wrapper {
           position: relative;
-          background: #f8fafc;
-          padding: 16px;
-          border-radius: 16px;
+          background: #ffffff;
+          padding: 24px;
+          border-radius: 24px;
           border: 1px solid var(--app-border);
-          box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-          margin-bottom: 20px;
+          box-shadow: var(--shadow-sm);
+          margin-bottom: 24px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+          width: 100%;
+        }
+        .qr-image-container {
+          position: relative;
+          width: 200px;
+          height: 200px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
         .qr-image {
-          width: 180px;
-          height: 180px;
+          width: 100%;
+          height: 100%;
           object-fit: contain;
-          border-radius: 8px;
+          border-radius: 12px;
+        }
+        .scan-laser {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 3px;
+          background: linear-gradient(90deg, transparent, var(--primary-cyan), transparent);
+          box-shadow: 0 0 8px var(--primary-cyan);
+          animation: laserAnim 2.5s infinite ease-in-out;
+          pointer-events: none;
+        }
+        @keyframes laserAnim {
+          0% { top: 0%; }
+          50% { top: 100%; }
+          100% { top: 0%; }
         }
         .qr-code-overlay {
-          margin-top: 10px;
-          background: rgba(0, 209, 209, 0.1);
-          border: 1px solid rgba(0, 209, 209, 0.3);
-          padding: 4px 12px;
-          border-radius: 8px;
+          margin-top: 16px;
+          background: rgba(0, 209, 209, 0.08);
+          border: 1px solid rgba(0, 209, 209, 0.2);
+          padding: 6px 16px;
+          border-radius: 10px;
+          width: 100%;
+          text-align: center;
         }
         .code-text {
           font-family: monospace;
           color: var(--primary-cyan);
-          font-size: 0.85rem;
+          font-size: 0.95rem;
           font-weight: 800;
           letter-spacing: 1px;
         }
         .session-details-list {
           width: 100%;
           border: 1px solid var(--app-border);
-          border-radius: 12px;
+          border-radius: 16px;
           overflow: hidden;
-          margin-bottom: 20px;
+          margin-bottom: 24px;
         }
         .detail-item {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: 12px 16px;
+          padding: 14px 20px;
           background: #ffffff;
           font-size: 0.85rem;
         }
@@ -693,7 +758,7 @@ const AttendanceAdmin = () => {
           justify-content: center;
           gap: 8px;
           width: 100%;
-          padding: 14px;
+          padding: 16px;
           border-radius: 12px;
           border: none;
           background: #ef4444;
@@ -702,10 +767,10 @@ const AttendanceAdmin = () => {
           font-size: 0.9rem;
           cursor: pointer;
           box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
-          transition: all 0.2s;
+          transition: all 0.2s ease;
         }
         .btn-stop-session:hover {
-          transform: translateY(-1px);
+          transform: translateY(-2px);
           box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
         }
         .session-inactive-view {
@@ -713,7 +778,7 @@ const AttendanceAdmin = () => {
           flex-direction: column;
           align-items: center;
           text-align: center;
-          padding: 20px 0;
+          padding: 10px 0;
         }
         .inactive-badge {
           display: flex;
@@ -723,7 +788,7 @@ const AttendanceAdmin = () => {
           border: 1px solid rgba(148, 163, 184, 0.2);
           padding: 6px 14px;
           border-radius: 20px;
-          margin-bottom: 20px;
+          margin-bottom: 24px;
         }
         .inactive-dot {
           width: 8px;
@@ -743,35 +808,38 @@ const AttendanceAdmin = () => {
           flex-direction: column;
           gap: 8px;
           text-align: left;
-          margin-bottom: 20px;
+          margin-bottom: 24px;
         }
         .select-day-label {
           font-size: 0.8rem;
           font-weight: 750;
           color: var(--text-primary);
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
         }
         .select-day-input {
           width: 100%;
-          padding: 12px 16px;
+          padding: 14px 16px;
           border: 1px solid var(--app-border);
           border-radius: 12px;
-          background: #ffffff;
+          background: #f8fafc;
           color: var(--text-primary);
           font-size: 0.9rem;
           font-weight: 650;
           outline: none;
           cursor: pointer;
-          transition: all 0.2s;
+          transition: all 0.2s ease;
         }
         .select-day-input:focus {
           border-color: var(--primary-cyan);
+          background: #ffffff;
           box-shadow: 0 0 0 3px rgba(0, 209, 209, 0.08);
         }
         .inactive-description {
-          font-size: 0.85rem;
+          font-size: 0.875rem;
           color: var(--text-secondary);
-          line-height: 1.5;
-          margin-bottom: 24px;
+          line-height: 1.6;
+          margin-bottom: 28px;
         }
         .btn-start-session {
           display: flex;
@@ -779,7 +847,7 @@ const AttendanceAdmin = () => {
           justify-content: center;
           gap: 8px;
           width: 100%;
-          padding: 14px;
+          padding: 16px;
           border-radius: 12px;
           border: none;
           background: var(--brand-gradient);
@@ -788,14 +856,14 @@ const AttendanceAdmin = () => {
           font-size: 0.9rem;
           cursor: pointer;
           box-shadow: 0 4px 15px rgba(0, 209, 209, 0.2);
-          transition: all 0.2s;
+          transition: all 0.2s ease;
         }
         .btn-start-session:hover {
-          transform: translateY(-1px);
+          transform: translateY(-2px);
           box-shadow: 0 6px 20px rgba(0, 209, 209, 0.3);
         }
         .filters-container {
-          margin-bottom: 24px;
+          margin-bottom: 28px;
           display: flex;
           flex-direction: column;
           gap: 16px;
@@ -806,30 +874,30 @@ const AttendanceAdmin = () => {
         }
         .search-icon-card {
           position: absolute;
-          left: 14px;
+          left: 16px;
           top: 50%;
           transform: translateY(-50%);
           color: #94a3b8;
         }
         .search-input-card {
           width: 100%;
-          padding: 12px 16px 12px 42px;
+          padding: 14px 16px 14px 46px;
           border: 1px solid var(--app-border);
           border-radius: 12px;
           background: #f8fafc;
           color: var(--text-primary);
-          font-size: 0.875rem;
-          transition: all 0.2s;
+          font-size: 0.9rem;
+          transition: all 0.2s ease;
         }
         .search-input-card:focus {
           outline: none;
           border-color: var(--primary-cyan);
           background: #ffffff;
-          box-shadow: 0 0 10px rgba(0,209,209,0.1);
+          box-shadow: 0 0 0 3px rgba(0, 209, 209, 0.08);
         }
         .filter-selectors-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+          grid-template-columns: repeat(4, 1fr);
           gap: 12px;
           width: 100%;
         }
@@ -839,15 +907,15 @@ const AttendanceAdmin = () => {
           gap: 6px;
         }
         .filter-label {
-          font-size: 0.75rem;
-          font-weight: 700;
+          font-size: 0.72rem;
+          font-weight: 750;
           color: var(--text-secondary);
           text-transform: uppercase;
           letter-spacing: 0.5px;
         }
         .filter-select-input, .filter-date-input {
           width: 100%;
-          padding: 10px 14px;
+          padding: 11px 14px;
           border: 1px solid var(--app-border);
           border-radius: 10px;
           background: #f8fafc;
@@ -855,7 +923,7 @@ const AttendanceAdmin = () => {
           font-size: 0.85rem;
           font-weight: 600;
           outline: none;
-          transition: all 0.2s;
+          transition: all 0.2s ease;
         }
         .filter-select-input:focus, .filter-date-input:focus {
           border-color: var(--primary-cyan);
@@ -865,6 +933,8 @@ const AttendanceAdmin = () => {
         .table-responsive-container {
           overflow-x: auto;
           -webkit-overflow-scrolling: touch;
+          border: 1px solid var(--app-border);
+          border-radius: 16px;
         }
         .premium-admin-table {
           width: 100%;
@@ -872,8 +942,8 @@ const AttendanceAdmin = () => {
           text-align: left;
         }
         .premium-admin-table th {
-          padding: 12px 16px;
-          font-size: 0.75rem;
+          padding: 16px 20px;
+          font-size: 0.72rem;
           font-weight: 750;
           color: var(--text-secondary);
           text-transform: uppercase;
@@ -882,14 +952,15 @@ const AttendanceAdmin = () => {
           letter-spacing: 0.5px;
         }
         .premium-admin-table td {
-          padding: 14px 16px;
+          padding: 18px 20px;
           border-bottom: 1px solid var(--app-border);
           font-size: 0.875rem;
           color: var(--text-primary);
           white-space: nowrap;
+          vertical-align: middle;
         }
         .table-row-hover:hover {
-          background: #f8fafc;
+          background: rgba(0, 209, 209, 0.015);
         }
         .user-info-cell {
           display: flex;
@@ -907,8 +978,8 @@ const AttendanceAdmin = () => {
           background: rgba(0, 209, 209, 0.06);
           color: var(--primary-cyan);
           border: 1px solid rgba(0, 209, 209, 0.15);
-          padding: 4px 10px;
-          border-radius: 8px;
+          padding: 6px 12px;
+          border-radius: 10px;
           font-size: 0.75rem;
           font-weight: 700;
           display: inline-block;
@@ -941,23 +1012,23 @@ const AttendanceAdmin = () => {
           background: rgba(16, 185, 129, 0.08);
           color: #10b981;
           border: 1px solid rgba(16, 185, 129, 0.2);
-          padding: 4px 10px;
+          padding: 6px 12px;
           border-radius: 20px;
           font-size: 0.75rem;
           font-weight: 850;
           display: inline-block;
         }
         .loading-state-card {
-          padding: 40px;
+          padding: 50px;
           text-align: center;
-          color: var(--text-neutral);
-          font-size: 0.9rem;
+          color: var(--text-secondary);
+          font-size: 0.95rem;
         }
         .empty-records-card {
-          padding: 40px;
+          padding: 50px;
           text-align: center;
-          color: var(--text-neutral);
-          font-size: 0.9rem;
+          color: var(--text-secondary);
+          font-size: 0.95rem;
         }
         .spin {
           animation: spin 1s linear infinite;
@@ -972,9 +1043,9 @@ const AttendanceAdmin = () => {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: 16px 0 0;
+          padding: 20px 0 0;
           border-top: 1px solid var(--app-border);
-          margin-top: 16px;
+          margin-top: 24px;
         }
         .pagination-info {
           font-size: 0.85rem;
@@ -994,71 +1065,92 @@ const AttendanceAdmin = () => {
           gap: 4px;
         }
         .page-btn {
-          min-width: 32px;
-          height: 32px;
+          min-width: 34px;
+          height: 34px;
           display: flex;
           align-items: center;
           justify-content: center;
-          border-radius: 8px;
+          border-radius: 10px;
           border: 1px solid var(--app-border);
           background: #ffffff;
           color: var(--text-secondary);
           font-weight: 700;
-          font-size: 0.8rem;
+          font-size: 0.85rem;
           cursor: pointer;
-          transition: all 0.2s;
+          transition: all 0.2s ease;
         }
         .page-btn:hover:not(:disabled) {
           border-color: var(--primary-cyan);
           color: var(--primary-cyan);
           background: rgba(0, 209, 209, 0.05);
+          transform: translateY(-1px);
         }
         .page-btn:disabled {
-          opacity: 0.5;
+          opacity: 0.4;
           cursor: not-allowed;
         }
         .page-btn.active {
           background: var(--primary-cyan);
           color: white;
           border-color: var(--primary-cyan);
-          box-shadow: 0 4px 10px rgba(0, 209, 209, 0.2);
+          box-shadow: 0 4px 12px rgba(0, 209, 209, 0.25);
         }
 
-        /* Mobile Responsiveness Media Queries */
-        @media (max-width: 1024px) {
+        /* Responsive Media Queries */
+        @media (max-width: 1200px) {
           .attendance-grid {
             grid-template-columns: 1fr;
+            gap: 28px;
+          }
+          .filter-selectors-grid {
+            grid-template-columns: repeat(2, 1fr);
           }
         }
         @media (max-width: 768px) {
           .attendance-admin-container {
-            padding: 16px;
+            padding: 20px 16px 80px 16px;
           }
           .admin-header-card {
             flex-direction: column;
             align-items: stretch;
             text-align: center;
-            padding: 20px;
-            gap: 16px;
+            padding: 24px;
+            gap: 20px;
+            margin-bottom: 24px;
+          }
+          .header-text-block {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+          }
+          .admin-page-title {
+            font-size: 1.6rem;
           }
           .header-actions-block {
             justify-content: center;
+            width: 100%;
           }
-          .admin-page-title {
-            font-size: 1.5rem;
+          .action-btn-secondary {
+            flex: 1;
+            justify-content: center;
           }
           .control-card, .audit-card {
-            padding: 16px;
+            padding: 24px 20px;
           }
           .filter-selectors-grid {
             grid-template-columns: 1fr;
-            gap: 10px;
+            gap: 12px;
           }
           .audit-pagination {
             flex-direction: column;
-            gap: 12px;
+            gap: 16px;
             align-items: center;
             text-align: center;
+            padding: 16px 0 0;
+          }
+          .page-navigation {
+            width: 100%;
+            justify-content: center;
           }
         }
       `}} />
