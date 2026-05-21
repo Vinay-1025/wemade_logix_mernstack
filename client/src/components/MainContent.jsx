@@ -52,7 +52,7 @@ import {
 const EMPTY_CODE = { html: '', css: '', js: '' };
 
 const MainContent = () => {
-  const { selectedTopic, setSelectedTopic, refreshAssignments, userAssignments } = useCourse();
+  const { selectedTopic, setSelectedTopic, refreshAssignments, userAssignments, dayLocks } = useCourse();
   const [snackbar, setSnackbar] = useState({ visible: false, message: '', type: 'success' });
 
   // Microsoft Learn Docs Resources View State
@@ -224,7 +224,29 @@ const MainContent = () => {
 
   const isDayUnlocked = (weekIndex, dayIndex) => {
     if (isTutorOrAdmin) return true;
-    if (weekIndex === 0 && dayIndex === 0) return true;
+
+    const day = courseData[weekIndex]?.days[dayIndex];
+    if (!day) return false;
+    const dayId = day.dayId;
+
+    // Check manual override status
+    const lockOverride = dayLocks?.find(dl => dl.dayId === dayId);
+    if (lockOverride) {
+      if (lockOverride.status === 'locked') return false;
+      if (lockOverride.status === 'unlocked') return true;
+    }
+    
+    // Parse week and day number from dayId (e.g. w1-d4)
+    const match = dayId.match(/^w(\d+)-d(\d+)$/);
+    if (match) {
+      const wNum = parseInt(match[1], 10);
+      const dNum = parseInt(match[2], 10);
+      
+      // Before Day 4 (i.e. w1 and dNum < 4) is unlocked by default
+      if (wNum === 1 && dNum < 4) {
+        return true;
+      }
+    }
 
     let prevDayId = '';
     if (dayIndex > 0) {
@@ -237,7 +259,7 @@ const MainContent = () => {
     if (prevDayId === 'w1-d0') return true;
 
     const prevStatus = getDayStatus(prevDayId);
-    return prevStatus.isSubmitted;
+    return prevStatus.isAccepted;
   };
 
   const isTopicUnlocked = (topic) => {

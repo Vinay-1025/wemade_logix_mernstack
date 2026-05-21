@@ -19,6 +19,30 @@ export const CourseProvider = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 768);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(localStorage.getItem('isSidebarCollapsed') === 'true');
   const [userAssignments, setUserAssignments] = useState([]);
+  const [dayLocks, setDayLocks] = useState([]);
+  const [dayLocksLoading, setDayLocksLoading] = useState(true);
+
+  const fetchDayLocks = async () => {
+    try {
+      const userData = JSON.parse(localStorage.getItem('user'));
+      if (!userData?.token) {
+        setDayLocksLoading(false);
+        return;
+      }
+      
+      const response = await axios.get('/api/course/day-locks', {
+        headers: { 'Authorization': `Bearer ${userData.token}` }
+      });
+      
+      if (response.data?.success && Array.isArray(response.data.locks)) {
+        setDayLocks(response.data.locks);
+      }
+    } catch (err) {
+      console.error('Failed to fetch day locks:', err);
+    } finally {
+      setDayLocksLoading(false);
+    }
+  };
 
   const fetchUserAssignments = async () => {
     try {
@@ -39,6 +63,7 @@ export const CourseProvider = ({ children }) => {
 
   useEffect(() => {
     fetchUserAssignments();
+    fetchDayLocks();
   }, []);
 
   useEffect(() => {
@@ -71,7 +96,11 @@ export const CourseProvider = ({ children }) => {
       isSidebarCollapsed,
       toggleSidebarCollapse,
       userAssignments,
-      refreshAssignments: fetchUserAssignments
+      refreshAssignments: fetchUserAssignments,
+      dayLocks,
+      dayLocksLoading,
+      refreshDayLocks: fetchDayLocks,
+      setDayLocks
     }}>
       {children}
     </CourseContext.Provider>

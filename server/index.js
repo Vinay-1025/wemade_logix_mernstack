@@ -32,6 +32,7 @@ app.use('/api/notifications', require('./routes/notificationRoutes'));
 app.use('/api/audit', require('./routes/auditRoutes'));
 app.use('/api/recordings', require('./routes/recordingRoutes'));
 app.use('/api/attendance', require('./routes/attendanceRoutes'));
+app.use('/api/course', require('./routes/courseRoutes'));
 
 // Basic Route
 app.get('/', (req, res) => {

@@ -17,7 +17,8 @@ const Sidebar = () => {
     isSidebarCollapsed, 
     toggleSidebarCollapse,
     toggleSidebar,
-    userAssignments 
+    userAssignments,
+    dayLocks
   } = useCourse();
   const [expandedWeeks, setExpandedWeeks] = useState(['w1']);
   const [expandedDays, setExpandedDays] = useState(['w1-d1']);
@@ -47,10 +48,30 @@ const Sidebar = () => {
   const isDayUnlocked = (weekIndex, dayIndex) => {
     // Admin/Superadmin sees everything
     if (user?.role === 'admin' || user?.role === 'superadmin') return true;
-    
-    // First day is always unlocked
-    if (weekIndex === 0 && dayIndex === 0) return true;
 
+    const day = courseData[weekIndex]?.days[dayIndex];
+    if (!day) return false;
+    const dayId = day.dayId;
+
+    // Check manual override status
+    const lockOverride = dayLocks?.find(dl => dl.dayId === dayId);
+    if (lockOverride) {
+      if (lockOverride.status === 'locked') return false;
+      if (lockOverride.status === 'unlocked') return true;
+    }
+    
+    // Parse week and day number from dayId (e.g. w1-d4)
+    const match = dayId.match(/^w(\d+)-d(\d+)$/);
+    if (match) {
+      const wNum = parseInt(match[1], 10);
+      const dNum = parseInt(match[2], 10);
+      
+      // Before Day 4 (i.e. w1 and dNum < 4) is unlocked by default
+      if (wNum === 1 && dNum < 4) {
+        return true;
+      }
+    }
+    
     // Get previous day's ID
     let prevDayId = '';
     if (dayIndex > 0) {
@@ -64,7 +85,7 @@ const Sidebar = () => {
     if (prevDayId === 'w1-d0') return true;
 
     const prevStatus = getDayStatus(prevDayId);
-    return prevStatus.isSubmitted; // Unlocked if submitted
+    return prevStatus.isAccepted; // Unlocked if approved/accepted
   };
 
   // Auto-expand active topic's section and collapse others
@@ -148,6 +169,14 @@ const Sidebar = () => {
                 <div className="btn-content">
                   <CheckSquare size={20} color="#10b981" />
                   {!isSidebarCollapsed && <span>Attendance Center</span>}
+                </div>
+              </button>
+            </Link>
+            <Link to="/admin/locks" style={{ textDecoration: 'none', color: 'inherit', marginTop: '8px', display: 'block' }}>
+              <button className={`sidebar-toggle-btn week-btn admin-btn ${location.pathname === '/admin/locks' ? 'active' : ''}`}>
+                <div className="btn-content">
+                  <Lock size={20} color="#f43f5e" />
+                  {!isSidebarCollapsed && <span>Course Locks</span>}
                 </div>
               </button>
             </Link>
