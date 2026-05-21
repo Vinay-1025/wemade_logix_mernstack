@@ -45,8 +45,8 @@ const CourseLocksAdmin = () => {
     if (match) {
       const wNum = parseInt(match[1], 10);
       const dNum = parseInt(match[2], 10);
-      if (wNum === 1 && dNum < 4) {
-        return { text: 'Default: Unlocked (Day < 4)', isLocked: false };
+      if (wNum === 1 && dNum < 2) {
+        return { text: 'Default: Unlocked (Day < 2)', isLocked: false };
       }
     }
     return { text: 'Default: Lock active (Requires previous day assignment submission)', isLocked: true };

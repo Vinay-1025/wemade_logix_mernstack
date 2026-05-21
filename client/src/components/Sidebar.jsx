@@ -66,8 +66,8 @@ const Sidebar = () => {
       const wNum = parseInt(match[1], 10);
       const dNum = parseInt(match[2], 10);
       
-      // Before Day 4 (i.e. w1 and dNum < 4) is unlocked by default
-      if (wNum === 1 && dNum < 4) {
+      // Before Day 2 (i.e. w1 and dNum < 2) is unlocked by default
+      if (wNum === 1 && dNum < 2) {
         return true;
       }
     }
