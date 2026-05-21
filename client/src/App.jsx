@@ -7,7 +7,6 @@ import AssignmentsList from './pages/AssignmentsList';
 import Profile from './pages/Profile';
 import AuditLogs from './pages/AuditLogs';
 import AttendanceAdmin from './pages/AttendanceAdmin';
-import CourseLocksAdmin from './pages/CourseLocksAdmin';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -29,7 +28,6 @@ function App() {
           <Route path="/admin/users" element={<UsersList />} />
           <Route path="/admin/assignments" element={<AssignmentsList />} />
           <Route path="/admin/attendance" element={<AttendanceAdmin />} />
-          <Route path="/admin/locks" element={<CourseLocksAdmin />} />
         </Route>
 
         {/* SuperAdmin Routes */}

@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useCourse } from '../context/CourseContext';
 import { courseData } from '../data/mockData';
-import { ChevronDown, ChevronRight, BookOpen, Clock, Calendar, CheckCircle2, PanelLeftClose, PanelLeftOpen, ShieldCheck, ClipboardCheck, Lock, History, CheckSquare } from 'lucide-react';
+import { ChevronDown, ChevronRight, BookOpen, Clock, Calendar, CheckCircle2, PanelLeftClose, PanelLeftOpen, ShieldCheck, ClipboardCheck, Lock, Unlock, Loader2, History, CheckSquare } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Sidebar = () => {
   const { user } = useSelector((state) => state.auth);
@@ -18,10 +19,12 @@ const Sidebar = () => {
     toggleSidebarCollapse,
     toggleSidebar,
     userAssignments,
-    dayLocks
+    dayLocks,
+    refreshDayLocks
   } = useCourse();
   const [expandedWeeks, setExpandedWeeks] = useState(['w1']);
   const [expandedDays, setExpandedDays] = useState(['w1-d1']);
+  const [updatingDayId, setUpdatingDayId] = useState(null);
 
   // Helper to get assignment status for a day
   const getDayStatus = (dayId) => {
@@ -44,11 +47,8 @@ const Sidebar = () => {
     };
   };
 
-  // Helper to check if a day is unlocked
-  const isDayUnlocked = (weekIndex, dayIndex) => {
-    // Admin/Superadmin sees everything
-    if (user?.role === 'admin' || user?.role === 'superadmin') return true;
-
+  // Helper to check if a day is unlocked for students
+  const isDayUnlockedForStudent = (weekIndex, dayIndex) => {
     const day = courseData[weekIndex]?.days[dayIndex];
     if (!day) return false;
     const dayId = day.dayId;
@@ -86,6 +86,34 @@ const Sidebar = () => {
 
     const prevStatus = getDayStatus(prevDayId);
     return prevStatus.isAccepted; // Unlocked if approved/accepted
+  };
+
+  // Helper to check if a day is unlocked for the current user
+  const isDayUnlocked = (weekIndex, dayIndex) => {
+    // Admin/Superadmin sees everything
+    if (user?.role === 'admin' || user?.role === 'superadmin') return true;
+    return isDayUnlockedForStudent(weekIndex, dayIndex);
+  };
+
+  const handleUpdateLockStatus = async (dayId, status) => {
+    if (!user?.token) return;
+    setUpdatingDayId(dayId);
+    try {
+      const response = await axios.put('/api/course/day-locks', 
+        { dayId, status },
+        { headers: { 'Authorization': `Bearer ${user.token}` } }
+      );
+      if (response.data?.success) {
+        await refreshDayLocks();
+      } else {
+        alert('Failed to update day lock status');
+      }
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || 'Error updating day lock status');
+    } finally {
+      setUpdatingDayId(null);
+    }
   };
 
   // Auto-expand active topic's section and collapse others
@@ -172,14 +200,7 @@ const Sidebar = () => {
                 </div>
               </button>
             </Link>
-            <Link to="/admin/locks" style={{ textDecoration: 'none', color: 'inherit', marginTop: '8px', display: 'block' }}>
-              <button className={`sidebar-toggle-btn week-btn admin-btn ${location.pathname === '/admin/locks' ? 'active' : ''}`}>
-                <div className="btn-content">
-                  <Lock size={20} color="#f43f5e" />
-                  {!isSidebarCollapsed && <span>Course Locks</span>}
-                </div>
-              </button>
-            </Link>
+            
             
             {user?.role === 'superadmin' && (
               <Link to="/admin/audit" style={{ textDecoration: 'none', color: 'inherit', marginTop: '8px', display: 'block' }}>
@@ -212,6 +233,10 @@ const Sidebar = () => {
                 {week.days.map((day, dIndex) => {
                   const unlocked = isDayUnlocked(wIndex, dIndex);
                   const status = getDayStatus(day.dayId);
+                  const unlockedForStudent = isDayUnlockedForStudent(wIndex, dIndex);
+                  const isUserAdmin = user?.role === 'admin' || user?.role === 'superadmin';
+                  const currentOverride = dayLocks?.find(dl => dl.dayId === day.dayId);
+                  const activeStatus = currentOverride ? currentOverride.status : 'default';
                   
                   return (
                     <div 
@@ -224,13 +249,48 @@ const Sidebar = () => {
                         disabled={!unlocked}
                       >
                         <div className="btn-content">
-                          {unlocked ? (
+                          {unlockedForStudent ? (
                             status.isAccepted ? <CheckCircle2 size={18} color="#16a34a" /> : <Clock size={18} />
                           ) : (
                             <Lock size={18} color="var(--text-neutral)" />
                           )}
                           {!isSidebarCollapsed && <span>{day.dayTitle}</span>}
                         </div>
+                        {isUserAdmin && !isSidebarCollapsed && (
+                          <button
+                            className={`sidebar-lock-override-btn ${activeStatus}`}
+                            title={`Lock override: ${activeStatus.toUpperCase()} (Click to cycle: Default -> Force Lock -> Force Unlock)`}
+                            onClick={async (e) => {
+                              e.stopPropagation();
+                              const statuses = ['default', 'locked', 'unlocked'];
+                              const nextStatus = statuses[(statuses.indexOf(activeStatus) + 1) % statuses.length];
+                              await handleUpdateLockStatus(day.dayId, nextStatus);
+                            }}
+                            disabled={updatingDayId === day.dayId}
+                            style={{
+                              background: 'rgba(255,255,255,0.05)',
+                              border: '1px solid var(--app-border, rgba(255,255,255,0.1))',
+                              padding: '4px',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              borderRadius: '4px',
+                              marginRight: '8px',
+                              color: activeStatus === 'locked' ? '#ef4444' : activeStatus === 'unlocked' ? '#10b981' : 'var(--text-neutral)',
+                            }}
+                          >
+                            {updatingDayId === day.dayId ? (
+                              <Loader2 className="spin" size={12} />
+                            ) : activeStatus === 'locked' ? (
+                              <Lock size={12} fill="#ef4444" />
+                            ) : activeStatus === 'unlocked' ? (
+                              <Unlock size={12} fill="#10b981" />
+                            ) : (
+                              <Lock size={12} style={{ opacity: 0.4 }} />
+                            )}
+                          </button>
+                        )}
                         {unlocked && !isSidebarCollapsed && (expandedDays.includes(day.dayId) ? <ChevronDown size={14} /> : <ChevronRight size={14} />)}
                       </button>
 
