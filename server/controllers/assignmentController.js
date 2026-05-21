@@ -14,6 +14,16 @@ const submitAssignment = async (req, res) => {
   }
 
   try {
+    // Prevent duplicate submissions within 3 seconds for the same topic
+    const lastSubmission = await Assignment.findOne({
+      student: req.user._id,
+      topicId
+    }).sort({ submittedAt: -1 });
+
+    if (lastSubmission && (Date.now() - new Date(lastSubmission.submittedAt).getTime() < 3000)) {
+      return res.status(400).json({ message: 'Submission already in progress. Please wait.' });
+    }
+
     const assignment = await Assignment.create({
       student: req.user._id,
       topicId,

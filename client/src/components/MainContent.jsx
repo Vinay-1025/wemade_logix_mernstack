@@ -54,6 +54,8 @@ const EMPTY_CODE = { html: '', css: '', js: '' };
 const MainContent = () => {
   const { selectedTopic, setSelectedTopic, refreshAssignments, userAssignments, dayLocks } = useCourse();
   const [snackbar, setSnackbar] = useState({ visible: false, message: '', type: 'success' });
+  const [assignmentSubmitting, setAssignmentSubmitting] = useState(false);
+  const assignmentSubmittingRef = useRef(false);
 
   // Microsoft Learn Docs Resources View State
   const [activeResourcesSection, setActiveResourcesSection] = useState('overview');
@@ -5096,8 +5098,12 @@ const MainContent = () => {
                   {!isLocked && (
                     <button
                       className="btn btn-primary launch-btn"
-                      disabled={!requirements.every(req => req.met)}
+                      disabled={!requirements.every(req => req.met) || assignmentSubmitting}
                       onClick={async () => {
+                        if (assignmentSubmittingRef.current) return;
+                        assignmentSubmittingRef.current = true;
+                        setAssignmentSubmitting(true);
+
                         const code = window.currentAssignmentCode || submittedCode;
                         const finalCode = JSON.stringify(code);
                         try {
@@ -5143,11 +5149,18 @@ const MainContent = () => {
                           }
                         } catch (err) {
                           showSnackbar('Failed to launch mission.');
+                        } finally {
+                          assignmentSubmittingRef.current = false;
+                          setAssignmentSubmitting(false);
                         }
                       }}
                     >
                       <ArrowUpRight size={18} />
-                      {submittedAssignment?.status === 'rejected' ? 'Resubmit Task' : 'Submit Task'}
+                      {assignmentSubmitting
+                        ? 'Submitting...'
+                        : submittedAssignment?.status === 'rejected'
+                          ? 'Resubmit Task'
+                          : 'Submit Task'}
                     </button>
                   )}
                 </div>

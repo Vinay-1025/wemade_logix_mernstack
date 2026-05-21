@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -25,6 +25,9 @@ const Header = () => {
   const [scanSuccessMessage, setScanSuccessMessage] = useState('');
   const [manualCode, setManualCode] = useState('');
   const [attendanceSubmitting, setAttendanceSubmitting] = useState(false);
+  const [passwordSubmitting, setPasswordSubmitting] = useState(false);
+  const attendanceSubmittingRef = useRef(false);
+  const passwordSubmittingRef = useRef(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -77,7 +80,8 @@ const Header = () => {
   }, [showScannerModal, scanSuccessMessage]);
 
   const handleMarkAttendance = async (code) => {
-    if (attendanceSubmitting) return;
+    if (attendanceSubmitting || attendanceSubmittingRef.current) return;
+    attendanceSubmittingRef.current = true;
     setAttendanceSubmitting(true);
     setScannerError('');
     try {
@@ -85,6 +89,7 @@ const Header = () => {
       const token = userData?.token;
       if (!token) {
         setScannerError("Authentication token not found. Please log in again.");
+        attendanceSubmittingRef.current = false;
         setAttendanceSubmitting(false);
         return;
       }
@@ -100,12 +105,14 @@ const Header = () => {
         setTimeout(() => {
           setShowScannerModal(false);
           setScanSuccessMessage('');
+          attendanceSubmittingRef.current = false;
           setAttendanceSubmitting(false);
         }, 1500);
       }
     } catch (err) {
       const msg = err.response?.data?.message || "Failed to mark attendance. Invalid QR code.";
       setScannerError(msg);
+      attendanceSubmittingRef.current = false;
       setAttendanceSubmitting(false);
       setTimeout(() => {
         setScannerError('');
@@ -117,7 +124,8 @@ const Header = () => {
 
   const handleManualCodeSubmit = async (e) => {
     e.preventDefault();
-    if (!manualCode.trim() || attendanceSubmitting) return;
+    if (!manualCode.trim() || attendanceSubmitting || attendanceSubmittingRef.current) return;
+    attendanceSubmittingRef.current = true;
     setAttendanceSubmitting(true);
     setScannerError('');
     try {
@@ -125,6 +133,7 @@ const Header = () => {
       const token = userData?.token;
       if (!token) {
         setScannerError("Authentication token not found. Please log in again.");
+        attendanceSubmittingRef.current = false;
         setAttendanceSubmitting(false);
         return;
       }
@@ -141,12 +150,14 @@ const Header = () => {
         setTimeout(() => {
           setShowScannerModal(false);
           setScanSuccessMessage('');
+          attendanceSubmittingRef.current = false;
           setAttendanceSubmitting(false);
         }, 1500);
       }
     } catch (err) {
       const msg = err.response?.data?.message || "Failed to mark attendance. Invalid code.";
       setScannerError(msg);
+      attendanceSubmittingRef.current = false;
       setAttendanceSubmitting(false);
     }
   };
@@ -271,6 +282,10 @@ const Header = () => {
       return;
     }
 
+    if (passwordSubmittingRef.current || passwordStatus.type === 'success') return;
+    passwordSubmittingRef.current = true;
+    setPasswordSubmitting(true);
+
     try {
       const userData = JSON.parse(localStorage.getItem('user'));
       await axios.put('/api/auth/password', {
@@ -288,6 +303,9 @@ const Header = () => {
       }, 2000);
     } catch (err) {
       setPasswordStatus({ type: 'error', message: err.response?.data?.message || 'Failed to update password' });
+    } finally {
+      passwordSubmittingRef.current = false;
+      setPasswordSubmitting(false);
     }
   };
 
@@ -638,8 +656,10 @@ const Header = () => {
                 </div>
               </div>
               <div className="modal-actions">
-                <button type="button" className="btn-secondary" onClick={() => setShowPasswordModal(false)}>Cancel</button>
-                <button type="submit" className="btn-primary">Update Password</button>
+                <button type="button" className="btn-secondary" disabled={passwordSubmitting} onClick={() => setShowPasswordModal(false)}>Cancel</button>
+                <button type="submit" className="btn-primary" disabled={passwordSubmitting}>
+                  {passwordSubmitting ? 'Updating...' : 'Update Password'}
+                </button>
               </div>
             </form>
           </div>
