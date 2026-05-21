@@ -213,7 +213,7 @@ const MainContent = () => {
     if (!dayData) return { isSubmitted: false, isAccepted: false };
     
     const assignmentTopic = dayData.topics.find(t => t.title.toLowerCase().includes('assignment')) || [...dayData.topics].reverse().find(t => !t.isResources) || dayData.topics[dayData.topics.length - 1];
-    const assignment = userAssignments.find(a => a.topicId === assignmentTopic.id);
+    const assignment = [...userAssignments].reverse().find(a => a.topicId === assignmentTopic.id);
 
     return {
       isSubmitted: !!assignment,
@@ -285,6 +285,22 @@ const MainContent = () => {
     if (targetWIndex === -1 || targetDIndex === -1) return false;
     
     return isDayUnlocked(targetWIndex, targetDIndex);
+  };
+
+  const getLatestUnlockedTopic = () => {
+    let latestUnlocked = null;
+    for (let wIndex = 0; wIndex < courseData.length; wIndex++) {
+      const week = courseData[wIndex];
+      for (let dIndex = 0; dIndex < week.days.length; dIndex++) {
+        if (isDayUnlocked(wIndex, dIndex)) {
+          const day = week.days[dIndex];
+          if (day.topics && day.topics.length > 0) {
+            latestUnlocked = day.topics[0];
+          }
+        }
+      }
+    }
+    return latestUnlocked || courseData[0]?.days[0]?.topics[0];
   };
 
   const [recording, setRecording] = useState(null);
@@ -493,6 +509,73 @@ const MainContent = () => {
   };
 
   if (!selectedTopic) return <div className="main-content">Select a topic to start learning</div>;
+
+  if (!isTutorOrAdmin && !isTopicUnlocked(selectedTopic)) {
+    return (
+      <div className="main-content locked-overlay-container" style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '3rem 2rem',
+        textAlign: 'center',
+        background: 'var(--app-card-bg)',
+        borderRadius: 'var(--radius-lg)',
+        border: '1px solid var(--app-border)',
+        margin: '2rem auto',
+        maxWidth: '620px',
+        boxShadow: 'var(--shadow-lg)',
+        color: 'var(--app-text)',
+        minHeight: '450px',
+        fontFamily: "'Inter', sans-serif"
+      }}>
+        <div className="lock-icon-wrapper" style={{
+          background: 'rgba(239, 68, 68, 0.08)',
+          color: '#ef4444',
+          borderRadius: '50%',
+          padding: '1.5rem',
+          marginBottom: '1.5rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: '0 8px 16px rgba(239, 68, 68, 0.1)',
+          animation: 'pulseLock 2.5s infinite ease-in-out'
+        }}>
+          <Lock size={48} />
+        </div>
+        <h2 style={{ marginBottom: '1rem', fontWeight: 800, fontSize: '2rem', letterSpacing: '-0.5px' }}>Access Restricted</h2>
+        <p style={{ color: 'var(--app-text-muted)', marginBottom: '2rem', fontSize: '1.1rem', lineHeight: '1.6', maxWidth: '480px' }}>
+          This learning module is locked. To unlock it, please submit your previous day's assignment and verify it has been approved by a tutor.
+        </p>
+        <button 
+          onClick={() => {
+            const topic = getLatestUnlockedTopic();
+            if (topic) setSelectedTopic(topic);
+          }}
+          className="btn btn-primary"
+          style={{
+            padding: '12px 28px',
+            fontSize: '1rem',
+            fontWeight: 600,
+            borderRadius: 'var(--radius-md)',
+            boxShadow: '0 4px 14px rgba(0, 71, 171, 0.25)',
+            border: 'none',
+            cursor: 'pointer',
+            transition: 'var(--transition)'
+          }}
+        >
+          Go to Active Topic
+        </button>
+
+        <style dangerouslySetInnerHTML={{__html: `
+          @keyframes pulseLock {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.9; }
+          }
+        `}} />
+      </div>
+    );
+  }
 
   if (selectedTopic.isResources) {
     const dayId = currentDayData?.dayId || 'w1-d0';
