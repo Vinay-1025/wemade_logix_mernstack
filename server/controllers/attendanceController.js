@@ -15,12 +15,16 @@ const enableAttendance = async (req, res) => {
 
     const { dayId } = req.body;
 
+    if (!dayId || !dayId.toString().trim()) {
+      return res.status(400).json({ message: 'Class Day Number is required' });
+    }
+
     // 3. Create new session
     const session = await AttendanceSession.create({
       code,
       isActive: true,
       createdBy: req.user._id,
-      dayId: dayId || '',
+      dayId: dayId.toString().trim(),
     });
 
     res.status(201).json({

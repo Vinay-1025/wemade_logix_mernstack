@@ -6,6 +6,29 @@ import { Play, Square, QrCode, Search, RefreshCw, CheckCircle, Clock, Calendar, 
 import { courseData } from '../data/mockData';
 import { QRCodeSVG } from 'qrcode.react';
 
+const getRecommendedDay = () => {
+  const baseDate = new Date(2026, 4, 21); // May 21, 2026 (Month is 0-indexed)
+  const today = new Date();
+  baseDate.setHours(0, 0, 0, 0);
+  today.setHours(0, 0, 0, 0);
+
+  if (today < baseDate) {
+    return 4;
+  }
+
+  let nonSundayDays = 0;
+  let tempDate = new Date(baseDate);
+
+  while (tempDate < today) {
+    tempDate.setDate(tempDate.getDate() + 1);
+    if (tempDate.getDay() !== 0) { // 0 is Sunday
+      nonSundayDays++;
+    }
+  }
+
+  return 4 + nonSundayDays;
+};
+
 const AttendanceAdmin = () => {
   const { user: currentUser } = useSelector((state) => state.auth);
 
@@ -34,7 +57,7 @@ const AttendanceAdmin = () => {
   };
 
   // Filter States
-  const [selectedDayId, setSelectedDayId] = useState('');
+  const [selectedDayId, setSelectedDayId] = useState(() => String(getRecommendedDay()));
   const [filterDayId, setFilterDayId] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -95,8 +118,12 @@ const AttendanceAdmin = () => {
 
   const handleStartSession = async () => {
     if (!currentUser?.token) return;
+    if (!selectedDayId || !selectedDayId.trim() || Number(selectedDayId) <= 0) {
+      setStatusMessage({ type: 'error', text: 'Class Day Number is required (minimum 1).' });
+      return;
+    }
     try {
-      const response = await axios.post('/api/attendance/session', { dayId: selectedDayId }, {
+      const response = await axios.post('/api/attendance/session', { dayId: selectedDayId.trim() }, {
         headers: { 'Authorization': `Bearer ${currentUser.token}` }
       });
       if (response.data?.success) {
@@ -303,14 +330,20 @@ const AttendanceAdmin = () => {
                 </div>
 
                 <div className="select-day-wrapper">
-                  <label className="select-day-label">Class Day Number (Optional)</label>
+                  <label className="select-day-label">
+                    Class Day Number <span style={{ color: '#ef4444' }}>*</span>
+                    <span style={{ fontSize: '0.75rem', color: '#94a3b8', marginLeft: '6px', textTransform: 'none', fontWeight: 'normal' }}>
+                      (Recommended: Day {getRecommendedDay()})
+                    </span>
+                  </label>
                   <input
                     type="number"
                     min="1"
-                    placeholder="e.g. 4"
+                    placeholder={`e.g. ${getRecommendedDay()}`}
                     value={selectedDayId}
                     onChange={e => setSelectedDayId(e.target.value)}
                     className="select-day-input"
+                    required
                   />
                 </div>
 
