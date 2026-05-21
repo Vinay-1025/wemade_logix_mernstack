@@ -82,9 +82,11 @@ const scanQR = async (req, res) => {
     return res.status(400).json({ message: 'Verification code is required' });
   }
 
+  const formattedCode = code.trim().toUpperCase();
+
   try {
     // 1. Find active session with this code
-    const session = await AttendanceSession.findOne({ code, isActive: true });
+    const session = await AttendanceSession.findOne({ code: formattedCode, isActive: true });
 
     if (!session) {
       return res.status(400).json({ message: 'Invalid or expired QR code' });

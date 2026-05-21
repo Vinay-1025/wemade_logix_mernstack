@@ -90,7 +90,7 @@ const Header = () => {
       }
 
       const response = await axios.post('/api/attendance/scan',
-        { code },
+        { code: code.trim().toUpperCase() },
         { headers: { 'Authorization': `Bearer ${token}` } }
       );
 
@@ -556,7 +556,7 @@ const Header = () => {
                       placeholder="Enter session code" 
                       value={manualCode}
                       onChange={e => setManualCode(e.target.value)}
-                      maxLength={10}
+                      maxLength={16}
                       disabled={attendanceSubmitting}
                       className="manual-code-input"
                     />
