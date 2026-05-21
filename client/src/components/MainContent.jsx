@@ -202,6 +202,69 @@ const MainContent = () => {
   const loggedInUser = JSON.parse(localStorage.getItem('user') || '{}');
   const isTutorOrAdmin = loggedInUser?.role === 'admin' || loggedInUser?.role === 'superadmin';
 
+  // Helper to check locks for bottom navigation
+  const getDayStatus = (dayId) => {
+    let dayData = null;
+    courseData.forEach(w => {
+      const found = w.days.find(d => d.dayId === dayId);
+      if (found) dayData = found;
+    });
+
+    if (!dayData) return { isSubmitted: false, isAccepted: false };
+    
+    const assignmentTopic = dayData.topics.find(t => t.title.toLowerCase().includes('assignment')) || [...dayData.topics].reverse().find(t => !t.isResources) || dayData.topics[dayData.topics.length - 1];
+    const assignment = userAssignments.find(a => a.topicId === assignmentTopic.id);
+
+    return {
+      isSubmitted: !!assignment,
+      isAccepted: assignment?.status === 'accepted',
+      status: assignment?.status || 'none'
+    };
+  };
+
+  const isDayUnlocked = (weekIndex, dayIndex) => {
+    if (isTutorOrAdmin) return true;
+    if (weekIndex === 0 && dayIndex === 0) return true;
+
+    let prevDayId = '';
+    if (dayIndex > 0) {
+      prevDayId = courseData[weekIndex].days[dayIndex - 1].dayId;
+    } else if (weekIndex > 0) {
+      const prevWeek = courseData[weekIndex - 1];
+      prevDayId = prevWeek.days[prevWeek.days.length - 1].dayId;
+    }
+
+    if (prevDayId === 'w1-d0') return true;
+
+    const prevStatus = getDayStatus(prevDayId);
+    return prevStatus.isSubmitted;
+  };
+
+  const isTopicUnlocked = (topic) => {
+    if (!topic) return false;
+    
+    // Find week and day indices in courseData
+    let targetWIndex = -1;
+    let targetDIndex = -1;
+    
+    for (let wIndex = 0; wIndex < courseData.length; wIndex++) {
+      const week = courseData[wIndex];
+      for (let dIndex = 0; dIndex < week.days.length; dIndex++) {
+        const day = week.days[dIndex];
+        if (day.topics.some(t => t.id === topic.id)) {
+          targetWIndex = wIndex;
+          targetDIndex = dIndex;
+          break;
+        }
+      }
+      if (targetWIndex !== -1) break;
+    }
+    
+    if (targetWIndex === -1 || targetDIndex === -1) return false;
+    
+    return isDayUnlocked(targetWIndex, targetDIndex);
+  };
+
   const [recording, setRecording] = useState(null);
   const [morningLinkInput, setMorningLinkInput] = useState('');
   const [eveningLinkInput, setEveningLinkInput] = useState('');
@@ -3134,7 +3197,7 @@ const MainContent = () => {
                 </button>
               ) : <div />}
 
-              {nextTopic && (
+              {nextTopic && isTopicUnlocked(nextTopic) && (
                 <button className="nav-btn next" onClick={() => setSelectedTopic(nextTopic)}>
                   <div className="nav-text">
                     <span className="nav-label">Next Topic</span>
@@ -5008,7 +5071,7 @@ const MainContent = () => {
               </button>
             ) : <div />}
 
-            {nextTopic && (
+            {nextTopic && isTopicUnlocked(nextTopic) && (
               <button className="nav-btn next" onClick={() => setSelectedTopic(nextTopic)}>
                 <div className="nav-text">
                   <span className="nav-label">Next Topic</span>
