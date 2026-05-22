@@ -157,10 +157,15 @@ const getAttendanceStats = async (req, res) => {
       studentId = req.params.studentId;
     }
 
-    const sessions = await AttendanceSession.find().sort({ createdAt: 1 });
-    const records = await AttendanceRecord.find({ student: studentId });
+    const sessions = await AttendanceSession.find().sort({ createdAt: 1 }) || [];
+    const records = await AttendanceRecord.find({ student: studentId }) || [];
 
-    const attendedSessionIds = new Set(records.map(r => r.session.toString()));
+    const attendedSessionIds = new Set();
+    records.forEach(r => {
+      if (r && r.session) {
+        attendedSessionIds.add(r.session.toString());
+      }
+    });
 
     const totalSessions = sessions.length;
     const attendedCount = records.length;
@@ -171,8 +176,11 @@ const getAttendanceStats = async (req, res) => {
     // Heatmap data: maps YYYY-MM-DD to 'attended' or 'missed'
     const heatmapData = {};
     sessions.forEach(session => {
-      const dateStr = new Date(session.createdAt).toLocaleDateString('en-CA');
-      const attended = attendedSessionIds.has(session._id.toString());
+      if (!session) return;
+      const dateObj = session.createdAt || new Date();
+      const dateStr = new Date(dateObj).toLocaleDateString('en-CA');
+      const sessionId = session._id ? session._id.toString() : '';
+      const attended = sessionId ? attendedSessionIds.has(sessionId) : false;
       if (attended) {
         heatmapData[dateStr] = 'attended';
       } else if (!heatmapData[dateStr]) {
@@ -186,7 +194,9 @@ const getAttendanceStats = async (req, res) => {
     let tempStreak = 0;
 
     sessions.forEach(session => {
-      const attended = attendedSessionIds.has(session._id.toString());
+      if (!session) return;
+      const sessionId = session._id ? session._id.toString() : '';
+      const attended = sessionId ? attendedSessionIds.has(sessionId) : false;
       if (attended) {
         tempStreak++;
         if (tempStreak > maxStreak) {
@@ -199,7 +209,9 @@ const getAttendanceStats = async (req, res) => {
 
     for (let i = sessions.length - 1; i >= 0; i--) {
       const session = sessions[i];
-      const attended = attendedSessionIds.has(session._id.toString());
+      if (!session) continue;
+      const sessionId = session._id ? session._id.toString() : '';
+      const attended = sessionId ? attendedSessionIds.has(sessionId) : false;
       if (attended) {
         currentStreak++;
       } else {
