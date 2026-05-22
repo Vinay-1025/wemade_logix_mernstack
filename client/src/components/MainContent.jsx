@@ -15,6 +15,11 @@ import CSSColorsPlayground from './CSSColorsPlayground';
 import CSSTypographyExplorer from './CSSTypographyExplorer';
 import CSSUnitsComparator from './CSSUnitsComparator';
 import CSSCardCustomizer from './CSSCardCustomizer';
+import CSSBoxModelLab from './CSSBoxModelLab';
+import CSSBoxSizingLab from './CSSBoxSizingLab';
+import CSSPositioningLab from './CSSPositioningLab';
+import CSSZIndexLab from './CSSZIndexLab';
+import CSSLayoutSandbox from './CSSLayoutSandbox';
 import GitTerminal from './GitTerminal';
 import PlanVisualizer from './PlanVisualizer';
 import JSRuntimeViz from './JSRuntimeViz';
@@ -471,6 +476,11 @@ const MainContent = () => {
     'CSSTypographyExplorer': <CSSTypographyExplorer />,
     'CSSUnitsComparator': <CSSUnitsComparator />,
     'CSSCardCustomizer': <CSSCardCustomizer />,
+    'CSSBoxModelLab': <CSSBoxModelLab />,
+    'CSSBoxSizingLab': <CSSBoxSizingLab />,
+    'CSSPositioningLab': <CSSPositioningLab />,
+    'CSSZIndexLab': <CSSZIndexLab />,
+    'CSSLayoutSandbox': <CSSLayoutSandbox />,
     'GitTerminal': <GitTerminal />,
     'PlanVisualizer': <PlanVisualizer />,
     'JSRuntimeViz': <JSRuntimeViz />,
