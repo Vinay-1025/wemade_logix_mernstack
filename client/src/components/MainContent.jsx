@@ -10,6 +10,7 @@ import { courseData } from '../data/mockData';
 import NetworkAnimation from './NetworkAnimation';
 import FlexboxPlayground from './FlexboxPlayground';
 import ResponsiveSimulator from './ResponsiveSimulator';
+import CSSBasicsPlayground from './CSSBasicsPlayground';
 import GitTerminal from './GitTerminal';
 import PlanVisualizer from './PlanVisualizer';
 import JSRuntimeViz from './JSRuntimeViz';
@@ -461,6 +462,7 @@ const MainContent = () => {
     'AccessibilityVisualizer': <AccessibilityVisualizer />,
     'StructureVisualizer': <StructureVisualizer />,
     'ResponsiveSimulator': <ResponsiveSimulator />,
+    'CSSBasicsPlayground': <CSSBasicsPlayground />,
     'GitTerminal': <GitTerminal />,
     'PlanVisualizer': <PlanVisualizer />,
     'JSRuntimeViz': <JSRuntimeViz />,
