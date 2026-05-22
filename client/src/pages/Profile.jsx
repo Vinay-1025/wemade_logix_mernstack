@@ -420,7 +420,7 @@ const Profile = () => {
                 </div>
 
                 {/* Heatmap Filters & Headers */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: '32px', marginBottom: '16px', flexWrap: 'wrap', gap: '16px' }}>
+                <div className="heatmap-header-container">
                   <div>
                     <h3 style={{ fontSize: '1rem', fontWeight: '750', margin: '0 0 4px 0', color: 'var(--text-primary)' }}>Attendance Heatmap</h3>
                     <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-neutral)' }}>Interactive calendar tracking your attendance over the past 15 weeks.</p>
@@ -720,19 +720,87 @@ const Profile = () => {
             to { opacity: 1; transform: translateY(0); }
           }
 
+          .heatmap-header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 32px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 16px;
+          }
+
           @media (max-width: 768px) {
-            .profile-stats, .profile-sections {
-              grid-template-columns: 1fr;
+            .profile-page {
+              padding: 20px 16px;
             }
-            .profile-info-card {
-              flex-direction: column;
-              align-items: center;
-              left: 50%;
-              transform: translateX(-50%);
-              text-align: center;
+            .profile-stats, .profile-sections {
+              grid-template-columns: 1fr !important;
             }
             .profile-hero {
-              margin-bottom: 140px;
+              margin-bottom: 24px;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              background: white;
+              border: 1px solid var(--light-tertiary);
+              border-radius: 20px;
+              padding: 20px;
+              padding-top: 0;
+              overflow: hidden;
+            }
+            .profile-cover {
+              width: calc(100% + 40px);
+              margin: 0 -20px;
+              border-radius: 0;
+              height: 100px;
+            }
+            .profile-info-card {
+              position: static;
+              transform: none;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              text-align: center;
+              margin-top: -50px;
+              gap: 12px;
+            }
+            .profile-avatar-wrapper {
+              box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+            }
+            .profile-avatar-large {
+              width: 80px;
+              height: 80px;
+              border-radius: 20px;
+            }
+            .profile-details h1 {
+              font-size: 1.5rem;
+            }
+            .profile-email {
+              margin-bottom: 8px;
+            }
+            .profile-badges {
+              justify-content: center;
+            }
+            .profile-section-card {
+              padding: 20px;
+              border-radius: 16px;
+            }
+            .heatmap-header-container {
+              flex-direction: column;
+              align-items: flex-start;
+            }
+            .heatmap-filters {
+              width: 100%;
+              justify-content: space-between;
+            }
+            .filter-group {
+              width: 100%;
+              justify-content: space-between;
+            }
+            .heatmap-container {
+              padding: 12px;
+              gap: 8px;
             }
           }
 
