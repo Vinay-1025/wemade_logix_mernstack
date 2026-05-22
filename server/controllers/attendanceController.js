@@ -167,36 +167,47 @@ const getAttendanceStats = async (req, res) => {
       }
     });
 
-    const totalSessions = sessions.length;
-    const attendedCount = records.length;
-    const attendancePercentage = totalSessions > 0 
-      ? Math.round((attendedCount / totalSessions) * 100) 
-      : 100; // Default to 100% if no sessions have been run yet
-
-    // Heatmap data: maps YYYY-MM-DD to 'attended' or 'missed'
-    const heatmapData = {};
+    // Group sessions by date string (YYYY-MM-DD)
+    const sessionsByDate = {};
     sessions.forEach(session => {
       if (!session) return;
       const dateObj = session.createdAt || new Date();
       const dateStr = new Date(dateObj).toLocaleDateString('en-CA');
-      const sessionId = session._id ? session._id.toString() : '';
-      const attended = sessionId ? attendedSessionIds.has(sessionId) : false;
+      if (!sessionsByDate[dateStr]) {
+        sessionsByDate[dateStr] = [];
+      }
+      sessionsByDate[dateStr].push(session);
+    });
+
+    const sortedSessionDates = Object.keys(sessionsByDate).sort();
+    const totalSessions = sortedSessionDates.length;
+
+    let attendedCount = 0;
+    const heatmapData = {};
+
+    sortedSessionDates.forEach(dateStr => {
+      const daySessions = sessionsByDate[dateStr];
+      const attended = daySessions.some(s => s._id && attendedSessionIds.has(s._id.toString()));
       if (attended) {
+        attendedCount++;
         heatmapData[dateStr] = 'attended';
-      } else if (!heatmapData[dateStr]) {
+      } else {
         heatmapData[dateStr] = 'missed';
       }
     });
 
-    // Calculate streaks
+    const attendancePercentage = totalSessions > 0 
+      ? Math.round((attendedCount / totalSessions) * 100) 
+      : 100;
+
+    // Calculate streaks based on unique session dates
     let currentStreak = 0;
     let maxStreak = 0;
     let tempStreak = 0;
 
-    sessions.forEach(session => {
-      if (!session) return;
-      const sessionId = session._id ? session._id.toString() : '';
-      const attended = sessionId ? attendedSessionIds.has(sessionId) : false;
+    sortedSessionDates.forEach(dateStr => {
+      const daySessions = sessionsByDate[dateStr];
+      const attended = daySessions.some(s => s._id && attendedSessionIds.has(s._id.toString()));
       if (attended) {
         tempStreak++;
         if (tempStreak > maxStreak) {
@@ -207,16 +218,16 @@ const getAttendanceStats = async (req, res) => {
       }
     });
 
-    for (let i = sessions.length - 1; i >= 0; i--) {
-      const session = sessions[i];
-      if (!session) continue;
-      const sessionId = session._id ? session._id.toString() : '';
-      const attended = sessionId ? attendedSessionIds.has(sessionId) : false;
+    for (let i = sortedSessionDates.length - 1; i >= 0; i--) {
+      const dateStr = sortedSessionDates[i];
+      const daySessions = sessionsByDate[dateStr];
+      const attended = daySessions.some(s => s._id && attendedSessionIds.has(s._id.toString()));
       if (attended) {
         currentStreak++;
       } else {
-        // If the session is currently active and the student hasn't marked it yet, we don't break the streak.
-        if (i === sessions.length - 1 && session.isActive) {
+        // If the last session date has an active session and the student hasn't marked it yet, we don't break the streak.
+        const hasActiveSession = daySessions.some(s => s.isActive);
+        if (i === sortedSessionDates.length - 1 && hasActiveSession) {
           continue;
         }
         break;

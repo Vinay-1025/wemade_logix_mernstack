@@ -468,18 +468,6 @@ const Profile = () => {
                     </div>
                   </div>
 
-                  {/* Max Streak */}
-                  <div className="att-stat-item">
-                    <div className="att-stat-icon-wrapper award-icon">
-                      <Award size={20} />
-                    </div>
-                    <div className="att-stat-details">
-                      <h3>{attendanceStats.maxStreak} Days</h3>
-                      <p>Max Streak Record</p>
-                      <span className="att-badge-neutral">Personal Best</span>
-                    </div>
-                  </div>
-
                   {/* Total Presence */}
                   <div className="att-stat-item">
                     <div className="att-stat-icon-wrapper calendar-icon">
@@ -842,7 +830,7 @@ const Profile = () => {
           }
           .attendance-stats-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 20px;
           }
           .att-stat-item {
