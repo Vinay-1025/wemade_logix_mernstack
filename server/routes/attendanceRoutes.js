@@ -15,6 +15,7 @@ router.get('/session/active', protect, getActiveSession);
 router.put('/session/end', protect, admin, endAttendance);
 router.post('/scan', protect, scanQR);
 router.get('/records', protect, admin, getAttendanceRecords);
-router.get('/stats/:studentId?', protect, getAttendanceStats);
+router.get('/stats', protect, getAttendanceStats);
+router.get('/stats/:studentId', protect, getAttendanceStats);
 
 module.exports = router;
