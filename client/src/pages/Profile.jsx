@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { User, Shield, Award, Book, Clock, CheckCircle2 } from 'lucide-react';
+import { User, Shield, Award, Book, Clock, CheckCircle2, Flame, Calendar, Percent, Activity } from 'lucide-react';
 import MainLayout from '../components/MainLayout';
 import { courseData } from '../data/mockData';
 import axios from 'axios';
@@ -10,6 +10,36 @@ const Profile = () => {
   const [userAssignments, setUserAssignments] = useState([]);
   const [allAssignments, setAllAssignments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [attendanceStats, setAttendanceStats] = useState(null);
+  const [attendanceLoading, setAttendanceLoading] = useState(true);
+  const [hoveredCell, setHoveredCell] = useState(null);
+
+  // Helper to generate days for heatmap (15 weeks = 105 days)
+  const generateHeatmapDays = () => {
+    const days = [];
+    const today = new Date();
+    const currentDayOfWeek = today.getDay();
+    
+    const startDate = new Date(today);
+    // Align with Sunday 14 weeks ago
+    startDate.setDate(today.getDate() - 14 * 7 - currentDayOfWeek);
+    
+    const tempDate = new Date(startDate);
+    // Generate up to today
+    while (tempDate <= today) {
+      days.push(new Date(tempDate));
+      tempDate.setDate(tempDate.getDate() + 1);
+    }
+    
+    // Pad to complete the final week's row
+    while (days.length % 7 !== 0) {
+      const nextDay = new Date(days[days.length - 1]);
+      nextDay.setDate(nextDay.getDate() + 1);
+      days.push(nextDay);
+    }
+    
+    return days;
+  };
 
   useEffect(() => {
     if (!user) return;
@@ -30,11 +60,26 @@ const Profile = () => {
           if (Array.isArray(response.data)) {
             setUserAssignments(response.data);
           }
+
+          // Fetch attendance stats for student
+          try {
+            const attResponse = await axios.get('/api/attendance/stats', {
+              headers: { 'Authorization': `Bearer ${user.token}` }
+            });
+            if (attResponse.data && attResponse.data.success) {
+              setAttendanceStats(attResponse.data.stats);
+            }
+          } catch (err) {
+            console.error('Failed to fetch attendance stats:', err);
+          } finally {
+            setAttendanceLoading(false);
+          }
         }
         setLoading(false);
       } catch (e) {
         console.error('Failed to fetch assignments for profile:', e);
         setLoading(false);
+        setAttendanceLoading(false);
       }
     };
 
@@ -326,6 +371,144 @@ const Profile = () => {
               </div>
             </div>
 
+            {/* Attendance Analytics & Heatmap Section */}
+            {!isAdmin && !attendanceLoading && attendanceStats && (
+              <div className="profile-section-card attendance-analytics-card" style={{ gridColumn: 'span 2', marginTop: '24px' }}>
+                <div className="attendance-header">
+                  <h2 style={{ margin: 0 }}>Attendance Analytics & Streaks</h2>
+                  <div className="hover-tooltip-display">
+                    {hoveredCell ? (
+                      <span className="tooltip-text fade-in">
+                        {hoveredCell.dateLabel} • <strong style={{ 
+                          color: hoveredCell.status === 'attended' ? '#10b981' : hoveredCell.status === 'missed' ? '#ef4444' : 'var(--text-neutral)' 
+                        }}>
+                          {hoveredCell.status === 'attended' ? 'Attended' : hoveredCell.status === 'missed' ? 'Missed' : 'No Class'}
+                        </strong>
+                      </span>
+                    ) : (
+                      <span className="tooltip-text-placeholder">Hover over a square to view details</span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Stat Grid */}
+                <div className="attendance-stats-grid">
+                  {/* Attendance Rate */}
+                  <div className="att-stat-item">
+                    <div className="att-stat-icon-wrapper percent-icon">
+                      <Percent size={20} />
+                    </div>
+                    <div className="att-stat-details">
+                      <h3>{attendanceStats.attendancePercentage}%</h3>
+                      <p>Attendance Rate</p>
+                      <span className={`att-badge ${
+                        attendanceStats.attendancePercentage >= 90 ? 'badge-excellent' : 
+                        attendanceStats.attendancePercentage >= 75 ? 'badge-warning' : 'badge-danger'
+                      }`}>
+                        {attendanceStats.attendancePercentage >= 90 ? 'Excellent' : 
+                         attendanceStats.attendancePercentage >= 75 ? 'On Track' : 'Low Attendance'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Current Streak */}
+                  <div className="att-stat-item">
+                    <div className={`att-stat-icon-wrapper flame-icon ${attendanceStats.currentStreak > 0 ? 'glowing-flame' : ''}`}>
+                      <Flame size={20} />
+                    </div>
+                    <div className="att-stat-details">
+                      <h3>{attendanceStats.currentStreak} Days</h3>
+                      <p>Current Streak</p>
+                      <span className="att-badge-streak" style={{ color: attendanceStats.currentStreak > 0 ? '#f97316' : 'var(--text-neutral)' }}>
+                        {attendanceStats.currentStreak > 0 ? '🔥 Keep it up!' : 'Scan QR to start!'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Max Streak */}
+                  <div className="att-stat-item">
+                    <div className="att-stat-icon-wrapper award-icon">
+                      <Award size={20} />
+                    </div>
+                    <div className="att-stat-details">
+                      <h3>{attendanceStats.maxStreak} Days</h3>
+                      <p>Max Streak Record</p>
+                      <span className="att-badge-neutral">Personal Best</span>
+                    </div>
+                  </div>
+
+                  {/* Total Presence */}
+                  <div className="att-stat-item">
+                    <div className="att-stat-icon-wrapper calendar-icon">
+                      <Calendar size={20} />
+                    </div>
+                    <div className="att-stat-details">
+                      <h3>{attendanceStats.attendedCount} / {attendanceStats.totalSessions}</h3>
+                      <p>Sessions Attended</p>
+                      <span className="att-badge-neutral">Classes Held</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Heatmap Grid Title & Subtitle */}
+                <div style={{ marginTop: '32px', marginBottom: '16px' }}>
+                  <h3 style={{ fontSize: '1rem', fontWeight: '750', margin: '0 0 4px 0', color: 'var(--text-primary)' }}>Attendance Heatmap</h3>
+                  <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-neutral)' }}>Interactive calendar tracking your attendance over the past 15 weeks.</p>
+                </div>
+
+                {/* Heatmap Layout */}
+                <div className="heatmap-container">
+                  <div className="day-labels">
+                    <span>Sun</span>
+                    <span>Mon</span>
+                    <span>Tue</span>
+                    <span>Wed</span>
+                    <span>Thu</span>
+                    <span>Fri</span>
+                    <span>Sat</span>
+                  </div>
+
+                  <div className="heatmap-grid-scroll-wrapper">
+                    <div className="heatmap-grid">
+                      {generateHeatmapDays().map((day, idx) => {
+                        const dateStr = day.toLocaleDateString('en-CA');
+                        const status = attendanceStats.heatmapData[dateStr] || 'none';
+                        const isFuture = day > new Date();
+                        const dateLabel = day.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+
+                        return (
+                          <div
+                            key={idx}
+                            className={`heatmap-cell cell-${status} ${isFuture ? 'cell-future' : ''}`}
+                            style={{
+                              gridRow: (day.getDay() + 1),
+                            }}
+                            onMouseEnter={() => setHoveredCell({ dateLabel, status })}
+                            onMouseLeave={() => setHoveredCell(null)}
+                            title={`${dateLabel}: ${status === 'attended' ? 'Attended' : status === 'missed' ? 'Missed' : 'No Class'}`}
+                          />
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Heatmap Legend */}
+                <div className="heatmap-legend">
+                  <span>Less</span>
+                  <div className="legend-cell cell-none"></div>
+                  <div className="legend-cell cell-missed"></div>
+                  <div className="legend-cell cell-attended"></div>
+                  <span>More</span>
+                  <div className="legend-labels" style={{ marginLeft: '12px', fontSize: '0.75rem', color: 'var(--text-neutral)', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                    <span>⬜ No Class</span>
+                    <span>🟥 Missed Class</span>
+                    <span>🟩 Attended Class</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Certificate Status Section */}
             {!isAdmin && (
               <div 
@@ -542,6 +725,219 @@ const Profile = () => {
             }
             .profile-hero {
               margin-bottom: 140px;
+            }
+          }
+
+          /* Attendance Analytics Styles */
+          .attendance-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+          }
+          .hover-tooltip-display {
+            background: var(--light-secondary);
+            padding: 6px 16px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            border: 1px solid var(--light-tertiary);
+            min-height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 200px;
+          }
+          .tooltip-text {
+            color: var(--text-primary);
+            font-weight: 500;
+          }
+          .tooltip-text-placeholder {
+            color: var(--text-neutral);
+            font-style: italic;
+          }
+          .attendance-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+          }
+          .att-stat-item {
+            background: var(--light-secondary);
+            border: 1px solid var(--light-tertiary);
+            padding: 20px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+          }
+          .att-stat-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.02);
+          }
+          .att-stat-icon-wrapper {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          .percent-icon {
+            background: rgba(14, 165, 233, 0.1);
+            color: #0ea5e9;
+          }
+          .flame-icon {
+            background: rgba(249, 115, 22, 0.1);
+            color: #f97316;
+          }
+          .flame-icon.glowing-flame {
+            background: linear-gradient(135deg, #ff6b6b, #ffbe0b);
+            color: white;
+            animation: pulse 1.5s infinite alternate;
+          }
+          .award-icon {
+            background: rgba(168, 85, 247, 0.1);
+            color: #a855f7;
+          }
+          .calendar-icon {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+          }
+          .att-stat-details h3 {
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin: 0 0 2px 0;
+            color: var(--text-primary);
+          }
+          .att-stat-details p {
+            font-size: 0.8rem;
+            color: var(--text-neutral);
+            margin: 0 0 6px 0;
+          }
+          .att-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+          }
+          .badge-excellent {
+            background: #f0fdf4;
+            color: #16a34a;
+          }
+          .badge-warning {
+            background: #fffbeb;
+            color: #d97706;
+          }
+          .badge-danger {
+            background: #fef2f2;
+            color: #dc2626;
+          }
+          .att-badge-streak {
+            font-size: 0.7rem;
+            font-weight: 700;
+          }
+          .att-badge-neutral {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-neutral);
+          }
+          
+          /* Heatmap styles */
+          .heatmap-container {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+            background: var(--light-secondary);
+            border: 1px solid var(--light-tertiary);
+            padding: 20px;
+            border-radius: 20px;
+          }
+          .day-labels {
+            display: grid;
+            grid-template-rows: repeat(7, 14px);
+            gap: 4px;
+            font-size: 0.7rem;
+            color: var(--text-neutral);
+            align-items: center;
+            user-select: none;
+            padding-top: 2px;
+          }
+          .heatmap-grid-scroll-wrapper {
+            overflow-x: auto;
+            flex: 1;
+          }
+          .heatmap-grid {
+            display: grid;
+            grid-template-rows: repeat(7, 14px);
+            grid-auto-flow: column;
+            gap: 4px;
+            width: max-content;
+          }
+          .heatmap-cell {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+            background: rgba(0, 0, 0, 0.04);
+            transition: transform 0.15s ease, background 0.2s ease;
+            cursor: pointer;
+          }
+          .heatmap-cell:hover {
+            transform: scale(1.25);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            z-index: 10;
+          }
+          .heatmap-cell.cell-attended {
+            background: #10b981;
+          }
+          .heatmap-cell.cell-missed {
+            background: #ef4444;
+          }
+          .heatmap-cell.cell-future {
+            opacity: 0.2;
+            cursor: default;
+            pointer-events: none;
+          }
+          .heatmap-legend {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 6px;
+            margin-top: 12px;
+            font-size: 0.75rem;
+            color: var(--text-neutral);
+          }
+          .legend-cell {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+          }
+          .legend-cell.cell-none {
+            background: rgba(0, 0, 0, 0.04);
+          }
+          .legend-cell.cell-missed {
+            background: #ef4444;
+          }
+          .legend-cell.cell-attended {
+            background: #10b981;
+          }
+
+          @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.4); }
+            100% { transform: scale(1.05); box-shadow: 0 0 10px 4px rgba(249, 115, 22, 0); }
+          }
+          
+          @media (max-width: 1024px) {
+            .attendance-stats-grid {
+              grid-template-columns: repeat(2, 1fr);
+            }
+          }
+          @media (max-width: 600px) {
+            .attendance-stats-grid {
+              grid-template-columns: 1fr;
             }
           }
         `}} />

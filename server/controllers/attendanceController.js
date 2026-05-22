@@ -147,10 +147,93 @@ const getAttendanceRecords = async (req, res) => {
   }
 };
 
+// @desc    Get attendance stats, streaks and heatmap data
+// @route   GET /api/attendance/stats/:studentId?
+// @access  Private
+const getAttendanceStats = async (req, res) => {
+  try {
+    let studentId = req.user._id;
+    if (req.params.studentId && (req.user.role === 'admin' || req.user.role === 'superadmin')) {
+      studentId = req.params.studentId;
+    }
+
+    const sessions = await AttendanceSession.find().sort({ createdAt: 1 });
+    const records = await AttendanceRecord.find({ student: studentId });
+
+    const attendedSessionIds = new Set(records.map(r => r.session.toString()));
+
+    const totalSessions = sessions.length;
+    const attendedCount = records.length;
+    const attendancePercentage = totalSessions > 0 
+      ? Math.round((attendedCount / totalSessions) * 100) 
+      : 100; // Default to 100% if no sessions have been run yet
+
+    // Heatmap data: maps YYYY-MM-DD to 'attended' or 'missed'
+    const heatmapData = {};
+    sessions.forEach(session => {
+      const dateStr = new Date(session.createdAt).toLocaleDateString('en-CA');
+      const attended = attendedSessionIds.has(session._id.toString());
+      if (attended) {
+        heatmapData[dateStr] = 'attended';
+      } else if (!heatmapData[dateStr]) {
+        heatmapData[dateStr] = 'missed';
+      }
+    });
+
+    // Calculate streaks
+    let currentStreak = 0;
+    let maxStreak = 0;
+    let tempStreak = 0;
+
+    sessions.forEach(session => {
+      const attended = attendedSessionIds.has(session._id.toString());
+      if (attended) {
+        tempStreak++;
+        if (tempStreak > maxStreak) {
+          maxStreak = tempStreak;
+        }
+      } else {
+        tempStreak = 0;
+      }
+    });
+
+    for (let i = sessions.length - 1; i >= 0; i--) {
+      const session = sessions[i];
+      const attended = attendedSessionIds.has(session._id.toString());
+      if (attended) {
+        currentStreak++;
+      } else {
+        // If the session is currently active and the student hasn't marked it yet, we don't break the streak.
+        if (i === sessions.length - 1 && session.isActive) {
+          continue;
+        }
+        break;
+      }
+    }
+
+    res.status(200).json({
+      success: true,
+      stats: {
+        attendancePercentage,
+        totalSessions,
+        attendedCount,
+        currentStreak,
+        maxStreak,
+        heatmapData
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching attendance stats:', error);
+    res.status(500).json({ message: 'Server error while calculating attendance stats' });
+  }
+};
+
 module.exports = {
   enableAttendance,
   getActiveSession,
   endAttendance,
   scanQR,
   getAttendanceRecords,
+  getAttendanceStats,
 };
+
