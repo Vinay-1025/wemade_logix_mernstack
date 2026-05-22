@@ -84,7 +84,7 @@ const CSSCardCustomizer = () => {
   --brand-glow: hsla(${hue}, ${saturation}%, ${lightness}%, 0.35);
 
   /* Card Layout Metrics */
-  --card-bg: #1e293b; /* Dark slate matching portal */
+  --card-bg: #ffffff; /* Light clean background */
   --card-radius: ${radius}rem;
   --card-padding: ${padding}rem;
   --btn-padding-y: ${btnPaddingY}em;
@@ -105,7 +105,7 @@ const CSSCardCustomizer = () => {
               0 var(--shadow-blur) calc(var(--shadow-blur) * 1.5) var(--shadow-color);
   transition: var(--card-transition);
   position: relative;
-  border: 1px solid #334155;
+  border: 1px solid #e2e8f0;
   display: flex;
   flex-direction: column;
 }
@@ -411,6 +411,7 @@ const CSSCardCustomizer = () => {
                   '--brand-hover': `hsl(${hue}, ${saturation}%, ${Math.max(lightness - 10, 15)}%)`,
                   '--brand-light': `hsl(${hue}, ${saturation}%, 95%)`,
                   '--brand-glow': `hsla(${hue}, ${saturation}%, ${lightness}%, 0.35)`,
+                  '--card-bg': '#ffffff',
                   '--card-radius': `${radius}rem`,
                   '--card-padding': `${padding}rem`,
                   '--btn-padding-y': `${btnPaddingY}em`,
@@ -500,7 +501,7 @@ const CSSCardCustomizer = () => {
       <style dangerouslySetInnerHTML={{ __html: `
         .card-customizer-root {
           font-family: 'Outfit', 'Inter', sans-serif;
-          color: #f8fafc;
+          color: #1e293b;
         }
 
         .lab-grid {
@@ -522,10 +523,11 @@ const CSSCardCustomizer = () => {
         }
 
         .telemetry-card {
-          background: #131b2e;
-          border: 1px solid #1e293b;
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
           border-radius: 12px;
           padding: 20px;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
         .card-heading {
@@ -548,24 +550,24 @@ const CSSCardCustomizer = () => {
         .card-heading h4 {
           font-size: 1.05rem;
           font-weight: 700;
-          color: #ffffff;
+          color: #0f172a;
           margin: 0;
         }
 
-        .icon-cyan { color: #06b6d4; }
-        .icon-purple { color: #a855f7; }
+        .icon-cyan { color: #0891b2; }
+        .icon-purple { color: #7c3aed; }
         .icon-gold { color: #f59e0b; }
 
         .description {
           font-size: 0.8rem;
-          color: #94a3b8;
+          color: #64748b;
           line-height: 1.5;
           margin: 0 0 16px 0;
         }
 
         .bg-panel {
-          background: #0b0f19;
-          border: 1px solid #1e293b;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
           border-radius: 8px;
           padding: 12px;
           margin-bottom: 12px;
@@ -579,8 +581,8 @@ const CSSCardCustomizer = () => {
           letter-spacing: 0.05em;
         }
 
-        .text-primary-cyan { color: #06b6d4; }
-        .text-primary-purple { color: #a855f7; }
+        .text-primary-cyan { color: #0891b2; }
+        .text-primary-purple { color: #7c3aed; }
         .text-primary-gold { color: #f59e0b; }
 
         .slide-row {
@@ -596,7 +598,7 @@ const CSSCardCustomizer = () => {
 
         .slide-lbl {
           font-size: 0.75rem;
-          color: #94a3b8;
+          color: #475569;
         }
 
         .flex-lbl-row {
@@ -615,7 +617,7 @@ const CSSCardCustomizer = () => {
           width: 100%;
           height: 5px;
           border-radius: 100px;
-          background: #1e293b;
+          background: #cbd5e1;
           outline: none;
         }
 
@@ -625,7 +627,7 @@ const CSSCardCustomizer = () => {
           width: 12px;
           height: 12px;
           border-radius: 50%;
-          background: #06b6d4;
+          background: #0891b2;
           cursor: pointer;
         }
 
@@ -653,11 +655,11 @@ const CSSCardCustomizer = () => {
         }
 
         .reset-btn {
-          background: #1e293b;
-          border: 1px solid #334155;
+          background: #ffffff;
+          border: 1px solid #cbd5e1;
           padding: 4px 10px;
           border-radius: 6px;
-          color: #cbd5e1;
+          color: #475569;
           font-size: 0.72rem;
           cursor: pointer;
           display: flex;
@@ -667,8 +669,9 @@ const CSSCardCustomizer = () => {
         }
 
         .reset-btn:hover {
-          color: white;
-          background: #334155;
+          color: #0f172a;
+          border-color: #94a3b8;
+          background: #f8fafc;
         }
 
         /* WCAG Diagnostics Panel Styles */
@@ -699,14 +702,14 @@ const CSSCardCustomizer = () => {
           justify-content: center;
           align-items: center;
           flex-shrink: 0;
-          background: #131b2e;
+          background: #ffffff;
           transition: all 0.3s ease;
         }
 
         .ratio-val {
           font-size: 1.1rem;
           font-weight: 700;
-          color: #ffffff;
+          color: #0f172a;
         }
 
         .ratio-lbl {
@@ -728,7 +731,7 @@ const CSSCardCustomizer = () => {
           align-items: center;
           gap: 12px;
           font-size: 0.75rem;
-          color: #94a3b8;
+          color: #475569;
         }
 
         .checker-preview {
@@ -750,7 +753,7 @@ const CSSCardCustomizer = () => {
           display: flex;
           align-items: center;
           font-size: 0.72rem;
-          color: #cbd5e1;
+          color: #475569;
         }
 
         .status-dot {
@@ -766,7 +769,7 @@ const CSSCardCustomizer = () => {
 
         .ind-lbl {
           flex-grow: 1;
-          color: #94a3b8;
+          color: #64748b;
         }
 
         .ind-res {
@@ -776,7 +779,7 @@ const CSSCardCustomizer = () => {
 
         .warning-callout {
           margin-top: 12px;
-          border-top: 1px solid #1e293b;
+          border-top: 1px solid #e2e8f0;
           padding-top: 12px;
           display: flex;
           gap: 8px;
@@ -808,10 +811,10 @@ const CSSCardCustomizer = () => {
         }
 
         .badge-selector-dropdown {
-          background: #0f172a;
-          border: 1px solid #334155;
+          background: #ffffff;
+          border: 1px solid #cbd5e1;
           border-radius: 4px;
-          color: #f8fafc;
+          color: #0f172a;
           font-size: 0.7rem;
           padding: 3px 6px;
           outline: none;
@@ -819,8 +822,8 @@ const CSSCardCustomizer = () => {
         }
 
         .card-preview-sandbox {
-          background: #090e1a;
-          border: 1px dashed #1e293b;
+          background: #f8fafc;
+          border: 1px dashed #cbd5e1;
           border-radius: 8px;
           padding: 40px 20px;
           display: flex;
@@ -834,14 +837,14 @@ const CSSCardCustomizer = () => {
         .custom-product-card {
           width: 100%;
           max-width: 320px;
-          background: #1e293b;
+          background: var(--card-bg, #ffffff);
           border-radius: var(--card-radius);
           padding: var(--card-padding);
           box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 
                       0 var(--shadow-blur) calc(var(--shadow-blur) * 1.5) var(--shadow-color);
           transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
           position: relative;
-          border: 1px solid #334155;
+          border: 1px solid #e2e8f0;
           display: flex;
           flex-direction: column;
           box-sizing: border-box;
@@ -890,7 +893,7 @@ const CSSCardCustomizer = () => {
           border-radius: calc(var(--card-radius) * 0.7);
           overflow: hidden;
           position: relative;
-          background: #0f172a;
+          background: #e2e8f0;
         }
 
         .product-image-container img {
@@ -908,7 +911,7 @@ const CSSCardCustomizer = () => {
         .img-glow-overlay {
           position: absolute;
           inset: 0;
-          background: linear-gradient(to top, rgba(15,23,42,0.8), transparent);
+          background: linear-gradient(to top, rgba(255,255,255,0.8), transparent);
           pointer-events: none;
         }
 
@@ -930,13 +933,13 @@ const CSSCardCustomizer = () => {
         .card-title {
           font-size: 1.15rem;
           font-weight: 700;
-          color: #ffffff;
+          color: #0f172a;
           margin: 6px 0 8px 0;
         }
 
         .card-text {
           font-size: 0.78rem;
-          color: #94a3b8;
+          color: #475569;
           line-height: 1.5;
           margin: 0 0 16px 0;
           flex-grow: 1;
@@ -952,13 +955,13 @@ const CSSCardCustomizer = () => {
         .sale-price {
           font-size: 1.4rem;
           font-weight: 700;
-          color: #ffffff;
+          color: #0f172a;
         }
 
         .orig-price {
           font-size: 0.85rem;
           text-decoration: line-through;
-          color: #64748b;
+          color: #94a3b8;
         }
 
         .cta-button {
@@ -987,8 +990,8 @@ const CSSCardCustomizer = () => {
         }
 
         .cta-button:disabled {
-          background: #334155;
-          color: #64748b;
+          background: #cbd5e1;
+          color: #94a3b8;
           cursor: not-allowed;
         }
 
@@ -1009,8 +1012,8 @@ const CSSCardCustomizer = () => {
 
         .tab-triggers {
           display: flex;
-          background: #0b0f19;
-          border: 1px solid #1e293b;
+          background: #f1f5f9;
+          border: 1px solid #e2e8f0;
           border-radius: 6px;
           padding: 2px;
         }
@@ -1028,13 +1031,14 @@ const CSSCardCustomizer = () => {
         }
 
         .tab-btn.active {
-          background: #1e293b;
-          color: #ffffff;
+          background: #ffffff;
+          color: #0f172a;
+          box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
         .css-pre {
-          background: #0b0f19;
-          border: 1px solid #1e293b;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
           border-radius: 8px;
           padding: 12px;
           overflow-x: auto;
@@ -1045,15 +1049,15 @@ const CSSCardCustomizer = () => {
         .css-pre code {
           font-family: 'Fira Code', monospace;
           font-size: 0.72rem;
-          color: #a7f3d0;
+          color: #0f766e;
         }
 
         .copy-btn {
-          background: #0f172a;
-          border: 1px solid #1e293b;
+          background: #ffffff;
+          border: 1px solid #cbd5e1;
           padding: 4px 10px;
           border-radius: 6px;
-          color: #94a3b8;
+          color: #475569;
           font-size: 0.72rem;
           font-weight: 600;
           cursor: pointer;
@@ -1064,14 +1068,15 @@ const CSSCardCustomizer = () => {
         }
 
         .copy-btn:hover {
-          color: white;
-          border-color: #cbd5e1;
+          color: #0f172a;
+          border-color: #94a3b8;
+          background: #f8fafc;
         }
 
         .green-text { color: #10b981; }
-        .text-cyan { color: #06b6d4; }
-        .text-purple { color: #c084fc; }
-        .text-gold { color: #f59e0b; }
+        .text-cyan { color: #0891b2; }
+        .text-purple { color: #7c3aed; }
+        .text-gold { color: #d97706; }
       `}} />
     </div>
   );

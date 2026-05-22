@@ -365,7 +365,7 @@ const CSSTypographyExplorer = () => {
       <style dangerouslySetInnerHTML={{ __html: `
         .typo-lab-root {
           font-family: 'Outfit', 'Inter', sans-serif;
-          color: #f8fafc;
+          color: #1e293b;
         }
 
         .lab-grid {
@@ -387,10 +387,11 @@ const CSSTypographyExplorer = () => {
         }
 
         .telemetry-card {
-          background: #131b2e;
-          border: 1px solid #1e293b;
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
           border-radius: 12px;
           padding: 20px;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
         .card-heading {
@@ -413,23 +414,23 @@ const CSSTypographyExplorer = () => {
         .card-heading h4 {
           font-size: 1.05rem;
           font-weight: 700;
-          color: #ffffff;
+          color: #0f172a;
           margin: 0;
         }
 
-        .icon-cyan { color: #06b6d4; }
-        .icon-purple { color: #a855f7; }
+        .icon-cyan { color: #0891b2; }
+        .icon-purple { color: #7c3aed; }
         
         .description {
           font-size: 0.8rem;
-          color: #94a3b8;
+          color: #64748b;
           line-height: 1.5;
           margin: 0 0 16px 0;
         }
 
         .bg-panel {
-          background: #0b0f19;
-          border: 1px solid #1e293b;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
           border-radius: 8px;
           padding: 12px;
           margin-bottom: 12px;
@@ -443,8 +444,8 @@ const CSSTypographyExplorer = () => {
           letter-spacing: 0.05em;
         }
 
-        .text-primary-cyan { color: #06b6d4; }
-        .text-primary-purple { color: #a855f7; }
+        .text-primary-cyan { color: #0891b2; }
+        .text-primary-purple { color: #7c3aed; }
 
         .slide-row {
           display: flex;
@@ -455,7 +456,7 @@ const CSSTypographyExplorer = () => {
 
         .slide-lbl {
           font-size: 0.75rem;
-          color: #94a3b8;
+          color: #475569;
         }
 
         .flex-lbl-row {
@@ -474,7 +475,7 @@ const CSSTypographyExplorer = () => {
           width: 100%;
           height: 5px;
           border-radius: 100px;
-          background: #1e293b;
+          background: #cbd5e1;
           outline: none;
         }
 
@@ -484,7 +485,7 @@ const CSSTypographyExplorer = () => {
           width: 12px;
           height: 12px;
           border-radius: 50%;
-          background: #06b6d4;
+          background: #0891b2;
           cursor: pointer;
         }
 
@@ -513,15 +514,15 @@ const CSSTypographyExplorer = () => {
 
         .input-field label {
           font-size: 0.72rem;
-          color: #94a3b8;
+          color: #475569;
           font-weight: 600;
           text-transform: uppercase;
         }
 
         .select-styled {
-          background: #0f172a;
-          border: 1px solid #1e293b;
-          color: #e2e8f0;
+          background: #ffffff;
+          border: 1px solid #cbd5e1;
+          color: #0f172a;
           font-size: 0.78rem;
           padding: 6px 10px;
           border-radius: 6px;
@@ -530,9 +531,9 @@ const CSSTypographyExplorer = () => {
         }
 
         .styled-num-input {
-          background: #0f172a;
-          border: 1px solid #1e293b;
-          color: #f8fafc;
+          background: #ffffff;
+          border: 1px solid #cbd5e1;
+          color: #0f172a;
           font-size: 0.8rem;
           padding: 6px 10px;
           border-radius: 6px;
@@ -540,9 +541,9 @@ const CSSTypographyExplorer = () => {
         }
 
         .grid-toggle-btn {
-          background: #0f172a;
-          border: 1px solid #1e293b;
-          color: #94a3b8;
+          background: #ffffff;
+          border: 1px solid #cbd5e1;
+          color: #475569;
           padding: 4px 10px;
           border-radius: 6px;
           font-size: 0.72rem;
@@ -552,15 +553,15 @@ const CSSTypographyExplorer = () => {
         }
 
         .grid-toggle-btn.active {
-          background: #06b6d4;
-          color: #0f172a;
+          background: #0891b2;
+          color: #ffffff;
           border-color: transparent;
         }
 
         /* Viewport Resizer & Render */
         .sandbox-wrapper {
-          background: #0b0f19;
-          border: 1px solid #1e293b;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
           border-radius: 8px;
           padding: 20px;
           min-height: 250px;
@@ -568,10 +569,10 @@ const CSSTypographyExplorer = () => {
         }
 
         .rendered-typography-container {
-          color: #cbd5e1;
+          color: #0f172a;
           border-radius: 6px;
           padding: 16px;
-          border: 1px solid rgba(255, 255, 255, 0.03);
+          border: 1px solid rgba(0, 0, 0, 0.03);
           transition: background-size 0.2s;
         }
 
@@ -588,8 +589,8 @@ const CSSTypographyExplorer = () => {
           justify-content: space-between;
           align-items: center;
           padding: 8px 10px;
-          background: #0f172a;
-          border: 1px solid #1e293b;
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
           border-radius: 6px;
         }
 
@@ -602,7 +603,7 @@ const CSSTypographyExplorer = () => {
         .meta-info .lbl {
           font-size: 0.78rem;
           font-weight: 700;
-          color: #ffffff;
+          color: #0f172a;
         }
 
         .meta-info .math-lbl {
@@ -617,7 +618,7 @@ const CSSTypographyExplorer = () => {
 
         .computed-values .px-val {
           font-size: 0.8rem;
-          color: #94a3b8;
+          color: #64748b;
         }
 
         .computed-values .rem-val {
@@ -628,8 +629,8 @@ const CSSTypographyExplorer = () => {
         /* Fluid generator styles */
         .generated-code-box {
           margin-top: 12px;
-          background: #0f172a;
-          border: 1px solid #1e293b;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
           border-radius: 6px;
           padding: 8px 10px;
           display: flex;
@@ -641,20 +642,20 @@ const CSSTypographyExplorer = () => {
           font-size: 0.68rem;
           font-weight: 700;
           text-transform: uppercase;
-          color: #a855f7;
+          color: #7c3aed;
         }
 
         .generated-code-box .code-snippet {
           font-family: 'Fira Code', monospace;
           font-size: 0.75rem;
-          color: #ffffff;
+          color: #0f172a;
           word-break: break-all;
         }
 
         /* Code Block styles */
         .css-pre {
-          background: #0b0f19;
-          border: 1px solid #1e293b;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
           border-radius: 8px;
           padding: 12px;
           overflow-x: auto;
@@ -664,15 +665,15 @@ const CSSTypographyExplorer = () => {
         .css-pre code {
           font-family: 'Fira Code', monospace;
           font-size: 0.75rem;
-          color: #a7f3d0;
+          color: #0f766e;
         }
 
         .copy-btn {
-          background: #0f172a;
-          border: 1px solid #1e293b;
+          background: #ffffff;
+          border: 1px solid #cbd5e1;
           padding: 4px 10px;
           border-radius: 6px;
-          color: #94a3b8;
+          color: #475569;
           font-size: 0.72rem;
           font-weight: 600;
           cursor: pointer;
@@ -683,12 +684,13 @@ const CSSTypographyExplorer = () => {
         }
 
         .copy-btn:hover {
-          color: white;
-          border-color: #cbd5e1;
+          color: #0f172a;
+          border-color: #94a3b8;
+          background: #f8fafc;
         }
 
         .green-text { color: #10b981; }
-        .text-cyan { color: #06b6d4; }
+        .text-cyan { color: #0891b2; }
       `}} />
     </div>
   );

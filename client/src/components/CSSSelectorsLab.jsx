@@ -401,7 +401,7 @@ const CSSSelectorsLab = () => {
       <style dangerouslySetInnerHTML={{ __html: `
         .selector-lab-root {
           font-family: 'Outfit', 'Inter', sans-serif;
-          color: #f8fafc;
+          color: #1e293b;
         }
 
         .lab-grid {
@@ -423,10 +423,11 @@ const CSSSelectorsLab = () => {
         }
 
         .telemetry-card {
-          background: #131b2e;
-          border: 1px solid #1e293b;
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
           border-radius: 12px;
           padding: 20px;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
         .card-heading {
@@ -439,16 +440,16 @@ const CSSSelectorsLab = () => {
         .card-heading h4 {
           font-size: 1.05rem;
           font-weight: 700;
-          color: #ffffff;
+          color: #0f172a;
           margin: 0;
         }
 
-        .icon-cyan { color: #06b6d4; }
-        .icon-purple { color: #8b5cf6; }
+        .icon-cyan { color: #0891b2; }
+        .icon-purple { color: #7c3aed; }
 
         .description {
           font-size: 0.8rem;
-          color: #94a3b8;
+          color: #64748b;
           line-height: 1.5;
           margin: 0 0 16px 0;
         }
@@ -463,15 +464,15 @@ const CSSSelectorsLab = () => {
         .input-field label {
           font-size: 0.78rem;
           font-weight: 600;
-          color: #94a3b8;
+          color: #475569;
         }
 
         .styled-input {
-          background: #0f172a;
-          border: 1px solid #1e293b;
+          background: #ffffff;
+          border: 1px solid #cbd5e1;
           border-radius: 6px;
           padding: 10px 14px;
-          color: #f8fafc;
+          color: #0f172a;
           font-family: 'Fira Code', monospace;
           font-size: 0.82rem;
           outline: none;
@@ -479,7 +480,7 @@ const CSSSelectorsLab = () => {
         }
 
         .styled-input:focus {
-          border-color: #06b6d4;
+          border-color: #0891b2;
         }
 
         .error-border {
@@ -495,8 +496,8 @@ const CSSSelectorsLab = () => {
         .specificity-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr) 1.2fr;
-          background: #0b0f19;
-          border: 1px solid #1e293b;
+          background: #f8fafc;
+          border: 1px solid #cbd5e1;
           border-radius: 8px;
           overflow: hidden;
           margin-bottom: 16px;
@@ -508,13 +509,13 @@ const CSSSelectorsLab = () => {
           align-items: center;
           justify-content: center;
           padding: 10px;
-          border-right: 1px solid #1e293b;
+          border-right: 1px solid #cbd5e1;
         }
 
         .cell-value {
           font-size: 1.15rem;
           font-weight: 700;
-          color: #06b6d4;
+          color: #0891b2;
         }
 
         .cell-lbl {
@@ -537,12 +538,12 @@ const CSSSelectorsLab = () => {
           font-size: 0.95rem;
           font-family: 'Fira Code', monospace;
           font-weight: 700;
-          color: #ffffff;
+          color: #0f172a;
         }
 
         .summary-lbl {
           font-size: 0.62rem;
-          color: #06b6d4;
+          color: #0891b2;
           font-weight: 700;
           text-transform: uppercase;
         }
@@ -553,17 +554,17 @@ const CSSSelectorsLab = () => {
           gap: 8px;
           padding: 8px 12px;
           background: rgba(6, 182, 212, 0.04);
-          border-left: 3px solid #06b6d4;
+          border-left: 3px solid #0891b2;
           border-radius: 4px;
           font-size: 0.75rem;
-          color: #e2e8f0;
+          color: #334155;
           margin-bottom: 16px;
         }
 
         .presets-box h5 {
           font-size: 0.78rem;
           font-weight: 600;
-          color: #94a3b8;
+          color: #475569;
           margin: 0 0 8px 0;
         }
 
@@ -574,11 +575,11 @@ const CSSSelectorsLab = () => {
         }
 
         .preset-btn-chip {
-          background: #0f172a;
-          border: 1px solid #1e293b;
+          background: #ffffff;
+          border: 1px solid #cbd5e1;
           padding: 4px 10px;
           border-radius: 100px;
-          color: #94a3b8;
+          color: #475569;
           font-size: 0.72rem;
           font-family: 'Fira Code', monospace;
           cursor: pointer;
@@ -586,21 +587,22 @@ const CSSSelectorsLab = () => {
         }
 
         .preset-btn-chip:hover {
-          color: #ffffff;
+          color: #0f172a;
           border-color: #64748b;
+          background: #f8fafc;
         }
 
         .preset-btn-chip.selected {
-          background: #06b6d4;
-          color: #0f172a;
+          background: #0891b2;
+          color: #ffffff;
           border-color: transparent;
           font-weight: 600;
         }
 
         /* Challenger Game Styles */
         .game-box {
-          background: #0b0f19;
-          border: 1px solid #1e293b;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
           border-radius: 8px;
           padding: 14px;
         }
@@ -608,7 +610,7 @@ const CSSSelectorsLab = () => {
         .game-telemetry {
           font-size: 0.68rem;
           font-weight: 700;
-          color: #8b5cf6;
+          color: #7c3aed;
           text-transform: uppercase;
           display: block;
           margin-bottom: 8px;
@@ -617,7 +619,7 @@ const CSSSelectorsLab = () => {
         .question-text {
           font-size: 0.85rem;
           font-weight: 700;
-          color: #ffffff;
+          color: #0f172a;
           line-height: 1.4;
           margin: 0 0 12px 0;
         }
@@ -629,8 +631,8 @@ const CSSSelectorsLab = () => {
         }
 
         .option-btn {
-          background: #0f172a;
-          border: 1px solid #1e293b;
+          background: #ffffff;
+          border: 1px solid #cbd5e1;
           border-radius: 6px;
           padding: 10px 14px;
           display: flex;
@@ -642,7 +644,7 @@ const CSSSelectorsLab = () => {
         }
 
         .option-btn:hover:not(:disabled) {
-          border-color: #8b5cf6;
+          border-color: #7c3aed;
           background: rgba(139, 92, 246, 0.05);
         }
 
@@ -655,7 +657,7 @@ const CSSSelectorsLab = () => {
         .option-selector {
           font-size: 0.8rem;
           font-family: 'Fira Code', monospace;
-          color: #ffffff;
+          color: #0f172a;
         }
 
         .option-spec {
@@ -681,10 +683,10 @@ const CSSSelectorsLab = () => {
           margin-top: 14px;
           padding: 10px 12px;
           background: rgba(139, 92, 246, 0.08);
-          border-left: 3px solid #8b5cf6;
+          border-left: 3px solid #7c3aed;
           border-radius: 4px;
           font-size: 0.78rem;
-          color: #cbd5e1;
+          color: #334155;
           line-height: 1.4;
           display: flex;
           flex-direction: column;
@@ -695,7 +697,7 @@ const CSSSelectorsLab = () => {
 
         .next-challenge-btn {
           align-self: flex-end;
-          background: #8b5cf6;
+          background: #7c3aed;
           color: white;
           border: none;
           padding: 4px 12px;
@@ -707,13 +709,13 @@ const CSSSelectorsLab = () => {
         }
 
         .next-challenge-btn:hover {
-          background: #7c3aed;
+          background: #6d28d9;
         }
 
         /* DOM Tree Styles */
         .tree-container {
-          background: #0b0f19;
-          border: 1px solid #1e293b;
+          background: #f8fafc;
+          border: 1px solid #cbd5e1;
           border-radius: 8px;
           padding: 16px;
           display: flex;
@@ -738,28 +740,28 @@ const CSSSelectorsLab = () => {
         }
 
         .tree-node:hover {
-          background: rgba(255, 255, 255, 0.03);
-          border-color: #334155;
+          background: rgba(0, 0, 0, 0.03);
+          border-color: #cbd5e1;
         }
 
         .node-type {
-          color: #f43f5e;
+          color: #e11d48;
         }
 
         .node-label {
-          color: #e2e8f0;
+          color: #334155;
         }
 
         .tree-node.node-matched {
           background: rgba(6, 182, 212, 0.15) !important;
-          border-color: #06b6d4;
+          border-color: #0891b2;
           box-shadow: 0 0 8px rgba(6, 182, 212, 0.2);
         }
 
         /* Sandbox Sandbox Visualizer */
         .sandbox-wrapper {
-          background: #0b0f19;
-          border: 1px solid #1e293b;
+          background: #f1f5f9;
+          border: 1px solid #cbd5e1;
           border-radius: 8px;
           padding: 20px;
           display: flex;
@@ -861,7 +863,7 @@ const CSSSelectorsLab = () => {
 
         /* Matched styling override */
         .selector-highlighted {
-          outline: 2px dashed #06b6d4 !important;
+          outline: 2px dashed #0891b2 !important;
           outline-offset: 3px;
           box-shadow: 0 0 10px rgba(6, 182, 212, 0.4) !important;
           background-color: rgba(6, 182, 212, 0.08) !important;

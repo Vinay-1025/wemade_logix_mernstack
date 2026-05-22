@@ -339,7 +339,7 @@ const CSSColorsPlayground = () => {
       <style dangerouslySetInnerHTML={{ __html: `
         .color-lab-root {
           font-family: 'Outfit', 'Inter', sans-serif;
-          color: #f8fafc;
+          color: #1e293b;
         }
 
         .lab-grid {
@@ -361,10 +361,11 @@ const CSSColorsPlayground = () => {
         }
 
         .telemetry-card {
-          background: #131b2e;
-          border: 1px solid #1e293b;
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
           border-radius: 12px;
           padding: 20px;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
         .card-heading {
@@ -377,22 +378,22 @@ const CSSColorsPlayground = () => {
         .card-heading h4 {
           font-size: 1.05rem;
           font-weight: 700;
-          color: #ffffff;
+          color: #0f172a;
           margin: 0;
         }
 
-        .icon-cyan { color: #06b6d4; }
+        .icon-cyan { color: #0891b2; }
         
         .description {
           font-size: 0.8rem;
-          color: #94a3b8;
+          color: #64748b;
           line-height: 1.5;
           margin: 0 0 16px 0;
         }
 
         .bg-panel {
-          background: #0b0f19;
-          border: 1px solid #1e293b;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
           border-radius: 8px;
           padding: 12px;
           margin-bottom: 12px;
@@ -406,8 +407,8 @@ const CSSColorsPlayground = () => {
           letter-spacing: 0.05em;
         }
 
-        .text-primary-cyan { color: #06b6d4; }
-        .text-primary-purple { color: #a855f7; }
+        .text-primary-cyan { color: #0891b2; }
+        .text-primary-purple { color: #7c3aed; }
 
         .slide-row {
           display: flex;
@@ -418,7 +419,7 @@ const CSSColorsPlayground = () => {
 
         .slide-lbl {
           font-size: 0.75rem;
-          color: #94a3b8;
+          color: #475569;
         }
 
         .slide-row input[type="range"] {
@@ -426,7 +427,7 @@ const CSSColorsPlayground = () => {
           width: 100%;
           height: 5px;
           border-radius: 100px;
-          background: #1e293b;
+          background: #cbd5e1;
           outline: none;
         }
 
@@ -436,7 +437,7 @@ const CSSColorsPlayground = () => {
           width: 12px;
           height: 12px;
           border-radius: 50%;
-          background: #06b6d4;
+          background: #0891b2;
           cursor: pointer;
         }
 
@@ -446,18 +447,18 @@ const CSSColorsPlayground = () => {
           font-size: 0.72rem;
           font-family: 'Fira Code', monospace;
           color: #64748b;
-          border-top: 1px solid #1e293b;
+          border-top: 1px solid #e2e8f0;
           padding-top: 6px;
           margin-top: 6px;
         }
 
         .swap-btn {
           width: 100%;
-          background: #0f172a;
-          border: 1px solid #1e293b;
+          background: #ffffff;
+          border: 1px solid #cbd5e1;
           padding: 8px 12px;
           border-radius: 6px;
-          color: #e2e8f0;
+          color: #475569;
           font-size: 0.78rem;
           font-weight: 600;
           cursor: pointer;
@@ -469,15 +470,16 @@ const CSSColorsPlayground = () => {
         }
 
         .swap-btn:hover {
-          background: #1e293b;
-          border-color: #475569;
+          background: #f8fafc;
+          border-color: #94a3b8;
+          color: #0f172a;
         }
 
         /* Harmonious Swatches */
         .scheme-tabs {
           display: flex;
-          background: #0b0f19;
-          border: 1px solid #1e293b;
+          background: #f1f5f9;
+          border: 1px solid #e2e8f0;
           border-radius: 6px;
           overflow: hidden;
           margin-bottom: 12px;
@@ -496,7 +498,7 @@ const CSSColorsPlayground = () => {
         }
 
         .scheme-tab.active {
-          color: #06b6d4;
+          color: #0891b2;
           background: rgba(6, 182, 212, 0.08);
         }
 
@@ -511,8 +513,8 @@ const CSSColorsPlayground = () => {
 
         .swatch-card {
           flex: 1;
-          background: #0b0f19;
-          border: 1px solid #1e293b;
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
           border-radius: 6px;
           padding: 6px;
           display: flex;
@@ -530,7 +532,7 @@ const CSSColorsPlayground = () => {
         .swatch-hex {
           font-size: 0.65rem;
           font-family: 'Fira Code', monospace;
-          color: #e2e8f0;
+          color: #475569;
         }
 
         .swatch-actions {
@@ -541,9 +543,9 @@ const CSSColorsPlayground = () => {
 
         .swatch-actions button {
           flex: 1;
-          background: #1e293b;
+          background: #f1f5f9;
           border: none;
-          color: #cbd5e1;
+          color: #475569;
           font-size: 0.6rem;
           font-weight: 600;
           padding: 3px 0;
@@ -553,8 +555,8 @@ const CSSColorsPlayground = () => {
         }
 
         .swatch-actions button:hover {
-          background: #06b6d4;
-          color: #0f172a;
+          background: #0891b2;
+          color: #ffffff;
         }
 
         /* Contrast Score Display */
@@ -566,8 +568,8 @@ const CSSColorsPlayground = () => {
           display: flex;
           align-items: center;
           gap: 24px;
-          background: #0b0f19;
-          border: 1px solid #1e293b;
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
           border-radius: 8px;
           padding: 16px;
         }
@@ -580,7 +582,7 @@ const CSSColorsPlayground = () => {
           width: 85px;
           height: 85px;
           border-radius: 50%;
-          border: 3px solid #06b6d4;
+          border: 3px solid #0891b2;
           background: rgba(6,182,212,0.04);
           flex-shrink: 0;
         }
@@ -588,12 +590,12 @@ const CSSColorsPlayground = () => {
         .ratio-score-txt {
           font-size: 1.1rem;
           font-weight: 700;
-          color: #ffffff;
+          color: #0f172a;
         }
 
         .ratio-score-lbl {
           font-size: 0.58rem;
-          color: #06b6d4;
+          color: #0891b2;
           font-weight: 700;
           text-transform: uppercase;
         }
@@ -609,7 +611,7 @@ const CSSColorsPlayground = () => {
           display: flex;
           align-items: center;
           gap: 8px;
-          color: #cbd5e1;
+          color: #475569;
         }
 
         .text-green { color: #10b981; }
@@ -624,9 +626,9 @@ const CSSColorsPlayground = () => {
         }
 
         .filter-btn {
-          background: #0b0f19;
-          border: 1px solid #1e293b;
-          color: #94a3b8;
+          background: #ffffff;
+          border: 1px solid #cbd5e1;
+          color: #475569;
           padding: 4px 10px;
           border-radius: 100px;
           font-size: 0.7rem;
@@ -636,20 +638,21 @@ const CSSColorsPlayground = () => {
         }
 
         .filter-btn:hover {
-          color: white;
-          border-color: #475569;
+          color: #0f172a;
+          border-color: #64748b;
+          background: #f8fafc;
         }
 
         .filter-btn.active {
-          background: #06b6d4;
-          color: #0f172a;
+          background: #0891b2;
+          color: #ffffff;
           border-color: transparent;
         }
 
         .render-canvas {
           padding: 20px;
           border-radius: 8px;
-          border: 1px solid #1e293b;
+          border: 1px solid #e2e8f0;
           min-height: 180px;
           display: flex;
           flex-direction: column;
@@ -684,7 +687,8 @@ const CSSColorsPlayground = () => {
           display: flex;
           gap: 8px;
           padding: 10px;
-          background: rgba(255,255,255,0.02);
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
           border-radius: 6px;
           font-size: 0.74rem;
           color: #64748b;
@@ -692,7 +696,7 @@ const CSSColorsPlayground = () => {
         }
 
         .note-icon {
-          color: #06b6d4;
+          color: #0891b2;
           flex-shrink: 0;
         }
       `}} />

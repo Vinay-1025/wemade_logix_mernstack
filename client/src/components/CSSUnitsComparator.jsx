@@ -256,7 +256,7 @@ const CSSUnitsComparator = () => {
       <style dangerouslySetInnerHTML={{ __html: `
         .units-lab-root {
           font-family: 'Outfit', 'Inter', sans-serif;
-          color: #f8fafc;
+          color: #1e293b;
         }
 
         .lab-grid {
@@ -278,10 +278,11 @@ const CSSUnitsComparator = () => {
         }
 
         .telemetry-card {
-          background: #131b2e;
-          border: 1px solid #1e293b;
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
           border-radius: 12px;
           padding: 20px;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
         .card-heading {
@@ -298,23 +299,23 @@ const CSSUnitsComparator = () => {
         .card-heading h4 {
           font-size: 1.05rem;
           font-weight: 700;
-          color: #ffffff;
+          color: #0f172a;
           margin: 0;
         }
 
-        .icon-cyan { color: #06b6d4; }
-        .icon-purple { color: #a855f7; }
+        .icon-cyan { color: #0891b2; }
+        .icon-purple { color: #7c3aed; }
         
         .description {
           font-size: 0.8rem;
-          color: #94a3b8;
+          color: #64748b;
           line-height: 1.5;
           margin: 0 0 16px 0;
         }
 
         .bg-panel {
-          background: #0b0f19;
-          border: 1px solid #1e293b;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
           border-radius: 8px;
           padding: 12px;
           margin-bottom: 12px;
@@ -328,8 +329,8 @@ const CSSUnitsComparator = () => {
           letter-spacing: 0.05em;
         }
 
-        .text-primary-cyan { color: #06b6d4; }
-        .text-primary-purple { color: #a855f7; }
+        .text-primary-cyan { color: #0891b2; }
+        .text-primary-purple { color: #7c3aed; }
 
         .slide-row {
           display: flex;
@@ -340,7 +341,7 @@ const CSSUnitsComparator = () => {
 
         .slide-lbl {
           font-size: 0.75rem;
-          color: #94a3b8;
+          color: #475569;
         }
 
         .flex-lbl-row {
@@ -359,7 +360,7 @@ const CSSUnitsComparator = () => {
           width: 100%;
           height: 5px;
           border-radius: 100px;
-          background: #1e293b;
+          background: #cbd5e1;
           outline: none;
         }
 
@@ -369,7 +370,7 @@ const CSSUnitsComparator = () => {
           width: 12px;
           height: 12px;
           border-radius: 50%;
-          background: #06b6d4;
+          background: #0891b2;
           cursor: pointer;
         }
 
@@ -380,15 +381,15 @@ const CSSUnitsComparator = () => {
 
         /* Nested Compound Sizing Graph */
         .compound-graph-tree {
-          background: #060913;
-          border: 1px dashed #1e293b;
+          background: #f8fafc;
+          border: 1px dashed #cbd5e1;
           border-radius: 6px;
           padding: 16px;
           margin-top: 12px;
         }
 
         .nested-box {
-          border: 1px solid rgba(255,255,255,0.08);
+          border: 1px solid rgba(0,0,0,0.08);
           border-radius: 4px;
           padding: 10px;
           margin-top: 6px;
@@ -405,41 +406,41 @@ const CSSUnitsComparator = () => {
         }
 
         .root-box {
-          background: rgba(255,255,255,0.01);
-          border-color: #1e293b;
+          background: rgba(0,0,0,0.01);
+          border-color: #cbd5e1;
         }
 
         .parent-box {
-          background: rgba(168, 85, 247, 0.03);
-          border-color: rgba(168, 85, 247, 0.25);
+          background: rgba(124, 58, 237, 0.03);
+          border-color: rgba(124, 58, 237, 0.2);
         }
 
         .parent-box > .box-lbl {
-          color: #c084fc;
+          color: #7c3aed;
         }
 
         .child-box {
-          background: rgba(168, 85, 247, 0.05);
-          border-color: rgba(168, 85, 247, 0.4);
+          background: rgba(124, 58, 237, 0.05);
+          border-color: rgba(124, 58, 237, 0.3);
         }
 
         .child-box > .box-lbl {
-          color: #d8b4fe;
+          color: #6d28d9;
         }
 
         .grandchild-box {
-          background: rgba(168, 85, 247, 0.08);
-          border-color: rgba(168, 85, 247, 0.6);
+          background: rgba(124, 58, 237, 0.08);
+          border-color: rgba(124, 58, 237, 0.4);
         }
 
         .grandchild-box > .box-lbl {
-          color: #f3e8ff;
+          color: #5b21b6;
         }
 
         /* Bounding Container Sandbox */
         .sandbox-wrapper {
-          background: #0b0f19;
-          border: 1px solid #1e293b;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
           border-radius: 8px;
           padding: 16px;
           min-height: 320px;
@@ -449,8 +450,8 @@ const CSSUnitsComparator = () => {
         }
 
         .parent-bounding-container {
-          background: rgba(255,255,255,0.01);
-          border: 2px dashed #334155;
+          background: rgba(0,0,0,0.01);
+          border: 2px dashed #94a3b8;
           border-radius: 6px;
           padding: 12px;
           position: relative;
@@ -464,7 +465,7 @@ const CSSUnitsComparator = () => {
           color: #64748b;
           text-transform: uppercase;
           margin-bottom: 12px;
-          border-bottom: 1px solid #1e293b;
+          border-bottom: 1px solid #cbd5e1;
           padding-bottom: 4px;
         }
 
@@ -476,13 +477,13 @@ const CSSUnitsComparator = () => {
           display: flex;
           justify-content: space-between;
           font-size: 0.72rem;
-          color: #94a3b8;
+          color: #475569;
           margin-bottom: 4px;
         }
 
         .row-metadata code {
           font-family: 'Fira Code', monospace;
-          color: #cbd5e1;
+          color: #0f172a;
         }
 
         .math-lbl {
@@ -498,21 +499,21 @@ const CSSUnitsComparator = () => {
         .render-bar {
           height: 14px;
           border-radius: 3px;
-          background: #334155;
+          background: #e2e8f0;
           position: relative;
           display: flex;
           align-items: center;
           padding-left: 6px;
-          color: #0f172a;
+          color: #ffffff;
           box-sizing: border-box;
           transition: width 0.2s ease;
         }
 
         .bar-px { background: #64748b; color: white; }
-        .bar-rem { background: #06b6d4; }
-        .bar-em { background: #a855f7; }
-        .bar-pct { background: #e2e8f0; }
-        .bar-vw { background: #06b6d4; border: 1px solid #22d3ee; }
+        .bar-rem { background: #0891b2; }
+        .bar-em { background: #7c3aed; }
+        .bar-pct { background: #cbd5e1; color: #0f172a; }
+        .bar-vw { background: #0891b2; border: 1px solid #06b6d4; }
 
         .bar-move-icon {
           position: absolute;
@@ -531,17 +532,17 @@ const CSSUnitsComparator = () => {
 
         .parent-limit {
           font-size: 0.75rem;
-          background: #1e293b;
+          background: #f1f5f9;
           padding: 2px 8px;
           border-radius: 4px;
-          color: #94a3b8;
+          color: #475569;
         }
 
         .educational-note {
           display: flex;
           gap: 8px;
           padding: 10px;
-          background: rgba(255,255,255,0.02);
+          background: rgba(0,0,0,0.02);
           border-radius: 6px;
           font-size: 0.74rem;
           color: #64748b;
@@ -549,14 +550,14 @@ const CSSUnitsComparator = () => {
         }
 
         .note-icon {
-          color: #06b6d4;
+          color: #0891b2;
           flex-shrink: 0;
         }
 
         /* Copy Button and Pre styling */
         .css-pre {
-          background: #0b0f19;
-          border: 1px solid #1e293b;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
           border-radius: 8px;
           padding: 12px;
           overflow-x: auto;
@@ -566,15 +567,15 @@ const CSSUnitsComparator = () => {
         .css-pre code {
           font-family: 'Fira Code', monospace;
           font-size: 0.72rem;
-          color: #a7f3d0;
+          color: #0f766e;
         }
 
         .copy-btn {
-          background: #0f172a;
-          border: 1px solid #1e293b;
+          background: #ffffff;
+          border: 1px solid #cbd5e1;
           padding: 4px 10px;
           border-radius: 6px;
-          color: #94a3b8;
+          color: #475569;
           font-size: 0.72rem;
           font-weight: 600;
           cursor: pointer;
@@ -585,13 +586,14 @@ const CSSUnitsComparator = () => {
         }
 
         .copy-btn:hover {
-          color: white;
-          border-color: #cbd5e1;
+          color: #0f172a;
+          border-color: #94a3b8;
+          background: #f8fafc;
         }
 
         .green-text { color: #10b981; }
-        .text-cyan { color: #06b6d4; }
-        .text-purple { color: #c084fc; }
+        .text-cyan { color: #0891b2; }
+        .text-purple { color: #7c3aed; }
       `}} />
     </div>
   );
