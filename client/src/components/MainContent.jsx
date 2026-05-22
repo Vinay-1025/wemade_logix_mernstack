@@ -129,6 +129,9 @@ const MainContent = () => {
     setDnsSearchInput('google.com');
     setDnsResolvedIp('142.250.183.14');
     setHtmlActiveDeconstruct('HYPER');
+    
+    // Clear any active assignment code editor state to prevent cross-topic submission leakage
+    window.currentAssignmentCode = null;
 
     // Dynamic requirements based on the active assignment / topic
     if (selectedTopic?.id === 't8') {
@@ -5003,7 +5006,25 @@ const MainContent = () => {
             const hasSubmission = !!submittedAssignment;
             // Only lock if submitted AND status is NOT rejected
             const isLocked = hasSubmission && submittedAssignment.status !== 'rejected';
-            const submittedCode = hasSubmission ? JSON.parse(submittedAssignment.code) : EMPTY_CODE;
+            const submittedCode = hasSubmission ? JSON.parse(submittedAssignment.code) : (selectedTopic.codeTemplate || EMPTY_CODE);
+
+            // Determine tabs based on day/week number (Day 5 onwards in Week 1, and all in subsequent weeks)
+            const dayId = currentDayData?.dayId || '';
+            const weekMatch = dayId.match(/w(\d+)/);
+            const dayMatch = dayId.match(/d(\d+)/);
+            const weekNum = weekMatch ? parseInt(weekMatch[1], 10) : 0;
+            const dayNum = dayMatch ? parseInt(dayMatch[1], 10) : 0;
+
+            let editorTabs = ['html'];
+            if (weekNum > 1) {
+              editorTabs = ['html', 'css', 'js'];
+            } else if (weekNum === 1) {
+              if (dayNum >= 5) {
+                editorTabs = ['html', 'css'];
+              } else {
+                editorTabs = ['html'];
+              }
+            }
 
             return (
               <motion.section
@@ -5082,7 +5103,7 @@ const MainContent = () => {
                     <div className="assignment-editor-container">
                       <CodeEditor
                         initialCode={submittedCode}
-                        tabs={['html']}
+                        tabs={editorTabs}
                         readOnly={isLocked}
                         onChange={(newCode) => {
                           if (!isLocked) {

@@ -303,7 +303,7 @@ const CSSLayoutSandbox = () => {
                       </header>
 
                       <div className="modal-content-scroller">
-                        <span className="badge-tag">Mini Project Details</span>
+                        <span className="badge-tag">Assignment Task Details</span>
                         <p style={{ margin: '8px 0 0 0', fontSize: '0.72rem', color: '#475569', lineHeight: 1.5 }}>
                           This widget combines multiple core styling mechanics:
                         </p>

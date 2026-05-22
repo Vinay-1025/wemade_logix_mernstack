@@ -89,7 +89,7 @@ export const w1d6Data = {
     },
     {
       id: "d6-t3",
-      title: "3. CSS Positioning (Static, Relative, Absolute, Fixed, Sticky)",
+      title: "3. CSS Positioning",
       customComponent: "CSSPositioningLab",
       explanation: "Positioning dictates where elements appear on the page and how they flow within the document structure. By default, elements stack in normal document flow. Using the position property, you can take elements out of flow, anchor them to parents, pin them to viewports, or make them stick during scrolls.",
       progression: [
@@ -173,7 +173,7 @@ export const w1d6Data = {
     },
     {
       id: "d6-t5",
-      title: "5. Mini Project: Interactive Layout Sandbox",
+      title: "5. Assignment Task",
       customComponent: "CSSLayoutSandbox",
       explanation: "Synthesize box model geometry, box-sizing rules, offsets, and stacking contexts to build a complex modal widget. You will customize margins, padding, borders, backdrop positioning, sticky panels, and overlapping layers, watching how these rules combine to form a responsive interface.",
       progression: [

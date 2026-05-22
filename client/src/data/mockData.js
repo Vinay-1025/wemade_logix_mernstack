@@ -2562,7 +2562,7 @@ export const courseData = [
           },
           {
             "id": "w2-d3-t7",
-            "title": "7. Mini Project – Interactive To-Do List",
+            "title": "7. Assignment Task – Interactive To-Do List",
             "visualization": "/js-todo.png",
             "progression": [
               {
@@ -2779,7 +2779,7 @@ export const courseData = [
           },
           {
             "id": "w2-d4-t7",
-            "title": "7. Mini Project – API Data Fetcher",
+            "title": "7. Assignment Task – API Data Fetcher",
             "visualization": "/js-api.png",
             "progression": [
               {
@@ -2996,7 +2996,7 @@ export const courseData = [
           },
           {
             "id": "w2-d5-t7",
-            "title": "7. Mini Project – Notes App",
+            "title": "7. Assignment Task – Notes App",
             "visualization": "/js-notes.png",
             "progression": [
               {
@@ -3213,7 +3213,7 @@ export const courseData = [
           },
           {
             "id": "w2-d6-t7",
-            "title": "7. Mini Project – User Directory App",
+            "title": "7. Assignment Task – User Directory App",
             "visualization": "/js-directory.png",
             "progression": [
               {

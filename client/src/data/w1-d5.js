@@ -172,7 +172,7 @@ export const w1d5Data = {
     },
     {
       id: "d5-t5",
-      title: "5. Mini Project: Dynamic Product Showcase Card",
+      title: "5. Assignment Task",
       customComponent: "CSSCardCustomizer",
       explanation: "Apply everything you have learned about selectors, colors, web fonts, and relative sizing to build a premium product card component. This project challenges you to style an interactive, responsive layout using only CSS tokens and classes, ensuring high contrast, clean typography, and a fluid layout.",
       progression: [
