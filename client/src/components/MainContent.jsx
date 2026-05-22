@@ -10,7 +10,11 @@ import { courseData } from '../data/mockData';
 import NetworkAnimation from './NetworkAnimation';
 import FlexboxPlayground from './FlexboxPlayground';
 import ResponsiveSimulator from './ResponsiveSimulator';
-import CSSBasicsPlayground from './CSSBasicsPlayground';
+import CSSSelectorsLab from './CSSSelectorsLab';
+import CSSColorsPlayground from './CSSColorsPlayground';
+import CSSTypographyExplorer from './CSSTypographyExplorer';
+import CSSUnitsComparator from './CSSUnitsComparator';
+import CSSCardCustomizer from './CSSCardCustomizer';
 import GitTerminal from './GitTerminal';
 import PlanVisualizer from './PlanVisualizer';
 import JSRuntimeViz from './JSRuntimeViz';
@@ -462,7 +466,11 @@ const MainContent = () => {
     'AccessibilityVisualizer': <AccessibilityVisualizer />,
     'StructureVisualizer': <StructureVisualizer />,
     'ResponsiveSimulator': <ResponsiveSimulator />,
-    'CSSBasicsPlayground': <CSSBasicsPlayground />,
+    'CSSSelectorsLab': <CSSSelectorsLab />,
+    'CSSColorsPlayground': <CSSColorsPlayground />,
+    'CSSTypographyExplorer': <CSSTypographyExplorer />,
+    'CSSUnitsComparator': <CSSUnitsComparator />,
+    'CSSCardCustomizer': <CSSCardCustomizer />,
     'GitTerminal': <GitTerminal />,
     'PlanVisualizer': <PlanVisualizer />,
     'JSRuntimeViz': <JSRuntimeViz />,
@@ -4911,7 +4919,7 @@ const MainContent = () => {
           )}
 
           {(selectedTopic.visualization || selectedTopic.customComponent) &&
-            !(selectedTopic.title.toLowerCase().includes('mini project') || selectedTopic.title.toLowerCase().includes('assignment task')) && (
+            (!(selectedTopic.title.toLowerCase().includes('mini project') || selectedTopic.title.toLowerCase().includes('assignment task')) || selectedTopic.customComponent) && (
               <motion.section
                 className="visualization-section"
                 initial={{ opacity: 0, scale: 0.95 }}

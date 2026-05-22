@@ -5,7 +5,7 @@ export const w1d5Data = {
     {
       id: "d5-t1",
       title: "1. CSS Selectors & Specificity",
-      customComponent: "CSSBasicsPlayground",
+      customComponent: "CSSSelectorsLab",
       explanation: "CSS Selectors are used to target the HTML elements on our web pages that we want to style. They range from simple tag names to complex combinations of classes, IDs, attributes, and pseudo-states. When multiple conflicting CSS rules target the same element, the browser uses Specificity (a weight-matching hierarchy) to determine which rule wins.",
       progression: [
         {
@@ -47,7 +47,7 @@ export const w1d5Data = {
     {
       id: "d5-t2",
       title: "2. CSS Colors & Contrast",
-      customComponent: "CSSBasicsPlayground",
+      customComponent: "CSSColorsPlayground",
       explanation: "Colors bring life to web design, but they must be applied with care to ensure readability and accessibility. CSS supports multiple color formats, each with different advantages, alongside opacity filters and alpha channels for handling transparency. Under WCAG rules, text colors must maintain high contrast ratios against backgrounds so all users can read them.",
       progression: [
         {
@@ -89,7 +89,7 @@ export const w1d5Data = {
     {
       id: "d5-t3",
       title: "3. CSS Typography & Fonts",
-      customComponent: "CSSBasicsPlayground",
+      customComponent: "CSSTypographyExplorer",
       explanation: "Typography dictates how users read and process content. Beyond selecting font families, professional web typography requires fine control over font weights, line spacing, alignments, and importing external Google Web Fonts to customize the app's aesthetic.",
       progression: [
         {
@@ -131,7 +131,7 @@ export const w1d5Data = {
     {
       id: "d5-t4",
       title: "4. CSS Units & Sizing",
-      customComponent: "CSSBasicsPlayground",
+      customComponent: "CSSUnitsComparator",
       explanation: "CSS units define the dimensions of margins, padding, text, and containers. Selecting the correct units is the cornerstone of responsive design, allowing layouts to scale fluidly when viewports shrink or when users adjust their default browser font sizes.",
       progression: [
         {
@@ -173,7 +173,7 @@ export const w1d5Data = {
     {
       id: "d5-t5",
       title: "5. Mini Project: Dynamic Product Showcase Card",
-      customComponent: "CSSBasicsPlayground",
+      customComponent: "CSSCardCustomizer",
       explanation: "Apply everything you have learned about selectors, colors, web fonts, and relative sizing to build a premium product card component. This project challenges you to style an interactive, responsive layout using only CSS tokens and classes, ensuring high contrast, clean typography, and a fluid layout.",
       progression: [
         {
