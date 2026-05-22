@@ -236,7 +236,7 @@ const Profile = () => {
         ) : (
           <div className="profile-content">
             {/* Sections */}
-            <div className="profile-sections">
+            <div className="profile-sections" style={{ gridTemplateColumns: isAdmin ? '1fr 1fr' : '1fr' }}>
               {/* Account Details & Recent Work / Progress */}
               <div className="profile-section-card">
                 <h2>Account Details</h2>
@@ -291,102 +291,40 @@ const Profile = () => {
               </div>
 
               {/* Progress Bars or Recent Submissions / Badges */}
-              <div className="profile-section-card">
-                {isAdmin ? (
-                  <>
-                    <h2>Recent Student Activity</h2>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                      {recentSubmissions.length === 0 ? (
-                        <p style={{ fontSize: '0.85rem', color: 'var(--text-neutral)', fontStyle: 'italic' }}>No student activity recorded yet.</p>
-                      ) : (
-                        recentSubmissions.map((sub, idx) => (
-                          <div key={sub._id || idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--light-secondary)', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--light-tertiary)' }}>
-                            <div style={{ minWidth: 0, flex: 1, paddingRight: '8px' }}>
-                              <strong style={{ fontSize: '0.85rem', display: 'block', color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                {sub.student?.name}
-                              </strong>
-                              <span style={{ fontSize: '0.75rem', color: 'var(--text-neutral)' }}>
-                                {sub.topicTitle}
-                              </span>
-                            </div>
-                            <span style={{
-                              fontSize: '0.7rem',
-                              fontWeight: '700',
-                              textTransform: 'uppercase',
-                              padding: '4px 8px',
-                              borderRadius: '8px',
-                              background: sub.status === 'accepted' ? '#f0fdf4' : sub.status === 'rejected' ? '#fef2f2' : '#fffbeb',
-                              color: sub.status === 'accepted' ? '#16a34a' : sub.status === 'rejected' ? '#dc2626' : '#d97706'
-                            }}>
-                              {sub.status}
+              {isAdmin && (
+                <div className="profile-section-card">
+                  <h2>Recent Student Activity</h2>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    {recentSubmissions.length === 0 ? (
+                      <p style={{ fontSize: '0.85rem', color: 'var(--text-neutral)', fontStyle: 'italic' }}>No student activity recorded yet.</p>
+                    ) : (
+                      recentSubmissions.map((sub, idx) => (
+                        <div key={sub._id || idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--light-secondary)', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--light-tertiary)' }}>
+                          <div style={{ minWidth: 0, flex: 1, paddingRight: '8px' }}>
+                            <strong style={{ fontSize: '0.85rem', display: 'block', color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              {sub.student?.name}
+                            </strong>
+                            <span style={{ fontSize: '0.75rem', color: 'var(--text-neutral)' }}>
+                              {sub.topicTitle}
                             </span>
                           </div>
-                        ))
-                      )}
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <h2>Technology Mastery</h2>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                      <div className="progress-item">
-                        <div className="progress-label">
-                          <span>HTML & CSS Foundations</span>
-                          <span>{htmlCssProgress}%</span>
+                          <span style={{
+                            fontSize: '0.7rem',
+                            fontWeight: '700',
+                            textTransform: 'uppercase',
+                            padding: '4px 8px',
+                            borderRadius: '8px',
+                            background: sub.status === 'accepted' ? '#f0fdf4' : sub.status === 'rejected' ? '#fef2f2' : '#fffbeb',
+                            color: sub.status === 'accepted' ? '#16a34a' : sub.status === 'rejected' ? '#dc2626' : '#d97706'
+                          }}>
+                            {sub.status}
+                          </span>
                         </div>
-                        <div className="progress-bar-bg">
-                          <div className="progress-bar-fill" style={{ width: `${htmlCssProgress}%` }}></div>
-                        </div>
-                      </div>
-                      <div className="progress-item">
-                        <div className="progress-label">
-                          <span>JavaScript Programming</span>
-                          <span>{jsProgress}%</span>
-                        </div>
-                        <div className="progress-bar-bg">
-                          <div className="progress-bar-fill" style={{ width: `${jsProgress}%` }}></div>
-                        </div>
-                      </div>
-                      <div className="progress-item">
-                        <div className="progress-label">
-                          <span>React Frontend Development</span>
-                          <span>{reactProgress}%</span>
-                        </div>
-                        <div className="progress-bar-bg">
-                          <div className="progress-bar-fill" style={{ width: `${reactProgress}%` }}></div>
-                        </div>
-                      </div>
-                      <div className="progress-item">
-                        <div className="progress-label">
-                          <span>Node.js & Express APIs</span>
-                          <span>{nodeProgress}%</span>
-                        </div>
-                        <div className="progress-bar-bg">
-                          <div className="progress-bar-fill" style={{ width: `${nodeProgress}%` }}></div>
-                        </div>
-                      </div>
-                      <div className="progress-item">
-                        <div className="progress-label">
-                          <span>MongoDB & Databases</span>
-                          <span>{mongoDbProgress}%</span>
-                        </div>
-                        <div className="progress-bar-bg">
-                          <div className="progress-bar-fill" style={{ width: `${mongoDbProgress}%` }}></div>
-                        </div>
-                      </div>
-                      <div className="progress-item">
-                        <div className="progress-label">
-                          <span>Full-Stack Projects & Deployment</span>
-                          <span>{fullStackProgress}%</span>
-                        </div>
-                        <div className="progress-bar-bg">
-                          <div className="progress-bar-fill" style={{ width: `${fullStackProgress}%` }}></div>
-                        </div>
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Attendance Analytics & Heatmap Section */}
