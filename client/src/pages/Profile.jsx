@@ -13,6 +13,24 @@ const Profile = () => {
   const [attendanceStats, setAttendanceStats] = useState(null);
   const [attendanceLoading, setAttendanceLoading] = useState(true);
   const [hoveredCell, setHoveredCell] = useState(null);
+  const [timeRange, setTimeRange] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
+
+  const getNextMilestone = (streak) => {
+    if (streak < 5) return 5;
+    if (streak < 10) return 10;
+    if (streak < 15) return 15;
+    if (streak < 20) return 20;
+    return streak + 5;
+  };
+
+  const getMilestoneProgress = (streak) => {
+    const next = getNextMilestone(streak);
+    const prev = next === 5 ? 0 : next - 5;
+    const range = next - prev;
+    const progress = streak - prev;
+    return Math.min((progress / range) * 100, 100);
+  };
 
   // Helper to generate days for heatmap (15 weeks = 105 days)
   const generateHeatmapDays = () => {
@@ -393,13 +411,25 @@ const Profile = () => {
 
                 {/* Stat Grid */}
                 <div className="attendance-stats-grid">
-                  {/* Attendance Rate */}
-                  <div className="att-stat-item">
-                    <div className="att-stat-icon-wrapper percent-icon">
-                      <Percent size={20} />
+                  {/* Attendance Rate (Circular SVG) */}
+                  <div className="att-stat-item rate-stat-card">
+                    <div className="radial-progress-container">
+                      <svg width="56" height="56" viewBox="0 0 44 44" className="circular-progress">
+                        <circle cx="22" cy="22" r="18" fill="none" stroke="var(--light-tertiary)" strokeWidth="3" />
+                        <circle cx="22" cy="22" r="18" fill="none" stroke="url(#progressGrad)" strokeWidth="3" 
+                                strokeDasharray="113" strokeDashoffset={113 - (113 * attendanceStats.attendancePercentage) / 100}
+                                strokeLinecap="round" transform="rotate(-90 22 22)" />
+                        <defs>
+                          <linearGradient id="progressGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#0ea5e9" />
+                            <stop offset="100%" stopColor="#10b981" />
+                          </linearGradient>
+                        </defs>
+                      </svg>
+                      <div className="radial-progress-value">{attendanceStats.attendancePercentage}%</div>
                     </div>
                     <div className="att-stat-details">
-                      <h3>{attendanceStats.attendancePercentage}%</h3>
+                      <h3>Rate</h3>
                       <p>Attendance Rate</p>
                       <span className={`att-badge ${
                         attendanceStats.attendancePercentage >= 90 ? 'badge-excellent' : 
@@ -411,17 +441,30 @@ const Profile = () => {
                     </div>
                   </div>
 
-                  {/* Current Streak */}
-                  <div className="att-stat-item">
+                  {/* Current Streak with Milestones */}
+                  <div className="att-stat-item streak-stat-card">
                     <div className={`att-stat-icon-wrapper flame-icon ${attendanceStats.currentStreak > 0 ? 'glowing-flame' : ''}`}>
                       <Flame size={20} />
                     </div>
-                    <div className="att-stat-details">
+                    <div className="att-stat-details" style={{ flex: 1, minWidth: 0 }}>
                       <h3>{attendanceStats.currentStreak} Days</h3>
                       <p>Current Streak</p>
-                      <span className="att-badge-streak" style={{ color: attendanceStats.currentStreak > 0 ? '#f97316' : 'var(--text-neutral)' }}>
-                        {attendanceStats.currentStreak > 0 ? '🔥 Keep it up!' : 'Scan QR to start!'}
-                      </span>
+                      <div className="streak-milestone-wrapper">
+                        {attendanceStats.currentStreak > 0 ? (
+                          <>
+                            <div className="streak-progress-label">
+                              <span>Next milestone: {getNextMilestone(attendanceStats.currentStreak)} Days</span>
+                            </div>
+                            <div className="streak-progress-bg">
+                              <div className="streak-progress-fill" style={{ width: `${getMilestoneProgress(attendanceStats.currentStreak)}%` }}></div>
+                            </div>
+                          </>
+                        ) : (
+                          <span className="att-badge-streak" style={{ color: 'var(--text-neutral)', fontSize: '0.7rem' }}>
+                            Scan QR to start!
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
 
@@ -450,10 +493,33 @@ const Profile = () => {
                   </div>
                 </div>
 
-                {/* Heatmap Grid Title & Subtitle */}
-                <div style={{ marginTop: '32px', marginBottom: '16px' }}>
-                  <h3 style={{ fontSize: '1rem', fontWeight: '750', margin: '0 0 4px 0', color: 'var(--text-primary)' }}>Attendance Heatmap</h3>
-                  <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-neutral)' }}>Interactive calendar tracking your attendance over the past 15 weeks.</p>
+                {/* Heatmap Filters & Headers */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: '32px', marginBottom: '16px', flexWrap: 'wrap', gap: '16px' }}>
+                  <div>
+                    <h3 style={{ fontSize: '1rem', fontWeight: '750', margin: '0 0 4px 0', color: 'var(--text-primary)' }}>Attendance Heatmap</h3>
+                    <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-neutral)' }}>Interactive calendar tracking your attendance over the past 15 weeks.</p>
+                  </div>
+                  
+                  {/* Heatmap Filters */}
+                  <div className="heatmap-filters">
+                    <div className="filter-group">
+                      <span className="filter-label">Timeframe</span>
+                      <div className="filter-buttons">
+                        <button className={`filter-btn ${timeRange === 'all' ? 'active' : ''}`} onClick={() => setTimeRange('all')}>15W</button>
+                        <button className={`filter-btn ${timeRange === '90' ? 'active' : ''}`} onClick={() => setTimeRange('90')}>90D</button>
+                        <button className={`filter-btn ${timeRange === '60' ? 'active' : ''}`} onClick={() => setTimeRange('60')}>60D</button>
+                        <button className={`filter-btn ${timeRange === '30' ? 'active' : ''}`} onClick={() => setTimeRange('30')}>30D</button>
+                      </div>
+                    </div>
+                    <div className="filter-group">
+                      <span className="filter-label">Status</span>
+                      <div className="filter-buttons">
+                        <button className={`filter-btn ${statusFilter === 'all' ? 'active' : ''}`} onClick={() => setStatusFilter('all')}>All</button>
+                        <button className={`filter-btn ${statusFilter === 'attended' ? 'active' : ''}`} onClick={() => setStatusFilter('attended')}>Attended</button>
+                        <button className={`filter-btn ${statusFilter === 'missed' ? 'active' : ''}`} onClick={() => setStatusFilter('missed')}>Missed</button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Heatmap Layout */}
@@ -476,10 +542,26 @@ const Profile = () => {
                         const isFuture = day > new Date();
                         const dateLabel = day.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
 
+                        // Apply Filters
+                        const today = new Date();
+                        const diffTime = Math.abs(today - day);
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                        
+                        let isFilteredByTime = false;
+                        if (timeRange === '30' && diffDays > 30) isFilteredByTime = true;
+                        if (timeRange === '60' && diffDays > 60) isFilteredByTime = true;
+                        if (timeRange === '90' && diffDays > 90) isFilteredByTime = true;
+
+                        let isFilteredByStatus = false;
+                        if (statusFilter === 'attended' && status !== 'attended') isFilteredByStatus = true;
+                        if (statusFilter === 'missed' && status !== 'missed') isFilteredByStatus = true;
+
+                        const isDimmed = isFilteredByTime || isFilteredByStatus;
+
                         return (
                           <div
                             key={idx}
-                            className={`heatmap-cell cell-${status} ${isFuture ? 'cell-future' : ''}`}
+                            className={`heatmap-cell cell-${status} ${isFuture ? 'cell-future' : ''} ${isDimmed ? 'cell-dimmed' : ''}`}
                             style={{
                               gridRow: (day.getDay() + 1),
                             }}
@@ -785,6 +867,105 @@ const Profile = () => {
             align-items: center;
             justify-content: center;
           }
+          
+          /* Radial Progress Styles */
+          .radial-progress-container {
+            position: relative;
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+          }
+          .circular-progress {
+            width: 100%;
+            height: 100%;
+          }
+          .radial-progress-value {
+            position: absolute;
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: var(--text-primary);
+          }
+
+          /* Streak Milestone Styles */
+          .streak-milestone-wrapper {
+            margin-top: 6px;
+            width: 100%;
+          }
+          .streak-progress-label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #f97316;
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+          }
+          .streak-progress-bg {
+            height: 5px;
+            background: rgba(0, 0, 0, 0.06);
+            border-radius: 3px;
+            overflow: hidden;
+            width: 100%;
+          }
+          .streak-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #ffbe0b);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+          }
+
+          /* Filters Styles */
+          .heatmap-filters {
+            display: flex;
+            gap: 12px;
+            background: rgba(0, 0, 0, 0.02);
+            padding: 4px;
+            border-radius: 12px;
+            border: 1px solid var(--light-tertiary);
+            flex-wrap: wrap;
+          }
+          .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+          }
+          .filter-label {
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: var(--text-neutral);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding-left: 6px;
+          }
+          .filter-buttons {
+            display: flex;
+            background: rgba(0, 0, 0, 0.03);
+            padding: 2px;
+            border-radius: 8px;
+            gap: 1px;
+          }
+          .filter-btn {
+            border: none;
+            background: transparent;
+            padding: 4px 10px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+          }
+          .filter-btn:hover {
+            color: var(--text-primary);
+          }
+          .filter-btn.active {
+            background: white;
+            color: var(--text-primary);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+          }
+
           .percent-icon {
             background: rgba(14, 165, 233, 0.1);
             color: #0ea5e9;
@@ -807,7 +988,7 @@ const Profile = () => {
             color: #10b981;
           }
           .att-stat-details h3 {
-            font-size: 1.3rem;
+            font-size: 1.25rem;
             font-weight: 800;
             margin: 0 0 2px 0;
             color: var(--text-primary);
@@ -882,7 +1063,7 @@ const Profile = () => {
             height: 14px;
             border-radius: 3px;
             background: rgba(0, 0, 0, 0.04);
-            transition: transform 0.15s ease, background 0.2s ease;
+            transition: transform 0.15s ease, background 0.2s ease, opacity 0.2s ease;
             cursor: pointer;
           }
           .heatmap-cell:hover {
@@ -899,6 +1080,11 @@ const Profile = () => {
           .heatmap-cell.cell-future {
             opacity: 0.2;
             cursor: default;
+            pointer-events: none;
+          }
+          .heatmap-cell.cell-dimmed {
+            opacity: 0.06;
+            transform: scale(0.85);
             pointer-events: none;
           }
           .heatmap-legend {
