@@ -28,6 +28,15 @@ const Login = () => {
   };
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const msg = params.get('message');
+    if (msg) {
+      showSnackbar(msg, 'error');
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
+
+  useEffect(() => {
     if (isError) {
       showSnackbar(message || 'Login failed', 'error');
     }

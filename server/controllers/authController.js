@@ -60,6 +60,9 @@ const loginUser = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (user && (await user.matchPassword(password))) {
+      if (!user.isActive) {
+        return res.status(403).json({ message: 'Application was inactive for you and consult the management' });
+      }
       res.json({
         _id: user._id,
         name: user.name,
