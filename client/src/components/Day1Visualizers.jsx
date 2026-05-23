@@ -1804,14 +1804,8 @@ export const HTMLPortfolioInteractive = () => {
 
         {/* Right Side: Live preview and inspector */}
         <div className="builder-render-inspector-column">
-          <div className="preview-inspector-toggles">
-            <button className={!showCode ? 'active' : ''} onClick={() => setShowCode(false)}><Eye size={12} /> Live Device Render</button>
-            <button className={showCode ? 'active' : ''} onClick={() => setShowCode(true)}><FileCode size={12} /> View Compiled HTML</button>
-          </div>
-
           {/* Render Area */}
-          {!showCode ? (
-            <div className="browser-preview-canvas portfolio-preview-container">
+          <div className="browser-preview-canvas portfolio-preview-container">
               <div className="browser-tab-bar">
                 <span className="window-dots"><span></span><span></span><span></span></span>
                 <div className="browser-url-strip"><Globe size={10} /> {name.toLowerCase().replace(/\s+/g, '')}.github.io</div>
@@ -1875,18 +1869,6 @@ export const HTMLPortfolioInteractive = () => {
                 </div>
               </div>
             </div>
-          ) : (
-            /* HTML Code Inspector */
-            <div className="code-viewer-panel portfolio-html-panel">
-              <div className="terminal-header">
-                <span className="dots"><span></span><span></span><span></span></span>
-                <span className="t-label">generated_index.html</span>
-              </div>
-              <pre className="p-code-snippet generated-pre">
-                <code>{getGeneratedHTML()}</code>
-              </pre>
-            </div>
-          )}
 
           {/* Real-time structural checks */}
           <div className="audit-checklist-card card-3d">

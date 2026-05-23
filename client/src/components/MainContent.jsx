@@ -4931,8 +4931,7 @@ const MainContent = () => {
             </motion.section>
           )}
 
-          {(selectedTopic.visualization || selectedTopic.customComponent) &&
-            !(selectedTopic.title.toLowerCase().includes('mini project') || selectedTopic.title.toLowerCase().includes('assignment task')) && (
+          {(selectedTopic.visualization || selectedTopic.customComponent) && (
               <motion.section
                 className="visualization-section"
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -5006,7 +5005,7 @@ const MainContent = () => {
             const hasSubmission = !!submittedAssignment;
             // Only lock if submitted AND status is NOT rejected
             const isLocked = hasSubmission && submittedAssignment.status !== 'rejected';
-            const submittedCode = hasSubmission ? JSON.parse(submittedAssignment.code) : (selectedTopic.codeTemplate || EMPTY_CODE);
+            const submittedCode = hasSubmission ? JSON.parse(submittedAssignment.code) : EMPTY_CODE;
 
             // Determine tabs based on day/week number (Day 5 onwards in Week 1, and all in subsequent weeks)
             const dayId = currentDayData?.dayId || '';
