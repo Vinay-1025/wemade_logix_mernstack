@@ -23,6 +23,16 @@ const UsersList = () => {
   const [detailUserAssignments, setDetailUserAssignments] = useState([]);
   const [detailLoading, setDetailLoading] = useState(false);
 
+  // Detailed view page & filter states
+  const [syllabusPage, setSyllabusPage] = useState(1);
+  const [syllabusStatusFilter, setSyllabusStatusFilter] = useState('all');
+  const [syllabusWeekFilter, setSyllabusWeekFilter] = useState('all');
+  const [syllabusSearch, setSyllabusSearch] = useState('');
+  const [submissionPage, setSubmissionPage] = useState(1);
+  const [submissionStatusFilter, setSubmissionStatusFilter] = useState('all');
+  const [submissionSearch, setSubmissionSearch] = useState('');
+
+
   // Excel / CSV Batch states
   const [isExcelModalOpen, setIsExcelModalOpen] = useState(false);
   const [excelUsers, setExcelUsers] = useState([]);
@@ -256,6 +266,13 @@ const UsersList = () => {
   const fetchDetailUserAssignments = async (selectedUser) => {
     if (!selectedUser) return;
     setDetailLoading(true);
+    setSyllabusPage(1);
+    setSyllabusStatusFilter('all');
+    setSyllabusWeekFilter('all');
+    setSyllabusSearch('');
+    setSubmissionPage(1);
+    setSubmissionStatusFilter('all');
+    setSubmissionSearch('');
     try {
       const config = { headers: { Authorization: `Bearer ${currentUser.token}` } };
       const { data } = await axios.get('/api/assignments', config);
@@ -399,6 +416,73 @@ const UsersList = () => {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+  // Filter & Paginate Syllabus for Detail Page
+  const syllabusPerPage = 6;
+  const filteredSyllabus = courseData.flatMap((week, wIdx) => 
+    week.days.map((day, dIdx) => {
+      const statusInfo = getDayStatus(day.dayId, day);
+      const unlocked = isDayUnlocked(day.dayId, wIdx, dIdx);
+      return {
+        week,
+        wIdx,
+        day,
+        dIdx,
+        statusInfo,
+        unlocked
+      };
+    })
+  ).filter(item => {
+    // Week filter
+    if (syllabusWeekFilter !== 'all') {
+      if (String(item.wIdx) !== syllabusWeekFilter) return false;
+    }
+    // Status filter
+    if (syllabusStatusFilter !== 'all') {
+      if (syllabusStatusFilter === 'locked') {
+        if (item.unlocked) return false;
+      } else {
+        if (!item.unlocked) return false;
+        if (item.statusInfo.status !== syllabusStatusFilter) return false;
+      }
+    }
+    // Search filter
+    if (syllabusSearch.trim() !== '') {
+      const query = syllabusSearch.toLowerCase();
+      const matchesDay = item.day.dayTitle.toLowerCase().includes(query);
+      const matchesWeek = item.week.weekTitle.toLowerCase().includes(query);
+      if (!matchesDay && !matchesWeek) return false;
+    }
+    return true;
+  });
+
+  const syllabusTotalPages = Math.ceil(filteredSyllabus.length / syllabusPerPage);
+  const currentSyllabus = filteredSyllabus.slice(
+    (syllabusPage - 1) * syllabusPerPage,
+    syllabusPage * syllabusPerPage
+  );
+
+  // Filter & Paginate Submissions for Detail Page
+  const submissionsPerPage = 5;
+  const filteredSubmissions = detailUserAssignments.filter(sub => {
+    // Status filter
+    if (submissionStatusFilter !== 'all') {
+      if (sub.status !== submissionStatusFilter) return false;
+    }
+    // Search filter
+    if (submissionSearch.trim() !== '') {
+      const query = submissionSearch.toLowerCase();
+      const matchesTopic = sub.topicTitle.toLowerCase().includes(query);
+      const matchesFeedback = sub.feedback && sub.feedback.toLowerCase().includes(query);
+      if (!matchesTopic && !matchesFeedback) return false;
+    }
+    return true;
+  });
+
+  const submissionTotalPages = Math.ceil(filteredSubmissions.length / submissionsPerPage);
+  const currentSubmissions = [...filteredSubmissions]
+    .sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt))
+    .slice((submissionPage - 1) * submissionsPerPage, submissionPage * submissionsPerPage);
+
   if (loading && users.length === 0) return <MainLayout><div className="loading-state">Accessing user records...</div></MainLayout>;
 
   return (
@@ -462,10 +546,44 @@ const UsersList = () => {
               <div className="detail-tables-grid">
                 {/* Table 1: Syllabus Progress */}
                 <div className="detail-section-card card-3d">
-                  <div className="section-header-title">
+                  <div className="section-header-title text-layout">
                     <h3>Syllabus Assignments</h3>
-                    <span className="sub-count">Total course outline</span>
+                    <span className="sub-count">Matches: {filteredSyllabus.length} of {courseData.reduce((acc, w) => acc + w.days.length, 0)} days</span>
                   </div>
+
+                  {/* Syllabus Filters */}
+                  <div className="detail-filters-row">
+                    <input 
+                      type="text" 
+                      placeholder="Search syllabus..." 
+                      value={syllabusSearch} 
+                      onChange={(e) => { setSyllabusSearch(e.target.value); setSyllabusPage(1); }} 
+                      className="detail-filter-input" 
+                    />
+                    <select 
+                      value={syllabusWeekFilter} 
+                      onChange={(e) => { setSyllabusWeekFilter(e.target.value); setSyllabusPage(1); }} 
+                      className="detail-filter-select"
+                    >
+                      <option value="all">All Weeks</option>
+                      {courseData.map((week, idx) => (
+                        <option key={idx} value={String(idx)}>{week.weekTitle.split(':')[0]}</option>
+                      ))}
+                    </select>
+                    <select 
+                      value={syllabusStatusFilter} 
+                      onChange={(e) => { setSyllabusStatusFilter(e.target.value); setSyllabusPage(1); }} 
+                      className="detail-filter-select"
+                    >
+                      <option value="all">All Statuses</option>
+                      <option value="locked">Locked</option>
+                      <option value="pending_submission">Not Started</option>
+                      <option value="pending">Pending</option>
+                      <option value="accepted">Accepted</option>
+                      <option value="rejected">Rejected</option>
+                    </select>
+                  </div>
+
                   <div className="table-scroll-wrapper">
                     <table className="detail-data-table">
                       <thead>
@@ -476,40 +594,100 @@ const UsersList = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {courseData.flatMap((week, wIdx) => 
-                          week.days.map((day, dIdx) => {
-                            const statusInfo = getDayStatus(day.dayId, day);
-                            const unlocked = isDayUnlocked(day.dayId, wIdx, dIdx);
-                            return (
-                              <tr key={day.dayId}>
-                                <td style={{ fontWeight: 700 }}>
-                                  {week.weekTitle.split(':')[0]} - {day.dayTitle.split(':')[0]}
-                                </td>
-                                <td>{day.dayTitle.split(':').slice(1).join(':').trim()}</td>
-                                <td style={{ textAlign: 'right' }}>
-                                  {!unlocked ? (
-                                    <span className="status-indicator locked">Locked</span>
-                                  ) : (
-                                    <span className={`status-indicator ${statusInfo.status}`}>
-                                      {statusInfo.label}
-                                    </span>
-                                  )}
-                                </td>
-                              </tr>
-                            );
-                          })
+                        {currentSyllabus.length === 0 ? (
+                          <tr>
+                            <td colSpan="3" style={{ textAlign: 'center', padding: '40px', color: 'var(--app-text-muted)', fontStyle: 'italic' }}>
+                              No matching syllabus topics found.
+                            </td>
+                          </tr>
+                        ) : (
+                          currentSyllabus.map(({ week, wIdx, day, dIdx, statusInfo, unlocked }) => (
+                            <tr key={day.dayId}>
+                              <td style={{ fontWeight: 700 }}>
+                                {week.weekTitle.split(':')[0]} - {day.dayTitle.split(':')[0]}
+                              </td>
+                              <td>{day.dayTitle.split(':').slice(1).join(':').trim()}</td>
+                              <td style={{ textAlign: 'right' }}>
+                                {!unlocked ? (
+                                  <span className="status-indicator locked">Locked</span>
+                                ) : (
+                                  <span className={`status-indicator ${statusInfo.status}`}>
+                                    {statusInfo.label}
+                                  </span>
+                                )}
+                              </td>
+                            </tr>
+                          ))
                         )}
                       </tbody>
                     </table>
                   </div>
+
+                  {/* Syllabus Pagination */}
+                  {syllabusTotalPages > 1 && (
+                    <div className="detail-pagination">
+                      <span className="pagination-info">
+                        Page <span className="bold">{syllabusPage}</span> of <span className="bold">{syllabusTotalPages}</span>
+                      </span>
+                      <div className="page-navigation">
+                        <button 
+                          className="page-btn" 
+                          onClick={() => setSyllabusPage(p => Math.max(1, p - 1))}
+                          disabled={syllabusPage === 1}
+                        >
+                          Prev
+                        </button>
+                        <div className="page-numbers">
+                          {Array.from({ length: syllabusTotalPages }, (_, i) => i + 1).map(p => (
+                            <button 
+                              key={p} 
+                              className={`page-btn ${syllabusPage === p ? 'active' : ''}`}
+                              onClick={() => setSyllabusPage(p)}
+                            >
+                              {p}
+                            </button>
+                          ))}
+                        </div>
+                        <button 
+                          className="page-btn" 
+                          onClick={() => setSyllabusPage(p => Math.min(syllabusTotalPages, p + 1))}
+                          disabled={syllabusPage === syllabusTotalPages}
+                        >
+                          Next
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Table 2: Submissions Log */}
                 <div className="detail-section-card card-3d">
-                  <div className="section-header-title">
+                  <div className="section-header-title text-layout">
                     <h3>Submission Log</h3>
-                    <span className="sub-count">Received projects: {detailUserAssignments.length}</span>
+                    <span className="sub-count">Matches: {filteredSubmissions.length} of {detailUserAssignments.length} projects</span>
                   </div>
+
+                  {/* Submissions Filters */}
+                  <div className="detail-filters-row">
+                    <input 
+                      type="text" 
+                      placeholder="Search submissions..." 
+                      value={submissionSearch} 
+                      onChange={(e) => { setSubmissionSearch(e.target.value); setSubmissionPage(1); }} 
+                      className="detail-filter-input" 
+                    />
+                    <select 
+                      value={submissionStatusFilter} 
+                      onChange={(e) => { setSubmissionStatusFilter(e.target.value); setSubmissionPage(1); }} 
+                      className="detail-filter-select"
+                    >
+                      <option value="all">All Statuses</option>
+                      <option value="pending">Pending</option>
+                      <option value="accepted">Accepted</option>
+                      <option value="rejected">Rejected</option>
+                    </select>
+                  </div>
+
                   <div className="table-scroll-wrapper">
                     <table className="detail-data-table">
                       <thead>
@@ -521,41 +699,75 @@ const UsersList = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {detailUserAssignments.length === 0 ? (
+                        {currentSubmissions.length === 0 ? (
                           <tr>
-                            <td colSpan="4" style={{ textAlign: 'center', padding: '40px', color: 'var(--text-neutral)', fontStyle: 'italic' }}>
+                            <td colSpan="4" style={{ textAlign: 'center', padding: '40px', color: 'var(--app-text-muted)', fontStyle: 'italic' }}>
                               No project submissions logged for this user.
                             </td>
                           </tr>
                         ) : (
-                          [...detailUserAssignments]
-                            .sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt))
-                            .map((sub) => (
-                              <tr key={sub._id}>
-                                <td className="date-cell-details">
-                                  {new Date(sub.submittedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
-                                </td>
-                                <td style={{ fontWeight: 700 }}>{sub.topicTitle}</td>
-                                <td>
-                                  <span className={`status-indicator ${sub.status}`}>
-                                    {sub.status}
-                                  </span>
-                                </td>
-                                <td className="feedback-cell-details">
-                                  {sub.feedback ? (
-                                    <div className="feedback-bubble-mini" title={sub.feedback}>
-                                      {sub.feedback}
-                                    </div>
-                                  ) : (
-                                    <span style={{ color: 'var(--text-neutral)', fontStyle: 'italic' }}>None</span>
-                                  )}
-                                </td>
-                              </tr>
-                            ))
+                          currentSubmissions.map((sub) => (
+                            <tr key={sub._id}>
+                              <td className="date-cell-details">
+                                {new Date(sub.submittedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                              </td>
+                              <td style={{ fontWeight: 700 }}>{sub.topicTitle}</td>
+                              <td>
+                                <span className={`status-indicator ${sub.status}`}>
+                                  {sub.status}
+                                </span>
+                              </td>
+                              <td className="feedback-cell-details">
+                                {sub.feedback ? (
+                                  <div className="feedback-bubble-mini" title={sub.feedback}>
+                                    {sub.feedback}
+                                  </div>
+                                ) : (
+                                  <span style={{ color: 'var(--app-text-muted)', fontStyle: 'italic' }}>None</span>
+                                )}
+                              </td>
+                            </tr>
+                          ))
                         )}
                       </tbody>
                     </table>
                   </div>
+
+                  {/* Submissions Pagination */}
+                  {submissionTotalPages > 1 && (
+                    <div className="detail-pagination">
+                      <span className="pagination-info">
+                        Page <span className="bold">{submissionPage}</span> of <span className="bold">{submissionTotalPages}</span>
+                      </span>
+                      <div className="page-navigation">
+                        <button 
+                          className="page-btn" 
+                          onClick={() => setSubmissionPage(p => Math.max(1, p - 1))}
+                          disabled={submissionPage === 1}
+                        >
+                          Prev
+                        </button>
+                        <div className="page-numbers">
+                          {Array.from({ length: submissionTotalPages }, (_, i) => i + 1).map(p => (
+                            <button 
+                              key={p} 
+                              className={`page-btn ${submissionPage === p ? 'active' : ''}`}
+                              onClick={() => setSubmissionPage(p)}
+                            >
+                              {p}
+                            </button>
+                          ))}
+                        </div>
+                        <button 
+                          className="page-btn" 
+                          onClick={() => setSubmissionPage(p => Math.min(submissionTotalPages, p + 1))}
+                          disabled={submissionPage === submissionTotalPages}
+                        >
+                          Next
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -1563,6 +1775,57 @@ const UsersList = () => {
           cursor: help;
         }
         
+        /* Detail Page Filters & Pagination Styles */
+        .detail-filters-row {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 12px;
+          margin-bottom: 16px;
+          align-items: center;
+        }
+        .detail-filter-input {
+          flex: 1;
+          min-width: 150px;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          border-radius: 10px;
+          padding: 8px 12px;
+          color: #1e293b;
+          font-size: 0.85rem;
+          outline: none;
+          transition: all 0.2s;
+        }
+        .detail-filter-input:focus {
+          border-color: #00d1d1;
+          background: white;
+          box-shadow: 0 0 0 3px rgba(0, 209, 209, 0.08);
+        }
+        .detail-filter-select {
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          border-radius: 10px;
+          padding: 8px 12px;
+          color: #1e293b;
+          font-size: 0.85rem;
+          outline: none;
+          transition: all 0.2s;
+          cursor: pointer;
+          min-width: 120px;
+        }
+        .detail-filter-select:focus {
+          border-color: #00d1d1;
+          background: white;
+          box-shadow: 0 0 0 3px rgba(0, 209, 209, 0.08);
+        }
+        .detail-pagination {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding-top: 16px;
+          margin-top: 16px;
+          border-top: 1px solid var(--app-border);
+        }
+        
         @media (max-width: 1024px) {
           .detail-tables-grid {
             grid-template-columns: 1fr;
@@ -1580,6 +1843,22 @@ const UsersList = () => {
           }
           .summary-meta-badges {
             justify-content: center;
+          }
+        }
+        @media (max-width: 480px) {
+          .detail-filters-row {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 8px;
+          }
+          .detail-filter-input, .detail-filter-select {
+            width: 100%;
+          }
+          .detail-pagination {
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+            text-align: center;
           }
         }
 
