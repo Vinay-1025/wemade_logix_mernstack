@@ -161,6 +161,26 @@ const MainContent = () => {
         { id: 'inputs', text: 'Implement text, email, and validation attributes (required)', regex: /type=['"](text|email)['"].*?required|required.*?type=['"](text|email)['"]/i, met: false },
         { id: 'selections', text: 'Include checkboxes (<input type="checkbox">) and submit buttons', regex: /type=['"]checkbox['"]/i, met: false },
       ]);
+    } else if (selectedTopic?.id === 'w2-d5-t7') {
+      setRequirements([
+        { id: 'textarea', text: 'Create a textarea (id="note-text") for typing notes', regex: /<textarea\s+[^>]*?id\s*=\s*['"]note-text['"][^>]*?>/i, target: 'html', met: false },
+        { id: 'addBtn', text: 'Create an add button (id="add-note")', regex: /<button\s+[^>]*?id\s*=\s*['"]add-note['"][^>]*?>/i, target: 'html', met: false },
+        { id: 'notesList', text: 'Create a container (id="notes-list") to display notes', regex: /<div\s+[^>]*?id\s*=\s*['"]notes-list['"][^>]*?>/i, target: 'html', met: false },
+        { id: 'arrowFunc', text: 'Implement arrow functions (=>) for event handling or helpers', regex: /=>/i, target: 'js', met: false },
+        { id: 'arrayMethods', text: 'Use array operations (push, splice, map) to manage note lists', regex: /\.(push|splice|map)\b/i, target: 'js', met: false },
+        { id: 'localStorage', text: 'Persist and load data using localStorage APIs', regex: /localStorage\.(setItem|getItem)/i, target: 'js', met: false },
+        { id: 'json', text: 'Serialize and deserialize array arrays using JSON stringify/parse', regex: /JSON\.(stringify|parse)/i, target: 'js', met: false },
+        { id: 'timestamp', text: 'Include timestamp or unique Date IDs for saved notes', regex: /(new\s+Date|Date\.now)/i, target: 'js', met: false },
+      ]);
+    } else if (selectedTopic?.id === 'w2-d6-t7') {
+      setRequirements([
+        { id: 'searchInput', text: 'Create search input (id="search") to filter users', regex: /<input\s+[^>]*?id\s*=\s*['"]search['"][^>]*?>/i, target: 'html', met: false },
+        { id: 'userListGrid', text: 'Create user card grid container (id="user-list")', regex: /<div\s+[^>]*?id\s*=\s*['"]user-list['"][^>]*?>/i, target: 'html', met: false },
+        { id: 'fetchApi', text: 'Use the fetch API to retrieve remote profiles', regex: /fetch\s*\(/i, target: 'js', met: false },
+        { id: 'targetEndpoint', text: 'Fetch specifically from the jsonplaceholder users endpoint', regex: /jsonplaceholder\.typicode\.com\/users/i, target: 'js', met: false },
+        { id: 'filterSearch', text: 'Implement search filtering using Array filter() and toLowerCase()', regex: /\.(filter|toLowerCase)\b/gi, count: 2, target: 'js', met: false },
+        { id: 'phoneAlert', text: 'Provide phone alerts using buttons triggering alert() dialogs', regex: /(alert\b|onclick\s*=)/i, target: 'js', met: false },
+      ]);
     } else if (selectedTopic?.title?.toLowerCase()?.includes('mini project') || selectedTopic?.title?.toLowerCase()?.includes('assignment task')) {
       setRequirements([
         { id: 'semantic', text: 'Use HTML Semantic layout structure', regex: /<(div|section|main|header|footer).*?>/i, met: false },
@@ -184,15 +204,18 @@ const MainContent = () => {
 
   const validateCode = useCallback((codeObj) => {
     const html = codeObj?.html || '';
+    const css = codeObj?.css || '';
+    const js = codeObj?.js || '';
     setRequirements(prevReqs => {
       let changed = false;
       const updated = prevReqs.map(req => {
         let isMet = false;
+        const targetText = req.target === 'js' ? js : (req.target === 'css' ? css : html);
         if (req.count) {
-          const matches = html.match(req.regex);
+          const matches = targetText.match(req.regex);
           isMet = matches && matches.length >= req.count;
         } else {
-          isMet = req.regex.test(html);
+          isMet = req.regex.test(targetText);
         }
         if (isMet !== req.met) changed = true;
         return { ...req, met: isMet };
