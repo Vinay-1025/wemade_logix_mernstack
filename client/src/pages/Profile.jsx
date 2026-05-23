@@ -736,6 +736,7 @@ const Profile = () => {
             }
             .profile-stats, .profile-sections {
               grid-template-columns: 1fr !important;
+              gap: 16px !important;
             }
             .profile-hero {
               margin-bottom: 24px;
@@ -785,22 +786,45 @@ const Profile = () => {
             .profile-section-card {
               padding: 20px;
               border-radius: 16px;
+              grid-column: span 1 !important;
             }
             .heatmap-header-container {
               flex-direction: column;
               align-items: flex-start;
+              gap: 12px;
             }
             .heatmap-filters {
               width: 100%;
-              justify-content: space-between;
+              padding: 8px 12px;
+              flex-direction: column;
+              gap: 10px;
+              border-radius: 14px;
             }
             .filter-group {
               width: 100%;
               justify-content: space-between;
+              align-items: center;
             }
             .heatmap-container {
               padding: 12px;
               gap: 8px;
+            }
+            .heatmap-legend {
+              justify-content: center;
+              flex-wrap: wrap;
+              gap: 8px;
+              margin-top: 16px;
+            }
+            .heatmap-legend .legend-labels {
+              margin-left: 0 !important;
+              justify-content: center;
+              width: 100%;
+              margin-top: 4px;
+            }
+            .att-stat-item {
+              padding: 16px;
+              gap: 12px;
+              border-radius: 16px;
             }
           }
 
