@@ -4932,7 +4932,7 @@ const MainContent = () => {
           )}
 
           {(selectedTopic.visualization || selectedTopic.customComponent) &&
-            (!(selectedTopic.title.toLowerCase().includes('mini project') || selectedTopic.title.toLowerCase().includes('assignment task')) || selectedTopic.customComponent) && (
+            !(selectedTopic.title.toLowerCase().includes('mini project') || selectedTopic.title.toLowerCase().includes('assignment task')) && (
               <motion.section
                 className="visualization-section"
                 initial={{ opacity: 0, scale: 0.95 }}
