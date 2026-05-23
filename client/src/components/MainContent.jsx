@@ -181,6 +181,23 @@ const MainContent = () => {
         { id: 'filterSearch', text: 'Implement search filtering using Array filter() and toLowerCase()', regex: /\.(filter|toLowerCase)\b/gi, count: 2, target: 'js', met: false },
         { id: 'phoneAlert', text: 'Provide phone alerts using buttons triggering alert() dialogs', regex: /(alert\b|onclick\s*=)/i, target: 'js', met: false },
       ]);
+    } else if (selectedTopic?.id === 'd5-t5') {
+      setRequirements([
+        { id: 'cardContainer', text: 'Create product card wrapper (class="product-card")', regex: /class=['"]product-card['"]/i, target: 'html', met: false },
+        { id: 'googleFonts', text: 'Import Google Fonts via CSS @import or load font-family', regex: /@import\s+url|font-family:\s*['"]?[a-zA-Z0-9\s+-]+['"]?/i, target: 'css', met: false },
+        { id: 'hslTheme', text: 'Use HSL color functions for styling variables', regex: /hsl\(\s*\d+\s*,\s*\d+%\s*,\s*\d+%\s*\)/i, target: 'css', met: false },
+        { id: 'hoverStyle', text: 'Implement hover transition effects on the product card', regex: /\.product-card:hover/i, target: 'css', met: false },
+        { id: 'relativeUnits', text: 'Utilize relative sizing units (rem or em) for spacing', regex: /\b\d+(\.\d+)?(rem|em)\b/i, target: 'css', met: false },
+        { id: 'attrSelector', text: 'Use attribute selector for card status badges', regex: /\[data-status=['"]?sale['"]?\]/i, target: 'css', met: false },
+      ]);
+    } else if (selectedTopic?.id === 'd6-t5') {
+      setRequirements([
+        { id: 'wrapperStructure', text: 'Create modal layout wrapper structure in HTML', regex: /class=['"]modal-wrapper['"]/i, target: 'html', met: false },
+        { id: 'fixedOverlay', text: 'Configure fixed viewport overlay on the modal wrapper', regex: /position:\s*fixed/i, target: 'css', met: false },
+        { id: 'backdropPos', text: 'Apply absolute positioning & full coverage on backdrop', regex: /position:\s*absolute/i, target: 'css', met: false },
+        { id: 'zIndexLayers', text: 'Set up z-index layout layers for overlay hierarchy (min 2 layers)', regex: /z-index:\s*\d+/gi, count: 2, target: 'css', met: false },
+        { id: 'closeButtonPos', text: 'Position close button absolutely using top/right offsets', regex: /\.close-btn\s*\{[^}]*position:\s*absolute/i, target: 'css', met: false },
+      ]);
     } else if (selectedTopic?.title?.toLowerCase()?.includes('mini project') || selectedTopic?.title?.toLowerCase()?.includes('assignment task')) {
       setRequirements([
         { id: 'semantic', text: 'Use HTML Semantic layout structure', regex: /<(div|section|main|header|footer).*?>/i, met: false },
