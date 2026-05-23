@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { User, Mail, Shield, Calendar, Search, ArrowLeft, Plus, X, UserPlus, ChevronLeft, ChevronRight, MoreVertical, Trash2, UserCheck, Edit2, Ban, Bell, AlertCircle, CheckCircle, Filter, RotateCcw, FileSpreadsheet, Upload, Download, Database } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import MainLayout from '../components/MainLayout';
 import { sendWelcomeEmailJS } from '../utils/emailService';
+import { courseData } from '../data/mockData';
 
 const UsersList = () => {
   const [users, setUsers] = useState([]);
@@ -18,6 +19,9 @@ const UsersList = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [usersPerPage, setUsersPerPage] = useState(10);
+  const [selectedDetailUser, setSelectedDetailUser] = useState(null);
+  const [detailUserAssignments, setDetailUserAssignments] = useState([]);
+  const [detailLoading, setDetailLoading] = useState(false);
 
   // Excel / CSV Batch states
   const [isExcelModalOpen, setIsExcelModalOpen] = useState(false);
@@ -190,6 +194,7 @@ const UsersList = () => {
 
   const { user: currentUser } = useSelector((state) => state.auth);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleDelete = async (id) => {
     showConfirm(
@@ -247,6 +252,78 @@ const UsersList = () => {
     }
     return colors[Math.abs(hash) % colors.length];
   };
+
+  const fetchDetailUserAssignments = async (selectedUser) => {
+    if (!selectedUser) return;
+    setDetailLoading(true);
+    try {
+      const config = { headers: { Authorization: `Bearer ${currentUser.token}` } };
+      const { data } = await axios.get('/api/assignments', config);
+      if (Array.isArray(data)) {
+        const filtered = data.filter(a => a.student?._id === selectedUser._id || a.student?.email === selectedUser.email);
+        setDetailUserAssignments(filtered);
+      }
+    } catch (err) {
+      console.error(err);
+      showSnackbar('Failed to load student submission details', 'error');
+    } finally {
+      setDetailLoading(false);
+    }
+  };
+
+  const getDayAssignmentTopic = (day) => {
+    if (!day || !day.topics || day.topics.length === 0) return null;
+    return day.topics.find(t => t.title.toLowerCase().includes('assignment')) 
+      || [...day.topics].reverse().find(t => !t.isResources) 
+      || day.topics[day.topics.length - 1];
+  };
+
+  const getDayStatus = (dayId, day) => {
+    const topic = getDayAssignmentTopic(day);
+    if (!topic) return { status: 'none', label: 'No Assignment' };
+
+    const submission = detailUserAssignments.find(a => a.topicId === topic.id);
+    if (!submission) {
+      return { status: 'pending_submission', label: 'Not Started' };
+    }
+    return {
+      status: submission.status,
+      label: submission.status.charAt(0).toUpperCase() + submission.status.slice(1),
+      submission
+    };
+  };
+
+  const isDayUnlocked = (dayId, wIndex, dIndex) => {
+    const match = dayId.match(/^w(\d+)-d(\d+)$/);
+    if (match) {
+      const wNum = parseInt(match[1], 10);
+      const dNum = parseInt(match[2], 10);
+      if (wNum === 1 && dNum < 2) {
+        return true;
+      }
+    }
+
+    let prevDay = null;
+    if (dIndex > 0) {
+      prevDay = courseData[wIndex].days[dIndex - 1];
+    } else if (wIndex > 0) {
+      const prevWeek = courseData[wIndex - 1];
+      prevDay = prevWeek.days[prevWeek.days.length - 1];
+    }
+
+    if (!prevDay) return true;
+    if (prevDay.dayId === 'w1-d0') return true;
+
+    const prevTopic = getDayAssignmentTopic(prevDay);
+    if (!prevTopic) return true;
+
+    const prevSubmission = detailUserAssignments.find(a => a.topicId === prevTopic.id);
+    return prevSubmission && prevSubmission.status === 'accepted';
+  };
+
+  useEffect(() => {
+    setSelectedDetailUser(null);
+  }, [location.pathname]);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -327,438 +404,606 @@ const UsersList = () => {
   return (
     <MainLayout>
       <div className="users-page">
-        <div className="users-header">
-          <div className="header-top">
-            <div className="header-title">
-              <div className="icon-box">
-                <Shield size={24} />
-              </div>
-              <div>
-                <h1>Personnel Directory</h1>
-                <p>Manage access protocols and mission personnel</p>
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', gap: '12px' }}>
-              <button 
-                className="btn btn-secondary excel-import-btn" 
-                onClick={() => setIsExcelModalOpen(true)}
-                style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: '8px', 
-                  background: 'rgba(0, 209, 209, 0.05)', 
-                  color: 'var(--primary-cyan)', 
-                  border: '1px solid rgba(0, 209, 209, 0.2)', 
-                  padding: '10px 20px', 
-                  borderRadius: '10px', 
-                  fontWeight: 700, 
-                  cursor: 'pointer',
-                  fontSize: '0.85rem'
-                }}
-              >
-                <FileSpreadsheet size={18} />
-                Excel Import
+        {selectedDetailUser ? (
+          <div className="user-detail-container fade-in">
+            {/* Top Navigation */}
+            <div className="detail-navigation">
+              <button className="back-btn-directory" onClick={() => setSelectedDetailUser(null)}>
+                <ArrowLeft size={18} />
+                <span>Back to User Directory</span>
               </button>
-              <button className="btn btn-primary add-user-btn" onClick={() => setIsAddModalOpen(true)}>
-                <Plus size={18} />
-                Add Personnel
-              </button>
-            </div>
-          </div>
-
-          <div className="header-bottom">
-            <div className="search-container">
-              <Search size={18} />
-              <input
-                type="text"
-                placeholder="Filter personnel by name, email or role..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            
-            <div className="filter-group-users">
-              <div className="density-select">
-                <Filter size={16} />
-                <select value={usersPerPage} onChange={(e) => setUsersPerPage(Number(e.target.value))}>
-                  <option value={10}>10 Rows</option>
-                  <option value={20}>20 Rows</option>
-                  <option value={50}>50 Rows</option>
-                </select>
-              </div>
-              {searchTerm && (
-                <button className="reset-btn-users" onClick={resetFilters}>
-                  <RotateCcw size={14} />
-                  Reset
-                </button>
-              )}
+              <h2 className="directory-nav-title">Personnel File: {selectedDetailUser.name}</h2>
             </div>
 
-            <div className="stats-mini">
-              <span>Total Active: <strong>{users.length}</strong></span>
-              <span>Administrative: <strong>{users.filter(u => u.role === 'admin' || u.role === 'superadmin').length}</strong></span>
-            </div>
-          </div>
-        </div>
-
-        {isExcelModalOpen && (
-          <div className="modal-overlay">
-            <div className="modal-content card-3d excel-modal" style={{ maxWidth: '600px' }}>
-              <div className="modal-header">
-                <div className="modal-icon">
-                  <FileSpreadsheet size={24} />
+            {/* Profile Summary Card */}
+            <div className="detail-profile-card card-3d">
+              <div className="profile-summary-header">
+                <div className="avatar-large-details" style={{ backgroundColor: getAvatarColor(selectedDetailUser.name) }}>
+                  {selectedDetailUser.name.charAt(0).toUpperCase()}
                 </div>
-                <div>
-                  <h3 style={{ margin: 0 }}>Batch Personnel Onboarding</h3>
-                  <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: '#64748b' }}>Import multiple users simultaneously via Excel/CSV templates</p>
-                </div>
-                <button className="close-btn" onClick={() => { setIsExcelModalOpen(false); setExcelUsers([]); setExcelFile(null); }}>
-                  <X size={20} />
-                </button>
-              </div>
-
-              <div className="excel-workflow" style={{ display: 'flex', flexDirection: 'column', gap: '20px', maxHeight: '55vh', overflowY: 'auto', paddingRight: '8px' }}>
-                
-                {/* Step 1: Download Template */}
-                <div className="workflow-step" style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
-                  <div>
-                    <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700 }}>1. Get Configuration Spreadsheet</h4>
-                    <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: '#64748b' }}>Download our prepared template containing required user schemas.</p>
+                <div className="summary-info">
+                  <h2>{selectedDetailUser.name}</h2>
+                  <p className="summary-email">
+                    <Mail size={14} style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                    {selectedDetailUser.email}
+                  </p>
+                  <div className="summary-meta-badges">
+                    <span className="badge-role" data-role={selectedDetailUser.role}>
+                      <Shield size={12} style={{ marginRight: '4px' }} />
+                      {selectedDetailUser.role}
+                    </span>
+                    <span className={`badge-status ${selectedDetailUser.isActive ? 'active' : 'inactive'}`}>
+                      {selectedDetailUser.isActive ? 'Active' : 'Suspended'}
+                    </span>
                   </div>
+                </div>
+              </div>
+              <div className="profile-summary-details">
+                <div className="summary-col">
+                  <span className="label">Registered On</span>
+                  <span className="val">{new Date(selectedDetailUser.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                </div>
+                <div className="summary-col">
+                  <span className="label">Unique Identifier</span>
+                  <span className="val">{selectedDetailUser._id}</span>
+                </div>
+                <div className="summary-col">
+                  <span className="label">Access Status</span>
+                  <span className="val" style={{ color: selectedDetailUser.isActive ? '#16a34a' : '#dc2626', fontWeight: 700 }}>
+                    {selectedDetailUser.isActive ? 'AUTHORIZED' : 'REVOKED'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {detailLoading ? (
+              <div className="loading-state-details">Loading syllabus and submission analytics...</div>
+            ) : (
+              <div className="detail-tables-grid">
+                {/* Table 1: Syllabus Progress */}
+                <div className="detail-section-card card-3d">
+                  <div className="section-header-title">
+                    <h3>Syllabus Assignments</h3>
+                    <span className="sub-count">Total course outline</span>
+                  </div>
+                  <div className="table-scroll-wrapper">
+                    <table className="detail-data-table">
+                      <thead>
+                        <tr>
+                          <th>Day</th>
+                          <th>Topic / Project</th>
+                          <th style={{ textAlign: 'right' }}>Syllabus Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {courseData.flatMap((week, wIdx) => 
+                          week.days.map((day, dIdx) => {
+                            const statusInfo = getDayStatus(day.dayId, day);
+                            const unlocked = isDayUnlocked(day.dayId, wIdx, dIdx);
+                            return (
+                              <tr key={day.dayId}>
+                                <td style={{ fontWeight: 700 }}>
+                                  {week.weekTitle.split(':')[0]} - {day.dayTitle.split(':')[0]}
+                                </td>
+                                <td>{day.dayTitle.split(':').slice(1).join(':').trim()}</td>
+                                <td style={{ textAlign: 'right' }}>
+                                  {!unlocked ? (
+                                    <span className="status-indicator locked">Locked</span>
+                                  ) : (
+                                    <span className={`status-indicator ${statusInfo.status}`}>
+                                      {statusInfo.label}
+                                    </span>
+                                  )}
+                                </td>
+                              </tr>
+                            );
+                          })
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Table 2: Submissions Log */}
+                <div className="detail-section-card card-3d">
+                  <div className="section-header-title">
+                    <h3>Submission Log</h3>
+                    <span className="sub-count">Received projects: {detailUserAssignments.length}</span>
+                  </div>
+                  <div className="table-scroll-wrapper">
+                    <table className="detail-data-table">
+                      <thead>
+                        <tr>
+                          <th>Submitted Date</th>
+                          <th>Project Name</th>
+                          <th>Status</th>
+                          <th>Instructor Feedback</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {detailUserAssignments.length === 0 ? (
+                          <tr>
+                            <td colSpan="4" style={{ textAlign: 'center', padding: '40px', color: 'var(--text-neutral)', fontStyle: 'italic' }}>
+                              No project submissions logged for this user.
+                            </td>
+                          </tr>
+                        ) : (
+                          [...detailUserAssignments]
+                            .sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt))
+                            .map((sub) => (
+                              <tr key={sub._id}>
+                                <td className="date-cell-details">
+                                  {new Date(sub.submittedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                                </td>
+                                <td style={{ fontWeight: 700 }}>{sub.topicTitle}</td>
+                                <td>
+                                  <span className={`status-indicator ${sub.status}`}>
+                                    {sub.status}
+                                  </span>
+                                </td>
+                                <td className="feedback-cell-details">
+                                  {sub.feedback ? (
+                                    <div className="feedback-bubble-mini" title={sub.feedback}>
+                                      {sub.feedback}
+                                    </div>
+                                  ) : (
+                                    <span style={{ color: 'var(--text-neutral)', fontStyle: 'italic' }}>None</span>
+                                  )}
+                                </td>
+                              </tr>
+                            ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+          <>
+            <div className="users-header">
+              <div className="header-top">
+                <div className="header-title">
+                  <div className="icon-box">
+                    <Shield size={24} />
+                  </div>
+                  <div>
+                    <h1>Personnel Directory</h1>
+                    <p>Manage access protocols and mission personnel</p>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '12px' }}>
                   <button 
-                    type="button" 
-                    className="btn btn-secondary" 
-                    onClick={downloadTemplate}
-                    style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(0, 209, 209, 0.08)', color: 'var(--primary-cyan)', border: '1px solid rgba(0, 209, 209, 0.2)', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '0.8rem' }}
+                    className="btn btn-secondary excel-import-btn" 
+                    onClick={() => setIsExcelModalOpen(true)}
+                    style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '8px', 
+                      background: 'rgba(0, 209, 209, 0.05)', 
+                      color: 'var(--primary-cyan)', 
+                      border: '1px solid rgba(0, 209, 209, 0.2)', 
+                      padding: '10px 20px', 
+                      borderRadius: '10px', 
+                      fontWeight: 700, 
+                      cursor: 'pointer',
+                      fontSize: '0.85rem'
+                    }}
                   >
-                    <Download size={14} />
-                    Download Schema
+                    <FileSpreadsheet size={18} />
+                    Excel Import
+                  </button>
+                  <button className="btn btn-primary add-user-btn" onClick={() => setIsAddModalOpen(true)}>
+                    <Plus size={18} />
+                    Add Personnel
                   </button>
                 </div>
+              </div>
 
-                {/* Step 2: Drag and Drop Zone */}
-                <div className="workflow-step" style={{ flexShrink: 0 }}>
-                  <h4 style={{ margin: '0 0 10px', fontSize: '0.95rem', fontWeight: 700 }}>2. Upload Populated Template</h4>
-                  
-                  <div 
-                    className={`dropzone-container ${dragActive ? 'active' : ''}`}
-                    onDragEnter={handleDrag}
-                    onDragOver={handleDrag}
-                    onDragLeave={handleDrag}
-                    onDrop={handleDrop}
-                    style={{
-                      border: dragActive ? '2px dashed var(--primary-cyan)' : '2px dashed #cbd5e1',
-                      background: dragActive ? 'rgba(0, 209, 209, 0.02)' : '#f8fafc',
-                      borderRadius: '16px',
-                      padding: '30px 20px',
-                      textAlign: 'center',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s',
-                      position: 'relative'
-                    }}
-                    onClick={() => document.getElementById('file-upload-input').click()}
-                  >
-                    <input 
-                      id="file-upload-input" 
-                      type="file" 
-                      accept=".csv, .xlsx, .xls"
-                      onChange={handleFileSelect}
-                      style={{ display: 'none' }}
-                    />
+              <div className="header-bottom">
+                <div className="search-container">
+                  <Search size={18} />
+                  <input
+                    type="text"
+                    placeholder="Filter personnel by name, email or role..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+                
+                <div className="filter-group-users">
+                  <div className="density-select">
+                    <Filter size={16} />
+                    <select value={usersPerPage} onChange={(e) => setUsersPerPage(Number(e.target.value))}>
+                      <option value={10}>10 Rows</option>
+                      <option value={20}>20 Rows</option>
+                      <option value={50}>50 Rows</option>
+                    </select>
+                  </div>
+                  {searchTerm && (
+                    <button className="reset-btn-users" onClick={resetFilters}>
+                      <RotateCcw size={14} />
+                      Reset
+                    </button>
+                  )}
+                </div>
+
+                <div className="stats-mini">
+                  <span>Total Active: <strong>{users.length}</strong></span>
+                  <span>Administrative: <strong>{users.filter(u => u.role === 'admin' || u.role === 'superadmin').length}</strong></span>
+                </div>
+              </div>
+            </div>
+
+            {isExcelModalOpen && (
+              <div className="modal-overlay">
+                <div className="modal-content card-3d excel-modal" style={{ maxWidth: '600px' }}>
+                  <div className="modal-header">
+                    <div className="modal-icon">
+                      <FileSpreadsheet size={24} />
+                    </div>
+                    <div>
+                      <h3 style={{ margin: 0 }}>Batch Personnel Onboarding</h3>
+                      <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: '#64748b' }}>Import multiple users simultaneously via Excel/CSV templates</p>
+                    </div>
+                    <button className="close-btn" onClick={() => { setIsExcelModalOpen(false); setExcelUsers([]); setExcelFile(null); }}>
+                      <X size={20} />
+                    </button>
+                  </div>
+
+                  <div className="excel-workflow" style={{ display: 'flex', flexDirection: 'column', gap: '20px', maxHeight: '55vh', overflowY: 'auto', paddingRight: '8px' }}>
                     
-                    <Upload size={32} style={{ color: dragActive ? 'var(--primary-cyan)' : '#94a3b8', marginBottom: '12px' }} />
-                    {excelFile ? (
+                    {/* Step 1: Download Template */}
+                    <div className="workflow-step" style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '16px', display: 'flex', justifycontent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
                       <div>
-                        <p style={{ margin: 0, fontWeight: 700, color: '#1e293b', fontSize: '0.9rem' }}>{excelFile.name}</p>
-                        <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: '#16a34a', fontWeight: 600 }}>
-                          Detected {excelUsers.length} valid personnel record(s) ready to synchronize
-                        </p>
+                        <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700 }}>1. Get Configuration Spreadsheet</h4>
+                        <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: '#64748b' }}>Download our prepared template containing required user schemas.</p>
                       </div>
-                    ) : (
-                      <div>
-                        <p style={{ margin: 0, fontWeight: 700, color: '#475569', fontSize: '0.9rem' }}>Drag & drop populated spreadsheet template here</p>
-                        <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: '#94a3b8' }}>Supports Excel (.xlsx) or CSV (.csv) formats up to 10MB</p>
+                      <button 
+                        type="button" 
+                        className="btn btn-secondary" 
+                        onClick={downloadTemplate}
+                        style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(0, 209, 209, 0.08)', color: 'var(--primary-cyan)', border: '1px solid rgba(0, 209, 209, 0.2)', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '0.8rem' }}
+                      >
+                        <Download size={14} />
+                        Download Schema
+                      </button>
+                    </div>
+
+                    {/* Step 2: Drag and Drop Zone */}
+                    <div className="workflow-step" style={{ flexShrink: 0 }}>
+                      <h4 style={{ margin: '0 0 10px', fontSize: '0.95rem', fontWeight: 700 }}>2. Upload Populated Template</h4>
+                      
+                      <div 
+                        className={`dropzone-container ${dragActive ? 'active' : ''}`}
+                        onDragEnter={handleDrag}
+                        onDragOver={handleDrag}
+                        onDragLeave={handleDrag}
+                        onDrop={handleDrop}
+                        style={{
+                          border: dragActive ? '2px dashed var(--primary-cyan)' : '2px dashed #cbd5e1',
+                          background: dragActive ? 'rgba(0, 209, 209, 0.02)' : '#f8fafc',
+                          borderRadius: '16px',
+                          padding: '30px 20px',
+                          textAlign: 'center',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s',
+                          position: 'relative'
+                        }}
+                        onClick={() => document.getElementById('file-upload-input').click()}
+                      >
+                        <input 
+                          id="file-upload-input" 
+                          type="file" 
+                          accept=".csv, .xlsx, .xls"
+                          onChange={handleFileSelect}
+                          style={{ display: 'none' }}
+                        />
+                        
+                        <Upload size={32} style={{ color: dragActive ? 'var(--primary-cyan)' : '#94a3b8', marginBottom: '12px' }} />
+                        {excelFile ? (
+                          <div>
+                            <p style={{ margin: 0, fontWeight: 700, color: '#1e293b', fontSize: '0.9rem' }}>{excelFile.name}</p>
+                            <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: '#16a34a', fontWeight: 600 }}>
+                              Detected {excelUsers.length} valid personnel record(s) ready to synchronize
+                            </p>
+                          </div>
+                        ) : (
+                          <div>
+                            <p style={{ margin: 0, fontWeight: 700, color: '#475569', fontSize: '0.9rem' }}>Drag & drop populated spreadsheet template here</p>
+                            <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: '#94a3b8' }}>Supports Excel (.xlsx) or CSV (.csv) formats up to 10MB</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Step 3: parsed preview */}
+                    {excelUsers.length > 0 && (
+                      <div className="parsed-preview-container" style={{ border: '1px solid #e2e8f0', borderRadius: '16px', overflow: 'hidden', flexShrink: 0 }}>
+                        <div style={{ background: '#f8fafc', padding: '10px 16px', borderBottom: '1px solid #e2e8f0', display: 'flex', justifycontent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: '#64748b', letterSpacing: '0.5px' }}>Data Schema Preview</span>
+                          <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--primary-cyan)' }}>Total: {excelUsers.length}</span>
+                        </div>
+                        <div style={{ maxHeight: '150px', overflowY: 'auto' }}>
+                          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem', textAlign: 'left' }}>
+                            <thead>
+                              <tr style={{ background: '#f1f5f9', borderBottom: '1px solid #e2e8f0' }}>
+                                <th style={{ padding: '8px 12px', color: '#64748b' }}>Name</th>
+                                <th style={{ padding: '8px 12px', color: '#64748b' }}>Email</th>
+                                <th style={{ padding: '8px 12px', color: '#64748b' }}>Role</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {excelUsers.slice(0, 5).map((user, idx) => (
+                                <tr key={idx} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                                  <td style={{ padding: '8px 12px', fontWeight: 600 }}>{user.name}</td>
+                                  <td style={{ padding: '8px 12px', color: '#64748b' }}>{user.email}</td>
+                                  <td style={{ padding: '8px 12px' }}>
+                                    <span style={{ padding: '2px 8px', borderRadius: '6px', fontSize: '0.7rem', fontWeight: 700, background: user.role === 'admin' ? 'rgba(0, 209, 209, 0.08)' : '#f1f5f9', color: user.role === 'admin' ? 'var(--primary-cyan)' : '#475569' }}>
+                                      {user.role}
+                                    </span>
+                                  </td>
+                                </tr>
+                              ))}
+                              {excelUsers.length > 5 && (
+                                <tr>
+                                  <td colSpan="3" style={{ padding: '8px 12px', textAlign: 'center', color: '#94a3b8', background: '#f8fafc' }}>
+                                    + {excelUsers.length - 5} more records parsed
+                                  </td>
+                                </tr>
+                              )}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Import Status Progress */}
+                    {isImporting && (
+                      <div className="import-progress-container" style={{ background: '#f8fafc', padding: '16px', borderRadius: '16px', border: '1px solid #e2e8f0', flexShrink: 0 }}>
+                        <div style={{ display: 'flex', justifycontent: 'space-between', fontSize: '0.85rem', fontWeight: 700, marginBottom: '8px' }}>
+                          <span style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--primary-cyan)' }}>
+                            <Database size={16} />
+                            Synchronizing with Main Directory...
+                          </span>
+                          <span>{importProgress}%</span>
+                        </div>
+                        <div style={{ width: '100%', height: '8px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
+                          <div style={{ width: `${importProgress}%`, height: '100%', background: 'linear-gradient(90deg, var(--primary-cyan) 0%, #3b82f6 100%)', transition: 'width 0.1s ease', borderRadius: '4px' }}></div>
+                        </div>
                       </div>
                     )}
                   </div>
-                </div>
 
-                {/* Step 3: parsed preview */}
-                {excelUsers.length > 0 && (
-                  <div className="parsed-preview-container" style={{ border: '1px solid #e2e8f0', borderRadius: '16px', overflow: 'hidden', flexShrink: 0 }}>
-                    <div style={{ background: '#f8fafc', padding: '10px 16px', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: '#64748b', letterSpacing: '0.5px' }}>Data Schema Preview</span>
-                      <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--primary-cyan)' }}>Total: {excelUsers.length}</span>
-                    </div>
-                    <div style={{ maxHeight: '150px', overflowY: 'auto' }}>
-                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem', textAlign: 'left' }}>
-                        <thead>
-                          <tr style={{ background: '#f1f5f9', borderBottom: '1px solid #e2e8f0' }}>
-                            <th style={{ padding: '8px 12px', color: '#64748b' }}>Name</th>
-                            <th style={{ padding: '8px 12px', color: '#64748b' }}>Email</th>
-                            <th style={{ padding: '8px 12px', color: '#64748b' }}>Role</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {excelUsers.slice(0, 5).map((user, idx) => (
-                            <tr key={idx} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                              <td style={{ padding: '8px 12px', fontWeight: 600 }}>{user.name}</td>
-                              <td style={{ padding: '8px 12px', color: '#64748b' }}>{user.email}</td>
-                              <td style={{ padding: '8px 12px' }}>
-                                <span style={{ padding: '2px 8px', borderRadius: '6px', fontSize: '0.7rem', fontWeight: 700, background: user.role === 'admin' ? 'rgba(0, 209, 209, 0.08)' : '#f1f5f9', color: user.role === 'admin' ? 'var(--primary-cyan)' : '#475569' }}>
-                                  {user.role}
-                                </span>
-                              </td>
-                            </tr>
-                          ))}
-                          {excelUsers.length > 5 && (
-                            <tr>
-                              <td colSpan="3" style={{ padding: '8px 12px', textAlign: 'center', color: '#94a3b8', background: '#f8fafc' }}>
-                                + {excelUsers.length - 5} more records parsed
-                              </td>
-                            </tr>
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
+                  <div className="modal-footer" style={{ marginTop: '30px' }}>
+                    <button 
+                      type="button" 
+                      className="btn btn-ghost" 
+                      onClick={() => { setIsExcelModalOpen(false); setExcelUsers([]); setExcelFile(null); }}
+                      disabled={isImporting}
+                      style={{ width: '50%' }}
+                    >
+                      Cancel
+                    </button>
+                    <button 
+                      type="button" 
+                      className="btn btn-primary" 
+                      onClick={handleBatchImport}
+                      disabled={excelUsers.length === 0 || isImporting}
+                      style={{ width: '50%', background: 'linear-gradient(135deg, var(--primary-cyan) 0%, #3b82f6 100%)' }}
+                    >
+                      {isImporting ? 'Syncing...' : `Import ${excelUsers.length} Users`}
+                    </button>
                   </div>
-                )}
+                </div>
+              </div>
+            )}
 
-                {/* Import Status Progress */}
-                {isImporting && (
-                  <div className="import-progress-container" style={{ background: '#f8fafc', padding: '16px', borderRadius: '16px', border: '1px solid #e2e8f0', flexShrink: 0 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', fontWeight: 700, marginBottom: '8px' }}>
-                      <span style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--primary-cyan)' }}>
-                        <Database size={16} />
-                        Synchronizing with Main Directory...
-                      </span>
-                      <span>{importProgress}%</span>
+            {isAddModalOpen && (
+              <div className="modal-overlay">
+                <div className="modal-content card-3d">
+                  <div className="modal-header">
+                    <div className="modal-icon">
+                      <UserPlus size={24} />
                     </div>
-                    <div style={{ width: '100%', height: '8px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
-                      <div style={{ width: `${importProgress}%`, height: '100%', background: 'linear-gradient(90deg, var(--primary-cyan) 0%, #3b82f6 100%)', transition: 'width 0.1s ease', borderRadius: '4px' }}></div>
-                    </div>
+                    <h3>Enroll New Personnel</h3>
+                    <button className="close-btn" onClick={() => setIsAddModalOpen(false)}>
+                      <X size={20} />
+                    </button>
                   </div>
-                )}
-              </div>
-
-              <div className="modal-footer" style={{ marginTop: '30px' }}>
-                <button 
-                  type="button" 
-                  className="btn btn-ghost" 
-                  onClick={() => { setIsExcelModalOpen(false); setExcelUsers([]); setExcelFile(null); }}
-                  disabled={isImporting}
-                  style={{ width: '50%' }}
-                >
-                  Cancel
-                </button>
-                <button 
-                  type="button" 
-                  className="btn btn-primary" 
-                  onClick={handleBatchImport}
-                  disabled={excelUsers.length === 0 || isImporting}
-                  style={{ width: '50%', background: 'linear-gradient(135deg, var(--primary-cyan) 0%, #3b82f6 100%)' }}
-                >
-                  {isImporting ? 'Syncing...' : `Import ${excelUsers.length} Users`}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {isAddModalOpen && (
-          <div className="modal-overlay">
-            <div className="modal-content card-3d">
-              <div className="modal-header">
-                <div className="modal-icon">
-                  <UserPlus size={24} />
-                </div>
-                <h3>Enroll New Personnel</h3>
-                <button className="close-btn" onClick={() => setIsAddModalOpen(false)}>
-                  <X size={20} />
-                </button>
-              </div>
-              <form onSubmit={handleAddUser}>
-                <div className="form-group">
-                  <label>Full Name</label>
-                  <input
-                    type="text"
-                    required
-                    value={newUser.name}
-                    onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
-                    placeholder="Enter full name"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Email Address</label>
-                  <input
-                    type="email"
-                    required
-                    value={newUser.email}
-                    onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-                    placeholder="name@wemade.com"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Access Password</label>
-                  <input
-                    type="password"
-                    required
-                    value={newUser.password}
-                    onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-                    placeholder="••••••••"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Access Level (Role)</label>
-                  <select
-                    value={newUser.role}
-                    onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
-                  >
-                    <option value="student">Student (Access Gated)</option>
-                    <option value="admin">Administrator (Command Level)</option>
-                  </select>
-                </div>
-                <div className="modal-footer">
-                  <button type="button" className="btn btn-ghost" onClick={() => setIsAddModalOpen(false)}>Cancel</button>
-                  <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
-                    {isSubmitting ? 'Processing...' : 'Authorize Personnel'}
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
-
-        <div className="table-container card-3d">
-          <table className="personnel-table">
-            <thead>
-              <tr>
-                <th>Personnel</th>
-                <th>Access Level</th>
-                <th>Contact Information</th>
-                <th>Joined Date</th>
-                <th style={{ textAlign: 'right' }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentUsers.map((u) => (
-                <tr key={u._id} className={!u.isActive ? 'inactive-row' : ''}>
-                  <td>
-                    <div className="personnel-cell">
-                      <div
-                        className="avatar-small"
-                        style={{ backgroundColor: getAvatarColor(u.name) }}
+                  <form onSubmit={handleAddUser}>
+                    <div className="form-group">
+                      <label>Full Name</label>
+                      <input
+                        type="text"
+                        required
+                        value={newUser.name}
+                        onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+                        placeholder="Enter full name"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Email Address</label>
+                      <input
+                        type="email"
+                        required
+                        value={newUser.email}
+                        onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+                        placeholder="name@wemade.com"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Access Password</label>
+                      <input
+                        type="password"
+                        required
+                        value={newUser.password}
+                        onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                        placeholder="••••••••"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Access Level (Role)</label>
+                      <select
+                        value={newUser.role}
+                        onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
                       >
-                        {u.name.charAt(0).toUpperCase()}
-                      </div>
-                      <div className="personnel-info">
-                        <div className="name-status">
-                          <span className="name">{u.name}</span>
-                          {!u.isActive && <span className="status-label">Inactive</span>}
+                        <option value="student">Student (Access Gated)</option>
+                        <option value="admin">Administrator (Command Level)</option>
+                      </select>
+                    </div>
+                    <div className="modal-footer">
+                      <button type="button" className="btn btn-ghost" onClick={() => setIsAddModalOpen(false)}>Cancel</button>
+                      <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+                        {isSubmitting ? 'Processing...' : 'Authorize Personnel'}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
+
+            <div className="table-container card-3d">
+              <table className="personnel-table">
+                <thead>
+                  <tr>
+                    <th>Personnel</th>
+                    <th>Access Level</th>
+                    <th>Contact Information</th>
+                    <th>Joined Date</th>
+                    <th style={{ textAlign: 'right' }}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {currentUsers.map((u) => (
+                    <tr 
+                      key={u._id} 
+                      className={`${!u.isActive ? 'inactive-row' : ''} clickable-user-row`}
+                      onClick={() => {
+                        setSelectedDetailUser(u);
+                        fetchDetailUserAssignments(u);
+                      }}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      <td>
+                        <div className="personnel-cell">
+                          <div
+                            className="avatar-small"
+                            style={{ backgroundColor: getAvatarColor(u.name) }}
+                          >
+                            {u.name.charAt(0).toUpperCase()}
+                          </div>
+                          <div className="personnel-info">
+                            <div className="name-status">
+                              <span className="name">{u.name}</span>
+                              {!u.isActive && <span className="status-label">Inactive</span>}
+                            </div>
+                            <span className="id">ID: {u._id.slice(-6)}</span>
+                          </div>
                         </div>
-                        <span className="id">ID: {u._id.slice(-6)}</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <div className="user-role-badge" data-role={u.role}>
-                      {(u.role === 'admin' || u.role === 'superadmin') ? <Shield size={12} /> : <User size={12} />}
-                      {u.role}
-                    </div>
-                  </td>
-                  <td>
-                    <div className="contact-cell">
-                      <Mail size={14} />
-                      <span>{u.email}</span>
-                    </div>
-                  </td>
-                  <td className="date-cell">
-                    {new Date(u.createdAt).toLocaleDateString()}
-                  </td>
-                  <td style={{ textAlign: 'right' }}>
-                    <div className="action-icons">
-                      <button
-                        className="icon-btn edit"
-                        title={currentUser._id === u._id ? "Cannot edit yourself" : (currentUser.role === 'admin' && u.role === 'superadmin' ? "Insufficient permissions" : "Edit Personnel")}
-                        disabled={currentUser._id === u._id || (currentUser.role === 'admin' && u.role === 'superadmin')}
-                        onClick={() => {
-                          setEditingUser(u);
-                          setIsEditModalOpen(true);
-                        }}
-                      >
-                        <Edit2 size={16} />
-                      </button>
-                      <button
-                        className={`icon-btn ${u.isActive ? 'ban' : 'activate'}`}
-                        onClick={() => toggleStatus(u._id, u.isActive)}
-                        disabled={currentUser._id === u._id || (currentUser.role === 'admin' && u.role === 'superadmin')}
-                        title={currentUser._id === u._id ? "Cannot deactivate yourself" : (currentUser.role === 'admin' && u.role === 'superadmin' ? "Insufficient permissions" : (u.isActive ? 'Deactivate Personnel' : 'Activate Personnel'))}
-                      >
-                        {u.isActive ? <Ban size={16} /> : <UserCheck size={16} />}
-                      </button>
-                      <button
-                        className="icon-btn delete"
-                        onClick={() => handleDelete(u._id)}
-                        disabled={currentUser._id === u._id || (currentUser.role === 'admin' && u.role === 'superadmin')}
-                        title={currentUser._id === u._id ? "Cannot remove yourself" : (currentUser.role === 'admin' && u.role === 'superadmin' ? "Insufficient permissions" : "Remove Personnel")}
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                      </td>
+                      <td>
+                        <div className="user-role-badge" data-role={u.role}>
+                          {(u.role === 'admin' || u.role === 'superadmin') ? <Shield size={12} /> : <User size={12} />}
+                          {u.role}
+                        </div>
+                      </td>
+                      <td>
+                        <div className="contact-cell">
+                          <Mail size={14} />
+                          <span>{u.email}</span>
+                        </div>
+                      </td>
+                      <td className="date-cell">
+                        {new Date(u.createdAt).toLocaleDateString()}
+                      </td>
+                      <td style={{ textAlign: 'right' }} onClick={(e) => e.stopPropagation()}>
+                        <div className="action-icons">
+                          <button
+                            className="icon-btn edit"
+                            title={currentUser._id === u._id ? "Cannot edit yourself" : (currentUser.role === 'admin' && u.role === 'superadmin' ? "Insufficient permissions" : "Edit Personnel")}
+                            disabled={currentUser._id === u._id || (currentUser.role === 'admin' && u.role === 'superadmin')}
+                            onClick={() => {
+                              setEditingUser(u);
+                              setIsEditModalOpen(true);
+                            }}
+                          >
+                            <Edit2 size={16} />
+                          </button>
+                          <button
+                            className={`icon-btn ${u.isActive ? 'ban' : 'activate'}`}
+                            onClick={() => toggleStatus(u._id, u.isActive)}
+                            disabled={currentUser._id === u._id || (currentUser.role === 'admin' && u.role === 'superadmin')}
+                            title={currentUser._id === u._id ? "Cannot deactivate yourself" : (currentUser.role === 'admin' && u.role === 'superadmin' ? "Insufficient permissions" : (u.isActive ? 'Deactivate Personnel' : 'Activate Personnel'))}
+                          >
+                            {u.isActive ? <Ban size={16} /> : <UserCheck size={16} />}
+                          </button>
+                          <button
+                            className="icon-btn delete"
+                            onClick={() => handleDelete(u._id)}
+                            disabled={currentUser._id === u._id || (currentUser.role === 'admin' && u.role === 'superadmin')}
+                            title={currentUser._id === u._id ? "Cannot remove yourself" : (currentUser.role === 'admin' && u.role === 'superadmin' ? "Insufficient permissions" : "Remove Personnel")}
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
 
-          {filteredUsers.length === 0 && (
-            <div className="empty-state">
-              <Search size={48} />
-              <p>No personnel records found.</p>
-            </div>
-          )}
+              {filteredUsers.length === 0 && (
+                <div className="empty-state">
+                  <Search size={48} />
+                  <p>No personnel records found.</p>
+                </div>
+              )}
 
-          {filteredUsers.length > 0 && (
-            <div className="audit-pagination">
-              <div className="pagination-info">
-                Showing <span className="bold">{indexOfFirstUser + 1}</span> to <span className="bold">{Math.min(indexOfLastUser, filteredUsers.length)}</span> of <span className="bold">{filteredUsers.length}</span> records
-              </div>
-              
-              {totalPages > 1 && (
-                <div className="page-navigation">
-                  <button 
-                    disabled={currentPage === 1}
-                    onClick={() => paginate(currentPage - 1)}
-                    className="page-btn"
-                  >
-                    <ChevronLeft size={18} />
-                  </button>
-                  
-                  <div className="page-numbers">
-                    {[...Array(totalPages)].map((_, index) => (
-                      <button
-                        key={index + 1}
-                        onClick={() => paginate(index + 1)}
-                        className={`page-btn ${currentPage === index + 1 ? 'active' : ''}`}
-                      >
-                        {index + 1}
-                      </button>
-                    ))}
+              {filteredUsers.length > 0 && (
+                <div className="audit-pagination">
+                  <div className="pagination-info">
+                    Showing <span className="bold">{indexOfFirstUser + 1}</span> to <span className="bold">{Math.min(indexOfLastUser, filteredUsers.length)}</span> of <span className="bold">{filteredUsers.length}</span> records
                   </div>
+                  
+                  {totalPages > 1 && (
+                    <div className="page-navigation">
+                      <button 
+                        disabled={currentPage === 1}
+                        onClick={() => paginate(currentPage - 1)}
+                        className="page-btn"
+                      >
+                        <ChevronLeft size={18} />
+                      </button>
+                      
+                      <div className="page-numbers">
+                        {[...Array(totalPages)].map((_, index) => (
+                          <button
+                            key={index + 1}
+                            onClick={() => paginate(index + 1)}
+                            className={`page-btn ${currentPage === index + 1 ? 'active' : ''}`}
+                          >
+                            {index + 1}
+                          </button>
+                        ))}
+                      </div>
 
-                  <button 
-                    disabled={currentPage === totalPages}
-                    onClick={() => paginate(currentPage + 1)}
-                    className="page-btn"
-                  >
-                    <ChevronRight size={18} />
-                  </button>
+                      <button 
+                        disabled={currentPage === totalPages}
+                        onClick={() => paginate(currentPage + 1)}
+                        className="page-btn"
+                      >
+                        <ChevronRight size={18} />
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
-          )}
-        </div>
+          </>
+        )}
 
         {/* Edit Personnel Modal */}
         {isEditModalOpen && editingUser && (
@@ -1062,6 +1307,280 @@ const UsersList = () => {
         @keyframes snackbarSlideIn { 
           from { opacity: 0; transform: translateX(40px) scale(0.9); } 
           to { opacity: 1; transform: translateX(0) scale(1); } 
+        }
+
+        /* User Detail View Styles */
+        .user-detail-container {
+          display: flex;
+          flex-direction: column;
+          gap: 24px;
+          animation: fadeIn 0.4s ease;
+        }
+        .detail-navigation {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          border-bottom: 1px solid var(--app-border);
+          padding-bottom: 16px;
+          margin-bottom: 8px;
+        }
+        .back-btn-directory {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          background: var(--app-card-bg);
+          border: 1px solid var(--app-border);
+          padding: 8px 16px;
+          border-radius: 10px;
+          font-weight: 700;
+          color: var(--app-text);
+          cursor: pointer;
+          transition: all 0.2s;
+          font-size: 0.85rem;
+        }
+        .back-btn-directory:hover {
+          background: var(--light-secondary);
+          transform: translateX(-3px);
+          box-shadow: var(--shadow-sm);
+        }
+        .directory-nav-title {
+          font-size: 1.25rem;
+          font-weight: 800;
+          margin: 0;
+          color: var(--app-text);
+        }
+        
+        .detail-profile-card {
+          background: var(--app-card-bg);
+          border: 1px solid var(--app-border);
+          border-radius: 24px;
+          padding: 24px 32px;
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+        }
+        .profile-summary-header {
+          display: flex;
+          align-items: center;
+          gap: 20px;
+        }
+        .avatar-large-details {
+          width: 72px;
+          height: 72px;
+          border-radius: 18px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-weight: 800;
+          font-size: 1.8rem;
+          box-shadow: var(--shadow-md);
+          border: 2px solid white;
+        }
+        .summary-info h2 {
+          font-size: 1.5rem;
+          font-weight: 800;
+          margin: 0 0 4px 0;
+          color: var(--app-text);
+        }
+        .summary-email {
+          color: var(--app-text-muted);
+          font-size: 0.9rem;
+          margin-bottom: 8px;
+        }
+        .summary-meta-badges {
+          display: flex;
+          gap: 10px;
+        }
+        .badge-role {
+          padding: 4px 10px;
+          border-radius: 8px;
+          font-size: 0.7rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          display: inline-flex;
+          align-items: center;
+          background: rgba(0, 209, 209, 0.08);
+          color: #00d1d1;
+        }
+        .badge-role[data-role='student'] {
+          background: rgba(0, 71, 171, 0.08);
+          color: var(--primary-blue);
+        }
+        .badge-status {
+          padding: 4px 10px;
+          border-radius: 8px;
+          font-size: 0.7rem;
+          font-weight: 700;
+          text-transform: uppercase;
+        }
+        .badge-status.active {
+          background: #f0fdf4;
+          color: #16a34a;
+        }
+        .badge-status.inactive {
+          background: #fef2f2;
+          color: #dc2626;
+        }
+        
+        .profile-summary-details {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 20px;
+          border-top: 1px solid var(--app-border);
+          padding-top: 20px;
+        }
+        .summary-col {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+        }
+        .summary-col .label {
+          font-size: 0.75rem;
+          font-weight: 700;
+          color: var(--app-text-muted);
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+        .summary-col .val {
+          font-size: 0.95rem;
+          font-weight: 600;
+          color: var(--app-text);
+        }
+        
+        .loading-state-details {
+          text-align: center;
+          padding: 48px;
+          color: var(--app-text-muted);
+          font-size: 1rem;
+          font-style: italic;
+        }
+        
+        .detail-tables-grid {
+          display: grid;
+          grid-template-columns: 1fr 1.2fr;
+          gap: 24px;
+        }
+        .detail-section-card {
+          background: var(--app-card-bg);
+          border: 1px solid var(--app-border);
+          border-radius: 24px;
+          padding: 24px;
+          display: flex;
+          flex-direction: column;
+          min-width: 0;
+        }
+        .section-header-title {
+          margin-bottom: 20px;
+          border-bottom: 1px solid var(--app-border);
+          padding-bottom: 12px;
+        }
+        .section-header-title h3 {
+          font-size: 1.1rem;
+          font-weight: 800;
+          margin: 0 0 2px 0;
+          color: var(--app-text);
+        }
+        .section-header-title .sub-count {
+          font-size: 0.8rem;
+          color: var(--app-text-muted);
+        }
+        
+        .table-scroll-wrapper {
+          overflow-y: auto;
+          max-height: 480px;
+        }
+        .detail-data-table {
+          width: 100%;
+          border-collapse: collapse;
+          text-align: left;
+        }
+        .detail-data-table th {
+          padding: 12px;
+          font-size: 0.7rem;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          color: var(--app-text-muted);
+          border-bottom: 1px solid var(--app-border);
+          font-weight: 800;
+          position: sticky;
+          top: 0;
+          background: var(--app-card-bg);
+          z-index: 1;
+        }
+        .detail-data-table td {
+          padding: 12px;
+          font-size: 0.85rem;
+          color: var(--app-text);
+          border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+          vertical-align: middle;
+        }
+        .detail-data-table tr:hover {
+          background: rgba(0, 0, 0, 0.01);
+        }
+        
+        .status-indicator {
+          padding: 3px 8px;
+          border-radius: 6px;
+          font-size: 0.7rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          display: inline-block;
+        }
+        .status-indicator.pending {
+          background: #fffbeb;
+          color: #d97706;
+        }
+        .status-indicator.accepted {
+          background: #f0fdf4;
+          color: #16a34a;
+        }
+        .status-indicator.rejected {
+          background: #fef2f2;
+          color: #dc2626;
+        }
+        .status-indicator.pending_submission {
+          background: #f1f5f9;
+          color: #64748b;
+        }
+        .status-indicator.locked {
+          background: #f8fafc;
+          color: #cbd5e1;
+          border: 1.5px dashed #cbd5e1;
+        }
+        
+        .feedback-bubble-mini {
+          max-width: 200px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          background: #f8fafc;
+          padding: 4px 10px;
+          border-radius: 8px;
+          border: 1px solid #e2e8f0;
+          color: #475569;
+          font-size: 0.8rem;
+          cursor: help;
+        }
+        
+        @media (max-width: 1024px) {
+          .detail-tables-grid {
+            grid-template-columns: 1fr;
+            gap: 20px;
+          }
+        }
+        @media (max-width: 768px) {
+          .profile-summary-header {
+            flex-direction: column;
+            text-align: center;
+          }
+          .profile-summary-details {
+            grid-template-columns: 1fr;
+            gap: 12px;
+          }
+          .summary-meta-badges {
+            justify-content: center;
+          }
         }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
