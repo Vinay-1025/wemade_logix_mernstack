@@ -9,6 +9,8 @@ import { courseData } from '../data/mockData';
 
 import NetworkAnimation from './NetworkAnimation';
 import FlexboxPlayground from './FlexboxPlayground';
+import FlexboxGridVisualizer from './FlexboxGridVisualizer';
+import CSSAnimationsPlayground from './CSSAnimationsPlayground';
 import ResponsiveSimulator from './ResponsiveSimulator';
 import CSSSelectorsLab from './CSSSelectorsLab';
 import CSSColorsPlayground from './CSSColorsPlayground';
@@ -161,25 +163,52 @@ const MainContent = () => {
         { id: 'inputs', text: 'Implement text, email, and validation attributes (required)', regex: /type=['"](text|email)['"].*?required|required.*?type=['"](text|email)['"]/i, met: false },
         { id: 'selections', text: 'Include checkboxes (<input type="checkbox">) and submit buttons', regex: /type=['"]checkbox['"]/i, met: false },
       ]);
+    } else if (selectedTopic?.id === 'w2-d1-t6') {
+      setRequirements([
+        { id: 'gridContainer', text: 'Create main dashboard container styled with display: grid', regex: /display:\s*grid/i, target: 'css', met: false },
+        { id: 'gridColsOrAreas', text: 'Specify grid-template-columns or grid-template-areas properties', regex: /grid-template-(columns|areas)/i, target: 'css', met: false },
+        { id: 'flexmicro', text: 'Use display: flex inside dashboard header or cards for alignment', regex: /display:\s*flex/i, target: 'css', met: false },
+        { id: 'responsiveBreak', text: 'Declare responsive media query breakpoints (@media)', regex: /@media/i, target: 'css', met: false },
+        { id: 'semanticSidebar', text: 'Implement semantic HTML structure (aside, header, and main)', regex: /<(aside|header|main).*?>/i, target: 'html', met: false },
+        { id: 'cardGrid', text: 'Create card components inside the main layout grid', regex: /class=['"]card|metric['"]/i, target: 'html', met: false },
+      ]);
+    } else if (selectedTopic?.id === 'w2-d2-t6') {
+      setRequirements([
+        { id: 'mediaQueries', text: 'Implement at least 2 media queries to handle mobile and tablet screens', regex: /@media/gi, count: 2, target: 'css', met: false },
+        { id: 'transitionEffects', text: 'Use CSS transition property for hover animation states', regex: /transition\b|transition-property\b/i, target: 'css', met: false },
+        { id: 'keyframesDef', text: 'Define custom keyframes animation rules (@keyframes)', regex: /@keyframes\s+[a-zA-Z0-9_-]+/i, target: 'css', met: false },
+        { id: 'animationTrigger', text: 'Trigger the custom animation using animation properties', regex: /animation\b|animation-name\b/i, target: 'css', met: false },
+        { id: 'responsiveShowHide', text: 'Show or hide elements adaptively on mobile views (display: none)', regex: /display:\s*none/i, target: 'css', met: false },
+      ]);
+    } else if (selectedTopic?.id === 'w2-d3-t6') {
+      setRequirements([
+        { id: 'varsDeclaration', text: 'Declare block-scoped variables using const or let keywords', regex: /\b(const|let)\s+[a-zA-Z0-9_$]+/i, target: 'js', met: false },
+        { id: 'typeCasting', text: 'Perform explicit type conversion (e.g., Number, String, parseInt)', regex: /\b(Number|String|parseInt|parseFloat)\b/i, target: 'js', met: false },
+        { id: 'mathOperators', text: 'Utilize arithmetic operators (+, -, *, /, or %) for calculation logic', regex: /[-+*/%]/gi, target: 'js', met: false },
+        { id: 'compAssertions', text: 'Write comparison checks using strict equality (=== or !==)', regex: /==/gi, target: 'js', met: false },
+        { id: 'outputLogs', text: 'Display computed results using console.log or DOM manipulation', regex: /(console\.log|innerText|innerHTML)/i, target: 'js', met: false },
+      ]);
+    } else if (selectedTopic?.id === 'w2-d4-t6') {
+      setRequirements([
+        { id: 'ifElseCheck', text: 'Use conditional statements (if and else) to handle modes', regex: /\b(if|else)\b/gi, count: 2, target: 'js', met: false },
+        { id: 'loopsCheck', text: 'Implement a loop structure (for, while, or do-while)', regex: /\b(for|while)\b/i, target: 'js', met: false },
+        { id: 'loopControlCheck', text: 'Use loop controls (break or continue) to alter iteration flow', regex: /\b(break|continue)\b/i, target: 'js', met: false },
+        { id: 'domOutput', text: 'Output the generated sequence to the DOM', regex: /(innerText|innerHTML|textContent)/i, target: 'js', met: false },
+      ]);
     } else if (selectedTopic?.id === 'w2-d5-t7') {
       setRequirements([
-        { id: 'textarea', text: 'Create a textarea (id="note-text") for typing notes', regex: /<textarea\s+[^>]*?id\s*=\s*['"]note-text['"][^>]*?>/i, target: 'html', met: false },
-        { id: 'addBtn', text: 'Create an add button (id="add-note")', regex: /<button\s+[^>]*?id\s*=\s*['"]add-note['"][^>]*?>/i, target: 'html', met: false },
-        { id: 'notesList', text: 'Create a container (id="notes-list") to display notes', regex: /<div\s+[^>]*?id\s*=\s*['"]notes-list['"][^>]*?>/i, target: 'html', met: false },
-        { id: 'arrowFunc', text: 'Implement arrow functions (=>) for event handling or helpers', regex: /=>/i, target: 'js', met: false },
-        { id: 'arrayMethods', text: 'Use array operations (push, splice, map) to manage note lists', regex: /\.(push|splice|map)\b/i, target: 'js', met: false },
-        { id: 'localStorage', text: 'Persist and load data using localStorage APIs', regex: /localStorage\.(setItem|getItem)/i, target: 'js', met: false },
-        { id: 'json', text: 'Serialize and deserialize array arrays using JSON stringify/parse', regex: /JSON\.(stringify|parse)/i, target: 'js', met: false },
-        { id: 'timestamp', text: 'Include timestamp or unique Date IDs for saved notes', regex: /(new\s+Date|Date\.now)/i, target: 'js', met: false },
+        { id: 'funcDecl', text: 'Declare a function statement (using the function keyword)', regex: /\bfunction\b/i, target: 'js', met: false },
+        { id: 'arrowFunc', text: 'Declare an arrow function expression (using =>)', regex: /=>/i, target: 'js', met: false },
+        { id: 'callbackUsage', text: 'Execute a callback function parameter (e.g. formatCallback(val))', regex: /\b[a-zA-Z0-9_$]*callback[a-zA-Z0-9_$]*\s*\(/i, target: 'js', met: false },
+        { id: 'domOutput', text: 'Output the formatted text results to the DOM', regex: /(innerText|innerHTML|textContent)/i, target: 'js', met: false },
       ]);
     } else if (selectedTopic?.id === 'w2-d6-t7') {
       setRequirements([
-        { id: 'searchInput', text: 'Create search input (id="search") to filter users', regex: /<input\s+[^>]*?id\s*=\s*['"]search['"][^>]*?>/i, target: 'html', met: false },
-        { id: 'userListGrid', text: 'Create user card grid container (id="user-list")', regex: /<div\s+[^>]*?id\s*=\s*['"]user-list['"][^>]*?>/i, target: 'html', met: false },
-        { id: 'fetchApi', text: 'Use the fetch API to retrieve remote profiles', regex: /fetch\s*\(/i, target: 'js', met: false },
-        { id: 'targetEndpoint', text: 'Fetch specifically from the jsonplaceholder users endpoint', regex: /jsonplaceholder\.typicode\.com\/users/i, target: 'js', met: false },
-        { id: 'filterSearch', text: 'Implement search filtering using Array filter() and toLowerCase()', regex: /\.(filter|toLowerCase)\b/gi, count: 2, target: 'js', met: false },
-        { id: 'phoneAlert', text: 'Provide phone alerts using buttons triggering alert() dialogs', regex: /(alert\b|onclick\s*=)/i, target: 'js', met: false },
+        { id: 'arrayMap', text: 'Use the array .map() method to transform items', regex: /\b\.map\s*\(/i, target: 'js', met: false },
+        { id: 'arrayFilter', text: 'Use the array .filter() method to filter items', regex: /\b\.filter\s*\(/i, target: 'js', met: false },
+        { id: 'arrayReduce', text: 'Use the array .reduce() method to compute the total sum', regex: /\b\.reduce\s*\(/i, target: 'js', met: false },
+        { id: 'arrowSyntax', text: 'Use arrow functions (=>) within the array methods', regex: /=>/i, target: 'js', met: false },
+        { id: 'domRender', text: 'Render computed analytics results in the DOM', regex: /(innerText|innerHTML|textContent)/i, target: 'js', met: false },
       ]);
     } else if (selectedTopic?.id === 'd5-t5') {
       setRequirements([
@@ -510,6 +539,8 @@ const MainContent = () => {
   const CustomVisuals = {
     'NetworkAnimation': <NetworkAnimation />,
     'FlexboxPlayground': <FlexboxPlayground />,
+    'FlexboxGridVisualizer': <FlexboxGridVisualizer />,
+    'CSSAnimationsPlayground': <CSSAnimationsPlayground />,
     'SemanticLayoutVisualizer': <SemanticLayoutVisualizer />,
     'AccessibilityVisualizer': <AccessibilityVisualizer />,
     'StructureVisualizer': <StructureVisualizer />,
@@ -5056,7 +5087,11 @@ const MainContent = () => {
 
             let editorTabs = ['html'];
             if (weekNum > 1) {
-              editorTabs = ['html', 'css', 'js'];
+              if (weekNum === 2 && dayNum < 3) {
+                editorTabs = ['html', 'css'];
+              } else {
+                editorTabs = ['html', 'css', 'js'];
+              }
             } else if (weekNum === 1) {
               if (dayNum >= 5) {
                 editorTabs = ['html', 'css'];
