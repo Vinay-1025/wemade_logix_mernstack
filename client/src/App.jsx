@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard';
 import UsersList from './pages/UsersList';
 import AssignmentsList from './pages/AssignmentsList';
 import Profile from './pages/Profile';
+import Recordings from './pages/Recordings';
 import AuditLogs from './pages/AuditLogs';
 import AttendanceAdmin from './pages/AttendanceAdmin';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -21,6 +22,7 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route path="/" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/recordings" element={<Recordings />} />
         </Route>
         
         {/* Admin Routes */}

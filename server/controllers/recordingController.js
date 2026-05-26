@@ -116,4 +116,16 @@ const upsertRecording = async (req, res) => {
   }
 };
 
-module.exports = { getRecording, upsertRecording };
+// @desc    Get all recordings
+// @route   GET /api/recordings
+// @access  Private
+const getAllRecordings = async (req, res) => {
+  try {
+    const recordings = await Recording.find({});
+    res.json(recordings);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { getRecording, upsertRecording, getAllRecordings };

@@ -6,6 +6,36 @@ import { w2d3Data } from './w2-d3.js';
 import { w2d4Data } from './w2-d4.js';
 import { w2d5Data } from './w2-d5.js';
 import { w2d6Data } from './w2-d6.js';
+import { w3d1Data } from './w3-d1.js';
+import { w3d2Data } from './w3-d2.js';
+import { w3d3Data } from './w3-d3.js';
+import { w3d4Data } from './w3-d4.js';
+import { w3d5Data } from './w3-d5.js';
+import { w3d6Data } from './w3-d6.js';
+import { w4d1Data } from './w4-d1.js';
+import { w4d2Data } from './w4-d2.js';
+import { w4d3Data } from './w4-d3.js';
+import { w4d4Data } from './w4-d4.js';
+import { w4d5Data } from './w4-d5.js';
+import { w4d6Data } from './w4-d6.js';
+import { w5d1Data } from './w5-d1.js';
+import { w5d2Data } from './w5-d2.js';
+import { w5d3Data } from './w5-d3.js';
+import { w5d4Data } from './w5-d4.js';
+import { w5d5Data } from './w5-d5.js';
+import { w5d6Data } from './w5-d6.js';
+import { w6d1Data } from './w6-d1.js';
+import { w6d2Data } from './w6-d2.js';
+import { w6d3Data } from './w6-d3.js';
+import { w6d4Data } from './w6-d4.js';
+import { w6d5Data } from './w6-d5.js';
+import { w6d6Data } from './w6-d6.js';
+import { w7d1Data } from './w7-d1.js';
+import { w7d2Data } from './w7-d2.js';
+import { w7d3Data } from './w7-d3.js';
+import { w7d4Data } from './w7-d4.js';
+import { w7d5Data } from './w7-d5.js';
+import { w7d6Data } from './w7-d6.js';
 
 export const courseData = [
   {
@@ -1756,5 +1786,70 @@ export const courseData = [
       w2d5Data,
       w2d6Data
     ]
+  },
+  {
+    "weekId": "w3",
+    "weekTitle": "Week 3: Advanced JavaScript & React Introduction",
+    "days": [
+      w3d1Data,
+      w3d2Data,
+      w3d3Data,
+      w3d4Data,
+      w3d5Data,
+      w3d6Data
+    ]
+  },
+  {
+    "weekId": "w4",
+    "weekTitle": "Week 4: React Essentials & Routing",
+    "days": [
+      w4d1Data,
+      w4d2Data,
+      w4d3Data,
+      w4d4Data,
+      w4d5Data,
+      w4d6Data
+    ]
+  },
+  {
+    "weekId": "w5",
+    "weekTitle": "Week 5: React Advanced Hooks & MongoDB Foundations",
+    "days": [
+      w5d1Data,
+      w5d2Data,
+      w5d3Data,
+      w5d4Data,
+      w5d5Data,
+      w5d6Data
+    ]
+  },
+  {
+    "weekId": "w6",
+    "weekTitle": "Week 6: Node.js & Express API Development",
+    "days": [
+      w6d1Data,
+      w6d2Data,
+      w6d3Data,
+      w6d4Data,
+      w6d5Data,
+      w6d6Data
+    ]
+  },
+  {
+    "weekId": "w7",
+    "weekTitle": "Week 7: Backend Security, Hashing & Integration",
+    "days": [
+      w7d1Data,
+      w7d2Data,
+      w7d3Data,
+      w7d4Data,
+      w7d5Data,
+      w7d6Data
+    ]
+  },
+  {
+    "weekId": "w8",
+    "weekTitle": "Week 8: Capstone Project & Deployments",
+    "days": []
   }
 ];

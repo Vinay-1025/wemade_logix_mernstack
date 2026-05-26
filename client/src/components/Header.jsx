@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { logout, reset } from '../features/auth/authSlice';
-import { Sun, Moon, Menu, Search, Bell, User, LogOut, Users, Shield, GraduationCap, ChevronDown, ClipboardCheck, MessageSquare, Eye, EyeOff, X, QrCode } from 'lucide-react';
+import { Sun, Moon, Menu, Search, Bell, User, LogOut, Users, Shield, GraduationCap, ChevronDown, ClipboardCheck, MessageSquare, Eye, EyeOff, X, QrCode, Video } from 'lucide-react';
 import { useCourse } from '../context/CourseContext';
 import { courseData } from '../data/mockData';
 import { Html5Qrcode } from 'html5-qrcode';
@@ -493,6 +493,17 @@ const Header = () => {
               >
                 <Shield size={18} />
                 <span>Reset Password</span>
+              </button>
+
+              <button
+                className="dropdown-item"
+                onClick={() => {
+                  navigate('/recordings');
+                  setShowProfileMenu(false);
+                }}
+              >
+                <Video size={18} />
+                <span>Session Recordings</span>
               </button>
 
               <button

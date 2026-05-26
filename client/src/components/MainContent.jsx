@@ -36,6 +36,38 @@ import OperatorViz from './OperatorViz';
 import LoopViz from './LoopViz';
 import InputOutputViz from './InputOutputViz';
 import CalculatorTaskViz from './CalculatorTaskViz';
+import { 
+  PropsFlowViz, 
+  StateVsVariableViz, 
+  ListConditionalViz, 
+  ControlledFormViz, 
+  EffectLifecycleViz, 
+  RouterSimulatorViz 
+} from './ReactWeekVisualizers';
+import {
+  RefMemoViz,
+  ContextCustomHooksViz,
+  MiniProjectIntegrationViz,
+  NoSqlCollectionsViz,
+  CrudOperationsViz,
+  SchemaModelsViz
+} from './ReactDbWeekVisualizers';
+import {
+  NodeDbConnectionViz,
+  NodeCoreModulesViz,
+  ExpressRoutingViz,
+  BackendCrudOperationsViz,
+  MiddlewarePipelineViz,
+  MvcArchitectureViz
+} from './NodeExpressWeekVisualizers';
+import {
+  BcryptEncryptionViz,
+  JwtSessionsViz,
+  ProtectedRoutesViz,
+  BackendErrorHandlingViz,
+  FileUploadEnvViz,
+  MernIntegrationViz
+} from './BackendSecurityVisualizers';
 import {
   WebFundamentalsVisualizer,
   NetworkTopologySimulator,
@@ -209,6 +241,118 @@ const MainContent = () => {
         { id: 'arrayReduce', text: 'Use the array .reduce() method to compute the total sum', regex: /\b\.reduce\s*\(/i, target: 'js', met: false },
         { id: 'arrowSyntax', text: 'Use arrow functions (=>) within the array methods', regex: /=>/i, target: 'js', met: false },
         { id: 'domRender', text: 'Render computed analytics results in the DOM', regex: /(innerText|innerHTML|textContent)/i, target: 'js', met: false },
+      ]);
+    } else if (selectedTopic?.id === 'w3-d1-t6') {
+      setRequirements([
+        { id: 'classDecl', text: 'Declare an ES6 class (using class keyword)', regex: /\bclass\s+[a-zA-Z0-9_$]+/i, target: 'js', met: false },
+        { id: 'constructorMethod', text: 'Implement a constructor method in your class', regex: /\bconstructor\b\s*\(/i, target: 'js', met: false },
+        { id: 'destructureObject', text: 'Unpack properties using object destructuring', regex: /\{(.*?)\}\s*=\s*(this\.|[a-zA-Z0-9_$]+)/i, target: 'js', met: false },
+        { id: 'spreadMerge', text: 'Merge properties or arrays using the spread operator (...)', regex: /\.\.\.[a-zA-Z0-9_$]+/i, target: 'js', met: false },
+        { id: 'thisContext', text: 'Access instance attributes using the this keyword', regex: /\bthis\.[a-zA-Z0-9_$]+/i, target: 'js', met: false },
+      ]);
+    } else if (selectedTopic?.id === 'w3-d2-t6') {
+      setRequirements([
+        { id: 'createElement', text: 'Create DOM elements dynamically using document.createElement', regex: /document\.createElement\s*\(/i, target: 'js', met: false },
+        { id: 'appendNode', text: 'Add items to the DOM tree using appendChild or prepend', regex: /\.(appendChild|prepend)\s*\(/i, target: 'js', met: false },
+        { id: 'selectElement', text: 'Query DOM elements using querySelector or getElementById', regex: /document\.(querySelector|getElementById)\s*\(/i, target: 'js', met: false },
+        { id: 'classListControl', text: 'Modify CSS classes using classList.add or classList.toggle', regex: /classList\.(add|toggle)\s*\(/i, target: 'js', met: false },
+        { id: 'removeNode', text: 'Implement nodal deletions using remove()', regex: /\b[a-zA-Z0-9_$]+\.remove\s*\(\s*\)/i, target: 'js', met: false },
+      ]);
+    } else if (selectedTopic?.id === 'w3-d3-t7') {
+      setRequirements([
+        { id: 'textareaNote', text: 'Implement a textarea with id="note-text"', regex: /<textarea\s+[^>]*?id\s*=\s*['"]note-text['"][^>]*?>/i, target: 'html', met: false },
+        { id: 'addNoteBtn', text: 'Implement a button with id="add-note"', regex: /<button\s+[^>]*?id\s*=\s*['"]add-note['"][^>]*?>/i, target: 'html', met: false },
+        { id: 'notesListContainer', text: 'Implement a notes container with id="notes-list"', regex: /<div\s+[^>]*?id\s*=\s*['"]notes-list['"][^>]*?>/i, target: 'html', met: false },
+        { id: 'eventListener', text: 'Attach click triggers using event listener properties or addEventListener', regex: /(\.onclick\b|addEventListener\s*\(\s*['"]click['"])/i, target: 'js', met: false },
+        { id: 'localStorageAccess', text: 'Persist notes data using localStorage APIs', regex: /localStorage\.(setItem|getItem)/i, target: 'js', met: false },
+        { id: 'jsonParsing', text: 'Serialize and deserialize array state using JSON stringify/parse', regex: /JSON\.(stringify|parse)/i, target: 'js', met: false },
+        { id: 'timestampNode', text: 'Add creation timestamps (e.g. using new Date() or toLocaleTimeString())', regex: /(new\s+Date|Date\.now|\.toLocaleTimeString)/i, target: 'js', met: false },
+      ]);
+    } else if (selectedTopic?.id === 'w3-d4-t6') {
+      setRequirements([
+        { id: 'promiseInstance', text: 'Instantiate or return a Promise structure (new Promise)', regex: /\bnew\s+Promise\s*\(/i, target: 'js', met: false },
+        { id: 'asyncAwaitSyntax', text: 'Implement async and await keywords to manage flow', regex: /\b(async|await)\b/gi, count: 2, target: 'js', met: false },
+        { id: 'tryCatchBlock', text: 'Handle runtime errors using try...catch blocks', regex: /\btry\b[\s\S]*?\bcatch\b/is, met: false },
+        { id: 'timerDelay', text: 'Use setTimeout inside your delay helper', regex: /setTimeout\s*\(/i, target: 'js', met: false },
+      ]);
+    } else if (selectedTopic?.id === 'w3-d5-t7') {
+      setRequirements([
+        { id: 'fetchMethod', text: 'Use the fetch API to retrieve remote profiles', regex: /fetch\s*\(/i, target: 'js', met: false },
+        { id: 'usersEndpoint', text: 'Fetch specifically from the jsonplaceholder users endpoint', regex: /jsonplaceholder\.typicode\.com\/users/i, target: 'js', met: false },
+        { id: 'jsonConversion', text: 'Parse the response stream to JSON (res.json())', regex: /\.json\s*\(\s*\)/i, target: 'js', met: false },
+        { id: 'searchBoxInput', text: 'Create search input (id="search") to filter profiles', regex: /<input\s+[^>]*?id\s*=\s*['"]search['"][^>]*?>/i, target: 'html', met: false },
+        { id: 'cardGridList', text: 'Create user card grid container (id="user-list")', regex: /<div\s+[^>]*?id\s*=\s*['"]user-list['"][^>]*?>/i, target: 'html', met: false },
+        { id: 'realTimeFilter', text: 'Implement live search filtering using Array filter() and toLowerCase()', regex: /\.(filter|toLowerCase)\b/gi, count: 2, target: 'js', met: false },
+        { id: 'phoneAlertTrigger', text: 'Bind card button clicks to phone alert() dialogs', regex: /(alert\b|\.onclick\b)/i, target: 'js', met: false },
+      ]);
+    } else if (selectedTopic?.id === 'w3-d6-t6') {
+      setRequirements([
+        { id: 'componentCardClass', text: 'Create a component layout card with class="component-card"', regex: /class=['"]component-card['"]/i, target: 'html', met: false },
+        { id: 'propsOutlines', text: 'Include mock user properties (name, role, and bio classes)', regex: /class=['"]component-prop-(name|role|bio)['"]/gi, count: 3, target: 'html', met: false },
+        { id: 'conceptFunc', text: 'Declare a mockup functional component in JS (e.g. function UserProfileCard(props))', regex: /(function\s+[a-zA-Z0-9_$]+\s*\(\s*props\s*\)|const\s+[a-zA-Z0-9_$]+\s*=\s*\(\s*props\s*\)\s*=>)/i, target: 'js', met: false },
+      ]);
+    } else if (selectedTopic?.id === 'w4-d1-t6') {
+      setRequirements([
+        { id: 'userCardComponent', text: 'Declare a UserCard functional component', regex: /(const\s+UserCard\b|function\s+UserCard\b)/i, target: 'js', met: false },
+        { id: 'propsUsage', text: 'Verify props are destructured or passed in parameters', regex: /(\bUserCard\s*\(\s*\{|\bUserCard\s*\(\s*props\b)/i, target: 'js', met: false },
+        { id: 'defaultProps', text: 'Define fallback default values for role or themeColor', regex: /(role\s*=\s*['"]Student['"]|themeColor\s*=\s*['"]#[0-9a-fA-F]{3,6}['"]|\.defaultProps\b)/i, target: 'js', met: false },
+        { id: 'multipleCards', text: 'Render at least 3 instances of <UserCard /> in App', regex: /<UserCard\b/gi, count: 3, target: 'js', met: false },
+      ]);
+    } else if (selectedTopic?.id === 'w4-d2-t6') {
+      setRequirements([
+        { id: 'useStateHook', text: 'Initialize state using the useState hook', regex: /\buseState\s*\(/i, target: 'js', met: false },
+        { id: 'functionalUpdate', text: 'Use the functional updater pattern (prev => ...) for count updates', regex: /(setCount\s*\(\s*[a-zA-Z0-9_$]+\s*=>|\(\s*prev\s*=>\s*prev\s*[-+])/i, target: 'js', met: false },
+        { id: 'themeToggleState', text: 'Implement a theme toggle (e.g. isDarkMode or theme) in state', regex: /(\btheme\b|\bdarkMode\b|\bisDarkMode\b)/i, target: 'js', met: false },
+        { id: 'resetHandler', text: 'Implement a reset button that resets count back to 0', regex: /(setCount\s*\(\s*0\s*\)|reset)/i, target: 'js', met: false },
+      ]);
+    } else if (selectedTopic?.id === 'w4-d3-t6') {
+      setRequirements([
+        { id: 'arrayMapList', text: 'Render list items dynamically using the array .map() method', regex: /\b\.map\s*\(/i, target: 'js', met: false },
+        { id: 'keyProp', text: 'Provide a unique key prop for each item rendered in a list', regex: /\bkey\s*=\s*\{/i, target: 'js', met: false },
+        { id: 'filterState', text: 'Filter list items dynamically based on the active filter state', regex: /(\bfilter\s*\b|\bactiveFilter\b|\b\.filter\s*\()/i, target: 'js', met: false },
+        { id: 'addDeleteHandlers', text: 'Implement functions to add and delete items in state', regex: /(setTasks|deleteTask|toggleTask|handleAddTask)/i, target: 'js', met: false },
+      ]);
+    } else if (selectedTopic?.id === 'w4-d4-t6') {
+      setRequirements([
+        { id: 'singleStateObject', text: 'Manage form fields using a single state object', regex: /\buseState\s*\(\s*\{\s*(username|email|password|agree)/i, target: 'js', met: false },
+        { id: 'onChangeHandler', text: 'Sync input values to state using value and onChange attributes', regex: /value\s*=\s*\{.*?formData\..*?\}\s*onChange\s*=/is, target: 'js', met: false },
+        { id: 'computedPropertyKeys', text: 'Update the state object dynamically using computed property names', regex: /(\[\s*name\s*\]\s*:\s*|\[\s*e\.target\.name\s*\]\s*:\s*)/i, target: 'js', met: false },
+        { id: 'disabledSubmit', text: 'Disable the submit button until all validation checks pass', regex: /disabled\s*=\s*\{/i, target: 'js', met: false },
+      ]);
+    } else if (selectedTopic?.id === 'w4-d5-t6') {
+      setRequirements([
+        { id: 'useEffectHook', text: 'Use the useEffect hook to fetch user profiles on mount', regex: /\buseEffect\s*\(/i, target: 'js', met: false },
+        { id: 'fetchJsonPlaceholder', text: 'Fetch user profiles from jsonplaceholder endpoint', regex: /fetch\s*\(\s*['"]https:\/\/jsonplaceholder\.typicode\.com\/users/i, target: 'js', met: false },
+        { id: 'cleanupActiveFlag', text: 'Return a cleanup function from useEffect to prevent memory leaks', regex: /(return\s*\(\s*\)\s*=>|active\s*=\s*false|controller\.abort)/i, target: 'js', met: false },
+        { id: 'loadingErrorStates', text: 'Track and display loading or error states in the UI', regex: /(loading|error)/i, target: 'js', met: false },
+      ]);
+    } else if (selectedTopic?.id === 'w4-d6-t6') {
+      setRequirements([
+        { id: 'routerContext', text: 'Wrap the application layout in a Router component (e.g. HashRouter)', regex: /<(HashRouter|BrowserRouter)\b/i, target: 'js', met: false },
+        { id: 'routesDefinitions', text: 'Configure routes using Routes and Route matching elements', regex: /<(Routes|Route)\b/i, target: 'js', met: false },
+        { id: 'linkComponents', text: 'Use Link components for navigation to prevent full page reloads', regex: /<(Link|NavLink)\b/i, target: 'js', met: false },
+        { id: 'useNavigateHook', text: 'Redirect users programmatically on the About page using useNavigate', regex: /\buseNavigate\s*\(\s*\)/i, target: 'js', met: false },
+      ]);
+    } else if (selectedTopic?.id === 'w5-d1-t6') {
+      setRequirements([
+        { id: 'useRefHook', text: 'Initialize DOM refs using the useRef hook', regex: /\buseRef\s*\(/i, target: 'js', met: false },
+        { id: 'focusDOM', text: 'Trigger focus on the input element using ref.current.focus()', regex: /\.focus\s*\(\s*\)/i, target: 'js', met: false },
+        { id: 'useMemoHook', text: 'Wrap expensive filtering calculations inside useMemo', regex: /\buseMemo\s*\(/i, target: 'js', met: false },
+        { id: 'filteringLogic', text: 'Filter module results dynamically based on search query', regex: /(\bquery\b|\b\.filter\s*\()/i, target: 'js', met: false },
+      ]);
+    } else if (selectedTopic?.id === 'w5-d2-t6') {
+      setRequirements([
+        { id: 'createContext', text: 'Create ThemeContext global state container', regex: /\bcreateContext\s*\(/i, target: 'js', met: false },
+        { id: 'contextProvider', text: 'Render ThemeContext.Provider wrapping layout component trees', regex: /ThemeContext\.Provider/i, target: 'js', met: false },
+        { id: 'useContextHook', text: 'Consume context state variables using the useContext hook', regex: /\buseContext\s*\(/i, target: 'js', met: false },
+        { id: 'customLocalStorageHook', text: 'Implement a custom useLocalStorage hook to persist theme selections', regex: /\buseLocalStorage\b/i, target: 'js', met: false },
+      ]);
+    } else if (selectedTopic?.id === 'w5-d3-t6') {
+      setRequirements([
+        { id: 'trelloBoardContext', text: 'Utilize ThemeContext to configure global dark/light layout themes', regex: /ThemeContext\.Provider/i, target: 'js', met: false },
+        { id: 'tasksStateBoard', text: 'Manage collaborative board cards using tasks state arrays', regex: /(tasks|setTasks)/i, target: 'js', met: false },
+        { id: 'refInputCard', text: 'Focus task text inputs dynamically on mount using useRef hooks', regex: /\buseRef\s*\(/i, target: 'js', met: false },
+        { id: 'memoizedTasks', text: 'Optimize search board filters utilizing useMemo configurations', regex: /\buseMemo\s*\(/i, target: 'js', met: false },
       ]);
     } else if (selectedTopic?.id === 'd5-t5') {
       setRequirements([
@@ -563,6 +707,30 @@ const MainContent = () => {
     'ScopeHoistingViz': <ScopeHoistingViz />,
     'PromiseFlowViz': <PromiseFlowViz />,
     'StorageManagerViz': <StorageManagerViz />,
+    'PropsFlowViz': <PropsFlowViz />,
+    'StateVsVariableViz': <StateVsVariableViz />,
+    'ListConditionalViz': <ListConditionalViz />,
+    'ControlledFormViz': <ControlledFormViz />,
+    'EffectLifecycleViz': <EffectLifecycleViz />,
+    'RouterSimulatorViz': <RouterSimulatorViz />,
+    'RefMemoViz': <RefMemoViz />,
+    'ContextCustomHooksViz': <ContextCustomHooksViz />,
+    'MiniProjectIntegrationViz': <MiniProjectIntegrationViz />,
+    'NoSqlCollectionsViz': <NoSqlCollectionsViz />,
+    'CrudOperationsViz': <CrudOperationsViz />,
+    'SchemaModelsViz': <SchemaModelsViz />,
+    'NodeDbConnectionViz': <NodeDbConnectionViz />,
+    'NodeCoreModulesViz': <NodeCoreModulesViz />,
+    'ExpressRoutingViz': <ExpressRoutingViz />,
+    'BackendCrudOperationsViz': <BackendCrudOperationsViz />,
+    'MiddlewarePipelineViz': <MiddlewarePipelineViz />,
+    'MvcArchitectureViz': <MvcArchitectureViz />,
+    'BcryptEncryptionViz': <BcryptEncryptionViz />,
+    'JwtSessionsViz': <JwtSessionsViz />,
+    'ProtectedRoutesViz': <ProtectedRoutesViz />,
+    'BackendErrorHandlingViz': <BackendErrorHandlingViz />,
+    'FileUploadEnvViz': <FileUploadEnvViz />,
+    'MernIntegrationViz': <MernIntegrationViz />,
     'DataTypeViz': <DataTypeViz />,
     'LogicFlowViz': <LogicFlowViz />,
     'OperatorViz': <OperatorViz />,
@@ -708,8 +876,7 @@ const MainContent = () => {
       { id: 'tutor', title: 'Wemade Material', icon: <ShieldCheck size={16} /> }
     );
 
-    const hasRecording = recording && (recording.morningLink || recording.eveningLink || recording.commonLink);
-    const showRecordingTab = isTutorOrAdmin || hasRecording;
+    const showRecordingTab = isTutorOrAdmin;
 
     if (showRecordingTab) {
       sections.push(
@@ -5042,7 +5209,60 @@ const MainContent = () => {
                 <div className="preview-label">Live Preview of Final Result</div>
                 <iframe
                   className="goal-preview-frame"
-                  srcDoc={`
+                  srcDoc={!!selectedTopic.id.match(/^(w4|w5-d[1-3])/) ? `
+                    <!DOCTYPE html>
+                    <html>
+                      <head>
+                        <meta charset="UTF-8" />
+                        <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+                        <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+                        <script src="https://unpkg.com/@babel/standalone/babel.min.js" crossorigin></script>
+                        <script src="https://unpkg.com/react-router-dom@6.22.3/dist/umd/react-router-dom.production.min.js" crossorigin></script>
+                        <style>
+                          ${selectedTopic.codeTemplate?.css || ''}
+                          body {
+                            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                            padding: 16px;
+                            margin: 0;
+                            background: #f8fafc;
+                            color: #0f172a;
+                          }
+                        </style>
+                      </head>
+                      <body>
+                        <div id="root"></div>
+                        ${selectedTopic.codeTemplate?.html || ''}
+
+                        <script type="text/babel">
+                          try {
+                            const { useState, useEffect, useRef, useMemo, useCallback } = React;
+                            if (window.ReactRouterDOM) {
+                              window.BrowserRouter = window.ReactRouterDOM.BrowserRouter;
+                              window.HashRouter = window.ReactRouterDOM.HashRouter;
+                              window.Routes = window.ReactRouterDOM.Routes;
+                              window.Route = window.ReactRouterDOM.Route;
+                              window.Link = window.ReactRouterDOM.Link;
+                              window.useNavigate = window.ReactRouterDOM.useNavigate;
+                              window.useParams = window.ReactRouterDOM.useParams;
+                              window.useLocation = window.ReactRouterDOM.useLocation;
+                            }
+
+                            ${selectedTopic.codeTemplate?.js || ''}
+
+                            // Auto-render
+                            setTimeout(() => {
+                              if (typeof App !== 'undefined' && !document.getElementById('root').innerHTML) {
+                                const root = ReactDOM.createRoot(document.getElementById('root'));
+                                root.render(<App />);
+                              }
+                            }, 100);
+                          } catch (err) {
+                            console.error(err);
+                          }
+                        </script>
+                      </body>
+                    </html>
+                  ` : `
                     <html>
                       <head>
                         <style>
@@ -5066,7 +5286,7 @@ const MainContent = () => {
                 <FileEdit size={20} color="var(--primary-cyan)" />
                 <h2>Hands-on Playground</h2>
               </div>
-              <CodeEditor initialCode={selectedTopic.codeTemplate} />
+              <CodeEditor initialCode={selectedTopic.codeTemplate} isReact={!!selectedTopic.id.match(/^(w4|w5-d[1-3])/)} isBackend={!!selectedTopic.id.match(/^(w6|w7)/)} />
             </section>
           ) : null}
 
@@ -5179,6 +5399,8 @@ const MainContent = () => {
                         initialCode={submittedCode}
                         tabs={editorTabs}
                         readOnly={isLocked}
+                        isReact={!!selectedTopic.id.match(/^(w4|w5-d[1-3])/)}
+                        isBackend={!!selectedTopic.id.match(/^(w6|w7)/)}
                         onChange={(newCode) => {
                           if (!isLocked) {
                             window.currentAssignmentCode = newCode;
