@@ -44,6 +44,20 @@ const migrateAttendanceData = async () => {
   try {
     const AttendanceRecord = require('./models/AttendanceRecord');
     const AttendanceSession = require('./models/AttendanceSession');
+
+    // Drop the old student_1_session_1 unique index if it exists
+    try {
+      const collection = mongoose.connection.collection('attendancerecords');
+      const indexes = await collection.indexes();
+      const hasOldIndex = indexes.some(idx => idx.name === 'student_1_session_1');
+      if (hasOldIndex) {
+        console.log('[Migration] Dropping old student_1_session_1 index...');
+        await collection.dropIndex('student_1_session_1');
+        console.log('[Migration] student_1_session_1 index dropped successfully.');
+      }
+    } catch (indexErr) {
+      console.error('[Migration] Failed to drop old student_1_session_1 index:', indexErr);
+    }
     
     const normalizeDayId = (dayId) => {
       if (!dayId) return '';
