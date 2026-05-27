@@ -291,7 +291,7 @@ const getAttendanceStats = async (req, res) => {
       }
     });
 
-    const attendedCount = liveCount + recordingCount;
+    attendedCount = liveCount + recordingCount;
 
     const attendancePercentage = totalSessions > 0 
       ? Math.round((attendedCount / totalSessions) * 100) 
