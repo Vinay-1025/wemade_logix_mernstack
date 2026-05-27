@@ -15,6 +15,44 @@ const normalizeDayId = (dayId) => {
   return str;
 };
 
+const getCalendarDateForDay = (dayId) => {
+  const baseDate = new Date(2026, 4, 18); // May 18, 2026 (Month is 0-indexed)
+  baseDate.setHours(0, 0, 0, 0);
+
+  const getDayNumber = (id) => {
+    if (!id) return 1;
+    const str = id.toString().trim().toLowerCase();
+    if (/^\d+$/.test(str)) {
+      return parseInt(str, 10);
+    }
+    const match = str.match(/^w(\d+)-d(\d+)$/);
+    if (match) {
+      const week = parseInt(match[1], 10);
+      const day = parseInt(match[2], 10);
+      if (week === 1 && day === 0) return 0;
+      return (week - 1) * 6 + day;
+    }
+    return 1;
+  };
+
+  const dayNo = getDayNumber(dayId);
+  if (dayNo === 0) {
+    return '2026-05-18';
+  }
+
+  let targetDate = new Date(baseDate);
+  let nonSundayDaysAdded = 0;
+
+  while (nonSundayDaysAdded < dayNo - 1) {
+    targetDate.setDate(targetDate.getDate() + 1);
+    if (targetDate.getDay() !== 0) { // 0 is Sunday
+      nonSundayDaysAdded++;
+    }
+  }
+
+  return targetDate.toLocaleDateString('en-CA');
+};
+
 // @desc    Enable attendance (Generate new active session)
 // @route   POST /api/attendance/session
 // @access  Private/Admin
@@ -182,12 +220,11 @@ const getAttendanceStats = async (req, res) => {
       }
     });
 
-    // Group sessions by date string (YYYY-MM-DD)
+    // Group sessions by calculated calendar date string (YYYY-MM-DD)
     const sessionsByDate = {};
     sessions.forEach(session => {
-      if (!session) return;
-      const dateObj = session.createdAt || new Date();
-      const dateStr = new Date(dateObj).toLocaleDateString('en-CA');
+      if (!session || !session.dayId) return;
+      const dateStr = getCalendarDateForDay(session.dayId);
       if (!sessionsByDate[dateStr]) {
         sessionsByDate[dateStr] = [];
       }
@@ -221,11 +258,12 @@ const getAttendanceStats = async (req, res) => {
       }
     });
 
-    // Overlay records directly on their calendar dates so they are guaranteed to show up in the heatmap
+    // Overlay records directly on their calculated calendar dates so they are guaranteed to show up in the heatmap
     records.forEach(r => {
-      if (r && r.date) {
-        if (!heatmapData[r.date] || heatmapData[r.date] === 'missed' || heatmapData[r.date] === 'none') {
-          heatmapData[r.date] = r.attendanceType || 'live';
+      if (r && r.dayId) {
+        const calculatedDateStr = getCalendarDateForDay(r.dayId);
+        if (!heatmapData[calculatedDateStr] || heatmapData[calculatedDateStr] === 'missed' || heatmapData[calculatedDateStr] === 'none') {
+          heatmapData[calculatedDateStr] = r.attendanceType || 'live';
         }
       }
     });
@@ -310,13 +348,8 @@ const markRecordingAttendance = async (req, res) => {
       });
     }
 
-    // 2. Find if a session exists for this dayId to get the date it was held
-    const session = await AttendanceSession.findOne({ dayId: formattedDayId }).sort({ createdAt: 1 });
-    let recordDate = new Date().toLocaleDateString('en-CA'); // Default fallback to today
-
-    if (session && session.createdAt) {
-      recordDate = new Date(session.createdAt).toLocaleDateString('en-CA');
-    }
+    // 2. Calculate the calendar date of the session from the start date (May 18, 2026) skipping Sundays
+    const recordDate = getCalendarDateForDay(formattedDayId);
 
     // 3. Create recording-based attendance record
     const record = await AttendanceRecord.create({

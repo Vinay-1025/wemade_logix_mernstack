@@ -58,6 +58,44 @@ const migrateAttendanceData = async () => {
       return str;
     };
 
+    const getCalendarDateForDay = (dayId) => {
+      const baseDate = new Date(2026, 4, 18); // May 18, 2026 (Month is 0-indexed)
+      baseDate.setHours(0, 0, 0, 0);
+
+      const getDayNumber = (id) => {
+        if (!id) return 1;
+        const str = id.toString().trim().toLowerCase();
+        if (/^\d+$/.test(str)) {
+          return parseInt(str, 10);
+        }
+        const match = str.match(/^w(\d+)-d(\d+)$/);
+        if (match) {
+          const week = parseInt(match[1], 10);
+          const day = parseInt(match[2], 10);
+          if (week === 1 && day === 0) return 0;
+          return (week - 1) * 6 + day;
+        }
+        return 1;
+      };
+
+      const dayNo = getDayNumber(dayId);
+      if (dayNo === 0) {
+        return '2026-05-18';
+      }
+
+      let targetDate = new Date(baseDate);
+      let nonSundayDaysAdded = 0;
+
+      while (nonSundayDaysAdded < dayNo - 1) {
+        targetDate.setDate(targetDate.getDate() + 1);
+        if (targetDate.getDay() !== 0) { // 0 is Sunday
+          nonSundayDaysAdded++;
+        }
+      }
+
+      return targetDate.toLocaleDateString('en-CA');
+    };
+
     // 1. Backfill dayId in records where it doesn't exist
     const recordsWithoutDayId = await AttendanceRecord.find({ dayId: { $exists: false } }).populate('session');
     if (recordsWithoutDayId.length > 0) {
@@ -119,23 +157,20 @@ const migrateAttendanceData = async () => {
       console.log(`[Migration] Normalized dayId in ${updatedRecordsCount} records.`);
     }
 
-    // 4. Update existing recording records to use their original session's date (if one exists)
+    // 4. Update all existing records to use their calculated calendar date (May 18 base, skip Sundays)
     let updatedDatesCount = 0;
     for (const rec of records) {
-      if (rec.attendanceType === 'recording') {
-        const session = await AttendanceSession.findOne({ dayId: rec.dayId }).sort({ createdAt: 1 });
-        if (session && session.createdAt) {
-          const sessionDateStr = new Date(session.createdAt).toLocaleDateString('en-CA');
-          if (rec.date !== sessionDateStr) {
-            rec.date = sessionDateStr;
-            await rec.save();
-            updatedDatesCount++;
-          }
+      if (rec.dayId) {
+        const calculatedDateStr = getCalendarDateForDay(rec.dayId);
+        if (rec.date !== calculatedDateStr) {
+          rec.date = calculatedDateStr;
+          await rec.save();
+          updatedDatesCount++;
         }
       }
     }
     if (updatedDatesCount > 0) {
-      console.log(`[Migration] Updated date to original session date in ${updatedDatesCount} recording records.`);
+      console.log(`[Migration] Updated date to calculated calendar date in ${updatedDatesCount} records.`);
     }
 
     console.log('[Migration] Attendance data normalization check completed.');
