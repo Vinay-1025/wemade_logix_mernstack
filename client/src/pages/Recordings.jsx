@@ -312,38 +312,27 @@ const Recordings = () => {
     <MainLayout showSidebar={!activeVideoUrl}>
       {activeVideoUrl ? (
         /* Full Screen Theater Mode Player View */
-        <div className="theater-mode-view" style={{ background: '#090d16', color: '#f8fafc', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+        <div className="theater-mode-view">
           
           {/* Top navigation */}
-          <div className="theater-header" style={{ padding: '16px 24px', background: '#0b0f19', borderBottom: '1px solid #1e293b', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className="theater-header">
             <button 
               onClick={() => {
                 setActiveVideoUrl('');
                 setActiveDayData(null);
               }}
-              style={{
-                background: 'transparent',
-                border: 'none',
-                color: '#cbd5e1',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                fontSize: '0.9rem',
-                fontWeight: '700'
-              }}
               className="back-list-btn"
             >
               <ArrowLeft size={18} /> Back to Recordings List
             </button>
-            <div style={{ textAlign: 'center' }}>
-              <h2 style={{ margin: 0, fontSize: '1.15rem', fontWeight: '800', color: 'white' }}>{activeVideoTitle}</h2>
-              {activeDayData && <span style={{ fontSize: '0.7rem', color: '#64748b', textTransform: 'uppercase' }}>{activeDayData.weekId} • {activeDayData.dayId.toUpperCase()}</span>}
+            <div className="theater-title-section">
+              <h2 className="theater-title">{activeVideoTitle}</h2>
+              {activeDayData && <span className="theater-subtitle">{activeDayData.weekId} • {activeDayData.dayId.toUpperCase()}</span>}
             </div>
             {/* Top Header Verification Tools on the right */}
-            <div style={{ display: 'flex', justifyContent: 'flex-end', minWidth: '220px' }}>
+            <div className="theater-header-right">
               {activeDayData && !isAdmin && (
-                <div style={{ display: 'flex', alignItems: 'center' }}>
+                <div className="theater-tools-wrap">
                   {(() => {
                     const matchedAttendance = myAttendance.find(
                       a => a.dayId && normalizeDayId(a.dayId) === normalizeDayId(activeDayData.dayId)
@@ -352,18 +341,7 @@ const Recordings = () => {
                     if (matchedAttendance) {
                       const isLive = matchedAttendance.attendanceType === 'live';
                       return (
-                        <div style={{ 
-                          display: 'flex', 
-                          alignItems: 'center', 
-                          gap: '6px', 
-                          background: isLive ? 'rgba(16, 185, 129, 0.08)' : 'rgba(14, 165, 233, 0.08)', 
-                          border: isLive ? '1px solid rgba(16, 185, 129, 0.15)' : '1px solid rgba(14, 165, 233, 0.15)',
-                          borderRadius: '16px', 
-                          padding: '6px 14px',
-                          color: isLive ? '#10b981' : '#0ea5e9',
-                          fontSize: '0.75rem',
-                          fontWeight: '800'
-                        }}>
+                        <div className={`attendance-verified-badge ${isLive ? 'is-live' : 'is-recording'}`}>
                           <CheckCircle2 size={14} /> 
                           <span>Verified ({isLive ? 'Live' : 'Recording'})</span>
                         </div>
@@ -372,12 +350,15 @@ const Recordings = () => {
                     
                     if (timerActive) {
                       return (
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
-                          <span style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: '700' }}>
+                        <div className="attendance-timer-container">
+                          <span className="attendance-timer-text">
                             Unlock in <strong>{countdown}s</strong>
                           </span>
-                          <div style={{ width: '100px', height: '4px', background: 'rgba(255,255,255,0.06)', borderRadius: '2px', overflow: 'hidden' }}>
-                            <div style={{ height: '100%', background: 'var(--primary-cyan)', width: `${((30 - countdown) / 30) * 100}%`, transition: 'width 1s linear' }}></div>
+                          <div className="attendance-timer-bar-bg">
+                            <div 
+                              className="attendance-timer-bar-fill" 
+                              style={{ width: `${((30 - countdown) / 30) * 100}%` }}
+                            ></div>
                           </div>
                         </div>
                       );
@@ -388,22 +369,7 @@ const Recordings = () => {
                         <button
                           onClick={handleMarkMyAttendance}
                           disabled={markingAttendance}
-                          style={{
-                            padding: '8px 16px',
-                            background: 'linear-gradient(135deg, #0ea5e9, #10b981)',
-                            border: 'none',
-                            borderRadius: '20px',
-                            color: '#090d16',
-                            fontWeight: '800',
-                            fontSize: '0.75rem',
-                            cursor: 'pointer',
-                            boxShadow: '0 4px 10px rgba(16, 185, 129, 0.25)',
-                            transition: 'all 0.2s',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '4px'
-                          }}
-                          className="theater-trigger-btn"
+                          className="verify-attendance-btn"
                         >
                           <CheckCircle2 size={12} /> {markingAttendance ? 'Verifying...' : 'Verify Attendance'}
                         </button>
@@ -418,40 +384,24 @@ const Recordings = () => {
           </div>
 
           {/* Main Video View Box - Spans Full Width */}
-          <div className="theater-layout" style={{ flex: 1, display: 'flex', minHeight: 0, width: '100%' }}>
+          <div className="theater-layout">
             {/* Full-width Video Player Frame */}
-            <div className="theater-video-frame-box" style={{ flex: 1, width: '100%', background: 'black', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div className="theater-video-frame-box">
               <iframe 
                 src={getEmbedUrl(activeVideoUrl)}
                 title="Theater playback screen"
-                style={{ width: '100%', height: '100%', border: 'none', minHeight: '560px' }}
+                className="theater-iframe"
                 allow="autoplay; encrypted-media; picture-in-picture"
                 allowFullScreen
               />
               {/* Cover Pop Out Icon Overlay */}
-              <div style={{
-                position: 'absolute',
-                top: '12px',
-                right: '48px', // Covers the native pop-out button on Drive iframe
-                width: '110px',
-                height: '40px',
-                borderRadius: '20px',
-                background: '#090d16',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                zIndex: 5,
-                pointerEvents: 'all',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.5)',
-                gap: '8px'
-              }}>
+              <div className="theater-overlay">
                 <img
                   src="/fav_icon.png"
                   alt="Wemade Logo"
-                  style={{ width: '16px', height: '16px', objectFit: 'contain' }}
+                  className="theater-overlay-logo"
                 />
-                <span style={{ color: '#fff', fontSize: '0.75rem', fontWeight: '800', letterSpacing: '0.5px' }}>WEMADE</span>
+                <span className="theater-overlay-text">WEMADE</span>
               </div>
             </div>
           </div>
@@ -919,6 +869,173 @@ const Recordings = () => {
           100% { transform: rotate(360deg); }
         }
 
+        /* Theater mode general styles */
+        .theater-mode-view {
+          background: #090d16;
+          color: #f8fafc;
+          min-height: 100vh;
+          display: flex;
+          flex-direction: column;
+        }
+        .theater-header {
+          padding: 16px 24px;
+          background: #0b0f19;
+          border-bottom: 1px solid #1e293b;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        .back-list-btn {
+          background: transparent;
+          border: none;
+          color: #cbd5e1;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 0.9rem;
+          font-weight: 700;
+          transition: all 0.2s;
+        }
+        .theater-title-section {
+          text-align: center;
+        }
+        .theater-title {
+          margin: 0;
+          font-size: 1.15rem;
+          font-weight: 800;
+          color: white;
+        }
+        .theater-subtitle {
+          font-size: 0.7rem;
+          color: #64748b;
+          text-transform: uppercase;
+        }
+        .theater-header-right {
+          display: flex;
+          justify-content: flex-end;
+          min-width: 220px;
+        }
+        .theater-tools-wrap {
+          display: flex;
+          align-items: center;
+        }
+        .attendance-verified-badge {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          border-radius: 16px;
+          padding: 6px 14px;
+          font-size: 0.75rem;
+          font-weight: 800;
+        }
+        .attendance-verified-badge.is-live {
+          background: rgba(16, 185, 129, 0.08);
+          border: 1px solid rgba(16, 185, 129, 0.15);
+          color: #10b981;
+        }
+        .attendance-verified-badge.is-recording {
+          background: rgba(14, 165, 233, 0.08);
+          border: 1px solid rgba(14, 165, 233, 0.15);
+          color: #0ea5e9;
+        }
+        .attendance-timer-container {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+          gap: 4px;
+        }
+        .attendance-timer-text {
+          font-size: 0.7rem;
+          color: #94a3b8;
+          font-weight: 700;
+        }
+        .attendance-timer-bar-bg {
+          width: 100px;
+          height: 4px;
+          background: rgba(255,255,255,0.06);
+          border-radius: 2px;
+          overflow: hidden;
+        }
+        .attendance-timer-bar-fill {
+          height: 100%;
+          background: var(--primary-cyan);
+          transition: width 1s linear;
+        }
+        .verify-attendance-btn {
+          padding: 8px 16px;
+          background: linear-gradient(135deg, #0ea5e9, #10b981);
+          border: none;
+          border-radius: 20px;
+          color: #090d16;
+          font-weight: 800;
+          font-size: 0.75rem;
+          cursor: pointer;
+          box-shadow: 0 4px 10px rgba(16, 185, 129, 0.25);
+          transition: all 0.2s;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        }
+        .verify-attendance-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 14px rgba(16, 185, 129, 0.4) !important;
+        }
+        .verify-attendance-btn:disabled {
+          opacity: 0.7;
+          cursor: not-allowed;
+          transform: none;
+        }
+        .theater-layout {
+          flex: 1;
+          display: flex;
+          min-height: 0;
+          width: 100%;
+        }
+        .theater-video-frame-box {
+          flex: 1;
+          width: 100%;
+          background: black;
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .theater-iframe {
+          width: 100%;
+          height: 100%;
+          border: none;
+          min-height: 560px;
+        }
+        .theater-overlay {
+          position: absolute;
+          top: 12px;
+          right: 48px;
+          width: 110px;
+          height: 40px;
+          border-radius: 20px;
+          background: #090d16;
+          border: 1px solid rgba(255, 255, 255, 0.15);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 5;
+          pointer-events: all;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+          gap: 8px;
+        }
+        .theater-overlay-logo {
+          width: 16px;
+          height: 16px;
+          object-fit: contain;
+        }
+        .theater-overlay-text {
+          color: #fff;
+          font-size: 0.75rem;
+          font-weight: 800;
+          letter-spacing: 0.5px;
+        }
+
         /* -------------------------------------------
            MOBILE AND TABLET RESPONSIVENESS MEDIA QUERY
            ------------------------------------------- */
@@ -929,6 +1046,64 @@ const Recordings = () => {
         }
 
         @media (max-width: 768px) {
+          /* Theater Mode Mobile Layout */
+          .theater-header {
+            padding: 12px 16px !important;
+            flex-wrap: wrap !important;
+            gap: 12px !important;
+          }
+          .back-list-btn {
+            order: 1 !important;
+            font-size: 0.8rem !important;
+          }
+          .theater-header-right {
+            order: 2 !important;
+            min-width: auto !important;
+            flex: 1 !important;
+            justify-content: flex-end !important;
+          }
+          .theater-title-section {
+            order: 3 !important;
+            width: 100% !important;
+            text-align: left !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+            padding-top: 10px !important;
+          }
+          .theater-title {
+            font-size: 1rem !important;
+          }
+          .theater-subtitle {
+            font-size: 0.65rem !important;
+          }
+          .theater-layout {
+            display: block !important;
+            flex: none !important;
+          }
+          .theater-video-frame-box {
+            display: block !important;
+            aspect-ratio: 16 / 9 !important;
+            flex: none !important;
+          }
+          .theater-iframe {
+            min-height: auto !important;
+            aspect-ratio: 16 / 9 !important;
+          }
+          .theater-overlay {
+            top: 8px !important;
+            right: 40px !important;
+            width: 90px !important;
+            height: 32px !important;
+            border-radius: 16px !important;
+            gap: 4px !important;
+          }
+          .theater-overlay-logo {
+            width: 12px !important;
+            height: 12px !important;
+          }
+          .theater-overlay-text {
+            font-size: 0.65rem !important;
+          }
+
           .recordings-container {
             padding: 16px !important;
           }
