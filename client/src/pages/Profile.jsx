@@ -353,7 +353,7 @@ const Profile = () => {
                 </div>
 
                 {/* Stat Grid */}
-                <div className="attendance-stats-grid">
+                 <div className="attendance-stats-grid">
                   {/* Attendance Rate (Circular SVG) */}
                   <div className="att-stat-item rate-stat-card">
                     <div className="radial-progress-container">
@@ -373,7 +373,7 @@ const Profile = () => {
                     </div>
                     <div className="att-stat-details">
                       <h3>Rate</h3>
-                      <p>Attendance Rate</p>
+                      <p>{attendanceStats.attendedCount} / {attendanceStats.totalSessions} Present</p>
                       <span className={`att-badge ${
                         attendanceStats.attendancePercentage >= 90 ? 'badge-excellent' : 
                         attendanceStats.attendancePercentage >= 75 ? 'badge-warning' : 'badge-danger'
@@ -411,15 +411,27 @@ const Profile = () => {
                     </div>
                   </div>
 
-                  {/* Total Presence */}
+                  {/* Live Sessions */}
                   <div className="att-stat-item">
                     <div className="att-stat-icon-wrapper calendar-icon">
-                      <Calendar size={20} />
+                      <CheckCircle2 size={20} />
                     </div>
                     <div className="att-stat-details">
-                      <h3>{attendanceStats.attendedCount} / {attendanceStats.totalSessions}</h3>
-                      <p>Sessions Attended</p>
-                      <span className="att-badge-neutral">Classes Held</span>
+                      <h3>{attendanceStats.liveCount || 0} / {attendanceStats.totalSessions}</h3>
+                      <p>Live Sessions</p>
+                      <span className="att-badge badge-excellent" style={{ fontSize: '0.65rem' }}>Live Check-ins</span>
+                    </div>
+                  </div>
+
+                  {/* Recordings Watched */}
+                  <div className="att-stat-item">
+                    <div className="att-stat-icon-wrapper percent-icon">
+                      <Clock size={20} />
+                    </div>
+                    <div className="att-stat-details">
+                      <h3>{attendanceStats.recordingCount || 0} Sessions</h3>
+                      <p>Recordings Watched</p>
+                      <span className="att-badge" style={{ background: 'rgba(14, 165, 233, 0.08)', color: '#0ea5e9', fontSize: '0.65rem' }}>Portal Study</span>
                     </div>
                   </div>
                 </div>
@@ -872,7 +884,7 @@ const Profile = () => {
           }
           .attendance-stats-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 20px;
           }
           .att-stat-item {

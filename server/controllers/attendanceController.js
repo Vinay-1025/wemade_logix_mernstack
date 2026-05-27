@@ -280,6 +280,19 @@ const getAttendanceStats = async (req, res) => {
       }
     });
 
+    // Calculate live and recording counts from heatmapData
+    let liveCount = 0;
+    let recordingCount = 0;
+    Object.values(heatmapData).forEach(status => {
+      if (status === 'live') {
+        liveCount++;
+      } else if (status === 'recording') {
+        recordingCount++;
+      }
+    });
+
+    const attendedCount = liveCount + recordingCount;
+
     const attendancePercentage = totalSessions > 0 
       ? Math.round((attendedCount / totalSessions) * 100) 
       : 100;
@@ -324,6 +337,8 @@ const getAttendanceStats = async (req, res) => {
         attendancePercentage,
         totalSessions,
         attendedCount,
+        liveCount,
+        recordingCount,
         currentStreak,
         maxStreak,
         heatmapData

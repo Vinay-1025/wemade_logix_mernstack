@@ -22,6 +22,20 @@ const normalizeDayId = (dayId) => {
   return str;
 };
 
+const UNLOCK_TIME_SECONDS = 5760; // 1.6 hours = 96 minutes = 5760 seconds
+
+const formatTime = (seconds) => {
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = seconds % 60;
+  
+  const parts = [];
+  if (h > 0) parts.push(`${h}h`);
+  if (m > 0 || h > 0) parts.push(`${m}m`);
+  parts.push(`${s}s`);
+  return parts.join(' ');
+};
+
 const Recordings = () => {
   const [recordings, setRecordings] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -32,12 +46,12 @@ const Recordings = () => {
   const [user, setUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
-
+ 
   // Full screen theater states
   const [activeVideoUrl, setActiveVideoUrl] = useState('');
   const [activeVideoTitle, setActiveVideoTitle] = useState('');
   const [activeDayData, setActiveDayData] = useState(null);
-
+ 
   // Admin edit modal states
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedDayToEdit, setSelectedDayToEdit] = useState(null);
@@ -50,10 +64,10 @@ const Recordings = () => {
   const [modalSubmitting, setModalSubmitting] = useState(false);
   const [modalError, setModalError] = useState('');
   const [modalSuccess, setModalSuccess] = useState('');
-
+ 
   // Student recording attendance states
   const [myAttendance, setMyAttendance] = useState([]);
-  const [countdown, setCountdown] = useState(30);
+  const [countdown, setCountdown] = useState(UNLOCK_TIME_SECONDS);
   const [timerActive, setTimerActive] = useState(false);
   const [canMarkAttendance, setCanMarkAttendance] = useState(false);
   const [markingAttendance, setMarkingAttendance] = useState(false);
@@ -115,7 +129,7 @@ const Recordings = () => {
         a => a.dayId && normalizeDayId(a.dayId) === normalizeDayId(activeDayData.dayId)
       );
       if (!hasAttended) {
-        setCountdown(30);
+        setCountdown(UNLOCK_TIME_SECONDS);
         setCanMarkAttendance(false);
         setTimerActive(true);
       } else {
@@ -352,12 +366,12 @@ const Recordings = () => {
                       return (
                         <div className="attendance-timer-container">
                           <span className="attendance-timer-text">
-                            Unlock in <strong>{countdown}s</strong>
+                            Unlock in <strong>{formatTime(countdown)}</strong>
                           </span>
                           <div className="attendance-timer-bar-bg">
                             <div 
                               className="attendance-timer-bar-fill" 
-                              style={{ width: `${((30 - countdown) / 30) * 100}%` }}
+                              style={{ width: `${((UNLOCK_TIME_SECONDS - countdown) / UNLOCK_TIME_SECONDS) * 100}%` }}
                             ></div>
                           </div>
                         </div>
