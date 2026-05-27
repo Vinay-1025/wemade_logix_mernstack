@@ -158,6 +158,18 @@ const scanQR = async (req, res) => {
       return res.status(400).json({ message: 'Attendance already marked for this day' });
     }
 
+    // Restrict to one live attendance per calendar day
+    const todayDate = new Date().toLocaleDateString('en-CA');
+    const existingLiveRecordToday = await AttendanceRecord.findOne({
+      student: req.user._id,
+      attendanceType: 'live',
+      date: todayDate,
+    });
+
+    if (existingLiveRecordToday) {
+      return res.status(400).json({ message: 'You have already marked live attendance for today' });
+    }
+
     // 3. Create attendance record
     const record = await AttendanceRecord.create({
       student: req.user._id,
