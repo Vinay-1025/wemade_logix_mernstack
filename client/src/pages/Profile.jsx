@@ -336,9 +336,14 @@ const Profile = () => {
                     {hoveredCell ? (
                       <span className="tooltip-text fade-in">
                         {hoveredCell.dateLabel} • <strong style={{ 
-                          color: hoveredCell.status === 'attended' ? '#10b981' : hoveredCell.status === 'missed' ? '#ef4444' : 'var(--text-neutral)' 
+                          color: hoveredCell.status === 'live' || hoveredCell.status === 'attended' ? '#10b981' : 
+                                 hoveredCell.status === 'recording' ? '#0ea5e9' : 
+                                 hoveredCell.status === 'missed' ? '#ef4444' : 'var(--text-neutral)' 
                         }}>
-                          {hoveredCell.status === 'attended' ? 'Attended' : hoveredCell.status === 'missed' ? 'Missed' : 'No Class'}
+                          {hoveredCell.status === 'live' ? 'Attended (Live)' : 
+                           hoveredCell.status === 'recording' ? 'Attended (Recording)' : 
+                           hoveredCell.status === 'attended' ? 'Attended' : 
+                           hoveredCell.status === 'missed' ? 'Missed' : 'No Class'}
                         </strong>
                       </span>
                     ) : (
@@ -493,7 +498,12 @@ const Profile = () => {
                             }}
                             onMouseEnter={() => setHoveredCell({ dateLabel, status })}
                             onMouseLeave={() => setHoveredCell(null)}
-                            title={`${dateLabel}: ${status === 'attended' ? 'Attended' : status === 'missed' ? 'Missed' : 'No Class'}`}
+                            title={`${dateLabel}: ${
+                              status === 'live' ? 'Attended (Live)' : 
+                              status === 'recording' ? 'Attended (Recording)' : 
+                              status === 'attended' ? 'Attended' : 
+                              status === 'missed' ? 'Missed' : 'No Class'
+                            }`}
                           />
                         );
                       })}
@@ -506,12 +516,14 @@ const Profile = () => {
                   <span>Less</span>
                   <div className="legend-cell cell-none"></div>
                   <div className="legend-cell cell-missed"></div>
-                  <div className="legend-cell cell-attended"></div>
+                  <div className="legend-cell cell-live"></div>
+                  <div className="legend-cell cell-recording"></div>
                   <span>More</span>
                   <div className="legend-labels" style={{ marginLeft: '12px', fontSize: '0.75rem', color: 'var(--text-neutral)', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                     <span>⬜ No Class</span>
                     <span>🟥 Missed Class</span>
-                    <span>🟩 Attended Class</span>
+                    <span>🟩 Live Class</span>
+                    <span>🟦 Recording Watched</span>
                   </div>
                 </div>
               </div>
@@ -1089,8 +1101,11 @@ const Profile = () => {
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
             z-index: 10;
           }
-          .heatmap-cell.cell-attended {
+          .heatmap-cell.cell-attended, .heatmap-cell.cell-live {
             background: #10b981;
+          }
+          .heatmap-cell.cell-recording {
+            background: #0ea5e9;
           }
           .heatmap-cell.cell-missed {
             background: #ef4444;
@@ -1125,8 +1140,11 @@ const Profile = () => {
           .legend-cell.cell-missed {
             background: #ef4444;
           }
-          .legend-cell.cell-attended {
+          .legend-cell.cell-attended, .legend-cell.cell-live {
             background: #10b981;
+          }
+          .legend-cell.cell-recording {
+            background: #0ea5e9;
           }
 
           @keyframes pulse {

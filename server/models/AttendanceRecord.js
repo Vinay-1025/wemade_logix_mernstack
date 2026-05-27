@@ -9,7 +9,16 @@ const attendanceRecordSchema = new mongoose.Schema({
   session: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'AttendanceSession',
-    required: true,
+    required: false, // Optional for recording-based attendance
+  },
+  dayId: {
+    type: String,
+    required: true, // Direct course day association (e.g., "w1-d2")
+  },
+  attendanceType: {
+    type: String,
+    enum: ['live', 'recording'],
+    default: 'live',
   },
   markedAt: {
     type: Date,
@@ -21,7 +30,8 @@ const attendanceRecordSchema = new mongoose.Schema({
   }
 });
 
-// Compound index to prevent duplicate attendance markings for the same student in the same session
-attendanceRecordSchema.index({ student: 1, session: 1 }, { unique: true });
+// Compound index to prevent duplicate attendance markings for the same student on the same course day
+attendanceRecordSchema.index({ student: 1, dayId: 1 }, { unique: true });
 
 module.exports = mongoose.model('AttendanceRecord', attendanceRecordSchema);
+

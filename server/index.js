@@ -39,9 +39,49 @@ app.get('/', (req, res) => {
   res.send('FluenC API is running...');
 });
 
+// Migration function to populate dayId in old records
+const migrateAttendanceData = async () => {
+  try {
+    const AttendanceRecord = require('./models/AttendanceRecord');
+    const AttendanceSession = require('./models/AttendanceSession');
+    
+    const recordsWithoutDayId = await AttendanceRecord.find({ dayId: { $exists: false } }).populate('session');
+    if (recordsWithoutDayId.length > 0) {
+      console.log(`[Migration] Found ${recordsWithoutDayId.length} attendance records missing dayId. Migrating...`);
+      for (const rec of recordsWithoutDayId) {
+        if (rec.session && rec.session.dayId) {
+          rec.dayId = rec.session.dayId.toString().trim();
+        } else {
+          rec.dayId = 'w1-d0'; // Fallback
+        }
+        
+        // Prevent duplicate index collisions: check if a record with student + dayId already exists
+        const isDuplicate = await AttendanceRecord.findOne({
+          student: rec.student,
+          dayId: rec.dayId,
+          _id: { $ne: rec._id }
+        });
+        
+        if (isDuplicate) {
+          console.log(`[Migration] Duplicate record found for student ${rec.student} on day ${rec.dayId}. Deleting duplicate.`);
+          await AttendanceRecord.deleteOne({ _id: rec._id });
+        } else {
+          await rec.save();
+        }
+      }
+      console.log('[Migration] Attendance record migration completed.');
+    }
+  } catch (err) {
+    console.error('[Migration] Failed to migrate attendance records:', err);
+  }
+};
+
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('MongoDB connected'))
+  .then(() => {
+    console.log('MongoDB connected');
+    migrateAttendanceData();
+  })
   .catch(err => console.error('MongoDB connection error:', err));
 
 const PORT = process.env.PORT || 5000;

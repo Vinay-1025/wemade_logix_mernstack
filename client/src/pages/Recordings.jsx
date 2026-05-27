@@ -38,6 +38,13 @@ const Recordings = () => {
   const [modalError, setModalError] = useState('');
   const [modalSuccess, setModalSuccess] = useState('');
 
+  // Student recording attendance states
+  const [myAttendance, setMyAttendance] = useState([]);
+  const [countdown, setCountdown] = useState(30);
+  const [timerActive, setTimerActive] = useState(false);
+  const [canMarkAttendance, setCanMarkAttendance] = useState(false);
+  const [markingAttendance, setMarkingAttendance] = useState(false);
+
   // Fetch all recordings and load user role on mount
   const fetchAllRecordings = async () => {
     try {
@@ -64,9 +71,85 @@ const Recordings = () => {
     }
   };
 
+  const fetchMyAttendance = async () => {
+    try {
+      const userData = JSON.parse(localStorage.getItem('user'));
+      const token = userData?.token;
+      if (!token) return;
+
+      const response = await axios.get('/api/attendance/my', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (response.data && Array.isArray(response.data.records)) {
+        setMyAttendance(response.data.records);
+      }
+    } catch (err) {
+      console.error('Error fetching my attendance:', err);
+    }
+  };
+
   useEffect(() => {
     fetchAllRecordings();
+    fetchMyAttendance();
   }, []);
+
+  // Timer logic for video engagement tracking
+  useEffect(() => {
+    if (activeVideoUrl && activeDayData && !isAdmin) {
+      const hasAttended = myAttendance.some(
+        a => a.dayId && a.dayId.trim().toLowerCase() === activeDayData.dayId.trim().toLowerCase()
+      );
+      if (!hasAttended) {
+        setCountdown(30);
+        setCanMarkAttendance(false);
+        setTimerActive(true);
+      } else {
+        setTimerActive(false);
+        setCanMarkAttendance(false);
+      }
+    } else {
+      setTimerActive(false);
+    }
+  }, [activeVideoUrl, activeDayData, myAttendance, isAdmin]);
+
+  useEffect(() => {
+    let interval = null;
+    if (timerActive && countdown > 0) {
+      interval = setInterval(() => {
+        setCountdown(prev => prev - 1);
+      }, 1000);
+    } else if (countdown === 0) {
+      setCanMarkAttendance(true);
+      setTimerActive(false);
+    }
+    return () => clearInterval(interval);
+  }, [timerActive, countdown]);
+
+  const handleMarkMyAttendance = async () => {
+    if (!activeDayData || markingAttendance) return;
+    setMarkingAttendance(true);
+    try {
+      const userData = JSON.parse(localStorage.getItem('user'));
+      const token = userData?.token;
+      if (!token) return;
+
+      const response = await axios.post('/api/attendance/recording', 
+        { dayId: activeDayData.dayId },
+        { headers: { 'Authorization': `Bearer ${token}` } }
+      );
+      if (response.data?.success) {
+        alert('🎉 Attendance verified successfully!');
+        await fetchMyAttendance();
+      }
+    } catch (err) {
+      console.error('Error marking attendance:', err);
+      alert(err.response?.data?.message || 'Failed to mark attendance');
+    } finally {
+      setMarkingAttendance(false);
+    }
+  };
 
   // Helper function to find day recordings case-insensitively and trimmed
   const getDayRecording = (dayId) => {
@@ -244,78 +327,118 @@ const Recordings = () => {
               <h2 style={{ margin: 0, fontSize: '1.15rem', fontWeight: '800', color: 'white' }}>{activeVideoTitle}</h2>
               {activeDayData && <span style={{ fontSize: '0.7rem', color: '#64748b', textTransform: 'uppercase' }}>{activeDayData.weekId} • {activeDayData.dayId.toUpperCase()}</span>}
             </div>
-            <div style={{ width: '150px' }}></div> {/* Spacer */}
+            {/* Top Header Verification Tools on the right */}
+            <div style={{ display: 'flex', justifyContent: 'flex-end', minWidth: '220px' }}>
+              {activeDayData && !isAdmin && (
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  {(() => {
+                    const matchedAttendance = myAttendance.find(
+                      a => a.dayId && a.dayId.trim().toLowerCase() === activeDayData.dayId.trim().toLowerCase()
+                    );
+                    
+                    if (matchedAttendance) {
+                      const isLive = matchedAttendance.attendanceType === 'live';
+                      return (
+                        <div style={{ 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: '6px', 
+                          background: isLive ? 'rgba(16, 185, 129, 0.08)' : 'rgba(14, 165, 233, 0.08)', 
+                          border: isLive ? '1px solid rgba(16, 185, 129, 0.15)' : '1px solid rgba(14, 165, 233, 0.15)',
+                          borderRadius: '16px', 
+                          padding: '6px 14px',
+                          color: isLive ? '#10b981' : '#0ea5e9',
+                          fontSize: '0.75rem',
+                          fontWeight: '800'
+                        }}>
+                          <CheckCircle2 size={14} /> 
+                          <span>Verified ({isLive ? 'Live' : 'Recording'})</span>
+                        </div>
+                      );
+                    }
+                    
+                    if (timerActive) {
+                      return (
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
+                          <span style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: '700' }}>
+                            Unlock in <strong>{countdown}s</strong>
+                          </span>
+                          <div style={{ width: '100px', height: '4px', background: 'rgba(255,255,255,0.06)', borderRadius: '2px', overflow: 'hidden' }}>
+                            <div style={{ height: '100%', background: 'var(--primary-cyan)', width: `${((30 - countdown) / 30) * 100}%`, transition: 'width 1s linear' }}></div>
+                          </div>
+                        </div>
+                      );
+                    }
+                    
+                    if (canMarkAttendance) {
+                      return (
+                        <button
+                          onClick={handleMarkMyAttendance}
+                          disabled={markingAttendance}
+                          style={{
+                            padding: '8px 16px',
+                            background: 'linear-gradient(135deg, #0ea5e9, #10b981)',
+                            border: 'none',
+                            borderRadius: '20px',
+                            color: '#090d16',
+                            fontWeight: '800',
+                            fontSize: '0.75rem',
+                            cursor: 'pointer',
+                            boxShadow: '0 4px 10px rgba(16, 185, 129, 0.25)',
+                            transition: 'all 0.2s',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}
+                          className="theater-trigger-btn"
+                        >
+                          <CheckCircle2 size={12} /> {markingAttendance ? 'Verifying...' : 'Verify Attendance'}
+                        </button>
+                      );
+                    }
+                    
+                    return null;
+                  })()}
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Main Video View Box Split */}
-          <div className="theater-layout" style={{ flex: 1, display: 'flex', flexWrap: 'wrap', minHeight: 0 }}>
-            {/* Left: Video Player Frame */}
-            <div className="theater-video-frame-box" style={{ flex: 1.8, minWidth: '320px', background: 'black', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          {/* Main Video View Box - Spans Full Width */}
+          <div className="theater-layout" style={{ flex: 1, display: 'flex', minHeight: 0, width: '100%' }}>
+            {/* Full-width Video Player Frame */}
+            <div className="theater-video-frame-box" style={{ flex: 1, width: '100%', background: 'black', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <iframe 
                 src={getEmbedUrl(activeVideoUrl)}
                 title="Theater playback screen"
-                style={{ width: '100%', height: '100%', border: 'none', minHeight: '520px' }}
+                style={{ width: '100%', height: '100%', border: 'none', minHeight: '560px' }}
                 allow="autoplay; encrypted-media; picture-in-picture"
                 allowFullScreen
               />
-            </div>
-
-            {/* Right: Lecture Resources Panel */}
-            <div className="theater-sidebar" style={{ flex: 0.8, minWidth: '300px', background: '#0b0f19', borderLeft: '1px solid #1e293b', padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary-cyan)', fontSize: '0.8rem', fontWeight: '800', textTransform: 'uppercase', borderBottom: '1px solid #1e293b', paddingBottom: '10px' }}>
-                <BookOpen size={16} /> <span>Lecture Resources</span>
-              </div>
-
-              {activeDayData?.topics && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <h4 style={{ margin: '0 0 4px 0', fontSize: '0.85rem', color: '#94a3b8' }}>Session Topics:</h4>
-                  {activeDayData.topics.map((t, idx) => (
-                    <div key={idx} style={{ fontSize: '0.8rem', color: '#cbd5e1', padding: '8px', background: '#131926', borderRadius: '6px', border: '1px solid #1e293b' }}>
-                      {t.title}
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {activeDayData && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '10px' }}>
-                  <h4 style={{ margin: '0 0 4px 0', fontSize: '0.85rem', color: '#94a3b8' }}>Study Options:</h4>
-                  
-                  {/* Slides/Worksheets material button */}
-                  {getDayRecording(activeDayData.dayId)?.tutorMaterialLink ? (
-                    <a 
-                      href={getDayRecording(activeDayData.dayId).tutorMaterialLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="theater-resource-link"
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        padding: '12px',
-                        background: 'rgba(0, 209, 209, 0.06)',
-                        border: '1px solid rgba(0, 209, 209, 0.15)',
-                        borderRadius: '10px',
-                        color: 'var(--primary-cyan)',
-                        textDecoration: 'none',
-                        fontSize: '0.85rem',
-                        fontWeight: '700'
-                      }}
-                    >
-                      <span>Download Course Materials</span>
-                      <ArrowUpRight size={14} />
-                    </a>
-                  ) : (
-                    <span style={{ fontSize: '0.8rem', color: '#64748b', fontStyle: 'italic' }}>No course slides links published yet.</span>
-                  )}
-                </div>
-              )}
-
-              <div style={{ marginTop: 'auto', borderTop: '1px dashed #1e293b', paddingTop: '16px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.75rem' }}>
-                  <Info size={14} />
-                  <span>Use Google Chrome or Edge for optimal Drive and YouTube video playback.</span>
-                </div>
+              {/* Cover Pop Out Icon Overlay */}
+              <div style={{
+                position: 'absolute',
+                top: '12px',
+                right: '48px', // Covers the native pop-out button on Drive iframe
+                width: '110px',
+                height: '40px',
+                borderRadius: '20px',
+                background: '#090d16',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                zIndex: 5,
+                pointerEvents: 'all',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.5)',
+                gap: '8px'
+              }}>
+                <img
+                  src="/fav_icon.png"
+                  alt="Wemade Logo"
+                  style={{ width: '16px', height: '16px', objectFit: 'contain' }}
+                />
+                <span style={{ color: '#fff', fontSize: '0.75rem', fontWeight: '800', letterSpacing: '0.5px' }}>WEMADE</span>
               </div>
             </div>
           </div>
@@ -467,6 +590,10 @@ const Recordings = () => {
                     const activeVideo = (rec.commonLink && rec.commonLink.trim()) || (rec.morningLink && rec.morningLink.trim()) || (rec.eveningLink && rec.eveningLink.trim()) || '';
                     const hasVideo = !!activeVideo;
                     
+                    const matchedAttendance = myAttendance.find(
+                      a => a.dayId && a.dayId.trim().toLowerCase() === day.dayId.trim().toLowerCase()
+                    );
+                    
                     return (
                       <tr 
                         key={day.dayId} 
@@ -482,7 +609,18 @@ const Recordings = () => {
 
                         {/* Day Label */}
                         <td style={{ padding: '16px 20px', fontWeight: '700', fontSize: '0.85rem', color: 'var(--text-primary)' }} data-label="Day">
-                          {day.dayId.split('-')[1].toUpperCase()}
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span>{day.dayId.split('-')[1].toUpperCase()}</span>
+                            {matchedAttendance && (
+                              <CheckCircle2 
+                                size={14} 
+                                style={{ 
+                                  color: matchedAttendance.attendanceType === 'live' ? '#10b981' : '#0ea5e9' 
+                                }} 
+                                title={`Attendance Verified (${matchedAttendance.attendanceType === 'live' ? 'Live' : 'Recording'})`}
+                              />
+                            )}
+                          </div>
                         </td>
 
                         {/* Day Title & Topics list */}

@@ -162,12 +162,13 @@ const AttendanceAdmin = () => {
   const handleExportCSV = () => {
     if (records.length === 0) return;
 
-    const headers = ['Student Name', 'Student Email', 'Session Code', 'Class Day', 'Marked At'];
+    const headers = ['Student Name', 'Student Email', 'Session Code', 'Class Day', 'Attendance Type', 'Marked At'];
     const rows = records.map(r => [
       r.student?.name || 'N/A',
       r.student?.email || 'N/A',
-      r.session?.code || 'N/A',
-      getDayLabel(r.session?.dayId),
+      r.session?.code || (r.attendanceType === 'recording' ? 'RECORDING' : 'N/A'),
+      getDayLabel(r.dayId || r.session?.dayId),
+      r.attendanceType === 'recording' ? 'Recording' : 'Live QR Scan',
       new Date(r.markedAt).toLocaleString()
     ]);
 
@@ -193,7 +194,7 @@ const AttendanceAdmin = () => {
       studentEmail.toLowerCase().includes(query) ||
       sessionCode.toLowerCase().includes(query);
 
-    const sessionDayId = r.session?.dayId || '';
+    const sessionDayId = r.dayId || r.session?.dayId || '';
     const resolvedLabel = getDayLabel(sessionDayId).toLowerCase();
     const filterQuery = filterDayId.toLowerCase();
     const matchesDay = !filterDayId || 
@@ -464,10 +465,10 @@ const AttendanceAdmin = () => {
                           </div>
                         </td>
                         <td>
-                          <span className="day-badge-table">{getDayLabel(record.session?.dayId)}</span>
+                          <span className="day-badge-table">{getDayLabel(record.dayId || record.session?.dayId)}</span>
                         </td>
                         <td>
-                          <span className="token-cell font-mono">{record.session?.code || 'Expired'}</span>
+                          <span className="token-cell font-mono">{record.session?.code || (record.attendanceType === 'recording' ? 'RECORDING' : 'N/A')}</span>
                         </td>
                         <td>
                           <div className="time-cell">
@@ -476,7 +477,11 @@ const AttendanceAdmin = () => {
                           </div>
                         </td>
                         <td>
-                          <span className="status-badge-verified">Verified</span>
+                          {record.attendanceType === 'recording' ? (
+                            <span className="status-badge-recording">Recording</span>
+                          ) : (
+                            <span className="status-badge-verified">Live</span>
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -1120,6 +1125,16 @@ const AttendanceAdmin = () => {
           background: rgba(16, 185, 129, 0.08);
           color: #10b981;
           border: 1px solid rgba(16, 185, 129, 0.2);
+          padding: 6px 12px;
+          border-radius: 20px;
+          font-size: 0.75rem;
+          font-weight: 850;
+          display: inline-block;
+        }
+        .status-badge-recording {
+          background: rgba(14, 165, 233, 0.08);
+          color: #0ea5e9;
+          border: 1px solid rgba(14, 165, 233, 0.2);
           padding: 6px 12px;
           border-radius: 20px;
           font-size: 0.75rem;

@@ -7,6 +7,8 @@ const {
   scanQR,
   getAttendanceRecords,
   getAttendanceStats,
+  markRecordingAttendance,
+  getMyAttendance,
 } = require('../controllers/attendanceController');
 const { protect, admin } = require('../middleware/authMiddleware');
 
@@ -17,5 +19,7 @@ router.post('/scan', protect, scanQR);
 router.get('/records', protect, admin, getAttendanceRecords);
 router.get('/stats', protect, getAttendanceStats);
 router.get('/stats/:studentId', protect, getAttendanceStats);
+router.get('/my', protect, getMyAttendance);
+router.post('/recording', protect, markRecordingAttendance);
 
 module.exports = router;

@@ -96,20 +96,22 @@ const scanQR = async (req, res) => {
       return res.status(400).json({ message: 'Invalid or expired QR code' });
     }
 
-    // 2. Check if student already marked attendance for this session
+    // 2. Check if student already marked attendance for this course day
     const existingRecord = await AttendanceRecord.findOne({
       student: req.user._id,
-      session: session._id,
+      dayId: session.dayId,
     });
 
     if (existingRecord) {
-      return res.status(400).json({ message: 'Attendance already marked for this session' });
+      return res.status(400).json({ message: 'Attendance already marked for this day' });
     }
 
     // 3. Create attendance record
     const record = await AttendanceRecord.create({
       student: req.user._id,
       session: session._id,
+      dayId: session.dayId,
+      attendanceType: 'live',
       date: new Date().toLocaleDateString('en-CA'),
     });
 
@@ -121,7 +123,7 @@ const scanQR = async (req, res) => {
   } catch (error) {
     console.error('Error scanning QR code:', error);
     if (error.code === 11000) {
-      return res.status(400).json({ message: 'Attendance already marked for this session' });
+      return res.status(400).json({ message: 'Attendance already marked for this day' });
     }
     res.status(500).json({ message: 'Server error while marking attendance' });
   }
@@ -148,8 +150,6 @@ const getAttendanceRecords = async (req, res) => {
 };
 
 // @desc    Get attendance stats, streaks and heatmap data
-// @route   GET /api/attendance/stats/:studentId?
-// @access  Private
 const getAttendanceStats = async (req, res) => {
   try {
     let studentId = req.user._id;
@@ -160,10 +160,11 @@ const getAttendanceStats = async (req, res) => {
     const sessions = await AttendanceSession.find().sort({ createdAt: 1 }) || [];
     const records = await AttendanceRecord.find({ student: studentId }) || [];
 
-    const attendedSessionIds = new Set();
+    // Map attended days with their attendanceType
+    const attendedDayIds = {};
     records.forEach(r => {
-      if (r && r.session) {
-        attendedSessionIds.add(r.session.toString());
+      if (r && r.dayId) {
+        attendedDayIds[r.dayId.toString().trim().toLowerCase()] = r.attendanceType || 'live';
       }
     });
 
@@ -187,10 +188,20 @@ const getAttendanceStats = async (req, res) => {
 
     sortedSessionDates.forEach(dateStr => {
       const daySessions = sessionsByDate[dateStr];
-      const attended = daySessions.some(s => s._id && attendedSessionIds.has(s._id.toString()));
-      if (attended) {
+      
+      let attendanceType = null;
+      daySessions.forEach(s => {
+        if (s && s.dayId) {
+          const key = s.dayId.toString().trim().toLowerCase();
+          if (attendedDayIds[key]) {
+            attendanceType = attendedDayIds[key];
+          }
+        }
+      });
+
+      if (attendanceType) {
         attendedCount++;
-        heatmapData[dateStr] = 'attended';
+        heatmapData[dateStr] = attendanceType; // 'live' or 'recording'
       } else {
         heatmapData[dateStr] = 'missed';
       }
@@ -207,7 +218,7 @@ const getAttendanceStats = async (req, res) => {
 
     sortedSessionDates.forEach(dateStr => {
       const daySessions = sessionsByDate[dateStr];
-      const attended = daySessions.some(s => s._id && attendedSessionIds.has(s._id.toString()));
+      const attended = daySessions.some(s => s && s.dayId && attendedDayIds[s.dayId.toString().trim().toLowerCase()]);
       if (attended) {
         tempStreak++;
         if (tempStreak > maxStreak) {
@@ -221,7 +232,7 @@ const getAttendanceStats = async (req, res) => {
     for (let i = sortedSessionDates.length - 1; i >= 0; i--) {
       const dateStr = sortedSessionDates[i];
       const daySessions = sessionsByDate[dateStr];
-      const attended = daySessions.some(s => s._id && attendedSessionIds.has(s._id.toString()));
+      const attended = daySessions.some(s => s && s.dayId && attendedDayIds[s.dayId.toString().trim().toLowerCase()]);
       if (attended) {
         currentStreak++;
       } else {
@@ -251,6 +262,72 @@ const getAttendanceStats = async (req, res) => {
   }
 };
 
+// @desc    Mark attendance via watching recording
+// @route   POST /api/attendance/recording
+// @access  Private
+const markRecordingAttendance = async (req, res) => {
+  const { dayId } = req.body;
+
+  if (!dayId || !dayId.toString().trim()) {
+    return res.status(400).json({ message: 'Day ID is required' });
+  }
+
+  const formattedDayId = dayId.toString().trim().toLowerCase();
+
+  try {
+    // 1. Check if student already marked attendance for this course day
+    const existingRecord = await AttendanceRecord.findOne({
+      student: req.user._id,
+      dayId: formattedDayId,
+    });
+
+    if (existingRecord) {
+      return res.status(400).json({
+        message: `Attendance already marked for this day (${existingRecord.attendanceType.toUpperCase()})`,
+      });
+    }
+
+    // 2. Create recording-based attendance record
+    const record = await AttendanceRecord.create({
+      student: req.user._id,
+      dayId: formattedDayId,
+      attendanceType: 'recording',
+      date: new Date().toLocaleDateString('en-CA'),
+    });
+
+    res.status(201).json({
+      success: true,
+      message: 'Attendance marked via Recording successfully',
+      record,
+    });
+  } catch (error) {
+    console.error('Error marking recording attendance:', error);
+    if (error.code === 11000) {
+      return res.status(400).json({ message: 'Attendance already marked for this day' });
+    }
+    res.status(500).json({ message: 'Server error while marking recording attendance' });
+  }
+};
+
+// @desc    Get student's own attendance records
+// @route   GET /api/attendance/my
+// @access  Private
+const getMyAttendance = async (req, res) => {
+  try {
+    const records = await AttendanceRecord.find({ student: req.user._id })
+      .populate('session', 'code createdAt dayId')
+      .sort({ markedAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      records,
+    });
+  } catch (error) {
+    console.error('Error getting my attendance:', error);
+    res.status(500).json({ message: 'Server error while getting my attendance' });
+  }
+};
+
 module.exports = {
   enableAttendance,
   getActiveSession,
@@ -258,5 +335,7 @@ module.exports = {
   scanQR,
   getAttendanceRecords,
   getAttendanceStats,
+  markRecordingAttendance,
+  getMyAttendance,
 };
 
