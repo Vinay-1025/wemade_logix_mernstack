@@ -6,6 +6,19 @@ import { Play, Square, QrCode, Search, RefreshCw, CheckCircle, Clock, Calendar, 
 import { courseData } from '../data/mockData';
 import { QRCodeSVG } from 'qrcode.react';
 
+const normalizeDayId = (dayId) => {
+  if (!dayId) return '';
+  const str = dayId.toString().trim().toLowerCase();
+  if (/^\d+$/.test(str)) {
+    const dayNo = parseInt(str, 10);
+    if (dayNo === 0) return 'w1-d0';
+    const week = Math.ceil(dayNo / 6);
+    const day = dayNo % 6 === 0 ? 6 : dayNo % 6;
+    return `w${week}-d${day}`;
+  }
+  return str;
+};
+
 const getRecommendedDay = () => {
   const baseDate = new Date(2026, 4, 21); // May 21, 2026 (Month is 0-indexed)
   const today = new Date();
@@ -50,7 +63,8 @@ const AttendanceAdmin = () => {
 
   const getDayLabel = (dayId) => {
     if (!dayId) return 'General / Unassigned';
-    const day = allDays.find(d => d.dayId === dayId);
+    const normalized = normalizeDayId(dayId);
+    const day = allDays.find(d => normalizeDayId(d.dayId) === normalized);
     if (day) return day.dayTitle;
     if (/^\d+$/.test(dayId)) return `Day ${dayId}`;
     return dayId;
@@ -194,7 +208,7 @@ const AttendanceAdmin = () => {
       studentEmail.toLowerCase().includes(query) ||
       sessionCode.toLowerCase().includes(query);
 
-    const sessionDayId = r.dayId || r.session?.dayId || '';
+    const sessionDayId = normalizeDayId(r.dayId || r.session?.dayId || '');
     const resolvedLabel = getDayLabel(sessionDayId).toLowerCase();
     const filterQuery = filterDayId.toLowerCase();
     const matchesDay = !filterDayId || 

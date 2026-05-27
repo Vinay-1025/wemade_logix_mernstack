@@ -9,6 +9,19 @@ import {
 import { courseData } from '../data/mockData';
 import { useNavigate } from 'react-router-dom';
 
+const normalizeDayId = (dayId) => {
+  if (!dayId) return '';
+  const str = dayId.toString().trim().toLowerCase();
+  if (/^\d+$/.test(str)) {
+    const dayNo = parseInt(str, 10);
+    if (dayNo === 0) return 'w1-d0';
+    const week = Math.ceil(dayNo / 6);
+    const day = dayNo % 6 === 0 ? 6 : dayNo % 6;
+    return `w${week}-d${day}`;
+  }
+  return str;
+};
+
 const Recordings = () => {
   const [recordings, setRecordings] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -77,7 +90,7 @@ const Recordings = () => {
       const token = userData?.token;
       if (!token) return;
 
-      const response = await axios.get('/api/attendance/my', {
+      const response = await axios.get(`/api/attendance/my?t=${Date.now()}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -99,7 +112,7 @@ const Recordings = () => {
   useEffect(() => {
     if (activeVideoUrl && activeDayData && !isAdmin) {
       const hasAttended = myAttendance.some(
-        a => a.dayId && a.dayId.trim().toLowerCase() === activeDayData.dayId.trim().toLowerCase()
+        a => a.dayId && normalizeDayId(a.dayId) === normalizeDayId(activeDayData.dayId)
       );
       if (!hasAttended) {
         setCountdown(30);
@@ -333,7 +346,7 @@ const Recordings = () => {
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   {(() => {
                     const matchedAttendance = myAttendance.find(
-                      a => a.dayId && a.dayId.trim().toLowerCase() === activeDayData.dayId.trim().toLowerCase()
+                      a => a.dayId && normalizeDayId(a.dayId) === normalizeDayId(activeDayData.dayId)
                     );
                     
                     if (matchedAttendance) {
@@ -591,7 +604,7 @@ const Recordings = () => {
                     const hasVideo = !!activeVideo;
                     
                     const matchedAttendance = myAttendance.find(
-                      a => a.dayId && a.dayId.trim().toLowerCase() === day.dayId.trim().toLowerCase()
+                      a => a.dayId && normalizeDayId(a.dayId) === normalizeDayId(day.dayId)
                     );
                     
                     return (

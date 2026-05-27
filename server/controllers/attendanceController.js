@@ -2,6 +2,19 @@ const crypto = require('crypto');
 const AttendanceSession = require('../models/AttendanceSession');
 const AttendanceRecord = require('../models/AttendanceRecord');
 
+const normalizeDayId = (dayId) => {
+  if (!dayId) return '';
+  const str = dayId.toString().trim().toLowerCase();
+  if (/^\d+$/.test(str)) {
+    const dayNo = parseInt(str, 10);
+    if (dayNo === 0) return 'w1-d0';
+    const week = Math.ceil(dayNo / 6);
+    const day = dayNo % 6 === 0 ? 6 : dayNo % 6;
+    return `w${week}-d${day}`;
+  }
+  return str;
+};
+
 // @desc    Enable attendance (Generate new active session)
 // @route   POST /api/attendance/session
 // @access  Private/Admin
@@ -24,7 +37,7 @@ const enableAttendance = async (req, res) => {
       code,
       isActive: true,
       createdBy: req.user._id,
-      dayId: dayId.toString().trim(),
+      dayId: normalizeDayId(dayId),
     });
 
     res.status(201).json({
@@ -97,9 +110,10 @@ const scanQR = async (req, res) => {
     }
 
     // 2. Check if student already marked attendance for this course day
+    const normalizedDayId = normalizeDayId(session.dayId);
     const existingRecord = await AttendanceRecord.findOne({
       student: req.user._id,
-      dayId: session.dayId,
+      dayId: normalizedDayId,
     });
 
     if (existingRecord) {
@@ -110,7 +124,7 @@ const scanQR = async (req, res) => {
     const record = await AttendanceRecord.create({
       student: req.user._id,
       session: session._id,
-      dayId: session.dayId,
+      dayId: normalizedDayId,
       attendanceType: 'live',
       date: new Date().toLocaleDateString('en-CA'),
     });
@@ -164,7 +178,7 @@ const getAttendanceStats = async (req, res) => {
     const attendedDayIds = {};
     records.forEach(r => {
       if (r && r.dayId) {
-        attendedDayIds[r.dayId.toString().trim().toLowerCase()] = r.attendanceType || 'live';
+        attendedDayIds[normalizeDayId(r.dayId)] = r.attendanceType || 'live';
       }
     });
 
@@ -192,7 +206,7 @@ const getAttendanceStats = async (req, res) => {
       let attendanceType = null;
       daySessions.forEach(s => {
         if (s && s.dayId) {
-          const key = s.dayId.toString().trim().toLowerCase();
+          const key = normalizeDayId(s.dayId);
           if (attendedDayIds[key]) {
             attendanceType = attendedDayIds[key];
           }
@@ -218,7 +232,7 @@ const getAttendanceStats = async (req, res) => {
 
     sortedSessionDates.forEach(dateStr => {
       const daySessions = sessionsByDate[dateStr];
-      const attended = daySessions.some(s => s && s.dayId && attendedDayIds[s.dayId.toString().trim().toLowerCase()]);
+      const attended = daySessions.some(s => s && s.dayId && attendedDayIds[normalizeDayId(s.dayId)]);
       if (attended) {
         tempStreak++;
         if (tempStreak > maxStreak) {
@@ -232,7 +246,7 @@ const getAttendanceStats = async (req, res) => {
     for (let i = sortedSessionDates.length - 1; i >= 0; i--) {
       const dateStr = sortedSessionDates[i];
       const daySessions = sessionsByDate[dateStr];
-      const attended = daySessions.some(s => s && s.dayId && attendedDayIds[s.dayId.toString().trim().toLowerCase()]);
+      const attended = daySessions.some(s => s && s.dayId && attendedDayIds[normalizeDayId(s.dayId)]);
       if (attended) {
         currentStreak++;
       } else {
@@ -272,7 +286,7 @@ const markRecordingAttendance = async (req, res) => {
     return res.status(400).json({ message: 'Day ID is required' });
   }
 
-  const formattedDayId = dayId.toString().trim().toLowerCase();
+  const formattedDayId = normalizeDayId(dayId);
 
   try {
     // 1. Check if student already marked attendance for this course day

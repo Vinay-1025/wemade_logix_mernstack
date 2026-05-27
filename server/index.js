@@ -39,40 +39,89 @@ app.get('/', (req, res) => {
   res.send('FluenC API is running...');
 });
 
-// Migration function to populate dayId in old records
+// Migration function to populate dayId in old records and normalize dayId formats
 const migrateAttendanceData = async () => {
   try {
     const AttendanceRecord = require('./models/AttendanceRecord');
     const AttendanceSession = require('./models/AttendanceSession');
     
+    const normalizeDayId = (dayId) => {
+      if (!dayId) return '';
+      const str = dayId.toString().trim().toLowerCase();
+      if (/^\d+$/.test(str)) {
+        const dayNo = parseInt(str, 10);
+        if (dayNo === 0) return 'w1-d0';
+        const week = Math.ceil(dayNo / 6);
+        const day = dayNo % 6 === 0 ? 6 : dayNo % 6;
+        return `w${week}-d${day}`;
+      }
+      return str;
+    };
+
+    // 1. Backfill dayId in records where it doesn't exist
     const recordsWithoutDayId = await AttendanceRecord.find({ dayId: { $exists: false } }).populate('session');
     if (recordsWithoutDayId.length > 0) {
-      console.log(`[Migration] Found ${recordsWithoutDayId.length} attendance records missing dayId. Migrating...`);
+      console.log(`[Migration] Found ${recordsWithoutDayId.length} attendance records missing dayId. Backfilling...`);
       for (const rec of recordsWithoutDayId) {
         if (rec.session && rec.session.dayId) {
           rec.dayId = rec.session.dayId.toString().trim();
         } else {
           rec.dayId = 'w1-d0'; // Fallback
         }
-        
-        // Prevent duplicate index collisions: check if a record with student + dayId already exists
-        const isDuplicate = await AttendanceRecord.findOne({
-          student: rec.student,
-          dayId: rec.dayId,
-          _id: { $ne: rec._id }
-        });
-        
-        if (isDuplicate) {
-          console.log(`[Migration] Duplicate record found for student ${rec.student} on day ${rec.dayId}. Deleting duplicate.`);
-          await AttendanceRecord.deleteOne({ _id: rec._id });
-        } else {
-          await rec.save();
+        await rec.save();
+      }
+      console.log('[Migration] Backfilling completed.');
+    }
+
+    // 2. Normalize dayId in all existing Sessions
+    const sessions = await AttendanceSession.find();
+    let updatedSessionsCount = 0;
+    for (const session of sessions) {
+      if (session.dayId) {
+        const normalized = normalizeDayId(session.dayId);
+        if (session.dayId !== normalized) {
+          session.dayId = normalized;
+          await session.save();
+          updatedSessionsCount++;
         }
       }
-      console.log('[Migration] Attendance record migration completed.');
     }
+    if (updatedSessionsCount > 0) {
+      console.log(`[Migration] Normalized dayId in ${updatedSessionsCount} sessions.`);
+    }
+
+    // 3. Normalize dayId in all existing Records and resolve duplicate collisions
+    const records = await AttendanceRecord.find();
+    let updatedRecordsCount = 0;
+    for (const rec of records) {
+      if (rec.dayId) {
+        const normalized = normalizeDayId(rec.dayId);
+        if (rec.dayId !== normalized) {
+          // Check for index collision before saving
+          const isDuplicate = await AttendanceRecord.findOne({
+            student: rec.student,
+            dayId: normalized,
+            _id: { $ne: rec._id }
+          });
+          
+          if (isDuplicate) {
+            console.log(`[Migration] Duplicate record found for student ${rec.student} on normalized day ${normalized}. Deleting duplicate.`);
+            await AttendanceRecord.deleteOne({ _id: rec._id });
+          } else {
+            rec.dayId = normalized;
+            await rec.save();
+            updatedRecordsCount++;
+          }
+        }
+      }
+    }
+    if (updatedRecordsCount > 0) {
+      console.log(`[Migration] Normalized dayId in ${updatedRecordsCount} records.`);
+    }
+
+    console.log('[Migration] Attendance data normalization check completed.');
   } catch (err) {
-    console.error('[Migration] Failed to migrate attendance records:', err);
+    console.error('[Migration] Failed to migrate/normalize attendance records:', err);
   }
 };
 
