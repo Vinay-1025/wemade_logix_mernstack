@@ -310,12 +310,20 @@ const markRecordingAttendance = async (req, res) => {
       });
     }
 
-    // 2. Create recording-based attendance record
+    // 2. Find if a session exists for this dayId to get the date it was held
+    const session = await AttendanceSession.findOne({ dayId: formattedDayId }).sort({ createdAt: 1 });
+    let recordDate = new Date().toLocaleDateString('en-CA'); // Default fallback to today
+
+    if (session && session.createdAt) {
+      recordDate = new Date(session.createdAt).toLocaleDateString('en-CA');
+    }
+
+    // 3. Create recording-based attendance record
     const record = await AttendanceRecord.create({
       student: req.user._id,
       dayId: formattedDayId,
       attendanceType: 'recording',
-      date: new Date().toLocaleDateString('en-CA'),
+      date: recordDate,
     });
 
     res.status(201).json({

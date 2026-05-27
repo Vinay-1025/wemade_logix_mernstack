@@ -119,6 +119,25 @@ const migrateAttendanceData = async () => {
       console.log(`[Migration] Normalized dayId in ${updatedRecordsCount} records.`);
     }
 
+    // 4. Update existing recording records to use their original session's date (if one exists)
+    let updatedDatesCount = 0;
+    for (const rec of records) {
+      if (rec.attendanceType === 'recording') {
+        const session = await AttendanceSession.findOne({ dayId: rec.dayId }).sort({ createdAt: 1 });
+        if (session && session.createdAt) {
+          const sessionDateStr = new Date(session.createdAt).toLocaleDateString('en-CA');
+          if (rec.date !== sessionDateStr) {
+            rec.date = sessionDateStr;
+            await rec.save();
+            updatedDatesCount++;
+          }
+        }
+      }
+    }
+    if (updatedDatesCount > 0) {
+      console.log(`[Migration] Updated date to original session date in ${updatedDatesCount} recording records.`);
+    }
+
     console.log('[Migration] Attendance data normalization check completed.');
   } catch (err) {
     console.error('[Migration] Failed to migrate/normalize attendance records:', err);
