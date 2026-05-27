@@ -221,6 +221,15 @@ const getAttendanceStats = async (req, res) => {
       }
     });
 
+    // Overlay records directly on their calendar dates so they are guaranteed to show up in the heatmap
+    records.forEach(r => {
+      if (r && r.date) {
+        if (!heatmapData[r.date] || heatmapData[r.date] === 'missed' || heatmapData[r.date] === 'none') {
+          heatmapData[r.date] = r.attendanceType || 'live';
+        }
+      }
+    });
+
     const attendancePercentage = totalSessions > 0 
       ? Math.round((attendedCount / totalSessions) * 100) 
       : 100;
