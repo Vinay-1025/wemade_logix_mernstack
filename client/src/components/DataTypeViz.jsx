@@ -74,6 +74,9 @@ const DataTypeViz = () => {
 
       <style dangerouslySetInnerHTML={{ __html: `
         .datatype-viz { padding: 20px; color: #333; background: #ffffff; width: 100%; height: 100%; min-height: 400px; box-sizing: border-box; }
+        .viz-controls { display: flex; gap: 10px; justify-content: center; margin-bottom: 30px; }
+        .viz-controls button { background: transparent; border: 1px solid #cbd5e1; color: #64748b; padding: 6px 15px; border-radius: 20px; cursor: pointer; font-size: 0.75rem; transition: all 0.3s; }
+        .viz-controls button.active { background: #00d1d1; color: #fff; border-color: transparent; box-shadow: 0 0 10px rgba(0,209,209,0.4); }
         .memory-model { display: flex; gap: 40px; justify-content: center; margin-bottom: 30px; }
         .memory-stack, .memory-heap {
           background: #f8fafc;
