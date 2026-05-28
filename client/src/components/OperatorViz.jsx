@@ -81,14 +81,14 @@ const OperatorViz = () => {
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `
-        .operator-viz { padding: 20px; color: white; }
+        .operator-viz { padding: 20px; color: #333; }
         .input-row { display: flex; gap: 20px; justify-content: center; margin-bottom: 20px; }
         .input-group { display: flex; flex-direction: column; gap: 5px; }
         .input-group label { font-size: 0.75rem; color: var(--text-neutral); text-transform: uppercase; }
         .input-group input { 
-          background: #0f172a; 
+          background: #f8fafc; 
           border: 1px solid var(--app-border); 
-          color: white; 
+          color: #333; 
           padding: 8px; 
           border-radius: 6px; 
           width: 80px;
@@ -107,7 +107,7 @@ const OperatorViz = () => {
         }
         .viz-tabs button.active {
           background: var(--brand-gradient);
-          color: white;
+          color: #333;
           border-color: transparent;
           box-shadow: var(--glow);
         }
@@ -115,10 +115,10 @@ const OperatorViz = () => {
           display: grid; 
           grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
           gap: 15px; 
-        }
+         align-items: stretch; justify-items: center; }
         .op-card {
-          background: rgba(255,255,255,0.03);
-          border: 1px solid rgba(255,255,255,0.05);
+          background: rgba(0, 0, 0,0.03);
+          border: 1px solid rgba(0, 0, 0,0.05);
           padding: 15px;
           border-radius: 12px;
           display: flex;
@@ -141,8 +141,8 @@ const OperatorViz = () => {
         .op-name { font-size: 0.8rem; font-weight: 600; }
         .op-expr { font-family: monospace; font-size: 0.75rem; color: var(--text-neutral); }
         .op-result { font-size: 0.85rem; font-weight: bold; margin-top: auto; }
-        .op-result.truthy { color: #4ade80; }
-        .op-result.falsy { color: #f87171; }
+        .op-result.truthy { color: #16a34a; }
+        .op-result.falsy { color: #dc2626; }
       `}} />
     </div>
   );

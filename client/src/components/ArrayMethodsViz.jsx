@@ -70,7 +70,7 @@ const ArrayMethodsViz = () => {
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `
-        .array-viz { padding: 20px; color: white; }
+        .array-viz { padding: 20px; color: #333; }
         .viz-controls {
           display: flex;
           gap: 10px;
@@ -78,7 +78,7 @@ const ArrayMethodsViz = () => {
           flex-wrap: wrap;
         }
         .viz-controls button {
-          background: rgba(255,255,255,0.05);
+          background: rgba(0, 0, 0,0.05);
           border: 1px solid var(--app-border);
           color: var(--app-text);
           padding: 8px 16px;
@@ -87,17 +87,17 @@ const ArrayMethodsViz = () => {
           font-family: monospace;
           transition: all 0.3s;
         }
-        .viz-controls button:hover { background: rgba(255,255,255,0.1); }
+        .viz-controls button:hover { background: rgba(0, 0, 0,0.1); }
         .viz-controls button.active {
           background: var(--brand-gradient);
-          color: white;
+          color: #333;
           border-color: transparent;
         }
         .array-display {
-          background: #0f172a;
+          background: #f8fafc;
           padding: 30px;
           border-radius: 16px;
-          border: 1px solid rgba(255,255,255,0.1);
+          border: 1px solid rgba(0, 0, 0,0.1);
         }
         .array-row {
           display: flex;
@@ -122,7 +122,7 @@ const ArrayMethodsViz = () => {
           display: flex;
           align-items: center;
           justify-content: center;
-          background: rgba(255,255,255,0.05);
+          background: rgba(0, 0, 0,0.05);
           border: 1px solid var(--app-border);
           border-radius: 8px;
           font-weight: bold;

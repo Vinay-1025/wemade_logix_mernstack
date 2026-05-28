@@ -134,21 +134,21 @@ const CalculatorTaskViz = () => {
       <style dangerouslySetInnerHTML={{ __html: `
         .task-viz { padding: 20px; }
         .task-header { display: flex; align-items: center; gap: 10px; margin-bottom: 25px; background: rgba(74, 222, 128, 0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(74, 222, 128, 0.1); }
-        .task-header h3 { margin: 0; font-size: 0.95rem; color: #4ade80; }
+        .task-header h3 { margin: 0; font-size: 0.95rem; color: #16a34a; }
         
         .task-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
         
-        .calc-card { background: #1e293b; border-radius: 20px; padding: 25px; border: 1px solid #334155; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-        .calc-display { background: #0f172a; padding: 20px; border-radius: 12px; margin-bottom: 20px; text-align: right; }
+        .calc-card { background: #f1f5f9; border-radius: 20px; padding: 25px; border: 1px solid #cbd5e1; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .calc-display { background: #f8fafc; padding: 20px; border-radius: 12px; margin-bottom: 20px; text-align: right; }
         .display-prev { font-size: 0.75rem; color: #475569; min-height: 1rem; }
-        .display-main { font-size: 1.8rem; font-weight: bold; color: white; font-family: monospace; }
+        .display-main { font-size: 1.8rem; font-weight: bold; color: #333; font-family: monospace; }
         
         .calc-inputs { display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; }
-        .input-group label { display: block; font-size: 0.65rem; color: #94a3b8; text-transform: uppercase; margin-bottom: 5px; }
-        .input-group input { width: 100%; background: #0f172a; border: 1px solid #334155; padding: 10px; border-radius: 8px; color: white; font-size: 0.9rem; }
+        .input-group label { display: block; font-size: 0.65rem; color: #64748b; text-transform: uppercase; margin-bottom: 5px; }
+        .input-group input { width: 100%; background: #f8fafc; border: 1px solid #cbd5e1; padding: 10px; border-radius: 8px; color: #333; font-size: 0.9rem; }
         
         .calc-operators { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        .calc-operators button { background: var(--brand-gradient); border: none; color: white; padding: 12px; border-radius: 8px; font-size: 1.2rem; cursor: pointer; transition: transform 0.2s; }
+        .calc-operators button { background: var(--brand-gradient); border: none; color: #333; padding: 12px; border-radius: 8px; font-size: 1.2rem; cursor: pointer; transition: transform 0.2s; }
         .calc-operators button:hover { transform: scale(1.05); opacity: 0.9; }
         
         /* Data Beam Animation */
@@ -165,18 +165,18 @@ const CalculatorTaskViz = () => {
         .beam-particle {
           width: 15px;
           height: 15px;
-          background: #4ade80;
+          background: #16a34a;
           border-radius: 50%;
-          box-shadow: 0 0 20px #4ade80, 0 0 40px #4ade80;
+          box-shadow: 0 0 20px #16a34a, 0 0 40px #16a34a;
           filter: blur(2px);
         }
 
-        .history-card { background: #000; border-radius: 20px; overflow: hidden; border: 1px solid #334155; display: flex; flex-direction: column; position: relative; }
-        .history-header { background: #1e293b; padding: 12px 20px; display: flex; align-items: center; gap: 10px; color: #94a3b8; font-size: 0.8rem; border-bottom: 1px solid #334155; }
+        .history-card { background: #e2e8f0; border-radius: 20px; overflow: hidden; border: 1px solid #cbd5e1; display: flex; flex-direction: column; position: relative; }
+        .history-header { background: #f1f5f9; padding: 12px 20px; display: flex; align-items: center; gap: 10px; color: #64748b; font-size: 0.8rem; border-bottom: 1px solid #cbd5e1; }
         .history-body { padding: 20px; flex: 1; overflow-y: auto; height: 350px; }
         .history-item { margin-bottom: 10px; font-family: monospace; font-size: 0.85rem; padding-bottom: 8px; border-bottom: 1px solid #1e293b; }
         .log-prefix { color: #475569; margin-right: 8px; }
-        .log-text { color: #4ade80; }
+        .log-text { color: #16a34a; }
         .history-empty { color: #475569; text-align: center; margin-top: 100px; font-style: italic; font-size: 0.85rem; }
       `}} />
     </div>

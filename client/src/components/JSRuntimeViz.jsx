@@ -111,7 +111,7 @@ const JSRuntimeViz = () => {
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `
-        .runtime-viz { padding: 20px; color: white; }
+        .runtime-viz { padding: 20px; color: #333; }
         .runtime-grid {
           display: grid;
           grid-template-columns: 1fr 1fr;
@@ -119,8 +119,8 @@ const JSRuntimeViz = () => {
           margin-top: 20px;
         }
         .runtime-box {
-          background: rgba(255,255,255,0.05);
-          border: 1px solid rgba(255,255,255,0.1);
+          background: rgba(0, 0, 0,0.05);
+          border: 1px solid rgba(0, 0, 0,0.1);
           border-radius: 12px;
           padding: 15px;
           min-height: 150px;
@@ -139,11 +139,11 @@ const JSRuntimeViz = () => {
           font-family: monospace;
         }
         .api-item { background: #facc15; color: #000; }
-        .queue-item { background: #4ade80; color: #000; }
+        .queue-item { background: #16a34a; color: #000; }
         .console-display {
           font-family: monospace;
           font-size: 0.8rem;
-          color: #4ade80;
+          color: #16a34a;
         }
       `}} />
     </div>

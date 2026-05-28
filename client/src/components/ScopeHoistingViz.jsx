@@ -81,7 +81,7 @@ function f1() {
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `
-        .scope-viz { padding: 20px; color: white; }
+        .scope-viz { padding: 20px; color: #333; }
         .memory-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
         .env-record { 
           background: rgba(15, 23, 42, 0.8); 
@@ -97,15 +97,15 @@ function f1() {
           align-items: center; 
           gap: 10px; 
           padding: 8px 12px; 
-          background: rgba(255,255,255,0.05); 
+          background: rgba(0, 0, 0,0.05); 
           border-radius: 6px;
           font-family: monospace;
           position: relative;
         }
         .var-item.hoisted { border-left: 3px solid #facc15; }
-        .var-type { color: #f472b6; font-weight: bold; }
-        .var-name { color: #4ade80; }
-        .var-value { color: #fff; }
+        .var-type { color: #db2777; font-weight: bold; }
+        .var-name { color: #16a34a; }
+        .var-value { color: #333; }
         .hoist-tag { 
           position: absolute; 
           right: 10px; 
@@ -117,11 +117,11 @@ function f1() {
           font-weight: bold;
         }
         .code-sync pre { 
-          background: #0f172a; 
+          background: #f8fafc; 
           padding: 15px; 
           border-radius: 8px; 
           font-size: 0.85rem;
-          border: 1px solid rgba(255,255,255,0.1);
+          border: 1px solid rgba(0, 0, 0,0.1);
         }
         .phase-explanation { 
           margin-top: 15px; 

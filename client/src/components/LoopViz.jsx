@@ -136,11 +136,11 @@ do {
 
 
       <style dangerouslySetInnerHTML={{ __html: `
-        .loop-viz { padding: 20px; color: white; display: flex; flex-direction: column; gap: 20px; }
+        .loop-viz { padding: 20px; color: #333; display: flex; flex-direction: column; gap: 20px; }
         .loop-controls { display: flex; align-items: flex-end; gap: 20px; justify-content: center; }
         .input-group { display: flex; flex-direction: column; gap: 5px; }
-        .input-group label { font-size: 0.65rem; color: #94a3b8; text-transform: uppercase; }
-        .input-group input { background: #0f172a; border: 1px solid #334155; color: white; padding: 5px; border-radius: 4px; width: 80px; }
+        .input-group label { font-size: 0.65rem; color: #64748b; text-transform: uppercase; }
+        .input-group input { background: #f8fafc; border: 1px solid #cbd5e1; color: #333; padding: 5px; border-radius: 4px; width: 80px; }
         
         .viz-tabs { display: flex; gap: 10px; justify-content: center; }
         .viz-tabs button {
@@ -153,13 +153,13 @@ do {
           font-size: 0.75rem;
           transition: all 0.3s;
         }
-        .viz-tabs button.active { background: var(--brand-gradient); color: white; border-color: transparent; }
+        .viz-tabs button.active { background: var(--brand-gradient); color: #333; border-color: transparent; }
         
         .loop-factory { 
-          background: #0f172a; 
+          background: #f8fafc; 
           padding: 20px; 
           border-radius: 20px; 
-          border: 1px solid rgba(255,255,255,0.1);
+          border: 1px solid rgba(0, 0, 0,0.1);
           display: flex;
           flex-direction: column;
           gap: 30px;
@@ -168,21 +168,21 @@ do {
         .conveyor-belt { position: relative; padding: 15px 0; border-bottom: 2px solid #1e293b; }
         .factory-items { display: flex; gap: 10px; justify-content: center; }
         .factory-item { 
-          width: 40px; height: 40px; background: rgba(255,255,255,0.05); border: 1px solid #475569; 
+          width: 40px; height: 40px; background: rgba(0, 0, 0,0.05); border: 1px solid #475569; 
           border-radius: 8px; display: flex; align-items: center; justify-content: center; position: relative; color: #64748b;
           transition: all 0.3s;
         }
         .factory-item.active { border-color: var(--primary-cyan); color: var(--primary-cyan); box-shadow: 0 0 15px var(--primary-cyan); }
-        .factory-item.done { border-color: #4ade80; color: #4ade80; background: rgba(74, 222, 128, 0.1); }
-        .factory-item.broken { border-color: #f87171; color: #f87171; background: rgba(248, 113, 113, 0.1); }
+        .factory-item.done { border-color: #16a34a; color: #16a34a; background: rgba(74, 222, 128, 0.1); }
+        .factory-item.broken { border-color: #dc2626; color: #dc2626; background: rgba(248, 113, 113, 0.1); }
         .item-idx { position: absolute; top: -18px; font-size: 0.6rem; font-family: monospace; }
         
-        .loop-split-view { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #334155; border-radius: 12px; overflow: hidden; border: 1px solid #334155; }
-        .code-pane, .output-pane { background: #000; padding: 20px; min-height: 180px; }
+        .loop-split-view { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #cbd5e1; border-radius: 12px; overflow: hidden; border: 1px solid #cbd5e1; }
+        .code-pane, .output-pane { background: #e2e8f0; padding: 20px; min-height: 180px; }
         .pane-header { font-size: 0.6rem; text-transform: uppercase; color: #475569; margin-bottom: 10px; letter-spacing: 1px; }
         .code-pane pre { margin: 0; color: var(--primary-cyan); font-size: 0.8rem; font-family: monospace; line-height: 1.5; }
         .output-content { font-family: monospace; font-size: 0.8rem; }
-        .output-line { color: #4ade80; margin-bottom: 4px; }
+        .output-line { color: #16a34a; margin-bottom: 4px; }
         .btn-group { display: flex; gap: 10px; }
       `}} />
     </div>

@@ -111,17 +111,17 @@ const InputOutputViz = () => {
         .io-viz { padding: 20px; }
         .io-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         
-        .mock-browser { background: #1e293b; border-radius: 12px; overflow: hidden; border: 1px solid #334155; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        .browser-header { background: #0f172a; padding: 10px; display: flex; align-items: center; gap: 15px; }
+        .mock-browser { background: #f1f5f9; border-radius: 12px; overflow: hidden; border: 1px solid #cbd5e1; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .browser-header { background: #f8fafc; padding: 10px; display: flex; align-items: center; gap: 15px; }
         .dots { display: flex; gap: 5px; }
         .dots span { width: 8px; height: 8px; border-radius: 50%; background: #475569; }
-        .address-bar { background: #1e293b; border-radius: 4px; padding: 2px 10px; font-size: 0.6rem; color: #94a3b8; flex: 1; }
+        .address-bar { background: #f1f5f9; border-radius: 4px; padding: 2px 10px; font-size: 0.6rem; color: #64748b; flex: 1; }
         .browser-content { padding: 30px; text-align: center; position: relative; min-height: 250px; }
         .action-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
-        .input-display { margin-top: 20px; padding: 10px; background: rgba(74, 222, 128, 0.1); border-radius: 8px; color: #4ade80; font-size: 0.9rem; }
+        .input-display { margin-top: 20px; padding: 10px; background: rgba(74, 222, 128, 0.1); border-radius: 8px; color: #16a34a; font-size: 0.9rem; }
         
         .prompt-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 10; }
-        .prompt-dialog { background: #fff; color: #334155; width: 250px; border-radius: 8px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); text-align: left; overflow: hidden; }
+        .prompt-dialog { background: #fff; color: #cbd5e1; width: 250px; border-radius: 8px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); text-align: left; overflow: hidden; }
         .dialog-header { background: #f1f5f9; padding: 8px 15px; font-size: 0.75rem; font-weight: bold; border-bottom: 1px solid #e2e8f0; }
         .dialog-body { padding: 15px; }
         .dialog-body p { margin: 0 0 10px 0; font-size: 0.85rem; }
@@ -130,12 +130,12 @@ const InputOutputViz = () => {
         .dialog-btns button { background: transparent; border: none; font-size: 0.75rem; font-weight: bold; color: #64748b; cursor: pointer; }
         .dialog-btns button.primary { color: #3b82f6; }
         
-        .mock-console { background: #000; border-radius: 12px; border: 1px solid #334155; display: flex; flex-direction: column; height: 320px; }
-        .console-header { background: #1e293b; padding: 8px 15px; font-size: 0.7rem; display: flex; align-items: center; gap: 10px; color: #94a3b8; border-bottom: 1px solid #334155; text-transform: uppercase; }
+        .mock-console { background: #e2e8f0; border-radius: 12px; border: 1px solid #cbd5e1; display: flex; flex-direction: column; height: 320px; }
+        .console-header { background: #f1f5f9; padding: 8px 15px; font-size: 0.7rem; display: flex; align-items: center; gap: 10px; color: #64748b; border-bottom: 1px solid #cbd5e1; text-transform: uppercase; }
         .console-body { padding: 15px; flex: 1; overflow-y: auto; font-family: monospace; font-size: 0.8rem; }
         .console-line { display: flex; gap: 10px; margin-bottom: 5px; }
         .prompt-char { color: #475569; }
-        .log-msg { color: #4ade80; }
+        .log-msg { color: #16a34a; }
         .console-placeholder { color: #475569; text-align: center; margin-top: 50px; font-style: italic; }
       `}} />
     </div>

@@ -73,11 +73,11 @@ const DataTypeViz = () => {
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `
-        .datatype-viz { padding: 20px; color: white; }
+        .datatype-viz { padding: 20px; color: #333; }
         .memory-model { display: flex; gap: 40px; justify-content: center; margin-bottom: 30px; }
         .memory-stack, .memory-heap {
-          background: #0f172a;
-          border: 1px solid rgba(255,255,255,0.1);
+          background: #f8fafc;
+          border: 1px solid rgba(0, 0, 0,0.1);
           padding: 15px;
           border-radius: 12px;
           width: 180px;
@@ -85,27 +85,27 @@ const DataTypeViz = () => {
         .memory-stack h4, .memory-heap h4 { font-size: 0.7rem; color: var(--primary-cyan); text-transform: uppercase; margin-top: 0; }
         .memory-slot, .heap-obj {
           padding: 10px;
-          background: rgba(255,255,255,0.05);
+          background: rgba(0, 0, 0,0.05);
           border-radius: 6px;
           display: flex;
           flex-direction: column;
           font-family: monospace;
           font-size: 0.85rem;
         }
-        .slot-name { color: #f472b6; font-size: 0.7rem; }
-        .slot-val { color: #4ade80; }
-        .obj-addr { font-size: 0.6rem; color: #94a3b8; }
+        .slot-name { color: #db2777; font-size: 0.7rem; }
+        .slot-val { color: #16a34a; }
+        .obj-addr { font-size: 0.6rem; color: #64748b; }
         .types-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
         .type-card {
-          background: rgba(255,255,255,0.03);
-          border: 1px solid rgba(255,255,255,0.05);
+          background: rgba(0, 0, 0,0.03);
+          border: 1px solid rgba(0, 0, 0,0.05);
           padding: 12px;
           border-radius: 10px;
           text-align: center;
         }
         .type-title { font-weight: bold; color: var(--primary-cyan); display: block; margin-bottom: 4px; }
-        .type-example { font-size: 0.8rem; background: #000; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 8px; }
-        .type-desc { font-size: 0.75rem; color: #94a3b8; margin: 0; }
+        .type-example { font-size: 0.8rem; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 8px; }
+        .type-desc { font-size: 0.75rem; color: #64748b; margin: 0; }
       `}} />
     </div>
   );
