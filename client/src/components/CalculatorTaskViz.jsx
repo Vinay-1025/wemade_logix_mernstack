@@ -132,7 +132,7 @@ const CalculatorTaskViz = () => {
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `
-        .task-viz { padding: 20px; }
+        .task-viz { padding: 20px; background: #ffffff; width: 100%; height: 100%; min-height: 400px; box-sizing: border-box; color: #333; }
         .task-header { display: flex; align-items: center; gap: 10px; margin-bottom: 25px; background: rgba(74, 222, 128, 0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(74, 222, 128, 0.1); }
         .task-header h3 { margin: 0; font-size: 0.95rem; color: #16a34a; }
         

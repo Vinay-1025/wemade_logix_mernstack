@@ -111,7 +111,7 @@ const JSRuntimeViz = () => {
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `
-        .runtime-viz { padding: 20px; color: #333; }
+        .runtime-viz { padding: 20px; color: #333; background: #ffffff; width: 100%; height: 100%; min-height: 400px; box-sizing: border-box; }
         .runtime-grid {
           display: grid;
           grid-template-columns: 1fr 1fr;

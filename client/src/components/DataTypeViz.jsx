@@ -73,7 +73,7 @@ const DataTypeViz = () => {
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `
-        .datatype-viz { padding: 20px; color: #333; }
+        .datatype-viz { padding: 20px; color: #333; background: #ffffff; width: 100%; height: 100%; min-height: 400px; box-sizing: border-box; }
         .memory-model { display: flex; gap: 40px; justify-content: center; margin-bottom: 30px; }
         .memory-stack, .memory-heap {
           background: #f8fafc;

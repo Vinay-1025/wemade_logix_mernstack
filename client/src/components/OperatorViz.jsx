@@ -81,7 +81,7 @@ const OperatorViz = () => {
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `
-        .operator-viz { padding: 20px; color: #333; }
+        .operator-viz { padding: 20px; color: #333; background: #ffffff; width: 100%; height: 100%; min-height: 400px; box-sizing: border-box; }
         .input-row { display: flex; gap: 20px; justify-content: center; margin-bottom: 20px; }
         .input-group { display: flex; flex-direction: column; gap: 5px; }
         .input-group label { font-size: 0.75rem; color: var(--text-neutral); text-transform: uppercase; }

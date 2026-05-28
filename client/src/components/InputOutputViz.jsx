@@ -108,7 +108,7 @@ const InputOutputViz = () => {
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `
-        .io-viz { padding: 20px; }
+        .io-viz { padding: 20px; background: #ffffff; width: 100%; height: 100%; min-height: 400px; box-sizing: border-box; color: #333; }
         .io-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         
         .mock-browser { background: #f1f5f9; border-radius: 12px; overflow: hidden; border: 1px solid #cbd5e1; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }

@@ -70,7 +70,7 @@ const ArrayMethodsViz = () => {
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `
-        .array-viz { padding: 20px; color: #333; }
+        .array-viz { padding: 20px; color: #333; background: #ffffff; width: 100%; height: 100%; min-height: 400px; box-sizing: border-box; }
         .viz-controls {
           display: flex;
           gap: 10px;

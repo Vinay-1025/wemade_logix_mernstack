@@ -81,7 +81,7 @@ function f1() {
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `
-        .scope-viz { padding: 20px; color: #333; }
+        .scope-viz { padding: 20px; color: #333; background: #ffffff; width: 100%; height: 100%; min-height: 400px; box-sizing: border-box; }
         .memory-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
         .env-record { 
           background: rgba(15, 23, 42, 0.8); 
