@@ -8,22 +8,36 @@ dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 const app = express();
 
-// Middleware
-app.use(express.json());
-
-// Production CORS configuration
+// Production CORS configuration (Placed at the very top of middleware chain)
 app.use(cors({
-  origin: [
-    'https://wemade-logix-mernstack.web.app',
-    'https://wemade-logix-mernstack.firebaseapp.com',
-    'http://localhost:5173',
-    'http://localhost:5175',
-    'http://localhost:5176'
-  ],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps, curl, or postman)
+    if (!origin) return callback(null, true);
+    
+    const allowedOrigins = [
+      'https://wemade-logix-mernstack.web.app',
+      'https://wemade-logix-mernstack.firebaseapp.com',
+      'http://localhost:5173',
+      'http://localhost:5175',
+      'http://localhost:5176'
+    ];
+
+    if (
+      allowedOrigins.includes(origin) || 
+      origin.includes('wemade-logix-mernstack') || 
+      origin.includes('wemade_logix-mernstack')
+    ) {
+      callback(null, true);
+    } else {
+      callback(null, false);
+    }
+  },
+  credentials: true,
+  optionsSuccessStatus: 200
 }));
+
+// Body parsing middleware
+app.use(express.json());
 
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
