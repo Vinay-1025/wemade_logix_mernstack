@@ -547,8 +547,20 @@ const getAttendanceReport = async (req, res) => {
       `;
     });
 
-    // Generate day headers
-    const dayHeadersHtml = daysList.map(d => `<th>Day ${d}</th>`).join('\n');
+    // Generate day headers using actual calendar dates
+    const dayHeadersHtml = daysList.map(d => {
+      const normId = normalizeDayId(d);
+      const dateStr = getCalendarDateForDay(normId);
+      let formattedDate = dateStr;
+      if (dateStr && dateStr.includes('-')) {
+        const parts = dateStr.split('-');
+        if (parts.length === 3) {
+          const date = new Date(parts[0], parts[1] - 1, parts[2]);
+          formattedDate = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+      }
+      return `<th>${formattedDate}</th>`;
+    }).join('\n');
 
     // 8. Generate the full HTML document
     const htmlContent = `
