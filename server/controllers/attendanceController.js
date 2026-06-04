@@ -419,6 +419,331 @@ const getMyAttendance = async (req, res) => {
   }
 };
 
+
+// @desc    Get attendance report HTML download
+// @route   GET /api/attendance/report
+// @access  Private/Admin
+const getAttendanceReport = async (req, res) => {
+  try {
+    const User = require('../models/User');
+
+    // 1. Fetch all students
+    const students = await User.find({ role: 'student' }).sort({ name: 1 });
+    
+    // 2. Fetch all attendance records
+    const records = await AttendanceRecord.find({});
+    
+    // 3. Fetch all sessions to calculate maxDayNum
+    const sessions = await AttendanceSession.find({});
+
+    // 4. Calculate max day number
+    const getDayNumberFromId = (id) => {
+      if (!id) return 0;
+      const str = id.toString().trim().toLowerCase();
+      if (/^\d+$/.test(str)) {
+        return parseInt(str, 10);
+      }
+      const match = str.match(/^w(\d+)-d(\d+)$/);
+      if (match) {
+        const week = parseInt(match[1], 10);
+        const day = parseInt(match[2], 10);
+        if (week === 1 && day === 0) return 0;
+        return (week - 1) * 6 + day;
+      }
+      return 0;
+    };
+
+    const getRecommendedDay = () => {
+      const baseDate = new Date(2026, 4, 21); // May 21, 2026
+      const today = new Date();
+      baseDate.setHours(0, 0, 0, 0);
+      today.setHours(0, 0, 0, 0);
+
+      if (today < baseDate) {
+        return 4;
+      }
+
+      let nonSundayDays = 0;
+      let tempDate = new Date(baseDate);
+
+      while (tempDate < today) {
+        tempDate.setDate(tempDate.getDate() + 1);
+        if (tempDate.getDay() !== 0) {
+          nonSundayDays++;
+        }
+      }
+
+      return 4 + nonSundayDays;
+    };
+
+    let maxDayNum = getRecommendedDay();
+
+    sessions.forEach(s => {
+      const num = getDayNumberFromId(s.dayId);
+      if (num > maxDayNum) maxDayNum = num;
+    });
+
+    records.forEach(r => {
+      const num = getDayNumberFromId(r.dayId);
+      if (num > maxDayNum) maxDayNum = num;
+    });
+
+    // 5. Determine if Day 0 is present in any session or record
+    const hasDay0 = sessions.some(s => s.dayId === 'w1-d0') || records.some(r => r.dayId === 'w1-d0');
+    const daysList = [];
+    if (hasDay0) {
+      daysList.push(0);
+    }
+    for (let i = 1; i <= maxDayNum; i++) {
+      daysList.push(i);
+    }
+
+    // 6. Map all records by student_dayId for fast O(1) lookup
+    const recordMap = {};
+    records.forEach(r => {
+      if (r.student && r.dayId) {
+        const sId = r.student.toString();
+        const dId = normalizeDayId(r.dayId);
+        recordMap[`${sId}_${dId}`] = r;
+      }
+    });
+
+    // 7. Compile report rows
+    let rowsHtml = '';
+    students.forEach(student => {
+      let liveCount = 0;
+      let recordingCount = 0;
+      let daysHtml = '';
+
+      daysList.forEach(d => {
+        const normId = normalizeDayId(d);
+        const record = recordMap[`${student._id}_${normId}`];
+        if (record) {
+          if (record.attendanceType === 'live') {
+            liveCount++;
+            daysHtml += `<td><span class="badge badge-live">Live</span></td>`;
+          } else {
+            recordingCount++;
+            daysHtml += `<td><span class="badge badge-rec">Recording</span></td>`;
+          }
+        } else {
+          daysHtml += `<td><span class="badge badge-absent">Absent</span></td>`;
+        }
+      });
+
+      const attendedCount = liveCount + recordingCount;
+      const totalDays = daysList.length;
+      const pct = totalDays > 0 ? Math.round((attendedCount / totalDays) * 100) : 100;
+      
+      const nameColorClass = pct >= 80 ? 'text-green' : 'text-red';
+
+      rowsHtml += `
+        <tr>
+          <td><span class="${nameColorClass}">${student.name}</span></td>
+          <td>${student.email}</td>
+          ${daysHtml}
+          <td class="pct-cell ${pct >= 80 ? 'pct-green' : 'pct-red'}">${pct}%</td>
+        </tr>
+      `;
+    });
+
+    // Generate day headers
+    const dayHeadersHtml = daysList.map(d => `<th>Day ${d}</th>`).join('\n');
+
+    // 8. Generate the full HTML document
+    const htmlContent = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Attendance Report</title>
+  <style>
+    :root {
+      --primary: #0f172a;
+      --border: #e2e8f0;
+      --bg: #f8fafc;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      margin: 0;
+      padding: 40px;
+      background-color: var(--bg);
+      color: #334155;
+    }
+    .report-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      max-width: 100%;
+      margin: 0 auto;
+    }
+    .report-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 20px;
+    }
+    .report-title h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+    .report-title p {
+      margin: 4px 0 0 0;
+      color: #64748b;
+      font-size: 14px;
+    }
+    .report-meta {
+      font-size: 14px;
+      color: #64748b;
+      text-align: right;
+    }
+    .table-container {
+      overflow-x: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      margin-top: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      text-align: left;
+    }
+    th, td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    th:last-child, td:last-child {
+      border-right: none;
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+    th {
+      background-color: #f1f5f9;
+      color: #475569;
+      font-weight: 700;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    th:first-child, td:first-child {
+      position: sticky;
+      left: 0;
+      background-color: #ffffff;
+      font-weight: 600;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.02);
+      z-index: 10;
+    }
+    th:first-child {
+      background-color: #f1f5f9;
+      z-index: 11;
+    }
+    tr:hover td {
+      background-color: #f8fafc;
+    }
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 12px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+      min-width: 80px;
+    }
+    .badge-live {
+      background-color: #dcfce7;
+      color: #16a34a;
+      border: 1px solid #bbf7d0;
+    }
+    .badge-rec {
+      background-color: #fef9c3;
+      color: #ca8a04;
+      border: 1px solid #fef08a;
+    }
+    .badge-absent {
+      background-color: #fee2e2;
+      color: #dc2626;
+      border: 1px solid #fecaca;
+    }
+    /* Text Coloring */
+    .text-green {
+      color: #16a34a;
+      font-weight: 700;
+    }
+    .text-red {
+      color: #dc2626;
+      font-weight: 700;
+    }
+    .pct-cell {
+      font-weight: 800;
+      text-align: center;
+    }
+    .pct-green {
+      color: #16a34a;
+      background-color: #f0fdf4;
+    }
+    .pct-red {
+      color: #dc2626;
+      background-color: #fef2f2;
+    }
+  </style>
+</head>
+<body>
+  <div class="report-card">
+    <div class="report-header">
+      <div class="report-title">
+        <h1>Students Attendance Report</h1>
+        <p>Comprehensive record of live & recording sessions</p>
+      </div>
+      <div class="report-meta">
+        <div>Generated: ${new Date().toLocaleString()}</div>
+        <div>Total Days Tracked: ${totalDays}</div>
+      </div>
+    </div>
+    
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Student Name</th>
+            <th>Email</th>
+            ${dayHeadersHtml}
+            <th>Attendance %</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rowsHtml}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>
+    `;
+
+    // 9. Send response as file download
+    res.setHeader('Content-Type', 'text/html');
+    res.setHeader('Content-Disposition', 'attachment; filename=wemade_attendance_report.html');
+    return res.status(200).send(htmlContent);
+  } catch (error) {
+    console.error('Error generating attendance report:', error);
+    res.status(500).json({ message: 'Server error while generating attendance report' });
+  }
+};
+
 module.exports = {
   enableAttendance,
   getActiveSession,
@@ -428,5 +753,6 @@ module.exports = {
   getAttendanceStats,
   markRecordingAttendance,
   getMyAttendance,
+  getAttendanceReport,
 };
 

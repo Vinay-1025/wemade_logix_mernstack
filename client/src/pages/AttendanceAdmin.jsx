@@ -50,6 +50,7 @@ const AttendanceAdmin = () => {
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(true);
   const [recordsLoading, setRecordsLoading] = useState(false);
+  const [reportDownloading, setReportDownloading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
   // Flatten days from courseData for selecting and filtering
@@ -198,6 +199,29 @@ const AttendanceAdmin = () => {
     document.body.removeChild(link);
   };
 
+  const handleDownloadReport = async () => {
+    if (!currentUser?.token) return;
+    setReportDownloading(true);
+    try {
+      const response = await axios.get('/api/attendance/report', {
+        headers: { 'Authorization': `Bearer ${currentUser.token}` },
+        responseType: 'blob'
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `wemade_attendance_report_${new Date().toISOString().split('T')[0]}.html`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      console.error('Failed to download report:', err);
+      setStatusMessage({ type: 'error', text: 'Failed to download attendance report.' });
+    } finally {
+      setReportDownloading(false);
+    }
+  };
+
   // Filter records based on query, day, and date range
   const filteredRecords = records.filter(r => {
     const studentName = r.student?.name || '';
@@ -252,7 +276,13 @@ const AttendanceAdmin = () => {
             <p className="admin-page-subtitle">Dynamically control class registration, generate secure QR keys, and audit student check-ins.</p>
           </div>
           <div className="header-actions-block">
-
+            <button
+              className="action-btn-secondary"
+              onClick={handleDownloadReport}
+              disabled={reportDownloading}
+            >
+              <Download size={16} /> {reportDownloading ? 'Downloading...' : 'Download Report'}
+            </button>
             <button
               className="action-btn-secondary"
               onClick={handleExportCSV}
