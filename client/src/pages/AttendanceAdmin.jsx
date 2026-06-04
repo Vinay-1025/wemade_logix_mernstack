@@ -204,15 +204,18 @@ const AttendanceAdmin = () => {
     setReportDownloading(true);
     try {
       const response = await axios.get('/api/attendance/report', {
-        headers: { 'Authorization': `Bearer ${currentUser.token}` }
+        headers: { 'Authorization': `Bearer ${currentUser.token}` },
+        responseType: 'blob'
       });
-      const printWindow = window.open('', '_blank');
-      if (printWindow) {
-        printWindow.document.write(response.data);
-        printWindow.document.close();
-      } else {
-        setStatusMessage({ type: 'error', text: 'Please allow popups to save the PDF report.' });
-      }
+      const blob = new Blob([response.data], { type: 'application/vnd.ms-excel' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `wemade_attendance_report_${new Date().toISOString().split('T')[0]}.xls`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
     } catch (err) {
       console.error('Failed to download report:', err);
       setStatusMessage({ type: 'error', text: 'Failed to download attendance report.' });

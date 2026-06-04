@@ -546,27 +546,27 @@ const getAttendanceReport = async (req, res) => {
         if (matchedRecord) {
           if (matchedRecord.attendanceType === 'live') {
             liveCount++;
-            daysHtml += `<td><span class="badge badge-live">Live</span></td>`;
+            daysHtml += `<td style="background-color: #dcfce7; color: #16a34a; font-weight: bold; border: 1px solid #cbd5e1; text-align: center; font-family: Calibri, sans-serif; padding: 8px;">Live</td>`;
           } else {
             recordingCount++;
-            daysHtml += `<td><span class="badge badge-rec">Recording</span></td>`;
+            daysHtml += `<td style="background-color: #fef9c3; color: #ca8a04; font-weight: bold; border: 1px solid #cbd5e1; text-align: center; font-family: Calibri, sans-serif; padding: 8px;">Recording</td>`;
           }
         } else {
-          daysHtml += `<td><span class="badge badge-absent">Absent</span></td>`;
+          daysHtml += `<td style="background-color: #fee2e2; color: #dc2626; font-weight: bold; border: 1px solid #cbd5e1; text-align: center; font-family: Calibri, sans-serif; padding: 8px;">Absent</td>`;
         }
       });
 
       const attendedCount = liveCount + recordingCount;
       const pct = totalDays > 0 ? Math.round((attendedCount / totalDays) * 100) : 100;
       
-      const nameColorClass = pct >= 80 ? 'text-green' : 'text-red';
+      const nameColor = pct >= 80 ? '#16a34a' : '#dc2626';
 
       rowsHtml += `
         <tr>
-          <td><span class="${nameColorClass}">${student.name}</span></td>
-          <td>${student.email}</td>
+          <td style="color: ${nameColor}; font-weight: bold; border: 1px solid #cbd5e1; font-family: Calibri, sans-serif; padding: 8px;">${student.name}</td>
+          <td style="color: #475569; border: 1px solid #cbd5e1; font-family: Calibri, sans-serif; padding: 8px;">${student.email}</td>
           ${daysHtml}
-          <td class="pct-cell ${pct >= 80 ? 'pct-green' : 'pct-red'}">${pct}%</td>
+          <td style="background-color: ${pct >= 80 ? '#f0fdf4' : '#fef2f2'}; color: ${pct >= 80 ? '#16a34a' : '#dc2626'}; font-weight: bold; text-align: center; border: 1px solid #cbd5e1; font-family: Calibri, sans-serif; padding: 8px;">${pct}%</td>
         </tr>
       `;
     });
@@ -581,290 +581,86 @@ const getAttendanceReport = async (req, res) => {
           formattedDate = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         }
       }
-      return `<th>${formattedDate}</th>`;
+      return `<th style="background-color: #f1f5f9; color: #475569; font-weight: bold; border: 1px solid #cbd5e1; text-align: center; font-family: Calibri, sans-serif; padding: 8px;">${formattedDate}</th>`;
     }).join('\n');
 
-    // 8. Generate the full HTML document
-    const htmlContent = `
-<!DOCTYPE html>
-<html lang="en">
+    // 8. Generate the Excel XML content
+    const excelContent = `
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Attendance Report</title>
+  <meta http-equiv="content-type" content="application/vnd.ms-excel; charset=UTF-8">
+  <!--[if gte mso 9]>
+  <xml>
+    <x:ExcelWorkbook>
+      <x:ExcelWorksheets>
+        <x:ExcelWorksheet>
+          <x:Name>Attendance Report</x:Name>
+          <x:WorksheetOptions>
+            <x:DisplayGridlines/>
+          </x:WorksheetOptions>
+        </x:ExcelWorksheet>
+      </x:ExcelWorksheets>
+    </x:ExcelWorkbook>
+  </xml>
+  <![endif]-->
   <style>
-    :root {
-      --primary: #0f172a;
-      --border: #e2e8f0;
-      --bg: #f8fafc;
-    }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      margin: 0;
-      padding: 40px;
-      background-color: var(--bg);
-      color: #334155;
-    }
-    .print-bar {
-      display: flex;
-      align-items: center;
-      background: #ffffff;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px 24px;
-      margin-bottom: 24px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-      gap: 16px;
-    }
-    .print-bar button {
-      background: #00d1d1;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      font-weight: 700;
-      cursor: pointer;
-      font-size: 14px;
-      transition: background 0.2s;
-    }
-    .print-bar button:hover {
-      background: #00b8b8;
-    }
-    .print-bar-text {
-      font-size: 14px;
-      color: #64748b;
-    }
-    .report-card {
-      background: #ffffff;
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 32px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-      max-width: 100%;
-      margin: 0 auto;
-    }
-    .report-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-      border-bottom: 2px solid var(--border);
-      padding-bottom: 20px;
-    }
-    .report-title h1 {
-      margin: 0;
-      font-size: 24px;
-      font-weight: 800;
-      color: var(--primary);
-    }
-    .report-title p {
-      margin: 4px 0 0 0;
-      color: #64748b;
-      font-size: 14px;
-    }
-    .report-meta {
-      font-size: 14px;
-      color: #64748b;
-      text-align: right;
-    }
-    .table-container {
-      overflow-x: auto;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      margin-top: 20px;
-    }
     table {
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 0;
-      text-align: left;
-    }
-    th, td {
-      padding: 12px 16px;
-      border-bottom: 1px solid var(--border);
-      border-right: 1px solid var(--border);
-      white-space: nowrap;
-    }
-    th:last-child, td:last-child {
-      border-right: none;
-    }
-    tr:last-child td {
-      border-bottom: none;
+      border-collapse: collapse;
+      font-family: Calibri, sans-serif;
     }
     th {
       background-color: #f1f5f9;
       color: #475569;
-      font-weight: 700;
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      font-weight: bold;
+      border: 1px solid #cbd5e1;
+      padding: 8px;
+      text-align: left;
     }
-    th:first-child, td:first-child {
-      position: sticky;
-      left: 0;
-      background-color: #ffffff;
-      font-weight: 600;
-      box-shadow: 2px 0 5px rgba(0,0,0,0.02);
-      z-index: 10;
-    }
-    th:first-child {
-      background-color: #f1f5f9;
-      z-index: 11;
-    }
-    tr:hover td {
-      background-color: #f8fafc;
-    }
-    /* Badges */
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 6px 12px;
-      border-radius: 9999px;
-      font-size: 12px;
-      font-weight: 600;
-      text-align: center;
-      min-width: 80px;
-    }
-    .badge-live {
-      background-color: #dcfce7;
-      color: #16a34a;
-      border: 1px solid #bbf7d0;
-    }
-    .badge-rec {
-      background-color: #fef9c3;
-      color: #ca8a04;
-      border: 1px solid #fef08a;
-    }
-    .badge-absent {
-      background-color: #fee2e2;
-      color: #dc2626;
-      border: 1px solid #fecaca;
-    }
-    /* Text Coloring */
-    .text-green {
-      color: #16a34a;
-      font-weight: 700;
-    }
-    .text-red {
-      color: #dc2626;
-      font-weight: 700;
-    }
-    .pct-cell {
-      font-weight: 800;
-      text-align: center;
-    }
-    .pct-green {
-      color: #16a34a;
-      background-color: #f0fdf4;
-    }
-    .pct-red {
-      color: #dc2626;
-      background-color: #fef2f2;
-    }
-    @media print {
-      @page {
-        size: A4 landscape;
-        margin: 10mm;
-      }
-      .no-print {
-        display: none !important;
-      }
-      body {
-        padding: 0;
-        margin: 0;
-        background: #ffffff;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-      }
-      .report-card {
-        border: none;
-        box-shadow: none;
-        padding: 0;
-        width: 100%;
-        max-width: 100%;
-      }
-      .table-container {
-        border: none;
-        overflow: visible !important;
-      }
-      table {
-        width: 100% !important;
-        table-layout: auto !important;
-        border-collapse: collapse !important;
-      }
-      th, td {
-        padding: 6px 4px !important;
-        font-size: 9px !important;
-        border: 1px solid #cbd5e1 !important;
-      }
-      th:first-child, td:first-child {
-        position: static !important;
-        background-color: transparent !important;
-        box-shadow: none !important;
-      }
-      .badge {
-        padding: 2px 4px !important;
-        font-size: 8px !important;
-        min-width: unset !important;
-        border-radius: 4px !important;
-      }
-      .text-green, .text-red, .pct-green, .pct-red {
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-      }
+    td {
+      padding: 8px;
+      border: 1px solid #cbd5e1;
     }
   </style>
 </head>
 <body>
-  <div class="print-bar no-print">
-    <button onclick="window.print()">Print / Save as PDF</button>
-    <span class="print-bar-text">If the print preview window did not open, click the button above to print or save this report as PDF.</span>
-  </div>
-
-  <div class="report-card">
-    <div class="report-header">
-      <div class="report-title">
-        <h1>Students Attendance Report</h1>
-        <p>Comprehensive record of live & recording sessions</p>
-      </div>
-      <div class="report-meta">
-        <div>Generated: ${new Date().toLocaleString()}</div>
-        <div>Total Days Tracked: ${totalDays}</div>
-      </div>
-    </div>
-    
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th>Student Name</th>
-            <th>Email</th>
-            ${dayHeadersHtml}
-            <th>Attendance %</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${rowsHtml}
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <script>
-    window.onload = function() {
-      setTimeout(function() {
-        window.print();
-      }, 500);
-    };
-  </script>
+  <table>
+    <thead>
+      <!-- Title Row -->
+      <tr>
+        <th colspan="${3 + uniqueDates.length}" style="font-size: 16pt; font-weight: bold; text-align: left; background-color: #ffffff; border: none; padding-bottom: 5px; color: #0f172a; font-family: Calibri, sans-serif;">
+          Students Attendance Report
+        </th>
+      </tr>
+      <!-- Meta Row -->
+      <tr>
+        <th colspan="${3 + uniqueDates.length}" style="font-size: 10pt; color: #64748b; font-weight: normal; text-align: left; background-color: #ffffff; border: none; padding-bottom: 15px; font-family: Calibri, sans-serif;">
+          Generated: ${new Date().toLocaleString()} | Total Days Tracked: ${totalDays}
+        </th>
+      </tr>
+      <!-- Empty Spacer Row -->
+      <tr>
+        <th colspan="${3 + uniqueDates.length}" style="background-color: #ffffff; border: none; height: 10px;"></th>
+      </tr>
+      <!-- Main Table Headers -->
+      <tr>
+        <th style="background-color: #f1f5f9; color: #475569; font-weight: bold; border: 1px solid #cbd5e1; font-family: Calibri, sans-serif; padding: 8px;">Student Name</th>
+        <th style="background-color: #f1f5f9; color: #475569; font-weight: bold; border: 1px solid #cbd5e1; font-family: Calibri, sans-serif; padding: 8px;">Email</th>
+        ${dayHeadersHtml}
+        <th style="background-color: #f1f5f9; color: #475569; font-weight: bold; border: 1px solid #cbd5e1; text-align: center; font-family: Calibri, sans-serif; padding: 8px;">Attendance %</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${rowsHtml}
+    </tbody>
+  </table>
 </body>
 </html>
-    `;
+    `.trim();
 
-    // 9. Send response
-    res.setHeader('Content-Type', 'text/html');
-    return res.status(200).send(htmlContent);
+    // 9. Send response as Excel file download
+    res.setHeader('Content-Type', 'application/vnd.ms-excel');
+    res.setHeader('Content-Disposition', 'attachment; filename=wemade_attendance_report.xls');
+    return res.status(200).send(excelContent);
   } catch (error) {
     console.error('Error generating attendance report:', error);
     res.status(500).json({ message: 'Server error while generating attendance report' });
