@@ -497,7 +497,23 @@ const getAttendanceReport = async (req, res) => {
     for (let i = 1; i <= maxDayNum; i++) {
       daysList.push(i);
     }
-    const totalDays = daysList.length;
+
+    // Map each day to its calendar date and group normalized dayIds by date to avoid duplicates (e.g. May 18 coming 2 times)
+    const uniqueDates = [];
+    const dateToDayIds = {};
+    daysList.forEach(d => {
+      const normId = normalizeDayId(d);
+      const dateStr = getCalendarDateForDay(normId);
+      if (!uniqueDates.includes(dateStr)) {
+        uniqueDates.push(dateStr);
+      }
+      if (!dateToDayIds[dateStr]) {
+        dateToDayIds[dateStr] = [];
+      }
+      dateToDayIds[dateStr].push(normId);
+    });
+
+    const totalDays = uniqueDates.length;
 
     // 6. Map all records by student_dayId for fast O(1) lookup
     const recordMap = {};
@@ -516,11 +532,19 @@ const getAttendanceReport = async (req, res) => {
       let recordingCount = 0;
       let daysHtml = '';
 
-      daysList.forEach(d => {
-        const normId = normalizeDayId(d);
-        const record = recordMap[`${student._id}_${normId}`];
-        if (record) {
-          if (record.attendanceType === 'live') {
+      uniqueDates.forEach(dateStr => {
+        const dayIds = dateToDayIds[dateStr];
+        let matchedRecord = null;
+        for (const dayId of dayIds) {
+          const record = recordMap[`${student._id}_${dayId}`];
+          if (record) {
+            matchedRecord = record;
+            break;
+          }
+        }
+
+        if (matchedRecord) {
+          if (matchedRecord.attendanceType === 'live') {
             liveCount++;
             daysHtml += `<td><span class="badge badge-live">Live</span></td>`;
           } else {
@@ -548,9 +572,7 @@ const getAttendanceReport = async (req, res) => {
     });
 
     // Generate day headers using actual calendar dates
-    const dayHeadersHtml = daysList.map(d => {
-      const normId = normalizeDayId(d);
-      const dateStr = getCalendarDateForDay(normId);
+    const dayHeadersHtml = uniqueDates.map(dateStr => {
       let formattedDate = dateStr;
       if (dateStr && dateStr.includes('-')) {
         const parts = dateStr.split('-');
@@ -582,6 +604,35 @@ const getAttendanceReport = async (req, res) => {
       padding: 40px;
       background-color: var(--bg);
       color: #334155;
+    }
+    .print-bar {
+      display: flex;
+      align-items: center;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      gap: 16px;
+    }
+    .print-bar button {
+      background: #00d1d1;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+    .print-bar button:hover {
+      background: #00b8b8;
+    }
+    .print-bar-text {
+      font-size: 14px;
+      color: #64748b;
     }
     .report-card {
       background: #ffffff;
@@ -711,9 +762,28 @@ const getAttendanceReport = async (req, res) => {
       color: #dc2626;
       background-color: #fef2f2;
     }
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+      body {
+        padding: 0;
+        background: #ffffff;
+      }
+      .report-card {
+        border: none;
+        box-shadow: none;
+        padding: 0;
+      }
+    }
   </style>
 </head>
 <body>
+  <div class="print-bar no-print">
+    <button onclick="window.print()">Print / Save as PDF</button>
+    <span class="print-bar-text">If the print preview window did not open, click the button above to print or save this report as PDF.</span>
+  </div>
+
   <div class="report-card">
     <div class="report-header">
       <div class="report-title">
@@ -742,13 +812,20 @@ const getAttendanceReport = async (req, res) => {
       </table>
     </div>
   </div>
+
+  <script>
+    window.onload = function() {
+      setTimeout(function() {
+        window.print();
+      }, 500);
+    };
+  </script>
 </body>
 </html>
     `;
 
-    // 9. Send response as file download
+    // 9. Send response
     res.setHeader('Content-Type', 'text/html');
-    res.setHeader('Content-Disposition', 'attachment; filename=wemade_attendance_report.html');
     return res.status(200).send(htmlContent);
   } catch (error) {
     console.error('Error generating attendance report:', error);

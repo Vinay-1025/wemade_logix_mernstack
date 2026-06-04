@@ -204,16 +204,15 @@ const AttendanceAdmin = () => {
     setReportDownloading(true);
     try {
       const response = await axios.get('/api/attendance/report', {
-        headers: { 'Authorization': `Bearer ${currentUser.token}` },
-        responseType: 'blob'
+        headers: { 'Authorization': `Bearer ${currentUser.token}` }
       });
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `wemade_attendance_report_${new Date().toISOString().split('T')[0]}.html`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      const printWindow = window.open('', '_blank');
+      if (printWindow) {
+        printWindow.document.write(response.data);
+        printWindow.document.close();
+      } else {
+        setStatusMessage({ type: 'error', text: 'Please allow popups to save the PDF report.' });
+      }
     } catch (err) {
       console.error('Failed to download report:', err);
       setStatusMessage({ type: 'error', text: 'Failed to download attendance report.' });
@@ -1305,9 +1304,12 @@ const AttendanceAdmin = () => {
           .header-actions-block {
             justify-content: center;
             width: 100%;
+            flex-wrap: wrap;
+            gap: 10px;
           }
           .action-btn-secondary {
             flex: 1;
+            min-width: 140px;
             justify-content: center;
           }
           .control-card, .audit-card {
@@ -1327,6 +1329,28 @@ const AttendanceAdmin = () => {
           .page-navigation {
             width: 100%;
             justify-content: center;
+          }
+        }
+        @media (max-width: 480px) {
+          .header-actions-block {
+            flex-direction: column;
+            gap: 8px;
+          }
+          .action-btn-secondary {
+            width: 100%;
+          }
+          .card-header-premium {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+          }
+          .records-count {
+            position: static;
+            margin-top: 4px;
+          }
+          .active-session-split {
+            flex-direction: column;
+            gap: 20px;
           }
         }
       `}} />
