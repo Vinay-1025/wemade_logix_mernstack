@@ -497,6 +497,7 @@ const getAttendanceReport = async (req, res) => {
     for (let i = 1; i <= maxDayNum; i++) {
       daysList.push(i);
     }
+    const totalDays = daysList.length;
 
     // 6. Map all records by student_dayId for fast O(1) lookup
     const recordMap = {};
@@ -532,7 +533,6 @@ const getAttendanceReport = async (req, res) => {
       });
 
       const attendedCount = liveCount + recordingCount;
-      const totalDays = daysList.length;
       const pct = totalDays > 0 ? Math.round((attendedCount / totalDays) * 100) : 100;
       
       const nameColorClass = pct >= 80 ? 'text-green' : 'text-red';
