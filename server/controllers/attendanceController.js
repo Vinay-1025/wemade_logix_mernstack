@@ -763,17 +763,55 @@ const getAttendanceReport = async (req, res) => {
       background-color: #fef2f2;
     }
     @media print {
+      @page {
+        size: A4 landscape;
+        margin: 10mm;
+      }
       .no-print {
         display: none !important;
       }
       body {
         padding: 0;
+        margin: 0;
         background: #ffffff;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
       }
       .report-card {
         border: none;
         box-shadow: none;
         padding: 0;
+        width: 100%;
+        max-width: 100%;
+      }
+      .table-container {
+        border: none;
+        overflow: visible !important;
+      }
+      table {
+        width: 100% !important;
+        table-layout: auto !important;
+        border-collapse: collapse !important;
+      }
+      th, td {
+        padding: 6px 4px !important;
+        font-size: 9px !important;
+        border: 1px solid #cbd5e1 !important;
+      }
+      th:first-child, td:first-child {
+        position: static !important;
+        background-color: transparent !important;
+        box-shadow: none !important;
+      }
+      .badge {
+        padding: 2px 4px !important;
+        font-size: 8px !important;
+        min-width: unset !important;
+        border-radius: 4px !important;
+      }
+      .text-green, .text-red, .pct-green, .pct-red {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
       }
     }
   </style>
