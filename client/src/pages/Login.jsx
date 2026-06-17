@@ -76,7 +76,7 @@ const Login = () => {
 
         <div className="auth-left-content">
           <div className="hero-text">
-            <h1>Master Your<br /><span>Language Skills</span></h1>
+            <h1>Master <br /><span>MERN</span></h1>
           </div>
           
           <div className="feature-list">
@@ -84,19 +84,19 @@ const Login = () => {
               <div className="feature-icon">
                 <ArrowRight size={18} />
               </div>
-              <span className="feature-text">Interactive Speaking Exercises</span>
+              <span className="feature-text">Live Interactive Sessions</span>
             </div>
             <div className="feature-item">
               <div className="feature-icon">
                 <ArrowRight size={18} />
               </div>
-              <span className="feature-text">Real-time Grammar Feedback</span>
+              <span className="feature-text">Visualizations & Material</span>
             </div>
             <div className="feature-item">
               <div className="feature-icon">
                 <ArrowRight size={18} />
               </div>
-              <span className="feature-text">Enterprise Learning Management</span>
+              <span className="feature-text">Assignments & Open Challenges</span>
             </div>
           </div>
         </div>

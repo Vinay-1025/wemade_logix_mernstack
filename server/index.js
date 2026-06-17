@@ -50,7 +50,7 @@ app.use('/api/course', require('./routes/courseRoutes'));
 
 // Basic Route
 app.get('/', (req, res) => {
-  res.send('FluenC API is running...');
+  res.send('WeMade Logix API is running...');
 });
 
 // Migration function to populate dayId in old records and normalize dayId formats
