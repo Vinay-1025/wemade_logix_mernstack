@@ -16,8 +16,7 @@ const normalizeDayId = (dayId) => {
 };
 
 const getCalendarDateForDay = (dayId) => {
-  const baseDate = new Date(2026, 4, 18); // May 18, 2026 (Month is 0-indexed)
-  baseDate.setHours(0, 0, 0, 0);
+  const baseDate = new Date(Date.UTC(2026, 4, 18)); // May 18, 2026 (Month is 0-indexed, UTC)
 
   const getDayNumber = (id) => {
     if (!id) return 1;
@@ -40,17 +39,20 @@ const getCalendarDateForDay = (dayId) => {
     return '2026-05-18';
   }
 
-  let targetDate = new Date(baseDate);
+  let targetDate = new Date(baseDate.getTime());
   let nonSundayDaysAdded = 0;
 
   while (nonSundayDaysAdded < dayNo - 1) {
-    targetDate.setDate(targetDate.getDate() + 1);
-    if (targetDate.getDay() !== 0) { // 0 is Sunday
+    targetDate.setUTCDate(targetDate.getUTCDate() + 1);
+    if (targetDate.getUTCDay() !== 0) { // 0 is Sunday
       nonSundayDaysAdded++;
     }
   }
 
-  return targetDate.toLocaleDateString('en-CA');
+  const yyyy = targetDate.getUTCFullYear();
+  const mm = String(targetDate.getUTCMonth() + 1).padStart(2, '0');
+  const dd = String(targetDate.getUTCDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
 };
 
 // @desc    Enable attendance (Generate new active session)

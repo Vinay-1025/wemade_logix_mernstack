@@ -268,6 +268,33 @@ const AttendanceAdmin = () => {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+  const getPaginationRange = (currPage, totPages) => {
+    const delta = 1;
+    const range = [];
+    const rangeWithDots = [];
+    let l;
+
+    for (let i = 1; i <= totPages; i++) {
+      if (i === 1 || i === totPages || (i >= currPage - delta && i <= currPage + delta)) {
+        range.push(i);
+      }
+    }
+
+    for (let i of range) {
+      if (l) {
+        if (i - l === 2) {
+          rangeWithDots.push(l + 1);
+        } else if (i - l > 2) {
+          rangeWithDots.push('...');
+        }
+      }
+      rangeWithDots.push(i);
+      l = i;
+    }
+
+    return rangeWithDots;
+  };
+
   return (
     <MainLayout>
       <div className="attendance-admin-container">
@@ -553,14 +580,18 @@ const AttendanceAdmin = () => {
                     </button>
 
                     <div className="page-numbers">
-                      {[...Array(totalPages)].map((_, index) => (
-                        <button
-                          key={index + 1}
-                          onClick={() => paginate(index + 1)}
-                          className={`page-btn ${currentPage === index + 1 ? 'active' : ''}`}
-                        >
-                          {index + 1}
-                        </button>
+                      {getPaginationRange(currentPage, totalPages).map((p, idx) => (
+                        p === '...' ? (
+                          <span key={`dots-${idx}`} className="pagination-dots" style={{ padding: '0 8px', color: '#94a3b8' }}>...</span>
+                        ) : (
+                          <button
+                            key={p}
+                            onClick={() => paginate(p)}
+                            className={`page-btn ${currentPage === p ? 'active' : ''}`}
+                          >
+                            {p}
+                          </button>
+                        )
                       ))}
                     </div>
 
@@ -1354,6 +1385,14 @@ const AttendanceAdmin = () => {
           .active-session-split {
             flex-direction: column;
             gap: 20px;
+          }
+          .pagination-dots {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #94a3b8;
           }
         }
       `}} />

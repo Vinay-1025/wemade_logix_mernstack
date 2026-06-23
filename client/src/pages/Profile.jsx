@@ -36,23 +36,24 @@ const Profile = () => {
   const generateHeatmapDays = () => {
     const days = [];
     const today = new Date();
-    const currentDayOfWeek = today.getDay();
+    // Create UTC midnight for today
+    const todayUTC = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
+    const currentDayOfWeek = todayUTC.getUTCDay();
     
-    const startDate = new Date(today);
-    // Align with Sunday 14 weeks ago
-    startDate.setDate(today.getDate() - 14 * 7 - currentDayOfWeek);
+    const startDate = new Date(todayUTC.getTime());
+    startDate.setUTCDate(todayUTC.getUTCDate() - 14 * 7 - currentDayOfWeek);
     
-    const tempDate = new Date(startDate);
+    const tempDate = new Date(startDate.getTime());
     // Generate up to today
-    while (tempDate <= today) {
-      days.push(new Date(tempDate));
-      tempDate.setDate(tempDate.getDate() + 1);
+    while (tempDate <= todayUTC) {
+      days.push(new Date(tempDate.getTime()));
+      tempDate.setUTCDate(tempDate.getUTCDate() + 1);
     }
     
     // Pad to complete the final week's row
     while (days.length % 7 !== 0) {
-      const nextDay = new Date(days[days.length - 1]);
-      nextDay.setDate(nextDay.getDate() + 1);
+      const nextDay = new Date(days[days.length - 1].getTime());
+      nextDay.setUTCDate(nextDay.getUTCDate() + 1);
       days.push(nextDay);
     }
     
@@ -480,14 +481,19 @@ const Profile = () => {
                   <div className="heatmap-grid-scroll-wrapper">
                     <div className="heatmap-grid">
                       {generateHeatmapDays().map((day, idx) => {
-                        const dateStr = day.toLocaleDateString('en-CA');
+                        const yyyy = day.getUTCFullYear();
+                        const mm = String(day.getUTCMonth() + 1).padStart(2, '0');
+                        const dd = String(day.getUTCDate()).padStart(2, '0');
+                        const dateStr = `${yyyy}-${mm}-${dd}`;
                         const status = attendanceStats.heatmapData[dateStr] || 'none';
-                        const isFuture = day > new Date();
-                        const dateLabel = day.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+                        
+                        const today = new Date();
+                        const todayUTC = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
+                        const isFuture = day.getTime() > todayUTC.getTime();
+                        const dateLabel = day.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
 
                         // Apply Filters
-                        const today = new Date();
-                        const diffTime = Math.abs(today - day);
+                        const diffTime = Math.abs(todayUTC.getTime() - day.getTime());
                         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                         
                         let isFilteredByTime = false;
@@ -496,7 +502,7 @@ const Profile = () => {
                         if (timeRange === '90' && diffDays > 90) isFilteredByTime = true;
 
                         let isFilteredByStatus = false;
-                        if (statusFilter === 'attended' && status !== 'attended') isFilteredByStatus = true;
+                        if (statusFilter === 'attended' && status !== 'live' && status !== 'recording') isFilteredByStatus = true;
                         if (statusFilter === 'missed' && status !== 'missed') isFilteredByStatus = true;
 
                         const isDimmed = isFilteredByTime || isFilteredByStatus;
@@ -506,7 +512,7 @@ const Profile = () => {
                             key={idx}
                             className={`heatmap-cell cell-${status} ${isFuture ? 'cell-future' : ''} ${isDimmed ? 'cell-dimmed' : ''}`}
                             style={{
-                              gridRow: (day.getDay() + 1),
+                              gridRow: (day.getUTCDay() + 1),
                             }}
                             onMouseEnter={() => setHoveredCell({ dateLabel, status })}
                             onMouseLeave={() => setHoveredCell(null)}

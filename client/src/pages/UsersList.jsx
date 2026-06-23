@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
-import { User, Mail, Shield, Calendar, Search, ArrowLeft, Plus, X, UserPlus, ChevronLeft, ChevronRight, MoreVertical, Trash2, UserCheck, Edit2, Ban, Bell, AlertCircle, CheckCircle, Filter, RotateCcw, FileSpreadsheet, Upload, Download, Database } from 'lucide-react';
+import { User, Mail, Shield, Calendar, Search, ArrowLeft, Plus, X, UserPlus, ChevronLeft, ChevronRight, MoreVertical, Trash2, UserCheck, Edit2, Ban, Bell, AlertCircle, CheckCircle, Filter, RotateCcw, FileSpreadsheet, Upload, Download, Database, Flame, Percent, Clock, CheckCircle2, Activity } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import MainLayout from '../components/MainLayout';
 import { sendWelcomeEmailJS } from '../utils/emailService';
@@ -44,6 +44,13 @@ const UsersList = () => {
   // Feedback states
   const [snackbar, setSnackbar] = useState({ open: false, message: '', type: 'success' });
   const [confirmDialog, setConfirmDialog] = useState({ open: false, title: '', message: '', onConfirm: null });
+
+  // Attendance details states for selected detail user
+  const [attendanceStats, setAttendanceStats] = useState(null);
+  const [attendanceLoading, setAttendanceLoading] = useState(true);
+  const [hoveredCell, setHoveredCell] = useState(null);
+  const [timeRange, setTimeRange] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
 
   const downloadTemplate = () => {
     const headers = "Name,Email,Password,Role\n";
@@ -263,6 +270,93 @@ const UsersList = () => {
     return colors[Math.abs(hash) % colors.length];
   };
 
+  const getNextMilestone = (streak) => {
+    if (streak < 5) return 5;
+    if (streak < 10) return 10;
+    if (streak < 15) return 15;
+    if (streak < 20) return 20;
+    return streak + 5;
+  };
+
+  const getMilestoneProgress = (streak) => {
+    const next = getNextMilestone(streak);
+    const prev = next === 5 ? 0 : next - 5;
+    const range = next - prev;
+    const progress = streak - prev;
+    return Math.min((progress / range) * 100, 100);
+  };
+
+  const generateHeatmapDays = () => {
+    const days = [];
+    const today = new Date();
+    // Create UTC midnight for today
+    const todayUTC = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
+    const currentDayOfWeek = todayUTC.getUTCDay();
+    
+    const startDate = new Date(todayUTC.getTime());
+    startDate.setUTCDate(todayUTC.getUTCDate() - 14 * 7 - currentDayOfWeek);
+    
+    const tempDate = new Date(startDate.getTime());
+    // Generate up to today
+    while (tempDate <= todayUTC) {
+      days.push(new Date(tempDate.getTime()));
+      tempDate.setUTCDate(tempDate.getUTCDate() + 1);
+    }
+    
+    // Pad to complete the final week's row
+    while (days.length % 7 !== 0) {
+      const nextDay = new Date(days[days.length - 1].getTime());
+      nextDay.setUTCDate(nextDay.getUTCDate() + 1);
+      days.push(nextDay);
+    }
+    
+    return days;
+  };
+
+  const fetchDetailUserAttendance = async (selectedUser) => {
+    if (!selectedUser) return;
+    setAttendanceLoading(true);
+    setAttendanceStats(null);
+    try {
+      const config = { headers: { Authorization: `Bearer ${currentUser.token}` } };
+      const { data } = await axios.get(`/api/attendance/stats/${selectedUser._id}`, config);
+      if (data && data.success) {
+        setAttendanceStats(data.stats);
+      }
+    } catch (err) {
+      console.error('Failed to fetch attendance stats:', err);
+    } finally {
+      setAttendanceLoading(false);
+    }
+  };
+
+  const getPaginationRange = (currPage, totPages) => {
+    const delta = 1;
+    const range = [];
+    const rangeWithDots = [];
+    let l;
+
+    for (let i = 1; i <= totPages; i++) {
+      if (i === 1 || i === totPages || (i >= currPage - delta && i <= currPage + delta)) {
+        range.push(i);
+      }
+    }
+
+    for (let i of range) {
+      if (l) {
+        if (i - l === 2) {
+          rangeWithDots.push(l + 1);
+        } else if (i - l > 2) {
+          rangeWithDots.push('...');
+        }
+      }
+      rangeWithDots.push(i);
+      l = i;
+    }
+
+    return rangeWithDots;
+  };
+
   const fetchDetailUserAssignments = async (selectedUser) => {
     if (!selectedUser) return;
     setDetailLoading(true);
@@ -340,6 +434,7 @@ const UsersList = () => {
 
   useEffect(() => {
     setSelectedDetailUser(null);
+    setAttendanceStats(null);
   }, [location.pathname]);
 
   const fetchUsers = async () => {
@@ -492,7 +587,7 @@ const UsersList = () => {
           <div className="user-detail-container fade-in">
             {/* Top Navigation */}
             <div className="detail-navigation">
-              <button className="back-btn-directory" onClick={() => setSelectedDetailUser(null)}>
+              <button className="back-btn-directory" onClick={() => { setSelectedDetailUser(null); setAttendanceStats(null); }}>
                 <ArrowLeft size={18} />
                 <span>Back to User Directory</span>
               </button>
@@ -638,14 +733,18 @@ const UsersList = () => {
                           Prev
                         </button>
                         <div className="page-numbers">
-                          {Array.from({ length: syllabusTotalPages }, (_, i) => i + 1).map(p => (
-                            <button 
-                              key={p} 
-                              className={`page-btn ${syllabusPage === p ? 'active' : ''}`}
-                              onClick={() => setSyllabusPage(p)}
-                            >
-                              {p}
-                            </button>
+                          {getPaginationRange(syllabusPage, syllabusTotalPages).map((p, idx) => (
+                            p === '...' ? (
+                              <span key={`dots-${idx}`} className="pagination-dots" style={{ padding: '0 8px', color: 'var(--app-text-muted)' }}>...</span>
+                            ) : (
+                              <button 
+                                key={p} 
+                                className={`page-btn ${syllabusPage === p ? 'active' : ''}`}
+                                onClick={() => setSyllabusPage(p)}
+                              >
+                                {p}
+                              </button>
+                            )
                           ))}
                         </div>
                         <button 
@@ -1096,6 +1195,7 @@ const UsersList = () => {
                       onClick={() => {
                         setSelectedDetailUser(u);
                         fetchDetailUserAssignments(u);
+                        fetchDetailUserAttendance(u);
                       }}
                       style={{ cursor: 'pointer' }}
                     >
@@ -1191,14 +1291,18 @@ const UsersList = () => {
                       </button>
                       
                       <div className="page-numbers">
-                        {[...Array(totalPages)].map((_, index) => (
-                          <button
-                            key={index + 1}
-                            onClick={() => paginate(index + 1)}
-                            className={`page-btn ${currentPage === index + 1 ? 'active' : ''}`}
-                          >
-                            {index + 1}
-                          </button>
+                        {getPaginationRange(currentPage, totalPages).map((p, idx) => (
+                          p === '...' ? (
+                            <span key={`dots-${idx}`} className="pagination-dots" style={{ padding: '0 8px', color: 'var(--app-text-muted)' }}>...</span>
+                          ) : (
+                            <button
+                              key={p}
+                              onClick={() => paginate(p)}
+                              className={`page-btn ${currentPage === p ? 'active' : ''}`}
+                            >
+                              {p}
+                            </button>
+                          )
                         ))}
                       </div>
 
@@ -1860,6 +1964,326 @@ const UsersList = () => {
             align-items: center;
             text-align: center;
           }
+        }
+
+        /* Attendance Analytics Styles */
+        .attendance-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 24px;
+          flex-wrap: wrap;
+          gap: 12px;
+        }
+        .hover-tooltip-display {
+          background: #f8fafc;
+          padding: 6px 16px;
+          border-radius: 12px;
+          font-size: 0.8rem;
+          color: var(--app-text-muted);
+          border: 1px solid var(--app-border);
+          min-height: 32px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 200px;
+        }
+        .tooltip-text {
+          color: var(--app-text);
+          font-weight: 500;
+        }
+        .tooltip-text-placeholder {
+          color: var(--app-text-muted);
+          font-style: italic;
+        }
+        .attendance-stats-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 20px;
+          margin-bottom: 24px;
+        }
+        .att-stat-item {
+          background: #f8fafc;
+          border: 1px solid var(--app-border);
+          padding: 20px;
+          border-radius: 20px;
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .att-stat-item:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.02);
+        }
+        .att-stat-icon-wrapper {
+          width: 44px;
+          height: 44px;
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        
+        /* Radial Progress Styles */
+        .radial-progress-container {
+          position: relative;
+          width: 56px;
+          height: 56px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+        .circular-progress {
+          width: 100%;
+          height: 100%;
+        }
+        .radial-progress-value {
+          position: absolute;
+          font-size: 0.8rem;
+          font-weight: 800;
+          color: var(--app-text);
+        }
+
+        /* Streak Milestone Styles */
+        .streak-milestone-wrapper {
+          margin-top: 6px;
+          width: 100%;
+        }
+        .streak-progress-label {
+          font-size: 0.65rem;
+          font-weight: 700;
+          color: #f97316;
+          margin-bottom: 4px;
+          display: flex;
+          justify-content: space-between;
+        }
+        .streak-progress-bg {
+          height: 5px;
+          background: rgba(0, 0, 0, 0.06);
+          border-radius: 3px;
+          overflow: hidden;
+          width: 100%;
+        }
+        .streak-progress-fill {
+          height: 100%;
+          background: linear-gradient(90deg, #ff6b6b, #ffbe0b);
+          border-radius: 3px;
+          transition: width 0.3s ease;
+        }
+
+        /* Filters Styles */
+        .heatmap-filters {
+          display: flex;
+          gap: 12px;
+          background: rgba(0, 0, 0, 0.02);
+          padding: 4px;
+          border-radius: 12px;
+          border: 1px solid var(--app-border);
+          flex-wrap: wrap;
+        }
+        .filter-group {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .filter-label {
+          font-size: 0.65rem;
+          font-weight: 800;
+          color: var(--app-text-muted);
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          padding-left: 6px;
+        }
+        .filter-buttons {
+          display: flex;
+          background: rgba(0, 0, 0, 0.03);
+          padding: 2px;
+          border-radius: 8px;
+          gap: 1px;
+        }
+        .filter-btn {
+          border: none;
+          background: transparent;
+          padding: 4px 10px;
+          font-size: 0.7rem;
+          font-weight: 700;
+          color: var(--app-text-muted);
+          border-radius: 6px;
+          cursor: pointer;
+          transition: all 0.15s ease;
+        }
+        .filter-btn:hover {
+          color: var(--app-text);
+        }
+        .filter-btn.active {
+          background: white;
+          color: var(--app-text);
+          box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+        }
+
+        .percent-icon {
+          background: rgba(14, 165, 233, 0.1);
+          color: #0ea5e9;
+        }
+        .flame-icon {
+          background: rgba(249, 115, 22, 0.1);
+          color: #f97316;
+        }
+        .flame-icon.glowing-flame {
+          background: linear-gradient(135deg, #ff6b6b, #ffbe0b);
+          color: white;
+          animation: pulse 1.5s infinite alternate;
+        }
+        .award-icon {
+          background: rgba(168, 85, 247, 0.1);
+          color: #a855f7;
+        }
+        .calendar-icon {
+          background: rgba(16, 185, 129, 0.1);
+          color: #10b981;
+        }
+        .att-stat-details h3 {
+          font-size: 1.25rem;
+          font-weight: 800;
+          margin: 0 0 2px 0;
+          color: var(--app-text);
+        }
+        .att-stat-details p {
+          font-size: 0.8rem;
+          color: var(--app-text-muted);
+          margin: 0 0 6px 0;
+        }
+        .att-badge {
+          font-size: 0.7rem;
+          font-weight: 700;
+          padding: 2px 8px;
+          border-radius: 6px;
+          text-transform: uppercase;
+        }
+        .badge-excellent {
+          background: #f0fdf4;
+          color: #16a34a;
+        }
+        .badge-warning {
+          background: #fffbeb;
+          color: #d97706;
+        }
+        .badge-danger {
+          background: #fef2f2;
+          color: #dc2626;
+        }
+        .att-badge-streak {
+          font-size: 0.7rem;
+          font-weight: 700;
+        }
+        .att-badge-neutral {
+          font-size: 0.7rem;
+          font-weight: 600;
+          color: var(--app-text-muted);
+        }
+        
+        /* Heatmap styles */
+        .heatmap-container {
+          display: flex;
+          gap: 12px;
+          margin-top: 16px;
+          background: #f8fafc;
+          border: 1px solid var(--app-border);
+          padding: 20px;
+          border-radius: 20px;
+        }
+        .day-labels {
+          display: grid;
+          grid-template-rows: repeat(7, 14px);
+          gap: 4px;
+          font-size: 0.7rem;
+          color: var(--app-text-muted);
+          align-items: center;
+          user-select: none;
+          padding-top: 2px;
+        }
+        .heatmap-grid-scroll-wrapper {
+          overflow-x: auto;
+          flex: 1;
+        }
+        .heatmap-grid {
+          display: grid;
+          grid-template-rows: repeat(7, 14px);
+          grid-auto-flow: column;
+          gap: 4px;
+          width: max-content;
+        }
+        .heatmap-cell {
+          width: 14px;
+          height: 14px;
+          border-radius: 3px;
+          background: rgba(0, 0, 0, 0.04);
+          transition: transform 0.15s ease, background 0.2s ease, opacity 0.2s ease;
+          cursor: pointer;
+        }
+        .heatmap-cell:hover {
+          transform: scale(1.25);
+          box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+          z-index: 10;
+        }
+        .heatmap-cell.cell-attended, .heatmap-cell.cell-live {
+          background: #10b981;
+        }
+        .heatmap-cell.cell-recording {
+          background: #0ea5e9;
+        }
+        .heatmap-cell.cell-missed {
+          background: #ef4444;
+        }
+        .heatmap-cell.cell-future {
+          opacity: 0.2;
+          cursor: default;
+          pointer-events: none;
+        }
+        .heatmap-cell.cell-dimmed {
+          opacity: 0.06;
+          transform: scale(0.85);
+          pointer-events: none;
+        }
+        .heatmap-legend {
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          gap: 6px;
+          margin-top: 12px;
+          font-size: 0.75rem;
+          color: var(--app-text-muted);
+        }
+        .legend-cell {
+          width: 10px;
+          height: 10px;
+          border-radius: 2px;
+        }
+        .legend-cell.cell-none {
+          background: rgba(0, 0, 0, 0.04);
+        }
+        .legend-cell.cell-missed {
+          background: #ef4444;
+        }
+        .legend-cell.cell-attended, .legend-cell.cell-live {
+          background: #10b981;
+        }
+        .legend-cell.cell-recording {
+          background: #0ea5e9;
+        }
+        .pagination-dots {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 700;
+          font-size: 0.95rem;
+        }
+
+        @keyframes pulse {
+          0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.4); }
+          100% { transform: scale(1.05); box-shadow: 0 0 10px 4px rgba(249, 115, 22, 0); }
         }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }

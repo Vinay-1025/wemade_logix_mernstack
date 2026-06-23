@@ -107,6 +107,33 @@ const AuditLogs = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const getPaginationRange = (currPage, totPages) => {
+    const delta = 1;
+    const range = [];
+    const rangeWithDots = [];
+    let l;
+
+    for (let i = 1; i <= totPages; i++) {
+      if (i === 1 || i === totPages || (i >= currPage - delta && i <= currPage + delta)) {
+        range.push(i);
+      }
+    }
+
+    for (let i of range) {
+      if (l) {
+        if (i - l === 2) {
+          rangeWithDots.push(l + 1);
+        } else if (i - l > 2) {
+          rangeWithDots.push('...');
+        }
+      }
+      rangeWithDots.push(i);
+      l = i;
+    }
+
+    return rangeWithDots;
+  };
+
   const resetFilters = () => {
     setSearchTerm('');
     setStartDate('');
@@ -281,14 +308,18 @@ const AuditLogs = () => {
                   </button>
                   
                   <div className="page-numbers">
-                    {[...Array(totalPages)].map((_, index) => (
-                      <button
-                        key={index + 1}
-                        onClick={() => paginate(index + 1)}
-                        className={`page-btn ${currentPage === index + 1 ? 'active' : ''}`}
-                      >
-                        {index + 1}
-                      </button>
+                    {getPaginationRange(currentPage, totalPages).map((p, idx) => (
+                      p === '...' ? (
+                        <span key={`dots-${idx}`} className="pagination-dots" style={{ padding: '0 8px', color: '#64748b' }}>...</span>
+                      ) : (
+                        <button
+                          key={p}
+                          onClick={() => paginate(p)}
+                          className={`page-btn ${currentPage === p ? 'active' : ''}`}
+                        >
+                          {p}
+                        </button>
+                      )
                     ))}
                   </div>
 
@@ -455,6 +486,14 @@ const AuditLogs = () => {
           .audit-page .filter-group.right { flex-direction: column; }
           .audit-page .density-select, .audit-page .reset-btn { width: 100%; justify-content: center; }
           .audit-page .page-btn { min-width: 32px; height: 32px; font-size: 0.8rem; }
+          .pagination-dots {
+             display: inline-flex;
+             align-items: center;
+             justify-content: center;
+             font-weight: 700;
+             font-size: 0.95rem;
+             color: #64748b;
+          }
         }
       `}} />
     </MainLayout>
