@@ -2858,23 +2858,23 @@ const UsersList = () => {
         }
 
         .status-indicator.live {
-          background: #f0fdf4;
+          background-color: #f0fdf4;
           color: #16a34a;
         }
         .status-indicator.recording {
-          background: #f0f9ff;
+          background-color: #f0f9ff;
           color: #0ea5e9;
         }
         .status-indicator.cancelled, .status-indicator.cancelled-badge {
-          background: #ffedd5;
+          background-color: #ffedd5;
           color: #ea580c;
         }
         .status-indicator.missed, .status-indicator.absent {
-          background: #fef2f2;
+          background-color: #fef2f2;
           color: #dc2626;
         }
         .status-indicator.future, .status-indicator.scheduled {
-          background: #f1f5f9;
+          background-color: #f1f5f9;
           color: #94a3b8;
         }
         .status-indicator-select {
