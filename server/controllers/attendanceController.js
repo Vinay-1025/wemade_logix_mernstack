@@ -550,6 +550,8 @@ const getAttendanceReport = async (req, res) => {
       dateToDayIds[dateStr].push(normId);
     });
 
+    const totalDays = uniqueDates.length;
+
     // Map sessions to find cancelled days
     const cancelledDaysMap = {};
     sessions.forEach(s => {
