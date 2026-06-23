@@ -25,6 +25,14 @@ const attendanceSessionSchema = new mongoose.Schema({
   },
   disabledAt: {
     type: Date,
+  },
+  isCancelled: {
+    type: Boolean,
+    default: false,
+  },
+  cancelReason: {
+    type: String,
+    default: '',
   }
 });
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import MainLayout from '../components/MainLayout';
 import axios from 'axios';
-import { Play, Square, QrCode, Search, RefreshCw, CheckCircle, Clock, Calendar, Download, ChevronLeft, ChevronRight, Copy, Check } from 'lucide-react';
+import { Play, Square, QrCode, Search, RefreshCw, CheckCircle, Clock, Calendar, Download, ChevronLeft, ChevronRight, Copy, Check, Ban } from 'lucide-react';
 import { courseData } from '../data/mockData';
 import { QRCodeSVG } from 'qrcode.react';
 
@@ -78,6 +78,10 @@ const AttendanceAdmin = () => {
   const [endDate, setEndDate] = useState('');
   const [statusMessage, setStatusMessage] = useState({ type: '', text: '' });
 
+  // Cancellation States
+  const [isCancelledSession, setIsCancelledSession] = useState(false);
+  const [cancelReason, setCancelReason] = useState('');
+
   // Pagination States
   const [currentPage, setCurrentPage] = useState(1);
   const [recordsPerPage, setRecordsPerPage] = useState(10);
@@ -138,12 +142,23 @@ const AttendanceAdmin = () => {
       return;
     }
     try {
-      const response = await axios.post('/api/attendance/session', { dayId: selectedDayId.trim() }, {
+      const response = await axios.post('/api/attendance/session', { 
+        dayId: selectedDayId.trim(),
+        isCancelled: isCancelledSession,
+        cancelReason: isCancelledSession ? cancelReason.trim() || 'Cancelled' : ''
+      }, {
         headers: { 'Authorization': `Bearer ${currentUser.token}` }
       });
       if (response.data?.success) {
-        setActiveSession(response.data.session);
-        setStatusMessage({ type: 'success', text: 'Attendance session started. QR code generated!' });
+        if (isCancelledSession) {
+          setActiveSession(null);
+          setStatusMessage({ type: 'success', text: `Class day ${selectedDayId} marked as cancelled successfully.` });
+          setIsCancelledSession(false);
+          setCancelReason('');
+        } else {
+          setActiveSession(response.data.session);
+          setStatusMessage({ type: 'success', text: 'Attendance session started. QR code generated!' });
+        }
         fetchRecords();
       }
     } catch (err) {
@@ -164,6 +179,28 @@ const AttendanceAdmin = () => {
       }
     } catch (err) {
       setStatusMessage({ type: 'error', text: err.response?.data?.message || 'Failed to end session' });
+    }
+  };
+
+  const handleCancelActiveSession = async () => {
+    if (!currentUser?.token) return;
+    const reason = window.prompt("Enter the reason for cancellation (e.g. Public Holiday, Technical Outage):");
+    if (reason === null) return; // User clicked Cancel in prompt
+
+    try {
+      const response = await axios.put('/api/attendance/session/end', {
+        isCancelled: true,
+        cancelReason: reason.trim() || 'Cancelled'
+      }, {
+        headers: { 'Authorization': `Bearer ${currentUser.token}` }
+      });
+      if (response.data?.success) {
+        setActiveSession(null);
+        setStatusMessage({ type: 'success', text: 'Active session cancelled successfully.' });
+        fetchRecords();
+      }
+    } catch (err) {
+      setStatusMessage({ type: 'error', text: err.response?.data?.message || 'Failed to cancel session' });
     }
   };
 
@@ -389,10 +426,14 @@ const AttendanceAdmin = () => {
                         <span className="detail-value font-mono">{activeSession.code}</span>
                       </div>
                     </div>
-
-                    <button className="btn-stop-session" onClick={handleEndSession}>
-                      <Square size={16} fill="white" /> End Active Session
-                    </button>
+                    <div style={{ display: 'flex', gap: '12px', width: '100%', marginTop: '8px' }}>
+                      <button className="btn-stop-session" onClick={handleEndSession} style={{ flex: 1, padding: '10px 14px' }}>
+                        <Square size={16} fill="white" style={{ marginRight: '6px', verticalAlign: 'middle' }} /> End Session
+                      </button>
+                      <button className="btn-stop-session" onClick={handleCancelActiveSession} style={{ flex: 1, background: '#f97316', padding: '10px 14px' }}>
+                        <Ban size={16} fill="white" style={{ marginRight: '6px', verticalAlign: 'middle' }} /> Cancel Session
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -421,11 +462,58 @@ const AttendanceAdmin = () => {
                   />
                 </div>
 
+                {/* Cancel Day Options */}
+                <div className="cancel-day-wrapper" style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600, color: 'var(--app-text)' }}>
+                    <input 
+                      type="checkbox" 
+                      checked={isCancelledSession} 
+                      onChange={e => {
+                        setIsCancelledSession(e.target.checked);
+                        if (!e.target.checked) setCancelReason('');
+                      }}
+                      style={{ cursor: 'pointer' }}
+                    />
+                    Mark this day as Cancelled
+                  </label>
+                  
+                  {isCancelledSession && (
+                    <div style={{ marginTop: '4px' }} className="fade-in">
+                      <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--app-text-muted)', marginBottom: '4px', fontWeight: 600 }}>
+                        Cancellation Reason
+                      </label>
+                      <input 
+                        type="text" 
+                        placeholder="e.g. Public Holiday, Technical Outage" 
+                        value={cancelReason}
+                        onChange={e => setCancelReason(e.target.value)}
+                        style={{
+                          width: '100%',
+                          padding: '10px 14px',
+                          borderRadius: '10px',
+                          border: '1.5px solid var(--app-border)',
+                          background: 'transparent',
+                          color: 'var(--app-text)',
+                          fontSize: '0.85rem'
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+
                 <p className="inactive-description">
                   Generate a dynamic, temporary session-bound QR key. Students can scan it via their headers to verify attendance. Keys remain valid until manually terminated.
                 </p>
-                <button className="btn-start-session" onClick={handleStartSession}>
-                  <Play size={16} fill="white" /> Enable Attendance QR
+                <button className={isCancelledSession ? "btn-stop-session" : "btn-start-session"} onClick={handleStartSession} style={{ marginTop: '16px', width: '100%', background: isCancelledSession ? '#f97316' : '' }}>
+                  {isCancelledSession ? (
+                    <>
+                      <Ban size={16} fill="white" style={{ marginRight: '6px', verticalAlign: 'middle' }} /> Log Cancelled Session
+                    </>
+                  ) : (
+                    <>
+                      <Play size={16} fill="white" style={{ marginRight: '6px', verticalAlign: 'middle' }} /> Enable Attendance QR
+                    </>
+                  )}
                 </button>
               </div>
             )}

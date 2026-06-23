@@ -60,29 +60,34 @@ const getCalendarDateForDay = (dayId) => {
 // @access  Private/Admin
 const enableAttendance = async (req, res) => {
   try {
-    // 1. Deactivate any active sessions
-    await AttendanceSession.updateMany({ isActive: true }, { isActive: false, disabledAt: new Date() });
-
-    // 2. Generate random 16-character code
+    // Generate random 16-character code
     const code = crypto.randomBytes(8).toString('hex').toUpperCase();
 
-    const { dayId } = req.body;
+    const { dayId, isCancelled, cancelReason } = req.body;
 
     if (!dayId || !dayId.toString().trim()) {
       return res.status(400).json({ message: 'Class Day Number is required' });
     }
 
-    // 3. Create new session
+    // Deactivate any active sessions if not creating a cancelled session
+    if (!isCancelled) {
+      await AttendanceSession.updateMany({ isActive: true }, { isActive: false, disabledAt: new Date() });
+    }
+
+    // Create new session
     const session = await AttendanceSession.create({
       code,
-      isActive: true,
+      isActive: !isCancelled,
       createdBy: req.user._id,
       dayId: normalizeDayId(dayId),
+      isCancelled: !!isCancelled,
+      cancelReason: cancelReason || '',
+      disabledAt: isCancelled ? new Date() : undefined,
     });
 
     res.status(201).json({
       success: true,
-      message: 'Attendance enabled successfully',
+      message: isCancelled ? 'Class day marked as cancelled successfully' : 'Attendance enabled successfully',
       session,
     });
   } catch (error) {
@@ -112,15 +117,21 @@ const getActiveSession = async (req, res) => {
 // @route   PUT /api/attendance/session/end
 // @access  Private/Admin
 const endAttendance = async (req, res) => {
+  const { isCancelled, cancelReason } = req.body;
   try {
     const result = await AttendanceSession.updateMany(
       { isActive: true },
-      { isActive: false, disabledAt: new Date() }
+      { 
+        isActive: false, 
+        disabledAt: new Date(),
+        isCancelled: !!isCancelled,
+        cancelReason: cancelReason || ''
+      }
     );
 
     res.status(200).json({
       success: true,
-      message: 'Attendance session ended successfully',
+      message: isCancelled ? 'Attendance session cancelled successfully' : 'Attendance session ended successfully',
       modifiedCount: result.modifiedCount,
     });
   } catch (error) {
@@ -246,13 +257,23 @@ const getAttendanceStats = async (req, res) => {
     });
 
     const sortedSessionDates = Object.keys(sessionsByDate).sort();
-    const totalSessions = sortedSessionDates.length;
-
+    
     let attendedCount = 0;
+    let activeSessionsCount = 0;
     const heatmapData = {};
+    const cancelledReasons = {};
+
+    // Collect cancelled sessions details
+    sessions.forEach(s => {
+      if (s && s.isCancelled) {
+        const dateStr = getCalendarDateForDay(s.dayId);
+        cancelledReasons[dateStr] = s.cancelReason || 'Cancelled Session';
+      }
+    });
 
     sortedSessionDates.forEach(dateStr => {
       const daySessions = sessionsByDate[dateStr];
+      const isAnySessionCancelled = daySessions.every(s => s.isCancelled);
       
       let attendanceType = null;
       daySessions.forEach(s => {
@@ -267,8 +288,14 @@ const getAttendanceStats = async (req, res) => {
       if (attendanceType) {
         attendedCount++;
         heatmapData[dateStr] = attendanceType; // 'live' or 'recording'
+        if (!isAnySessionCancelled) {
+          activeSessionsCount++;
+        }
+      } else if (isAnySessionCancelled) {
+        heatmapData[dateStr] = 'cancelled';
       } else {
         heatmapData[dateStr] = 'missed';
+        activeSessionsCount++;
       }
     });
 
@@ -285,7 +312,8 @@ const getAttendanceStats = async (req, res) => {
     // Calculate live and recording counts from heatmapData
     let liveCount = 0;
     let recordingCount = 0;
-    Object.values(heatmapData).forEach(status => {
+    Object.keys(heatmapData).forEach(dateStr => {
+      const status = heatmapData[dateStr];
       if (status === 'live') {
         liveCount++;
       } else if (status === 'recording') {
@@ -295,8 +323,8 @@ const getAttendanceStats = async (req, res) => {
 
     attendedCount = liveCount + recordingCount;
 
-    const attendancePercentage = totalSessions > 0 
-      ? Math.round((attendedCount / totalSessions) * 100) 
+    const attendancePercentage = activeSessionsCount > 0 
+      ? Math.round((attendedCount / activeSessionsCount) * 100) 
       : 100;
 
     // Calculate streaks based on unique session dates
@@ -306,6 +334,9 @@ const getAttendanceStats = async (req, res) => {
 
     sortedSessionDates.forEach(dateStr => {
       const daySessions = sessionsByDate[dateStr];
+      const isAnySessionCancelled = daySessions.every(s => s.isCancelled);
+      if (isAnySessionCancelled) return; // Skip cancelled session dates from streaks
+
       const attended = daySessions.some(s => s && s.dayId && attendedDayIds[normalizeDayId(s.dayId)]);
       if (attended) {
         tempStreak++;
@@ -320,6 +351,9 @@ const getAttendanceStats = async (req, res) => {
     for (let i = sortedSessionDates.length - 1; i >= 0; i--) {
       const dateStr = sortedSessionDates[i];
       const daySessions = sessionsByDate[dateStr];
+      const isAnySessionCancelled = daySessions.every(s => s.isCancelled);
+      if (isAnySessionCancelled) continue; // Skip cancelled sessions
+
       const attended = daySessions.some(s => s && s.dayId && attendedDayIds[normalizeDayId(s.dayId)]);
       if (attended) {
         currentStreak++;
@@ -337,13 +371,14 @@ const getAttendanceStats = async (req, res) => {
       success: true,
       stats: {
         attendancePercentage,
-        totalSessions,
+        totalSessions: activeSessionsCount,
         attendedCount,
         liveCount,
         recordingCount,
         currentStreak,
         maxStreak,
-        heatmapData
+        heatmapData,
+        cancelledReasons
       }
     });
   } catch (error) {
@@ -515,7 +550,21 @@ const getAttendanceReport = async (req, res) => {
       dateToDayIds[dateStr].push(normId);
     });
 
-    const totalDays = uniqueDates.length;
+    // Map sessions to find cancelled days
+    const cancelledDaysMap = {};
+    sessions.forEach(s => {
+      if (s && s.dayId && s.isCancelled) {
+        cancelledDaysMap[normalizeDayId(s.dayId)] = s.cancelReason || 'Cancelled';
+      }
+    });
+
+    // Map each day to check if it was cancelled
+    const dateCancelledMap = {};
+    uniqueDates.forEach(dateStr => {
+      const dayIds = dateToDayIds[dateStr];
+      const isAnyDayNotCancelled = dayIds.some(dayId => !cancelledDaysMap[dayId]);
+      dateCancelledMap[dateStr] = !isAnyDayNotCancelled; // True if all dayIds on this date are cancelled
+    });
 
     // 6. Map all records by student_dayId for fast O(1) lookup
     const recordMap = {};
@@ -532,6 +581,7 @@ const getAttendanceReport = async (req, res) => {
     students.forEach(student => {
       let liveCount = 0;
       let recordingCount = 0;
+      let heldDaysCount = 0;
       let daysHtml = '';
 
       uniqueDates.forEach(dateStr => {
@@ -545,6 +595,8 @@ const getAttendanceReport = async (req, res) => {
           }
         }
 
+        const isCancelled = dateCancelledMap[dateStr];
+
         if (matchedRecord) {
           if (matchedRecord.attendanceType === 'live') {
             liveCount++;
@@ -553,13 +605,24 @@ const getAttendanceReport = async (req, res) => {
             recordingCount++;
             daysHtml += `<td style="background-color: #fef9c3; color: #ca8a04; font-weight: bold; border: 1px solid #cbd5e1; text-align: center; font-family: Calibri, sans-serif; padding: 8px;">Recording</td>`;
           }
+          if (!isCancelled) heldDaysCount++;
+        } else if (isCancelled) {
+          let reason = 'Cancelled';
+          for (const dayId of dayIds) {
+            if (cancelledDaysMap[dayId]) {
+              reason = cancelledDaysMap[dayId];
+              break;
+            }
+          }
+          daysHtml += `<td style="background-color: #ffedd5; color: #ea580c; font-weight: bold; border: 1px solid #cbd5e1; text-align: center; font-family: Calibri, sans-serif; padding: 8px;" title="${reason}">Cancelled</td>`;
         } else {
           daysHtml += `<td style="background-color: #fee2e2; color: #dc2626; font-weight: bold; border: 1px solid #cbd5e1; text-align: center; font-family: Calibri, sans-serif; padding: 8px;">Absent</td>`;
+          heldDaysCount++;
         }
       });
 
       const attendedCount = liveCount + recordingCount;
-      const pct = totalDays > 0 ? Math.round((attendedCount / totalDays) * 100) : 100;
+      const pct = heldDaysCount > 0 ? Math.round((attendedCount / heldDaysCount) * 100) : 100;
       
       const nameColor = pct >= 80 ? '#16a34a' : '#dc2626';
 

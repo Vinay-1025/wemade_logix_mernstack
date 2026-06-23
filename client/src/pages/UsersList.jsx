@@ -32,6 +32,11 @@ const UsersList = () => {
   const [submissionStatusFilter, setSubmissionStatusFilter] = useState('all');
   const [submissionSearch, setSubmissionSearch] = useState('');
 
+  // Attendance Consistency Matrix States
+  const [consistencyPage, setConsistencyPage] = useState(1);
+  const [consistencyStatusFilter, setConsistencyStatusFilter] = useState('all');
+  const [consistencySearch, setConsistencySearch] = useState('');
+
 
   // Excel / CSV Batch states
   const [isExcelModalOpen, setIsExcelModalOpen] = useState(false);
@@ -313,6 +318,46 @@ const UsersList = () => {
     return days;
   };
 
+  const getCalendarDateForDay = (dayId) => {
+    const baseDate = new Date(Date.UTC(2026, 4, 18)); // May 18, 2026 (Month is 0-indexed, UTC)
+
+    const getDayNumber = (id) => {
+      if (!id) return 1;
+      const str = id.toString().trim().toLowerCase();
+      if (/^\d+$/.test(str)) {
+        return parseInt(str, 10);
+      }
+      const match = str.match(/^w(\d+)-d(\d+)$/);
+      if (match) {
+        const week = parseInt(match[1], 10);
+        const day = parseInt(match[2], 10);
+        if (week === 1 && day === 0) return 0;
+        return (week - 1) * 6 + day;
+      }
+      return 1;
+    };
+
+    const dayNo = getDayNumber(dayId);
+    if (dayNo === 0) {
+      return '2026-05-18';
+    }
+
+    let targetDate = new Date(baseDate.getTime());
+    let nonSundayDaysAdded = 0;
+
+    while (nonSundayDaysAdded < dayNo - 1) {
+      targetDate.setUTCDate(targetDate.getUTCDate() + 1);
+      if (targetDate.getUTCDay() !== 0) { // 0 is Sunday
+        nonSundayDaysAdded++;
+      }
+    }
+
+    const yyyy = targetDate.getUTCFullYear();
+    const mm = String(targetDate.getUTCMonth() + 1).padStart(2, '0');
+    const dd = String(targetDate.getUTCDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  };
+
   const fetchDetailUserAttendance = async (selectedUser) => {
     if (!selectedUser) return;
     setAttendanceLoading(true);
@@ -578,6 +623,111 @@ const UsersList = () => {
     .sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt))
     .slice((submissionPage - 1) * submissionsPerPage, submissionPage * submissionsPerPage);
 
+  // Attendance Consistency Matrix list processing
+  const allCourseDays = courseData.reduce((acc, week) => {
+    return acc.concat(
+      week.days.map(day => ({
+        weekTitle: week.weekTitle,
+        weekId: week.weekId,
+        ...day
+      }))
+    );
+  }, []);
+
+  const mappedCourseDays = allCourseDays.map(day => {
+    const dateStr = getCalendarDateForDay(day.dayId);
+    
+    // Calculate if day is in future
+    const targetDate = new Date(Date.UTC(
+      parseInt(dateStr.split('-')[0]),
+      parseInt(dateStr.split('-')[1]) - 1,
+      parseInt(dateStr.split('-')[2])
+    ));
+    const today = new Date();
+    const todayUTC = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
+    const isFuture = targetDate.getTime() > todayUTC.getTime();
+
+    let status = 'none';
+    let cancelReason = '';
+    if (attendanceStats && attendanceStats.heatmapData) {
+      status = attendanceStats.heatmapData[dateStr] || 'none';
+    }
+    if (attendanceStats && attendanceStats.cancelledReasons) {
+      cancelReason = attendanceStats.cancelledReasons[dateStr] || '';
+    }
+
+    // Display label mapping
+    let statusLabel = 'No Session';
+    let statusClass = 'none';
+    if (status === 'live') {
+      statusLabel = 'Live';
+      statusClass = 'live';
+    } else if (status === 'recording') {
+      statusLabel = 'Recording';
+      statusClass = 'recording';
+    } else if (status === 'cancelled') {
+      statusLabel = 'Cancelled';
+      statusClass = 'cancelled';
+    } else if (status === 'missed') {
+      statusLabel = 'Absent';
+      statusClass = 'absent';
+    } else if (isFuture) {
+      statusLabel = 'Scheduled';
+      statusClass = 'future';
+    }
+
+    return {
+      ...day,
+      dateStr,
+      formattedDate: targetDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }),
+      status,
+      statusLabel,
+      statusClass,
+      cancelReason,
+      isFuture
+    };
+  });
+
+  const filteredConsistencyDays = mappedCourseDays.filter(day => {
+    const matchesSearch = 
+      day.dayTitle.toLowerCase().includes(consistencySearch.toLowerCase()) ||
+      day.weekTitle.toLowerCase().includes(consistencySearch.toLowerCase()) ||
+      day.dayId.toLowerCase().includes(consistencySearch.toLowerCase());
+
+    let matchesStatus = true;
+    if (consistencyStatusFilter !== 'all') {
+      if (consistencyStatusFilter === 'attended') {
+        matchesStatus = day.status === 'live' || day.status === 'recording';
+      } else if (consistencyStatusFilter === 'absent') {
+        matchesStatus = day.status === 'missed';
+      } else if (consistencyStatusFilter === 'cancelled') {
+        matchesStatus = day.status === 'cancelled';
+      } else if (consistencyStatusFilter === 'no_session') {
+        matchesStatus = day.status === 'none' && !day.isFuture;
+      } else if (consistencyStatusFilter === 'future') {
+        matchesStatus = day.isFuture;
+      }
+    }
+
+    return matchesSearch && matchesStatus;
+  });
+
+  const consistencyPerPage = 10;
+  const consistencyTotalPages = Math.ceil(filteredConsistencyDays.length / consistencyPerPage);
+  const currentConsistencyDays = filteredConsistencyDays.slice(
+    (consistencyPage - 1) * consistencyPerPage,
+    consistencyPage * consistencyPerPage
+  );
+
+  const handleConsistencySearchChange = (e) => {
+    setConsistencySearch(e.target.value);
+    setConsistencyPage(1);
+  };
+  const handleConsistencyStatusFilterChange = (e) => {
+    setConsistencyStatusFilter(e.target.value);
+    setConsistencyPage(1);
+  };
+
   if (loading && users.length === 0) return <MainLayout><div className="loading-state">Accessing user records...</div></MainLayout>;
 
   return (
@@ -638,7 +788,8 @@ const UsersList = () => {
             {detailLoading ? (
               <div className="loading-state-details">Loading syllabus and submission analytics...</div>
             ) : (
-              <div className="detail-tables-grid">
+              <>
+                <div className="detail-tables-grid">
                 {/* Table 1: Syllabus Progress */}
                 <div className="detail-section-card card-3d">
                   <div className="section-header-title text-layout">
@@ -847,14 +998,18 @@ const UsersList = () => {
                           Prev
                         </button>
                         <div className="page-numbers">
-                          {Array.from({ length: submissionTotalPages }, (_, i) => i + 1).map(p => (
-                            <button 
-                              key={p} 
-                              className={`page-btn ${submissionPage === p ? 'active' : ''}`}
-                              onClick={() => setSubmissionPage(p)}
-                            >
-                              {p}
-                            </button>
+                          {getPaginationRange(submissionPage, submissionTotalPages).map((p, idx) => (
+                            p === '...' ? (
+                              <span key={`dots-${idx}`} className="pagination-dots" style={{ padding: '0 8px', color: 'var(--app-text-muted)' }}>...</span>
+                            ) : (
+                              <button 
+                                key={p} 
+                                className={`page-btn ${submissionPage === p ? 'active' : ''}`}
+                                onClick={() => setSubmissionPage(p)}
+                              >
+                                {p}
+                              </button>
+                            )
                           ))}
                         </div>
                         <button 
@@ -869,6 +1024,375 @@ const UsersList = () => {
                   )}
                 </div>
               </div>
+
+              {attendanceLoading ? (
+                <div className="loading-state-details" style={{ marginTop: '24px' }}>Loading student attendance records...</div>
+              ) : attendanceStats ? (
+                <div className="detail-tables-grid" style={{ marginTop: '24px' }}>
+                  {/* Card 1: Attendance Heatmap & Stats */}
+                  <div className="detail-section-card card-3d">
+                    <div className="section-header-title text-layout">
+                      <h3>Attendance Heatmap & Streaks</h3>
+                    </div>
+
+                    <div className="attendance-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px', marginBottom: '24px' }}>
+                      {/* Attendance Rate */}
+                      <div className="att-stat-item rate-stat-card" style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px', background: 'rgba(0,0,0,0.02)', borderRadius: '16px' }}>
+                        <div className="radial-progress-container" style={{ position: 'relative', width: '56px', height: '56px' }}>
+                          <svg width="56" height="56" viewBox="0 0 44 44" className="circular-progress">
+                            <circle cx="22" cy="22" r="18" fill="none" stroke="rgba(0,0,0,0.05)" strokeWidth="3" />
+                            <circle cx="22" cy="22" r="18" fill="none" stroke="url(#progressGradDetails)" strokeWidth="3" 
+                                    strokeDasharray="113" strokeDashoffset={113 - (113 * attendanceStats.attendancePercentage) / 100}
+                                    strokeLinecap="round" transform="rotate(-90 22 22)" />
+                            <defs>
+                              <linearGradient id="progressGradDetails" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stopColor="#0ea5e9" />
+                                <stop offset="100%" stopColor="#10b981" />
+                              </linearGradient>
+                            </defs>
+                          </svg>
+                          <div className="radial-progress-value" style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '0.8rem', fontWeight: 800 }}>{attendanceStats.attendancePercentage}%</div>
+                        </div>
+                        <div className="att-stat-details">
+                          <h4 style={{ margin: 0, fontSize: '0.85rem', color: 'var(--app-text-muted)' }}>Rate</h4>
+                          <p style={{ margin: '2px 0 4px', fontSize: '0.9rem', fontWeight: 700 }}>{attendanceStats.attendedCount} / {attendanceStats.totalSessions} Present</p>
+                          <span className={`status-indicator ${
+                            attendanceStats.attendancePercentage >= 90 ? 'accepted' : 
+                            attendanceStats.attendancePercentage >= 75 ? 'pending' : 'rejected'
+                          }`} style={{ fontSize: '0.6rem', padding: '2px 6px' }}>
+                            {attendanceStats.attendancePercentage >= 90 ? 'Excellent' : 
+                             attendanceStats.attendancePercentage >= 75 ? 'On Track' : 'Low Attendance'}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Current Streak */}
+                      <div className="att-stat-item streak-stat-card" style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px', background: 'rgba(0,0,0,0.02)', borderRadius: '16px' }}>
+                        <div className="att-stat-icon-wrapper flame-icon" style={{ background: attendanceStats.currentStreak > 0 ? 'rgba(249, 115, 22, 0.1)' : 'rgba(0,0,0,0.05)', color: attendanceStats.currentStreak > 0 ? '#f97316' : '#64748b', padding: '10px', borderRadius: '12px' }}>
+                          <Flame size={20} className={attendanceStats.currentStreak > 0 ? 'glowing-flame' : ''} />
+                        </div>
+                        <div className="att-stat-details" style={{ flex: 1, minWidth: 0 }}>
+                          <h4 style={{ margin: 0, fontSize: '0.85rem', color: 'var(--app-text-muted)' }}>{attendanceStats.currentStreak} Days</h4>
+                          <p style={{ margin: '2px 0 0', fontSize: '0.9rem', fontWeight: 700 }}>Current Streak</p>
+                        </div>
+                      </div>
+
+                      {/* Live Sessions */}
+                      <div className="att-stat-item" style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px', background: 'rgba(0,0,0,0.02)', borderRadius: '16px' }}>
+                        <div className="att-stat-icon-wrapper calendar-icon" style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#16a34a', padding: '10px', borderRadius: '12px' }}>
+                          <CheckCircle2 size={20} />
+                        </div>
+                        <div className="att-stat-details">
+                          <h4 style={{ margin: 0, fontSize: '0.85rem', color: 'var(--app-text-muted)' }}>{attendanceStats.liveCount || 0} / {attendanceStats.totalSessions}</h4>
+                          <p style={{ margin: '2px 0 0', fontSize: '0.9rem', fontWeight: 700 }}>Live Sessions</p>
+                        </div>
+                      </div>
+
+                      {/* Recordings Watched */}
+                      <div className="att-stat-item" style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px', background: 'rgba(0,0,0,0.02)', borderRadius: '16px' }}>
+                        <div className="att-stat-icon-wrapper percent-icon" style={{ background: 'rgba(14, 165, 233, 0.1)', color: '#0ea5e9', padding: '10px', borderRadius: '12px' }}>
+                          <Clock size={20} />
+                        </div>
+                        <div className="att-stat-details">
+                          <h4 style={{ margin: 0, fontSize: '0.85rem', color: 'var(--app-text-muted)' }}>{attendanceStats.recordingCount || 0} Sessions</h4>
+                          <p style={{ margin: '2px 0 0', fontSize: '0.9rem', fontWeight: 700 }}>Recordings Watched</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Heatmap Filters & Headers */}
+                    <div className="heatmap-header-container" style={{ marginTop: '16px', borderTop: '1px solid var(--app-border)', paddingTop: '16px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '12px' }}>
+                        <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 800 }}>Attendance Heatmap</h4>
+                        
+                        {/* Hover tooltip display */}
+                        <div className="hover-tooltip-display" style={{ fontSize: '0.8rem', color: 'var(--app-text-muted)', minHeight: '20px' }}>
+                          {hoveredCell ? (
+                            <span className="tooltip-text fade-in">
+                              {hoveredCell.dateLabel} • <strong style={{ 
+                                color: hoveredCell.status === 'live' ? '#10b981' : 
+                                       hoveredCell.status === 'recording' ? '#0ea5e9' : 
+                                       hoveredCell.status === 'missed' ? '#ef4444' : 
+                                       hoveredCell.status === 'cancelled' ? '#ea580c' : 'var(--app-text-muted)' 
+                              }}>
+                                {hoveredCell.status === 'live' ? 'Live' : 
+                                 hoveredCell.status === 'recording' ? 'Recording' : 
+                                 hoveredCell.status === 'missed' ? 'Missed' : 
+                                 hoveredCell.status === 'cancelled' ? `Cancelled: ${hoveredCell.reason || 'No Session Held'}` : 'No Class'}
+                              </strong>
+                            </span>
+                          ) : (
+                            <span className="tooltip-text-placeholder">Hover cell for details</span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="heatmap-filters" style={{ display: 'flex', gap: '16px', marginBottom: '16px', flexWrap: 'wrap' }}>
+                        <div className="filter-group" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span className="filter-label" style={{ fontSize: '0.75rem', color: 'var(--app-text-muted)', fontWeight: 600 }}>Time:</span>
+                          <div className="filter-buttons" style={{ display: 'flex', gap: '4px', background: 'rgba(0,0,0,0.03)', padding: '2px', borderRadius: '8px' }}>
+                            {['all', '90', '60', '30'].map(t => (
+                              <button 
+                                key={t}
+                                className={`filter-btn ${timeRange === t ? 'active' : ''}`} 
+                                onClick={() => setTimeRange(t)}
+                                style={{
+                                  border: 'none',
+                                  background: timeRange === t ? 'white' : 'transparent',
+                                  color: timeRange === t ? 'var(--app-text)' : 'var(--app-text-muted)',
+                                  padding: '4px 8px',
+                                  borderRadius: '6px',
+                                  cursor: 'pointer',
+                                  fontSize: '0.7rem',
+                                  fontWeight: 700,
+                                  boxShadow: timeRange === t ? '0 1px 3px rgba(0,0,0,0.05)' : 'none'
+                                }}
+                              >
+                                {t === 'all' ? '15W' : `${t}D`}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                        <div className="filter-group" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span className="filter-label" style={{ fontSize: '0.75rem', color: 'var(--app-text-muted)', fontWeight: 600 }}>Status:</span>
+                          <div className="filter-buttons" style={{ display: 'flex', gap: '4px', background: 'rgba(0,0,0,0.03)', padding: '2px', borderRadius: '8px' }}>
+                            {['all', 'attended', 'missed'].map(s => (
+                              <button 
+                                key={s}
+                                className={`filter-btn ${statusFilter === s ? 'active' : ''}`} 
+                                onClick={() => setStatusFilter(s)}
+                                style={{
+                                  border: 'none',
+                                  background: statusFilter === s ? 'white' : 'transparent',
+                                  color: statusFilter === s ? 'var(--app-text)' : 'var(--app-text-muted)',
+                                  padding: '4px 8px',
+                                  borderRadius: '6px',
+                                  cursor: 'pointer',
+                                  fontSize: '0.7rem',
+                                  fontWeight: 700,
+                                  boxShadow: statusFilter === s ? '0 1px 3px rgba(0,0,0,0.05)' : 'none'
+                                }}
+                              >
+                                {s === 'all' ? 'All' : s === 'attended' ? 'Attended' : 'Missed'}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="heatmap-container" style={{ display: 'flex', gap: '12px', background: 'rgba(0,0,0,0.01)', padding: '16px', borderRadius: '16px', border: '1px solid var(--app-border)' }}>
+                      <div className="day-labels" style={{ display: 'grid', gridTemplateRows: 'repeat(7, 14px)', gap: '4px', fontSize: '0.65rem', color: 'var(--app-text-muted)', alignItems: 'center' }}>
+                        <span>Sun</span>
+                        <span>Mon</span>
+                        <span>Tue</span>
+                        <span>Wed</span>
+                        <span>Thu</span>
+                        <span>Fri</span>
+                        <span>Sat</span>
+                      </div>
+
+                      <div className="heatmap-grid-scroll-wrapper" style={{ overflowX: 'auto', flex: 1 }}>
+                        <div className="heatmap-grid" style={{ display: 'grid', gridTemplateRows: 'repeat(7, 14px)', gridAutoFlow: 'column', gap: '4px', width: 'max-content' }}>
+                          {generateHeatmapDays().map((day, idx) => {
+                            const yyyy = day.getUTCFullYear();
+                            const mm = String(day.getUTCMonth() + 1).padStart(2, '0');
+                            const dd = String(day.getUTCDate()).padStart(2, '0');
+                            const dateStr = `${yyyy}-${mm}-${dd}`;
+                            const status = attendanceStats.heatmapData[dateStr] || 'none';
+                            const reason = attendanceStats.cancelledReasons ? attendanceStats.cancelledReasons[dateStr] : '';
+                            
+                            const today = new Date();
+                            const todayUTC = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
+                            const isFuture = day.getTime() > todayUTC.getTime();
+                            const dateLabel = day.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+
+                            const diffTime = Math.abs(todayUTC.getTime() - day.getTime());
+                            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                            
+                            let isFilteredByTime = false;
+                            if (timeRange === '30' && diffDays > 30) isFilteredByTime = true;
+                            if (timeRange === '60' && diffDays > 60) isFilteredByTime = true;
+                            if (timeRange === '90' && diffDays > 90) isFilteredByTime = true;
+
+                            let isFilteredByStatus = false;
+                            if (statusFilter === 'attended' && status !== 'live' && status !== 'recording') isFilteredByStatus = true;
+                            if (statusFilter === 'missed' && status !== 'missed') isFilteredByStatus = true;
+
+                            const isDimmed = isFilteredByTime || isFilteredByStatus;
+
+                            return (
+                              <div
+                                key={idx}
+                                className={`heatmap-cell cell-${status} ${isFuture ? 'cell-future' : ''} ${isDimmed ? 'cell-dimmed' : ''}`}
+                                style={{
+                                  gridRow: (day.getUTCDay() + 1),
+                                }}
+                                onMouseEnter={() => setHoveredCell({ dateLabel, status, reason })}
+                                onMouseLeave={() => setHoveredCell(null)}
+                                title={`${dateLabel}: ${
+                                  status === 'live' ? 'Attended (Live)' : 
+                                  status === 'recording' ? 'Attended (Recording)' : 
+                                  status === 'missed' ? 'Missed' : 
+                                  status === 'cancelled' ? `Cancelled: ${reason || 'No Session Held'}` : 'No Class'
+                                }`}
+                              />
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="heatmap-legend" style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '12px', marginTop: '12px', fontSize: '0.7rem', color: 'var(--app-text-muted)' }}>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><span className="legend-cell cell-none" style={{ width: '10px', height: '10px', borderRadius: '2px', background: 'rgba(0,0,0,0.04)', display: 'inline-block' }}></span> No Session</span>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><span className="legend-cell cell-live" style={{ width: '10px', height: '10px', borderRadius: '2px', background: '#10b981', display: 'inline-block' }}></span> Live</span>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><span className="legend-cell cell-recording" style={{ width: '10px', height: '10px', borderRadius: '2px', background: '#0ea5e9', display: 'inline-block' }}></span> Recording</span>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><span className="legend-cell cell-cancelled" style={{ width: '10px', height: '10px', borderRadius: '2px', background: '#ea580c', display: 'inline-block' }}></span> Cancelled</span>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><span className="legend-cell cell-missed" style={{ width: '10px', height: '10px', borderRadius: '2px', background: '#ef4444', display: 'inline-block' }}></span> Absent</span>
+                    </div>
+                  </div>
+
+                  {/* Card 2: Attendance Consistency Matrix */}
+                  <div className="detail-section-card card-3d">
+                    <div className="section-header-title text-layout">
+                      <h3>Attendance Consistency Matrix</h3>
+                      <span className="sub-count">Matches: {filteredConsistencyDays.length} of {mappedCourseDays.length} course days</span>
+                    </div>
+
+                    {/* Filters Row */}
+                    <div className="detail-filters-row" style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+                      <input 
+                        type="text" 
+                        placeholder="Search days or topics..." 
+                        value={consistencySearch} 
+                        onChange={handleConsistencySearchChange} 
+                        className="detail-filter-input"
+                        style={{ flex: 1, padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--app-border)', background: 'transparent', color: 'var(--app-text)', fontSize: '0.85rem' }}
+                      />
+                      <select 
+                        value={consistencyStatusFilter} 
+                        onChange={handleConsistencyStatusFilterChange} 
+                        className="detail-filter-select"
+                        style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--app-border)', background: 'var(--app-card-bg)', color: 'var(--app-text)', fontSize: '0.85rem' }}
+                      >
+                        <option value="all">All Markings</option>
+                        <option value="attended">Attended (Live/Rec)</option>
+                        <option value="absent">Absent</option>
+                        <option value="cancelled">Cancelled</option>
+                        <option value="no_session">No Session</option>
+                        <option value="future">Scheduled</option>
+                      </select>
+                    </div>
+
+                    {/* Table Scroll Wrapper */}
+                    <div className="table-scroll-wrapper" style={{ flex: 1, overflowY: 'auto' }}>
+                      <table className="detail-data-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+                        <thead>
+                          <tr style={{ borderBottom: '1px solid var(--app-border)', textAlign: 'left' }}>
+                            <th style={{ padding: '10px 8px', fontSize: '0.8rem', color: 'var(--app-text-muted)' }}>Day</th>
+                            <th style={{ padding: '10px 8px', fontSize: '0.8rem', color: 'var(--app-text-muted)' }}>Calendar Date</th>
+                            <th style={{ padding: '10px 8px', fontSize: '0.8rem', color: 'var(--app-text-muted)', textAlign: 'right' }}>Marking</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {currentConsistencyDays.length === 0 ? (
+                            <tr>
+                              <td colSpan="3" style={{ textAlign: 'center', padding: '40px', color: 'var(--app-text-muted)', fontStyle: 'italic' }}>
+                                No matching course days found.
+                              </td>
+                            </tr>
+                          ) : (
+                            currentConsistencyDays.map((day) => (
+                              <tr key={day.dayId} style={{ borderBottom: '1px solid rgba(0,0,0,0.03)' }}>
+                                <td style={{ padding: '10px 8px', fontSize: '0.85rem' }}>
+                                  <div style={{ fontWeight: 700 }}>
+                                    {day.weekId.toUpperCase()} - {day.dayId.split('-')[1].toUpperCase()}
+                                  </div>
+                                  <div style={{ fontSize: '0.75rem', color: 'var(--app-text-muted)', maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={day.dayTitle}>
+                                    {day.dayTitle}
+                                  </div>
+                                </td>
+                                <td style={{ padding: '10px 8px', fontSize: '0.85rem', color: 'var(--app-text-muted)' }}>
+                                  {day.formattedDate}
+                                </td>
+                                <td style={{ padding: '10px 8px', fontSize: '0.85rem', textAlign: 'right' }}>
+                                  <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'flex-end', gap: '2px' }}>
+                                    <span className={`status-indicator ${day.statusClass}`}>
+                                      {day.statusLabel}
+                                    </span>
+                                    {day.status === 'cancelled' && day.cancelReason && (
+                                      <span style={{ fontSize: '0.7rem', color: '#ea580c', fontStyle: 'italic', maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={day.cancelReason}>
+                                        {day.cancelReason}
+                                      </span>
+                                    )}
+                                  </div>
+                                </td>
+                              </tr>
+                            ))
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* Pagination Section */}
+                    {consistencyTotalPages > 1 && (
+                      <div className="detail-pagination" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '16px', borderTop: '1px solid var(--app-border)', paddingTop: '12px' }}>
+                        <span className="pagination-info" style={{ fontSize: '0.8rem', color: 'var(--app-text-muted)' }}>
+                          Page <span className="bold" style={{ fontWeight: 700 }}>{consistencyPage}</span> of <span className="bold" style={{ fontWeight: 700 }}>{consistencyTotalPages}</span>
+                        </span>
+                        <div className="page-navigation" style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                          <button 
+                            className="page-btn" 
+                            onClick={() => setConsistencyPage(p => Math.max(1, p - 1))}
+                            disabled={consistencyPage === 1}
+                            style={{ padding: '4px 10px', borderRadius: '6px', border: '1px solid var(--app-border)', background: 'transparent', cursor: 'pointer', fontSize: '0.75rem' }}
+                          >
+                            Prev
+                          </button>
+                          <div className="page-numbers" style={{ display: 'flex', gap: '4px' }}>
+                            {getPaginationRange(consistencyPage, consistencyTotalPages).map((p, idx) => (
+                              p === '...' ? (
+                                <span key={`dots-${idx}`} className="pagination-dots" style={{ padding: '0 4px', color: 'var(--app-text-muted)' }}>...</span>
+                              ) : (
+                                <button 
+                                  key={p} 
+                                  className={`page-btn ${consistencyPage === p ? 'active' : ''}`}
+                                  onClick={() => setConsistencyPage(p)}
+                                  style={{
+                                    padding: '4px 10px',
+                                    borderRadius: '6px',
+                                    border: '1px solid var(--app-border)',
+                                    background: consistencyPage === p ? 'var(--primary-cyan)' : 'transparent',
+                                    color: consistencyPage === p ? 'white' : 'var(--app-text)',
+                                    cursor: 'pointer',
+                                    fontSize: '0.75rem',
+                                    fontWeight: 700
+                                  }}
+                                >
+                                  {p}
+                                </button>
+                              )
+                            ))}
+                          </div>
+                          <button 
+                            className="page-btn" 
+                            onClick={() => setConsistencyPage(p => Math.min(consistencyTotalPages, p + 1))}
+                            disabled={consistencyPage === consistencyTotalPages}
+                            style={{ padding: '4px 10px', borderRadius: '6px', border: '1px solid var(--app-border)', background: 'transparent', cursor: 'pointer', fontSize: '0.75rem' }}
+                          >
+                            Next
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className="empty-records-card" style={{ marginTop: '24px', padding: '24px', background: 'var(--app-card-bg)', border: '1px solid var(--app-border)', borderRadius: '16px', textAlign: 'center', color: 'var(--app-text-muted)' }}>
+                  No attendance records found for this student.
+                </div>
+              )}
+              </>
             )}
           </div>
         ) : (
@@ -2237,6 +2761,9 @@ const UsersList = () => {
         .heatmap-cell.cell-missed {
           background: #ef4444;
         }
+        .heatmap-cell.cell-cancelled {
+          background: #ea580c;
+        }
         .heatmap-cell.cell-future {
           opacity: 0.2;
           cursor: default;
@@ -2267,11 +2794,35 @@ const UsersList = () => {
         .legend-cell.cell-missed {
           background: #ef4444;
         }
+        .legend-cell.cell-cancelled {
+          background: #ea580c;
+        }
         .legend-cell.cell-attended, .legend-cell.cell-live {
           background: #10b981;
         }
         .legend-cell.cell-recording {
           background: #0ea5e9;
+        }
+
+        .status-indicator.live {
+          background: #f0fdf4;
+          color: #16a34a;
+        }
+        .status-indicator.recording {
+          background: #f0f9ff;
+          color: #0ea5e9;
+        }
+        .status-indicator.cancelled, .status-indicator.cancelled-badge {
+          background: #ffedd5;
+          color: #ea580c;
+        }
+        .status-indicator.missed, .status-indicator.absent {
+          background: #fef2f2;
+          color: #dc2626;
+        }
+        .status-indicator.future, .status-indicator.scheduled {
+          background: #f1f5f9;
+          color: #94a3b8;
         }
         .pagination-dots {
           display: inline-flex;
