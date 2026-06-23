@@ -5,17 +5,7 @@ const { sendWelcomeEmail } = require('../utils/emailService');
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_ACCESS_EXPIRE || '2h',
-  });
-};
-
-const getRefreshSecret = () => {
-  return process.env.JWT_REFRESH_SECRET || (process.env.JWT_SECRET ? (process.env.JWT_SECRET + '_refresh') : 'fallback_refresh_secret_key_987');
-};
-
-const generateRefreshToken = (id) => {
-  return jwt.sign({ id }, getRefreshSecret(), {
-    expiresIn: process.env.JWT_REFRESH_EXPIRE || '5d',
+    expiresIn: '30d',
   });
 };
 
@@ -45,18 +35,12 @@ const registerUser = async (req, res) => {
       // Auto email credentials securely
       await sendWelcomeEmail(user.email, user.name, password, user.role);
 
-      const token = generateToken(user._id);
-      const refreshToken = generateRefreshToken(user._id);
-      user.refreshToken = refreshToken;
-      await user.save();
-
       res.status(201).json({
         _id: user._id,
         name: user.name,
         email: user.email,
         role: user.role,
-        token,
-        refreshToken,
+        token: generateToken(user._id),
       });
     } else {
       res.status(400).json({ message: 'Invalid user data' });
@@ -79,18 +63,12 @@ const loginUser = async (req, res) => {
       if (!user.isActive) {
         return res.status(403).json({ message: 'Application was inactive for you and consult the management' });
       }
-      const token = generateToken(user._id);
-      const refreshToken = generateRefreshToken(user._id);
-      user.refreshToken = refreshToken;
-      await user.save();
-
       res.json({
         _id: user._id,
         name: user.name,
         email: user.email,
         role: user.role,
-        token,
-        refreshToken,
+        token: generateToken(user._id),
       });
     } else {
       res.status(401).json({ message: 'Invalid email or password' });
@@ -182,12 +160,12 @@ const deleteUser = async (req, res) => {
       if (user.role === 'superadmin') {
         return res.status(403).json({ message: 'Cannot delete superadmin' });
       }
-      
+
       await User.deleteOne({ _id: user._id });
-      
+
       // Audit Log
       await logAction(req.user, 'Personnel Removal', `Removed personnel: ${user.email}`, user._id, 'User');
-      
+
       res.json({ message: 'User removed' });
     } else {
       res.status(404).json({ message: 'User not found' });
@@ -223,10 +201,10 @@ const updateUserStatus = async (req, res) => {
 
     // Detailed Audit Log
     await logAction(
-      req.user, 
-      'Status Change', 
-      `Status toggled from [${oldStatus ? 'Active' : 'Inactive'}] to [${newStatus ? 'Active' : 'Inactive'}] for ${user.email}`, 
-      user._id, 
+      req.user,
+      'Status Change',
+      `Status toggled from [${oldStatus ? 'Active' : 'Inactive'}] to [${newStatus ? 'Active' : 'Inactive'}] for ${user.email}`,
+      user._id,
       'User'
     );
 
@@ -265,10 +243,10 @@ const updateUser = async (req, res) => {
     // Detailed Audit Log
     if (changes.length > 0) {
       await logAction(
-        req.user, 
-        'Profile Update', 
-        `Changes to ${user.email}: ${changes.join(' | ')}`, 
-        user._id, 
+        req.user,
+        'Profile Update',
+        `Changes to ${user.email}: ${changes.join(' | ')}`,
+        user._id,
         'User'
       );
     }
@@ -291,66 +269,13 @@ const updatePassword = async (req, res) => {
     if (user && (await user.matchPassword(currentPassword))) {
       user.password = newPassword;
       await user.save();
-      
+
       await logAction(req.user, 'Security Update', `Password changed successfully`, user._id, 'User');
-      
+
       res.json({ message: 'Password updated successfully' });
     } else {
       res.status(401).json({ message: 'Invalid current password' });
     }
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-// @desc    Refresh access token
-// @route   POST /api/auth/refresh
-// @access  Public
-const refreshAccessToken = async (req, res) => {
-  const { refreshToken } = req.body;
-
-  if (!refreshToken) {
-    return res.status(401).json({ message: 'Refresh token required' });
-  }
-
-  try {
-    const decoded = jwt.verify(refreshToken, getRefreshSecret());
-    const user = await User.findById(decoded.id);
-
-    if (!user || user.refreshToken !== refreshToken) {
-      return res.status(401).json({ message: 'Invalid refresh token' });
-    }
-
-    if (!user.isActive) {
-      return res.status(403).json({ message: 'account_inactive' });
-    }
-
-    const token = generateToken(user._id);
-    const newRefreshToken = generateRefreshToken(user._id);
-    user.refreshToken = newRefreshToken;
-    await user.save();
-
-    res.json({
-      token,
-      refreshToken: newRefreshToken,
-    });
-  } catch (error) {
-    console.error('Refresh token verification failed:', error);
-    return res.status(401).json({ message: 'Invalid or expired refresh token' });
-  }
-};
-
-// @desc    Logout user & invalidate refresh token
-// @route   POST /api/auth/logout
-// @access  Private
-const logoutUser = async (req, res) => {
-  try {
-    const user = await User.findById(req.user._id);
-    if (user) {
-      user.refreshToken = null;
-      await user.save();
-    }
-    res.json({ message: 'Logged out successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -366,6 +291,8 @@ module.exports = {
   updateUserStatus,
   updateUser,
   updatePassword,
+};
+updatePassword,
   refreshAccessToken,
   logoutUser,
 };
