@@ -292,7 +292,3 @@ module.exports = {
   updateUser,
   updatePassword,
 };
-updatePassword,
-  refreshAccessToken,
-  logoutUser,
-};
