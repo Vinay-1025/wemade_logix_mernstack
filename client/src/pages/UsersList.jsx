@@ -358,10 +358,12 @@ const UsersList = () => {
     return `${yyyy}-${mm}-${dd}`;
   };
 
-  const fetchDetailUserAttendance = async (selectedUser) => {
+  const fetchDetailUserAttendance = async (selectedUser, silent = false) => {
     if (!selectedUser) return;
-    setAttendanceLoading(true);
-    setAttendanceStats(null);
+    if (!silent) {
+      setAttendanceLoading(true);
+      setAttendanceStats(null);
+    }
     try {
       const config = { headers: { Authorization: `Bearer ${currentUser.token}` } };
       const { data } = await axios.get(`/api/attendance/stats/${selectedUser._id}`, config);
@@ -371,7 +373,9 @@ const UsersList = () => {
     } catch (err) {
       console.error('Failed to fetch attendance stats:', err);
     } finally {
-      setAttendanceLoading(false);
+      if (!silent) {
+        setAttendanceLoading(false);
+      }
     }
   };
 
@@ -387,14 +391,15 @@ const UsersList = () => {
       
       if (response.data && response.data.success) {
         showSnackbar(response.data.message || 'Attendance status updated successfully!', 'success');
-        // Fetch stats again to update UI
-        fetchDetailUserAttendance(selectedDetailUser);
+        // Fetch stats again silently to update UI without unmounting/flashing
+        fetchDetailUserAttendance(selectedDetailUser, true);
       }
     } catch (err) {
       console.error('Failed to update attendance status:', err);
       showSnackbar(err.response?.data?.message || 'Failed to update attendance status', 'error');
     }
   };
+
 
 
   const getPaginationRange = (currPage, totPages) => {
