@@ -257,6 +257,18 @@ const getAttendanceStats = async (req, res) => {
     });
 
     const sortedSessionDates = Object.keys(sessionsByDate).sort();
+
+    // Force default presence for May 18, 19, and 20
+    const defaultPresentDates = ['2026-05-18', '2026-05-19', '2026-05-20'];
+    defaultPresentDates.forEach(dateStr => {
+      if (!sessionsByDate[dateStr]) {
+        sessionsByDate[dateStr] = [{ isCancelled: false, isActive: false }];
+      }
+      if (!sortedSessionDates.includes(dateStr)) {
+        sortedSessionDates.push(dateStr);
+      }
+    });
+    sortedSessionDates.sort();
     
     let attendedCount = 0;
     let activeSessionsCount = 0;
@@ -276,6 +288,9 @@ const getAttendanceStats = async (req, res) => {
       const isAnySessionCancelled = daySessions.every(s => s.isCancelled);
       
       let attendanceType = null;
+      if (defaultPresentDates.includes(dateStr)) {
+        attendanceType = 'live';
+      }
       daySessions.forEach(s => {
         if (s && s.dayId) {
           const key = normalizeDayId(s.dayId);
@@ -337,7 +352,7 @@ const getAttendanceStats = async (req, res) => {
       const isAnySessionCancelled = daySessions.every(s => s.isCancelled);
       if (isAnySessionCancelled) return; // Skip cancelled session dates from streaks
 
-      const attended = daySessions.some(s => s && s.dayId && attendedDayIds[normalizeDayId(s.dayId)]);
+      const attended = defaultPresentDates.includes(dateStr) || daySessions.some(s => s && s.dayId && attendedDayIds[normalizeDayId(s.dayId)]);
       if (attended) {
         tempStreak++;
         if (tempStreak > maxStreak) {
@@ -354,7 +369,7 @@ const getAttendanceStats = async (req, res) => {
       const isAnySessionCancelled = daySessions.every(s => s.isCancelled);
       if (isAnySessionCancelled) continue; // Skip cancelled sessions
 
-      const attended = daySessions.some(s => s && s.dayId && attendedDayIds[normalizeDayId(s.dayId)]);
+      const attended = defaultPresentDates.includes(dateStr) || daySessions.some(s => s && s.dayId && attendedDayIds[normalizeDayId(s.dayId)]);
       if (attended) {
         currentStreak++;
       } else {
@@ -579,6 +594,7 @@ const getAttendanceReport = async (req, res) => {
     });
 
     // 7. Compile report rows
+    const defaultPresentDates = ['2026-05-18', '2026-05-19', '2026-05-20'];
     let rowsHtml = '';
     students.forEach(student => {
       let liveCount = 0;
@@ -598,9 +614,11 @@ const getAttendanceReport = async (req, res) => {
         }
 
         const isCancelled = dateCancelledMap[dateStr];
+        const isDefaultPresent = defaultPresentDates.includes(dateStr);
 
-        if (matchedRecord) {
-          if (matchedRecord.attendanceType === 'live') {
+        if (matchedRecord || isDefaultPresent) {
+          const type = (matchedRecord && matchedRecord.attendanceType) || 'live';
+          if (type === 'live') {
             liveCount++;
             daysHtml += `<td style="background-color: #dcfce7; color: #16a34a; font-weight: bold; border: 1px solid #cbd5e1; text-align: center; font-family: Calibri, sans-serif; padding: 8px;">Live</td>`;
           } else {
