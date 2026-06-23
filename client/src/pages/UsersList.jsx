@@ -56,6 +56,8 @@ const UsersList = () => {
   const [hoveredCell, setHoveredCell] = useState(null);
   const [timeRange, setTimeRange] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [updatingDays, setUpdatingDays] = useState({});
+
 
   const downloadTemplate = () => {
     const headers = "Name,Email,Password,Role\n";
@@ -381,6 +383,7 @@ const UsersList = () => {
 
   const handleUpdateAttendanceStatus = async (dayId, newStatus) => {
     if (!selectedDetailUser) return;
+    setUpdatingDays(prev => ({ ...prev, [dayId]: true }));
     try {
       const config = { headers: { Authorization: `Bearer ${currentUser.token}` } };
       const response = await axios.put('/api/attendance/update', {
@@ -392,13 +395,16 @@ const UsersList = () => {
       if (response.data && response.data.success) {
         showSnackbar(response.data.message || 'Attendance status updated successfully!', 'success');
         // Fetch stats again silently to update UI without unmounting/flashing
-        fetchDetailUserAttendance(selectedDetailUser, true);
+        await fetchDetailUserAttendance(selectedDetailUser, true);
       }
     } catch (err) {
       console.error('Failed to update attendance status:', err);
       showSnackbar(err.response?.data?.message || 'Failed to update attendance status', 'error');
+    } finally {
+      setUpdatingDays(prev => ({ ...prev, [dayId]: false }));
     }
   };
+
 
 
 
@@ -1355,6 +1361,11 @@ const UsersList = () => {
                                           </span>
                                         )}
                                       </>
+                                    ) : updatingDays[day.dayId] ? (
+                                      <div 
+                                        className={`mini-spinner ${day.status === 'live' ? 'live' : (day.status === 'recording' ? 'recording' : 'absent')}`} 
+                                        style={{ margin: '4px 20px 4px 0' }} 
+                                      />
                                     ) : (
                                       <select
                                         className={`status-indicator-select ${day.status === 'live' ? 'live' : (day.status === 'recording' ? 'recording' : 'absent')}`}
@@ -2892,6 +2903,28 @@ const UsersList = () => {
           font-weight: normal;
           text-transform: none;
         }
+        .mini-spinner {
+          display: inline-block;
+          width: 14px;
+          height: 14px;
+          border: 2px solid rgba(0, 0, 0, 0.08);
+          border-radius: 50%;
+          animation: spin 0.6s linear infinite;
+        }
+        .mini-spinner.live {
+          border-top-color: #16a34a;
+        }
+        .mini-spinner.recording {
+          border-top-color: #0ea5e9;
+        }
+        .mini-spinner.absent {
+          border-top-color: #dc2626;
+        }
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+
 
         .pagination-dots {
           display: inline-flex;
