@@ -5,7 +5,13 @@ const { sendWelcomeEmail } = require('../utils/emailService');
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: '30d',
+    expiresIn: process.env.JWT_ACCESS_EXPIRE || '2h',
+  });
+};
+
+const generateRefreshToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_REFRESH_SECRET, {
+    expiresIn: process.env.JWT_REFRESH_EXPIRE || '5d',
   });
 };
 
@@ -35,12 +41,18 @@ const registerUser = async (req, res) => {
       // Auto email credentials securely
       await sendWelcomeEmail(user.email, user.name, password, user.role);
 
+      const token = generateToken(user._id);
+      const refreshToken = generateRefreshToken(user._id);
+      user.refreshToken = refreshToken;
+      await user.save();
+
       res.status(201).json({
         _id: user._id,
         name: user.name,
         email: user.email,
         role: user.role,
-        token: generateToken(user._id),
+        token,
+        refreshToken,
       });
     } else {
       res.status(400).json({ message: 'Invalid user data' });
@@ -63,12 +75,18 @@ const loginUser = async (req, res) => {
       if (!user.isActive) {
         return res.status(403).json({ message: 'Application was inactive for you and consult the management' });
       }
+      const token = generateToken(user._id);
+      const refreshToken = generateRefreshToken(user._id);
+      user.refreshToken = refreshToken;
+      await user.save();
+
       res.json({
         _id: user._id,
         name: user.name,
         email: user.email,
         role: user.role,
-        token: generateToken(user._id),
+        token,
+        refreshToken,
       });
     } else {
       res.status(401).json({ message: 'Invalid email or password' });
@@ -281,6 +299,59 @@ const updatePassword = async (req, res) => {
   }
 };
 
+// @desc    Refresh access token
+// @route   POST /api/auth/refresh
+// @access  Public
+const refreshAccessToken = async (req, res) => {
+  const { refreshToken } = req.body;
+
+  if (!refreshToken) {
+    return res.status(401).json({ message: 'Refresh token required' });
+  }
+
+  try {
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    const user = await User.findById(decoded.id);
+
+    if (!user || user.refreshToken !== refreshToken) {
+      return res.status(401).json({ message: 'Invalid refresh token' });
+    }
+
+    if (!user.isActive) {
+      return res.status(403).json({ message: 'account_inactive' });
+    }
+
+    const token = generateToken(user._id);
+    const newRefreshToken = generateRefreshToken(user._id);
+    user.refreshToken = newRefreshToken;
+    await user.save();
+
+    res.json({
+      token,
+      refreshToken: newRefreshToken,
+    });
+  } catch (error) {
+    console.error('Refresh token verification failed:', error);
+    return res.status(401).json({ message: 'Invalid or expired refresh token' });
+  }
+};
+
+// @desc    Logout user & invalidate refresh token
+// @route   POST /api/auth/logout
+// @access  Private
+const logoutUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (user) {
+      user.refreshToken = null;
+      await user.save();
+    }
+    res.json({ message: 'Logged out successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
@@ -291,4 +362,6 @@ module.exports = {
   updateUserStatus,
   updateUser,
   updatePassword,
+  refreshAccessToken,
+  logoutUser,
 };

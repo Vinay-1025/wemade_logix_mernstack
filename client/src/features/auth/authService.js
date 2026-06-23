@@ -25,8 +25,19 @@ const login = async (userData) => {
 };
 
 // Logout user
-const logout = () => {
-  localStorage.removeItem('user');
+const logout = async () => {
+  try {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user && user.token) {
+      await axios.post(API_URL + 'logout', {}, {
+        headers: { Authorization: `Bearer ${user.token}` },
+      });
+    }
+  } catch (error) {
+    console.error('Logout api request failed:', error);
+  } finally {
+    localStorage.removeItem('user');
+  }
 };
 
 const authService = {
