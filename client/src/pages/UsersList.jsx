@@ -1361,6 +1361,10 @@ const UsersList = () => {
                                           </span>
                                         )}
                                       </>
+                                    ) : day.isFuture ? (
+                                      <span className="status-indicator future">
+                                        Scheduled
+                                      </span>
                                     ) : updatingDays[day.dayId] ? (
                                       <div 
                                         className="mini-spinner" 
