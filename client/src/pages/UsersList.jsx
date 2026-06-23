@@ -1368,7 +1368,7 @@ const UsersList = () => {
                                       />
                                     ) : (
                                       <select
-                                        className={`status-indicator-select ${day.status === 'live' ? 'live' : (day.status === 'recording' ? 'recording' : 'absent')}`}
+                                        className={`status-indicator status-indicator-select ${day.status === 'live' ? 'live' : (day.status === 'recording' ? 'recording' : 'absent')}`}
                                         value={day.status === 'live' ? 'live' : (day.status === 'recording' ? 'recording' : 'absent')}
                                         onChange={(e) => handleUpdateAttendanceStatus(day.dayId, e.target.value)}
                                         style={{ outline: 'none' }}
@@ -2889,7 +2889,6 @@ const UsersList = () => {
           appearance: none;
           -webkit-appearance: none;
           -moz-appearance: none;
-          background-image: url("data:image/svg+xml;utf8,<svg fill='none' stroke='%23475569' stroke-width='2.5' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><path stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5'></path></svg>");
           background-repeat: no-repeat;
           background-position: right 6px center;
           background-size: 8px;
@@ -2897,6 +2896,16 @@ const UsersList = () => {
           font-family: inherit;
           transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
+        .status-indicator-select.live {
+          background-image: url("data:image/svg+xml;utf8,<svg fill='none' stroke='%2316a34a' stroke-width='2.5' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><path stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5'></path></svg>");
+        }
+        .status-indicator-select.recording {
+          background-image: url("data:image/svg+xml;utf8,<svg fill='none' stroke='%230ea5e9' stroke-width='2.5' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><path stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5'></path></svg>");
+        }
+        .status-indicator-select.absent {
+          background-image: url("data:image/svg+xml;utf8,<svg fill='none' stroke='%23dc2626' stroke-width='2.5' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><path stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5'></path></svg>");
+        }
+
         .status-indicator-select option {
           background-color: #ffffff;
           color: #0f172a;
