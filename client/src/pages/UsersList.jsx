@@ -375,6 +375,28 @@ const UsersList = () => {
     }
   };
 
+  const handleUpdateAttendanceStatus = async (dayId, newStatus) => {
+    if (!selectedDetailUser) return;
+    try {
+      const config = { headers: { Authorization: `Bearer ${currentUser.token}` } };
+      const response = await axios.put('/api/attendance/update', {
+        studentId: selectedDetailUser._id,
+        dayId,
+        newStatus
+      }, config);
+      
+      if (response.data && response.data.success) {
+        showSnackbar(response.data.message || 'Attendance status updated successfully!', 'success');
+        // Fetch stats again to update UI
+        fetchDetailUserAttendance(selectedDetailUser);
+      }
+    } catch (err) {
+      console.error('Failed to update attendance status:', err);
+      showSnackbar(err.response?.data?.message || 'Failed to update attendance status', 'error');
+    }
+  };
+
+
   const getPaginationRange = (currPage, totPages) => {
     const delta = 1;
     const range = [];
@@ -1317,13 +1339,28 @@ const UsersList = () => {
                                 </td>
                                 <td style={{ padding: '10px 8px', fontSize: '0.85rem', textAlign: 'right' }}>
                                   <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'flex-end', gap: '2px' }}>
-                                    <span className={`status-indicator ${day.statusClass}`}>
-                                      {day.statusLabel}
-                                    </span>
-                                    {day.status === 'cancelled' && day.cancelReason && (
-                                      <span style={{ fontSize: '0.7rem', color: '#ea580c', fontStyle: 'italic', maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={day.cancelReason}>
-                                        {day.cancelReason}
-                                      </span>
+                                    {day.status === 'cancelled' ? (
+                                      <>
+                                        <span className="status-indicator cancelled">
+                                          Cancelled
+                                        </span>
+                                        {day.cancelReason && (
+                                          <span style={{ fontSize: '0.7rem', color: '#ea580c', fontStyle: 'italic', maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={day.cancelReason}>
+                                            {day.cancelReason}
+                                          </span>
+                                        )}
+                                      </>
+                                    ) : (
+                                      <select
+                                        className={`status-indicator-select ${day.status === 'live' ? 'live' : (day.status === 'recording' ? 'recording' : 'absent')}`}
+                                        value={day.status === 'live' ? 'live' : (day.status === 'recording' ? 'recording' : 'absent')}
+                                        onChange={(e) => handleUpdateAttendanceStatus(day.dayId, e.target.value)}
+                                        style={{ outline: 'none' }}
+                                      >
+                                        <option value="live">Live</option>
+                                        <option value="recording">Recording</option>
+                                        <option value="absent">Absent</option>
+                                      </select>
                                     )}
                                   </div>
                                 </td>
@@ -2824,6 +2861,33 @@ const UsersList = () => {
           background: #f1f5f9;
           color: #94a3b8;
         }
+        .status-indicator-select {
+          padding: 3px 20px 3px 8px;
+          border-radius: 6px;
+          font-size: 0.7rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          display: inline-block;
+          border: 1px solid transparent;
+          cursor: pointer;
+          appearance: none;
+          -webkit-appearance: none;
+          -moz-appearance: none;
+          background-image: url("data:image/svg+xml;utf8,<svg fill='none' stroke='%23475569' stroke-width='2.5' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><path stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5'></path></svg>");
+          background-repeat: no-repeat;
+          background-position: right 6px center;
+          background-size: 8px;
+          outline: none;
+          font-family: inherit;
+          transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .status-indicator-select option {
+          background-color: #ffffff;
+          color: #0f172a;
+          font-weight: normal;
+          text-transform: none;
+        }
+
         .pagination-dots {
           display: inline-flex;
           align-items: center;

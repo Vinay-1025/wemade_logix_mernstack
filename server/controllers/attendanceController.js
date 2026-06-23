@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const AttendanceSession = require('../models/AttendanceSession');
 const AttendanceRecord = require('../models/AttendanceRecord');
+const logAction = require('../utils/auditLogger');
 
 const normalizeDayId = (dayId) => {
   if (!dayId) return '';
@@ -752,6 +753,76 @@ const getAttendanceReport = async (req, res) => {
   }
 };
 
+// @desc    Update student's attendance status manually (Admin/Superadmin)
+// @route   PUT /api/attendance/update
+// @access  Private/Admin
+const updateStudentAttendance = async (req, res) => {
+  const { studentId, dayId, newStatus } = req.body;
+
+  if (!studentId || !dayId || !newStatus) {
+    return res.status(400).json({ message: 'studentId, dayId and newStatus are required' });
+  }
+
+  const allowedStatuses = ['live', 'recording', 'absent'];
+  if (!allowedStatuses.includes(newStatus.toLowerCase())) {
+    return res.status(400).json({ message: 'Invalid status. Allowed values are live, recording, absent' });
+  }
+
+  try {
+    const User = require('../models/User');
+    const student = await User.findById(studentId);
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+
+    const normDayId = normalizeDayId(dayId);
+    const dateStr = getCalendarDateForDay(normDayId);
+
+    // Get existing record
+    let record = await AttendanceRecord.findOne({ student: studentId, dayId: normDayId });
+    const oldStatus = record ? record.attendanceType : 'absent';
+
+    if (newStatus.toLowerCase() === 'absent') {
+      if (record) {
+        await AttendanceRecord.deleteOne({ _id: record._id });
+      }
+    } else {
+      if (record) {
+        record.attendanceType = newStatus.toLowerCase();
+        record.markedAt = new Date();
+        await record.save();
+      } else {
+        record = await AttendanceRecord.create({
+          student: studentId,
+          dayId: normDayId,
+          attendanceType: newStatus.toLowerCase(),
+          markedAt: new Date(),
+          date: dateStr
+        });
+      }
+    }
+
+    // Log the action using auditLogger
+    const details = `Manually updated attendance for student ${student.name} on day ${normDayId} (${dateStr}) from '${oldStatus}' to '${newStatus}'`;
+    await logAction(
+      req.user,
+      'UPDATE_ATTENDANCE',
+      details,
+      studentId,
+      'Attendance'
+    );
+
+    res.status(200).json({
+      success: true,
+      message: `Manually marked ${student.name} as ${newStatus} for day ${normDayId}`,
+      record
+    });
+  } catch (error) {
+    console.error('Error manual updating student attendance:', error);
+    res.status(500).json({ message: 'Server error while manually updating attendance' });
+  }
+};
+
 module.exports = {
   enableAttendance,
   getActiveSession,
@@ -762,5 +833,6 @@ module.exports = {
   markRecordingAttendance,
   getMyAttendance,
   getAttendanceReport,
+  updateStudentAttendance,
 };
 

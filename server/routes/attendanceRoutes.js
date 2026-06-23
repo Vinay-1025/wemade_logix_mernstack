@@ -10,6 +10,7 @@ const {
   markRecordingAttendance,
   getMyAttendance,
   getAttendanceReport,
+  updateStudentAttendance,
 } = require('../controllers/attendanceController');
 const { protect, admin } = require('../middleware/authMiddleware');
 
@@ -23,5 +24,6 @@ router.get('/stats', protect, getAttendanceStats);
 router.get('/stats/:studentId', protect, getAttendanceStats);
 router.get('/my', protect, getMyAttendance);
 router.post('/recording', protect, markRecordingAttendance);
+router.put('/update', protect, admin, updateStudentAttendance);
 
 module.exports = router;
