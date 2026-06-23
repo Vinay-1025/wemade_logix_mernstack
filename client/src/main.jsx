@@ -14,6 +14,10 @@ axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 // Request interceptor to automatically add the Authorization header
 axios.interceptors.request.use(
   (config) => {
+    // Skip attaching authorization token for refresh endpoint
+    if (config.url && config.url.includes('/api/auth/refresh')) {
+      return config;
+    }
     // If request has no Authorization header already set, set it from localStorage
     if (!config.headers['Authorization']) {
       const user = JSON.parse(localStorage.getItem('user'));

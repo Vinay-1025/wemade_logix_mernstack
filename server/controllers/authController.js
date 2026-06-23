@@ -9,8 +9,12 @@ const generateToken = (id) => {
   });
 };
 
+const getRefreshSecret = () => {
+  return process.env.JWT_REFRESH_SECRET || (process.env.JWT_SECRET ? (process.env.JWT_SECRET + '_refresh') : 'fallback_refresh_secret_key_987');
+};
+
 const generateRefreshToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_REFRESH_SECRET, {
+  return jwt.sign({ id }, getRefreshSecret(), {
     expiresIn: process.env.JWT_REFRESH_EXPIRE || '5d',
   });
 };
@@ -310,7 +314,7 @@ const refreshAccessToken = async (req, res) => {
   }
 
   try {
-    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    const decoded = jwt.verify(refreshToken, getRefreshSecret());
     const user = await User.findById(decoded.id);
 
     if (!user || user.refreshToken !== refreshToken) {
