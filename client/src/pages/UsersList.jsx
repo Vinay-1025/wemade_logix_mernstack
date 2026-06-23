@@ -1363,7 +1363,7 @@ const UsersList = () => {
                                       </>
                                     ) : updatingDays[day.dayId] ? (
                                       <div 
-                                        className={`mini-spinner ${day.status === 'live' ? 'live' : (day.status === 'recording' ? 'recording' : 'absent')}`} 
+                                        className="mini-spinner" 
                                         style={{ margin: '4px 20px 4px 0' }} 
                                       />
                                     ) : (
@@ -1373,9 +1373,9 @@ const UsersList = () => {
                                         onChange={(e) => handleUpdateAttendanceStatus(day.dayId, e.target.value)}
                                         style={{ outline: 'none' }}
                                       >
-                                        <option value="live">Live</option>
-                                        <option value="recording">Recording</option>
-                                        <option value="absent">Absent</option>
+                                        <option value="live" className="option-live" style={{ color: '#16a34a', backgroundColor: '#f0fdf4', fontWeight: 'bold' }}>Live</option>
+                                        <option value="recording" className="option-recording" style={{ color: '#0ea5e9', backgroundColor: '#f0f9ff', fontWeight: 'bold' }}>Recording</option>
+                                        <option value="absent" className="option-absent" style={{ color: '#dc2626', backgroundColor: '#fef2f2', fontWeight: 'bold' }}>Absent</option>
                                       </select>
                                     )}
                                   </div>
@@ -2903,27 +2903,32 @@ const UsersList = () => {
           font-weight: normal;
           text-transform: none;
         }
+        .status-indicator-select option.option-live {
+          color: #16a34a !important;
+          background-color: #f0fdf4 !important;
+        }
+        .status-indicator-select option.option-recording {
+          color: #0ea5e9 !important;
+          background-color: #f0f9ff !important;
+        }
+        .status-indicator-select option.option-absent {
+          color: #dc2626 !important;
+          background-color: #fef2f2 !important;
+        }
         .mini-spinner {
           display: inline-block;
           width: 14px;
           height: 14px;
           border: 2px solid rgba(0, 0, 0, 0.08);
+          border-top-color: #0ea5e9;
           border-radius: 50%;
           animation: spin 0.6s linear infinite;
-        }
-        .mini-spinner.live {
-          border-top-color: #16a34a;
-        }
-        .mini-spinner.recording {
-          border-top-color: #0ea5e9;
-        }
-        .mini-spinner.absent {
-          border-top-color: #dc2626;
         }
         @keyframes spin {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }
         }
+
 
 
         .pagination-dots {
