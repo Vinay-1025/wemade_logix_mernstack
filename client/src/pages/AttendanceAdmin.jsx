@@ -467,7 +467,10 @@ const AttendanceAdmin = () => {
                   <span className="inactive-text">NO ACTIVE SESSION</span>
                 </div>
                 {/* Additional Session Toggle Switch */}
-                <div className="toggle-switch-wrapper" style={{ marginBottom: '16px' }}>
+                <div className="toggle-switch-wrapper" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', width: '100%' }}>
+                  <span className="toggle-label" style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--app-text)' }}>
+                    Additional/Extra Class Session (Sunday or custom date)
+                  </span>
                   <label className="toggle-switch">
                     <input 
                       type="checkbox" 
@@ -476,9 +479,6 @@ const AttendanceAdmin = () => {
                     />
                     <span className="slider round"></span>
                   </label>
-                  <span className="toggle-label" style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--app-text)' }}>
-                    Additional/Extra Class Session (Sunday or custom date)
-                  </span>
                 </div>
 
                 {!isAdditional ? (
@@ -516,7 +516,10 @@ const AttendanceAdmin = () => {
 
                 {/* Cancel Day Options Toggle Switch */}
                 <div className="cancel-day-wrapper" style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <div className="toggle-switch-wrapper">
+                  <div className="toggle-switch-wrapper" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                    <span className="toggle-label" style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--app-text)' }}>
+                      Mark this day as Cancelled
+                    </span>
                     <label className="toggle-switch cancelled-switch">
                       <input 
                         type="checkbox" 
@@ -528,9 +531,6 @@ const AttendanceAdmin = () => {
                       />
                       <span className="slider round"></span>
                     </label>
-                    <span className="toggle-label" style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--app-text)' }}>
-                      Mark this day as Cancelled
-                    </span>
                   </div>
                   
                   {isCancelledSession && (
