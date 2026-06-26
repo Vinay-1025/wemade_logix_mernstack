@@ -466,17 +466,19 @@ const AttendanceAdmin = () => {
                   <span className="inactive-dot"></span>
                   <span className="inactive-text">NO ACTIVE SESSION</span>
                 </div>
-                {/* Additional Session Checkbox */}
-                <div className="additional-class-wrapper" style={{ marginBottom: '16px' }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.95rem', fontWeight: 600, color: 'var(--app-text)' }}>
+                {/* Additional Session Toggle Switch */}
+                <div className="toggle-switch-wrapper" style={{ marginBottom: '16px' }}>
+                  <label className="toggle-switch">
                     <input 
                       type="checkbox" 
                       checked={isAdditional} 
                       onChange={e => setIsAdditional(e.target.checked)}
-                      style={{ cursor: 'pointer' }}
                     />
-                    Additional/Extra Class Session (Sunday or custom date)
+                    <span className="slider round"></span>
                   </label>
+                  <span className="toggle-label" style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--app-text)' }}>
+                    Additional/Extra Class Session (Sunday or custom date)
+                  </span>
                 </div>
 
                 {!isAdditional ? (
@@ -512,20 +514,24 @@ const AttendanceAdmin = () => {
                   </div>
                 )}
 
-                {/* Cancel Day Options */}
+                {/* Cancel Day Options Toggle Switch */}
                 <div className="cancel-day-wrapper" style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600, color: 'var(--app-text)' }}>
-                    <input 
-                      type="checkbox" 
-                      checked={isCancelledSession} 
-                      onChange={e => {
-                        setIsCancelledSession(e.target.checked);
-                        if (!e.target.checked) setCancelReason('');
-                      }}
-                      style={{ cursor: 'pointer' }}
-                    />
-                    Mark this day as Cancelled
-                  </label>
+                  <div className="toggle-switch-wrapper">
+                    <label className="toggle-switch cancelled-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={isCancelledSession} 
+                        onChange={e => {
+                          setIsCancelledSession(e.target.checked);
+                          if (!e.target.checked) setCancelReason('');
+                        }}
+                      />
+                      <span className="slider round"></span>
+                    </label>
+                    <span className="toggle-label" style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--app-text)' }}>
+                      Mark this day as Cancelled
+                    </span>
+                  </div>
                   
                   {isCancelledSession && (
                     <div style={{ marginTop: '4px' }} className="fade-in">
@@ -1532,6 +1538,63 @@ const AttendanceAdmin = () => {
             font-size: 0.95rem;
             color: #94a3b8;
           }
+        }
+
+        /* Smooth Toggle Switch Styles */
+        .toggle-switch-wrapper {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+        .toggle-switch {
+          position: relative;
+          display: inline-block;
+          width: 44px;
+          height: 22px;
+          flex-shrink: 0;
+        }
+        .toggle-switch input {
+          opacity: 0;
+          width: 0;
+          height: 0;
+        }
+        .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: var(--app-border, #cbd5e1);
+          transition: .3s;
+          border-radius: 22px;
+        }
+        .slider:before {
+          position: absolute;
+          content: "";
+          height: 16px;
+          width: 16px;
+          left: 3px;
+          bottom: 3px;
+          background-color: white;
+          transition: .3s;
+          border-radius: 50%;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+        }
+        .toggle-switch input:checked + .slider {
+          background-color: #10b981;
+        }
+        .toggle-switch.cancelled-switch input:checked + .slider {
+          background-color: #f59e0b;
+        }
+        .toggle-switch input:focus + .slider {
+          box-shadow: 0 0 1px #10b981;
+        }
+        .toggle-switch.cancelled-switch input:focus + .slider {
+          box-shadow: 0 0 1px #f59e0b;
+        }
+        .toggle-switch input:checked + .slider:before {
+          transform: translateX(22px);
         }
       `}} />
     </MainLayout>
