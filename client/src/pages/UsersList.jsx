@@ -321,7 +321,11 @@ const UsersList = () => {
   };
 
   const getCalendarDateForDay = (dayId) => {
+    if (dayId && dayId.toString().startsWith('extra-')) {
+      return dayId.toString().substring(6);
+    }
     const baseDate = new Date(Date.UTC(2026, 4, 18)); // May 18, 2026 (Month is 0-indexed, UTC)
+
 
     const getDayNumber = (id) => {
       if (!id) return 1;
@@ -721,7 +725,61 @@ const UsersList = () => {
     };
   });
 
-  const filteredConsistencyDays = mappedCourseDays.filter(day => {
+  const extraCourseDays = (attendanceStats?.extraDays || []).map(extra => {
+    const dateStr = getCalendarDateForDay(extra.dayId);
+    
+    const targetDate = new Date(Date.UTC(
+      parseInt(dateStr.split('-')[0]),
+      parseInt(dateStr.split('-')[1]) - 1,
+      parseInt(dateStr.split('-')[2])
+    ));
+    const today = new Date();
+    const todayUTC = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
+    const isFuture = targetDate.getTime() > todayUTC.getTime();
+
+    let status = 'none';
+    if (attendanceStats && attendanceStats.heatmapData) {
+      status = attendanceStats.heatmapData[dateStr] || 'none';
+    }
+    
+    let statusLabel = 'No Session';
+    let statusClass = 'none';
+    if (status === 'live') {
+      statusLabel = 'Live';
+      statusClass = 'live';
+    } else if (status === 'recording') {
+      statusLabel = 'Recording';
+      statusClass = 'recording';
+    } else if (status === 'cancelled') {
+      statusLabel = 'Cancelled';
+      statusClass = 'cancelled';
+    } else if (status === 'missed') {
+      statusLabel = 'Absent';
+      statusClass = 'absent';
+    } else if (isFuture) {
+      statusLabel = 'Scheduled';
+      statusClass = 'future';
+    }
+
+    return {
+      weekTitle: 'Additional Class',
+      weekId: 'extra',
+      dayId: extra.dayId,
+      dayTitle: 'Extra Session',
+      dateStr,
+      formattedDate: targetDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }),
+      status,
+      statusLabel,
+      statusClass,
+      cancelReason: extra.cancelReason || '',
+      isFuture,
+      isExtra: true
+    };
+  });
+
+  const combinedCourseDays = [...mappedCourseDays, ...extraCourseDays].sort((a, b) => new Date(a.dateStr) - new Date(b.dateStr));
+
+  const filteredConsistencyDays = combinedCourseDays.filter(day => {
     const matchesSearch = 
       day.dayTitle.toLowerCase().includes(consistencySearch.toLowerCase()) ||
       day.weekTitle.toLowerCase().includes(consistencySearch.toLowerCase()) ||
@@ -1146,7 +1204,7 @@ const UsersList = () => {
                                 color: hoveredCell.status === 'live' ? '#10b981' : 
                                        hoveredCell.status === 'recording' ? '#0ea5e9' : 
                                        hoveredCell.status === 'missed' ? '#ef4444' : 
-                                       hoveredCell.status === 'cancelled' ? '#ea580c' : 'var(--app-text-muted)' 
+                                       hoveredCell.status === 'cancelled' ? '#d97706' : 'var(--app-text-muted)' 
                               }}>
                                 {hoveredCell.status === 'live' ? 'Live' : 
                                  hoveredCell.status === 'recording' ? 'Recording' : 
@@ -1280,7 +1338,7 @@ const UsersList = () => {
                       <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><span className="legend-cell cell-none" style={{ width: '10px', height: '10px', borderRadius: '2px', background: 'rgba(0,0,0,0.04)', display: 'inline-block' }}></span> No Session</span>
                       <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><span className="legend-cell cell-live" style={{ width: '10px', height: '10px', borderRadius: '2px', background: '#10b981', display: 'inline-block' }}></span> Live</span>
                       <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><span className="legend-cell cell-recording" style={{ width: '10px', height: '10px', borderRadius: '2px', background: '#0ea5e9', display: 'inline-block' }}></span> Recording</span>
-                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><span className="legend-cell cell-cancelled" style={{ width: '10px', height: '10px', borderRadius: '2px', background: '#ea580c', display: 'inline-block' }}></span> Cancelled</span>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><span className="legend-cell cell-cancelled" style={{ width: '10px', height: '10px', borderRadius: '2px', background: '#f59e0b', display: 'inline-block' }}></span> Cancelled</span>
                       <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><span className="legend-cell cell-missed" style={{ width: '10px', height: '10px', borderRadius: '2px', background: '#ef4444', display: 'inline-block' }}></span> Absent</span>
                     </div>
                   </div>
@@ -1289,7 +1347,7 @@ const UsersList = () => {
                   <div className="detail-section-card card-3d">
                     <div className="section-header-title text-layout">
                       <h3>Attendance Consistency Matrix</h3>
-                      <span className="sub-count">Matches: {filteredConsistencyDays.length} of {mappedCourseDays.length} course days</span>
+                      <span className="sub-count">Matches: {filteredConsistencyDays.length} of {combinedCourseDays.length} course days</span>
                     </div>
 
                     {/* Filters Row */}
@@ -1300,13 +1358,31 @@ const UsersList = () => {
                         value={consistencySearch} 
                         onChange={handleConsistencySearchChange} 
                         className="detail-filter-input"
-                        style={{ flex: 1, padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--app-border)', background: 'transparent', color: 'var(--app-text)', fontSize: '0.85rem' }}
+                        style={{
+                          flex: 1,
+                          padding: '8px 12px',
+                          borderRadius: '8px',
+                          border: '1px solid var(--app-border)',
+                          background: 'transparent',
+                          color: 'var(--app-text)',
+                          fontSize: '0.85rem',
+                          outline: 'none'
+                        }}
                       />
                       <select 
                         value={consistencyStatusFilter} 
                         onChange={handleConsistencyStatusFilterChange} 
                         className="detail-filter-select"
-                        style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--app-border)', background: 'var(--app-card-bg)', color: 'var(--app-text)', fontSize: '0.85rem' }}
+                        style={{
+                          padding: '8px 12px',
+                          borderRadius: '8px',
+                          border: '1px solid var(--app-border)',
+                          background: 'var(--app-card-bg)',
+                          color: 'var(--app-text)',
+                          fontSize: '0.85rem',
+                          outline: 'none',
+                          cursor: 'pointer'
+                        }}
                       >
                         <option value="all">All Markings</option>
                         <option value="attended">Attended (Live/Rec)</option>
@@ -1318,8 +1394,8 @@ const UsersList = () => {
                     </div>
 
                     {/* Table Scroll Wrapper */}
-                    <div className="table-scroll-wrapper" style={{ flex: 1, overflowY: 'auto' }}>
-                      <table className="detail-data-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <div className="detail-table-wrapper" style={{ overflowX: 'auto' }}>
+                      <table className="detail-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
                         <thead>
                           <tr style={{ borderBottom: '1px solid var(--app-border)', textAlign: 'left' }}>
                             <th style={{ padding: '10px 8px', fontSize: '0.8rem', color: 'var(--app-text-muted)' }}>Day</th>
@@ -1339,11 +1415,20 @@ const UsersList = () => {
                               <tr key={day.dayId} style={{ borderBottom: '1px solid rgba(0,0,0,0.03)' }}>
                                 <td style={{ padding: '10px 8px', fontSize: '0.85rem' }}>
                                   <div style={{ fontWeight: 700 }}>
-                                    {day.weekId.toUpperCase()} - {day.dayId.split('-')[1].toUpperCase()}
+                                    {day.isExtra ? (
+                                      <span style={{ color: 'var(--primary-cyan)', fontWeight: 800 }}>EXTRA CLASS</span>
+                                    ) : (
+                                      `${day.weekId.toUpperCase()} - ${day.dayId.split('-')[1].toUpperCase()}`
+                                    )}
                                   </div>
                                   <div style={{ fontSize: '0.75rem', color: 'var(--app-text-muted)', maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={day.dayTitle}>
                                     {day.dayTitle}
                                   </div>
+                                  {day.isExtra && day.dayId.startsWith('extra-') && (
+                                    <div style={{ fontSize: '0.7rem', color: 'var(--app-text-muted)', marginTop: '2px' }}>
+                                      {day.dayId.substring(6)}
+                                    </div>
+                                  )}
                                 </td>
                                 <td style={{ padding: '10px 8px', fontSize: '0.85rem', color: 'var(--app-text-muted)' }}>
                                   {day.formattedDate}
@@ -1356,7 +1441,7 @@ const UsersList = () => {
                                           Cancelled
                                         </span>
                                         {day.cancelReason && (
-                                          <span style={{ fontSize: '0.7rem', color: '#ea580c', fontStyle: 'italic', maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={day.cancelReason}>
+                                          <span style={{ fontSize: '0.7rem', color: '#d97706', fontStyle: 'italic', maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={day.cancelReason}>
                                             {day.cancelReason}
                                           </span>
                                         )}
@@ -2819,7 +2904,7 @@ const UsersList = () => {
           background: #ef4444;
         }
         .heatmap-cell.cell-cancelled {
-          background: #ea580c;
+          background: #f59e0b;
         }
         .heatmap-cell.cell-future {
           opacity: 0.2;
@@ -2852,7 +2937,7 @@ const UsersList = () => {
           background: #ef4444;
         }
         .legend-cell.cell-cancelled {
-          background: #ea580c;
+          background: #f59e0b;
         }
         .legend-cell.cell-attended, .legend-cell.cell-live {
           background: #10b981;
@@ -2870,8 +2955,8 @@ const UsersList = () => {
           color: #0ea5e9;
         }
         .status-indicator.cancelled, .status-indicator.cancelled-badge {
-          background-color: #ffedd5;
-          color: #ea580c;
+          background-color: #fef3c7;
+          color: #d97706;
         }
         .status-indicator.missed, .status-indicator.absent {
           background-color: #fef2f2;

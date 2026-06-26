@@ -64,6 +64,10 @@ const AttendanceAdmin = () => {
 
   const getDayLabel = (dayId) => {
     if (!dayId) return 'General / Unassigned';
+    if (dayId.toString().startsWith('extra-')) {
+      const dateStr = dayId.toString().substring(6);
+      return `Extra Class (${dateStr})`;
+    }
     const normalized = normalizeDayId(dayId);
     const day = allDays.find(d => normalizeDayId(d.dayId) === normalized);
     if (day) return day.dayTitle;
@@ -81,6 +85,8 @@ const AttendanceAdmin = () => {
   // Cancellation States
   const [isCancelledSession, setIsCancelledSession] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
+  const [isAdditional, setIsAdditional] = useState(false);
+  const [extraDate, setExtraDate] = useState(() => new Date().toLocaleDateString('en-CA'));
 
   // Pagination States
   const [currentPage, setCurrentPage] = useState(1);
@@ -137,13 +143,25 @@ const AttendanceAdmin = () => {
 
   const handleStartSession = async () => {
     if (!currentUser?.token) return;
-    if (!selectedDayId || !selectedDayId.trim() || Number(selectedDayId) <= 0) {
-      setStatusMessage({ type: 'error', text: 'Class Day Number is required (minimum 1).' });
-      return;
+    
+    let finalDayId = '';
+    if (isAdditional) {
+      if (!extraDate) {
+        setStatusMessage({ type: 'error', text: 'Extra Session Date is required.' });
+        return;
+      }
+      finalDayId = `extra-${extraDate}`;
+    } else {
+      if (!selectedDayId || !selectedDayId.trim() || Number(selectedDayId) <= 0) {
+        setStatusMessage({ type: 'error', text: 'Class Day Number is required (minimum 1).' });
+        return;
+      }
+      finalDayId = selectedDayId.trim();
     }
+
     try {
       const response = await axios.post('/api/attendance/session', { 
-        dayId: selectedDayId.trim(),
+        dayId: finalDayId,
         isCancelled: isCancelledSession,
         cancelReason: isCancelledSession ? cancelReason.trim() || 'Cancelled' : ''
       }, {
@@ -152,7 +170,12 @@ const AttendanceAdmin = () => {
       if (response.data?.success) {
         if (isCancelledSession) {
           setActiveSession(null);
-          setStatusMessage({ type: 'success', text: `Class day ${selectedDayId} marked as cancelled successfully.` });
+          setStatusMessage({ 
+            type: 'success', 
+            text: isAdditional 
+              ? `Extra class on ${extraDate} marked as cancelled successfully.` 
+              : `Class day ${selectedDayId} marked as cancelled successfully.` 
+          });
           setIsCancelledSession(false);
           setCancelReason('');
         } else {
@@ -443,24 +466,51 @@ const AttendanceAdmin = () => {
                   <span className="inactive-dot"></span>
                   <span className="inactive-text">NO ACTIVE SESSION</span>
                 </div>
-
-                <div className="select-day-wrapper">
-                  <label className="select-day-label">
-                    Class Day Number <span style={{ color: '#ef4444' }}>*</span>
-                    <span style={{ fontSize: '0.75rem', color: '#94a3b8', marginLeft: '6px', textTransform: 'none', fontWeight: 'normal' }}>
-                      (Recommended: Day {getRecommendedDay()})
-                    </span>
+                {/* Additional Session Checkbox */}
+                <div className="additional-class-wrapper" style={{ marginBottom: '16px' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.95rem', fontWeight: 600, color: 'var(--app-text)' }}>
+                    <input 
+                      type="checkbox" 
+                      checked={isAdditional} 
+                      onChange={e => setIsAdditional(e.target.checked)}
+                      style={{ cursor: 'pointer' }}
+                    />
+                    Additional/Extra Class Session (Sunday or custom date)
                   </label>
-                  <input
-                    type="number"
-                    min="1"
-                    placeholder={`e.g. ${getRecommendedDay()}`}
-                    value={selectedDayId}
-                    onChange={e => setSelectedDayId(e.target.value)}
-                    className="select-day-input"
-                    required
-                  />
                 </div>
+
+                {!isAdditional ? (
+                  <div className="select-day-wrapper">
+                    <label className="select-day-label">
+                      Class Day Number <span style={{ color: '#ef4444' }}>*</span>
+                      <span style={{ fontSize: '0.75rem', color: '#94a3b8', marginLeft: '6px', textTransform: 'none', fontWeight: 'normal' }}>
+                        (Recommended: Day {getRecommendedDay()})
+                      </span>
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      placeholder={`e.g. ${getRecommendedDay()}`}
+                      value={selectedDayId}
+                      onChange={e => setSelectedDayId(e.target.value)}
+                      className="select-day-input"
+                      required
+                    />
+                  </div>
+                ) : (
+                  <div className="select-day-wrapper">
+                    <label className="select-day-label">
+                      Select Additional Class Date <span style={{ color: '#ef4444' }}>*</span>
+                    </label>
+                    <input
+                      type="date"
+                      value={extraDate}
+                      onChange={e => setExtraDate(e.target.value)}
+                      className="select-day-input"
+                      required
+                    />
+                  </div>
+                )}
 
                 {/* Cancel Day Options */}
                 <div className="cancel-day-wrapper" style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>

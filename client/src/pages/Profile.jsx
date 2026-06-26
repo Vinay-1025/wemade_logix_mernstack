@@ -339,12 +339,14 @@ const Profile = () => {
                         {hoveredCell.dateLabel} • <strong style={{ 
                           color: hoveredCell.status === 'live' || hoveredCell.status === 'attended' ? '#10b981' : 
                                  hoveredCell.status === 'recording' ? '#0ea5e9' : 
-                                 hoveredCell.status === 'missed' ? '#ef4444' : 'var(--text-neutral)' 
+                                 hoveredCell.status === 'missed' ? '#ef4444' : 
+                                 hoveredCell.status === 'cancelled' ? '#d97706' : 'var(--text-neutral)' 
                         }}>
                           {hoveredCell.status === 'live' ? 'Attended (Live)' : 
                            hoveredCell.status === 'recording' ? 'Attended (Recording)' : 
                            hoveredCell.status === 'attended' ? 'Attended' : 
-                           hoveredCell.status === 'missed' ? 'Missed' : 'No Class'}
+                           hoveredCell.status === 'missed' ? 'Missed' : 
+                           hoveredCell.status === 'cancelled' ? `Cancelled: ${hoveredCell.reason || 'Cancelled'}` : 'No Class'}
                         </strong>
                       </span>
                     ) : (
@@ -461,6 +463,7 @@ const Profile = () => {
                         <button className={`filter-btn ${statusFilter === 'all' ? 'active' : ''}`} onClick={() => setStatusFilter('all')}>All</button>
                         <button className={`filter-btn ${statusFilter === 'attended' ? 'active' : ''}`} onClick={() => setStatusFilter('attended')}>Attended</button>
                         <button className={`filter-btn ${statusFilter === 'missed' ? 'active' : ''}`} onClick={() => setStatusFilter('missed')}>Missed</button>
+                        <button className={`filter-btn ${statusFilter === 'cancelled' ? 'active' : ''}`} onClick={() => setStatusFilter('cancelled')}>Cancelled</button>
                       </div>
                     </div>
                   </div>
@@ -504,6 +507,7 @@ const Profile = () => {
                         let isFilteredByStatus = false;
                         if (statusFilter === 'attended' && status !== 'live' && status !== 'recording') isFilteredByStatus = true;
                         if (statusFilter === 'missed' && status !== 'missed') isFilteredByStatus = true;
+                        if (statusFilter === 'cancelled' && status !== 'cancelled') isFilteredByStatus = true;
 
                         const isDimmed = isFilteredByTime || isFilteredByStatus;
 
@@ -514,13 +518,14 @@ const Profile = () => {
                             style={{
                               gridRow: (day.getUTCDay() + 1),
                             }}
-                            onMouseEnter={() => setHoveredCell({ dateLabel, status })}
+                            onMouseEnter={() => setHoveredCell({ dateLabel, status, reason: attendanceStats.cancelledReasons?.[dateStr] || '' })}
                             onMouseLeave={() => setHoveredCell(null)}
                             title={`${dateLabel}: ${
                               status === 'live' ? 'Attended (Live)' : 
                               status === 'recording' ? 'Attended (Recording)' : 
                               status === 'attended' ? 'Attended' : 
-                              status === 'missed' ? 'Missed' : 'No Class'
+                              status === 'missed' ? 'Missed' : 
+                              status === 'cancelled' ? `Cancelled: ${attendanceStats.cancelledReasons?.[dateStr] || 'Cancelled'}` : 'No Class'
                             }`}
                           />
                         );
@@ -533,12 +538,14 @@ const Profile = () => {
                 <div className="heatmap-legend">
                   <span>Less</span>
                   <div className="legend-cell cell-none"></div>
+                  <div className="legend-cell cell-cancelled"></div>
                   <div className="legend-cell cell-missed"></div>
                   <div className="legend-cell cell-live"></div>
                   <div className="legend-cell cell-recording"></div>
                   <span>More</span>
                   <div className="legend-labels" style={{ marginLeft: '12px', fontSize: '0.75rem', color: 'var(--text-neutral)', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                     <span>⬜ No Class</span>
+                    <span>🟨 Session Cancelled</span>
                     <span>🟥 Missed Class</span>
                     <span>🟩 Live Class</span>
                     <span>🟦 Recording Watched</span>
@@ -1128,6 +1135,9 @@ const Profile = () => {
           .heatmap-cell.cell-missed {
             background: #ef4444;
           }
+          .heatmap-cell.cell-cancelled {
+            background: #f59e0b;
+          }
           .heatmap-cell.cell-future {
             opacity: 0.2;
             cursor: default;
@@ -1157,6 +1167,9 @@ const Profile = () => {
           }
           .legend-cell.cell-missed {
             background: #ef4444;
+          }
+          .legend-cell.cell-cancelled {
+            background: #f59e0b;
           }
           .legend-cell.cell-attended, .legend-cell.cell-live {
             background: #10b981;

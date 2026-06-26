@@ -17,7 +17,11 @@ const normalizeDayId = (dayId) => {
 };
 
 const getCalendarDateForDay = (dayId) => {
+  if (dayId && dayId.toString().startsWith('extra-')) {
+    return dayId.toString().substring(6);
+  }
   const baseDate = new Date(Date.UTC(2026, 4, 18)); // May 18, 2026 (Month is 0-indexed, UTC)
+
 
   const getDayNumber = (id) => {
     if (!id) return 1;
@@ -383,6 +387,29 @@ const getAttendanceStats = async (req, res) => {
       }
     }
 
+    const extraDays = [];
+    const seenExtraDayIds = new Set();
+    sessions.forEach(s => {
+      if (s && s.dayId && s.dayId.startsWith('extra-') && !seenExtraDayIds.has(s.dayId)) {
+        seenExtraDayIds.add(s.dayId);
+        extraDays.push({
+          dayId: s.dayId,
+          isCancelled: s.isCancelled,
+          cancelReason: s.cancelReason || ''
+        });
+      }
+    });
+    records.forEach(r => {
+      if (r && r.dayId && r.dayId.startsWith('extra-') && !seenExtraDayIds.has(r.dayId)) {
+        seenExtraDayIds.add(r.dayId);
+        extraDays.push({
+          dayId: r.dayId,
+          isCancelled: false,
+          cancelReason: ''
+        });
+      }
+    });
+
     res.status(200).json({
       success: true,
       stats: {
@@ -394,9 +421,11 @@ const getAttendanceStats = async (req, res) => {
         currentStreak,
         maxStreak,
         heatmapData,
-        cancelledReasons
+        cancelledReasons,
+        extraDays
       }
     });
+
   } catch (error) {
     console.error('Error fetching attendance stats:', error);
     res.status(500).json({ message: 'Server error while calculating attendance stats' });
@@ -566,6 +595,39 @@ const getAttendanceReport = async (req, res) => {
       dateToDayIds[dateStr].push(normId);
     });
 
+    // Collect extra class dates (e.g. starting with extra-)
+    sessions.forEach(s => {
+      if (s && s.dayId && s.dayId.startsWith('extra-')) {
+        const dateStr = getCalendarDateForDay(s.dayId);
+        if (!uniqueDates.includes(dateStr)) {
+          uniqueDates.push(dateStr);
+        }
+        if (!dateToDayIds[dateStr]) {
+          dateToDayIds[dateStr] = [];
+        }
+        if (!dateToDayIds[dateStr].includes(s.dayId)) {
+          dateToDayIds[dateStr].push(s.dayId);
+        }
+      }
+    });
+    records.forEach(r => {
+      if (r && r.dayId && r.dayId.startsWith('extra-')) {
+        const dateStr = getCalendarDateForDay(r.dayId);
+        if (!uniqueDates.includes(dateStr)) {
+          uniqueDates.push(dateStr);
+        }
+        if (!dateToDayIds[dateStr]) {
+          dateToDayIds[dateStr] = [];
+        }
+        if (!dateToDayIds[dateStr].includes(r.dayId)) {
+          dateToDayIds[dateStr].push(r.dayId);
+        }
+      }
+    });
+
+    // Sort uniqueDates chronologically
+    uniqueDates.sort();
+
     const totalDays = uniqueDates.length;
 
     // Map sessions to find cancelled days
@@ -635,7 +697,7 @@ const getAttendanceReport = async (req, res) => {
               break;
             }
           }
-          daysHtml += `<td style="background-color: #ffedd5; color: #ea580c; font-weight: bold; border: 1px solid #cbd5e1; text-align: center; font-family: Calibri, sans-serif; padding: 8px;" title="${reason}">Cancelled</td>`;
+          daysHtml += `<td style="background-color: #fef3c7; color: #d97706; font-weight: bold; border: 1px solid #cbd5e1; text-align: center; font-family: Calibri, sans-serif; padding: 8px;" title="${reason}">Cancelled</td>`;
         } else {
           daysHtml += `<td style="background-color: #fee2e2; color: #dc2626; font-weight: bold; border: 1px solid #cbd5e1; text-align: center; font-family: Calibri, sans-serif; padding: 8px;">Absent</td>`;
           heldDaysCount++;

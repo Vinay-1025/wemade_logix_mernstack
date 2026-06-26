@@ -87,6 +87,9 @@ const migrateAttendanceData = async () => {
     };
 
     const getCalendarDateForDay = (dayId) => {
+      if (dayId && dayId.toString().startsWith('extra-')) {
+        return dayId.toString().substring(6);
+      }
       const baseDate = new Date(2026, 4, 18); // May 18, 2026 (Month is 0-indexed)
       baseDate.setHours(0, 0, 0, 0);
 
