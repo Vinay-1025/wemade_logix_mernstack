@@ -143,7 +143,7 @@ const AttendanceAdmin = () => {
 
   const handleStartSession = async () => {
     if (!currentUser?.token) return;
-    
+
     let finalDayId = '';
     if (isAdditional) {
       if (!extraDate) {
@@ -160,7 +160,7 @@ const AttendanceAdmin = () => {
     }
 
     try {
-      const response = await axios.post('/api/attendance/session', { 
+      const response = await axios.post('/api/attendance/session', {
         dayId: finalDayId,
         isCancelled: isCancelledSession,
         cancelReason: isCancelledSession ? cancelReason.trim() || 'Cancelled' : ''
@@ -170,11 +170,11 @@ const AttendanceAdmin = () => {
       if (response.data?.success) {
         if (isCancelledSession) {
           setActiveSession(null);
-          setStatusMessage({ 
-            type: 'success', 
-            text: isAdditional 
-              ? `Extra class on ${extraDate} marked as cancelled successfully.` 
-              : `Class day ${selectedDayId} marked as cancelled successfully.` 
+          setStatusMessage({
+            type: 'success',
+            text: isAdditional
+              ? `Extra class on ${extraDate} marked as cancelled successfully.`
+              : `Class day ${selectedDayId} marked as cancelled successfully.`
           });
           setIsCancelledSession(false);
           setCancelReason('');
@@ -297,9 +297,9 @@ const AttendanceAdmin = () => {
     const sessionDayId = normalizeDayId(r.dayId || r.session?.dayId || '');
     const resolvedLabel = getDayLabel(sessionDayId).toLowerCase();
     const filterQuery = filterDayId.toLowerCase();
-    const matchesDay = !filterDayId || 
-                       sessionDayId.toLowerCase().includes(filterQuery) || 
-                       resolvedLabel.includes(filterQuery);
+    const matchesDay = !filterDayId ||
+      sessionDayId.toLowerCase().includes(filterQuery) ||
+      resolvedLabel.includes(filterQuery);
 
     const markedDate = new Date(r.markedAt);
 
@@ -467,14 +467,14 @@ const AttendanceAdmin = () => {
                   <span className="inactive-text">NO ACTIVE SESSION</span>
                 </div>
                 {/* Additional Session Toggle Switch */}
-                <div className="toggle-switch-wrapper" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', width: '100%' }}>
-                  <span className="toggle-label" style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--app-text)' }}>
-                    Additional/Extra Class Session (Sunday or custom date)
+                <div className="toggle-switch-wrapper" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', marginBottom: '24px', width: '100%', gap: '12px' }}>
+                  <span className="toggle-label" style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-secondary)' }}>
+                    Additional Session
                   </span>
                   <label className="toggle-switch">
-                    <input 
-                      type="checkbox" 
-                      checked={isAdditional} 
+                    <input
+                      type="checkbox"
+                      checked={isAdditional}
                       onChange={e => setIsAdditional(e.target.checked)}
                     />
                     <span className="slider round"></span>
@@ -515,15 +515,15 @@ const AttendanceAdmin = () => {
                 )}
 
                 {/* Cancel Day Options Toggle Switch */}
-                <div className="cancel-day-wrapper" style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <div className="toggle-switch-wrapper" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-                    <span className="toggle-label" style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--app-text)' }}>
+                <div className="cancel-day-wrapper" style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
+                  <div className="toggle-switch-wrapper" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', width: '100%', gap: '12px', marginBottom: '16px' }}>
+                    <span className="toggle-label" style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-secondary)' }}>
                       Mark this day as Cancelled
                     </span>
                     <label className="toggle-switch cancelled-switch">
-                      <input 
-                        type="checkbox" 
-                        checked={isCancelledSession} 
+                      <input
+                        type="checkbox"
+                        checked={isCancelledSession}
                         onChange={e => {
                           setIsCancelledSession(e.target.checked);
                           if (!e.target.checked) setCancelReason('');
@@ -532,15 +532,15 @@ const AttendanceAdmin = () => {
                       <span className="slider round"></span>
                     </label>
                   </div>
-                  
+
                   {isCancelledSession && (
                     <div style={{ marginTop: '4px' }} className="fade-in">
                       <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--app-text-muted)', marginBottom: '4px', fontWeight: 600 }}>
                         Cancellation Reason
                       </label>
-                      <input 
-                        type="text" 
-                        placeholder="e.g. Public Holiday, Technical Outage" 
+                      <input
+                        type="text"
+                        placeholder="e.g. Public Holiday, Technical Outage"
                         value={cancelReason}
                         onChange={e => setCancelReason(e.target.value)}
                         style={{
@@ -598,9 +598,9 @@ const AttendanceAdmin = () => {
                     style={{ height: '48px' }}
                   />
                 </div>
-                <button 
-                  className="icon-btn-action" 
-                  onClick={initializeData} 
+                <button
+                  className="icon-btn-action"
+                  onClick={initializeData}
                   title="Refresh Dashboard"
                   style={{ flexShrink: 0, height: '48px', width: '48px' }}
                 >
@@ -1542,8 +1542,11 @@ const AttendanceAdmin = () => {
 
         /* Smooth Toggle Switch Styles */
         .toggle-switch-wrapper {
-          display: flex;
-          align-items: center;
+          display: flex !important;
+          flex-direction: row !important;
+          align-items: center !important;
+          justify-content: flex-end !important;
+          width: 100% !important;
           gap: 12px;
         }
         .toggle-switch {
