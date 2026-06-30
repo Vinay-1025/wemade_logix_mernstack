@@ -309,21 +309,21 @@ const ExtraClassesAdmin = () => {
           justify-content: space-between;
           align-items: center;
           margin-bottom: 24px;
-          border-bottom: 1px solid var(--app-border, rgba(255,255,255,0.08));
+          border-bottom: 1px solid var(--app-border, #e2e8f0);
           padding-bottom: 20px;
         }
 
         .extra-admin-header h1 {
           font-size: 1.75rem;
           font-weight: 800;
-          color: #ffffff;
+          color: var(--app-text, #1e293b);
           margin: 0 0 6px 0;
           letter-spacing: -0.5px;
         }
 
         .extra-admin-header .subtitle {
           font-size: 0.9rem;
-          color: var(--text-neutral, #94a3b8);
+          color: var(--app-text-muted, #64748b);
           margin: 0;
         }
 
@@ -331,9 +331,9 @@ const ExtraClassesAdmin = () => {
           display: flex;
           align-items: center;
           gap: 8px;
-          background: rgba(255,255,255,0.05);
-          border: 1px solid rgba(255,255,255,0.1);
-          color: #ffffff;
+          background: rgba(0, 209, 209, 0.05);
+          border: 1px solid rgba(0, 209, 209, 0.2);
+          color: var(--primary-cyan, #00d1d1);
           padding: 10px 16px;
           border-radius: 8px;
           font-size: 0.875rem;
@@ -343,7 +343,7 @@ const ExtraClassesAdmin = () => {
         }
 
         .refresh-btn:hover {
-          background: rgba(255,255,255,0.08);
+          background: rgba(0, 209, 209, 0.1);
         }
 
         .admin-alert {
@@ -360,13 +360,13 @@ const ExtraClassesAdmin = () => {
         .admin-alert.success {
           background: rgba(16, 185, 129, 0.08);
           border: 1px solid rgba(16, 185, 129, 0.15);
-          color: #34d399;
+          color: #10b981;
         }
 
         .admin-alert.error {
           background: rgba(239, 68, 68, 0.08);
           border: 1px solid rgba(239, 68, 68, 0.15);
-          color: #fca5a5;
+          color: #ef4444;
         }
 
         .alert-close {
@@ -385,17 +385,17 @@ const ExtraClassesAdmin = () => {
           align-items: center;
           justify-content: center;
           padding: 80px 40px;
-          color: var(--text-neutral, #94a3b8);
+          color: var(--app-text-muted, #64748b);
           gap: 16px;
         }
 
         .no-sessions-card {
           text-align: center;
           padding: 60px 40px;
-          background: rgba(255,255,255,0.02);
-          border: 1px dashed rgba(255,255,255,0.1);
+          background: var(--app-card-bg, #ffffff);
+          border: 1px dashed var(--app-border, #e2e8f0);
           border-radius: 12px;
-          color: var(--text-neutral, #94a3b8);
+          color: var(--app-text-muted, #64748b);
         }
 
         .empty-icon {
@@ -405,7 +405,7 @@ const ExtraClassesAdmin = () => {
 
         .no-sessions-card h3 {
           font-size: 1.25rem;
-          color: #ffffff;
+          color: var(--app-text, #1e293b);
           margin: 0 0 8px 0;
         }
 
@@ -417,11 +417,11 @@ const ExtraClassesAdmin = () => {
         }
 
         .sessions-table-wrapper {
-          background: rgba(17, 24, 39, 0.55);
-          border: 1px solid var(--app-border, rgba(255,255,255,0.08));
+          background: var(--app-card-bg, #ffffff);
+          border: 1px solid var(--app-border, #e2e8f0);
           border-radius: 12px;
           overflow: hidden;
-          box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+          box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         }
 
         .sessions-table {
@@ -431,21 +431,21 @@ const ExtraClassesAdmin = () => {
         }
 
         .sessions-table th {
-          background: rgba(255,255,255,0.02);
+          background: rgba(0, 0, 0, 0.02);
           padding: 16px 20px;
           font-size: 0.8rem;
           font-weight: 700;
           text-transform: uppercase;
           letter-spacing: 0.5px;
-          color: var(--text-neutral, #94a3b8);
-          border-bottom: 1px solid rgba(255,255,255,0.05);
+          color: var(--app-text-muted, #64748b);
+          border-bottom: 1px solid var(--app-border, #e2e8f0);
         }
 
         .sessions-table td {
           padding: 16px 20px;
           font-size: 0.9rem;
-          border-bottom: 1px solid rgba(255,255,255,0.04);
-          color: #e2e8f0;
+          border-bottom: 1px solid var(--app-border, #e2e8f0);
+          color: var(--app-text, #0f172a);
           vertical-align: middle;
         }
 
@@ -454,7 +454,7 @@ const ExtraClassesAdmin = () => {
         }
 
         .cancelled-row td {
-          background: rgba(251, 191, 36, 0.02);
+          background: rgba(245, 158, 11, 0.02);
         }
 
         .session-id-badge {
@@ -486,15 +486,15 @@ const ExtraClassesAdmin = () => {
         }
 
         .status-cell-badge.active {
-          background: rgba(16, 185, 129, 0.15);
-          color: #34d399;
+          background: rgba(16, 185, 129, 0.1);
+          color: #16a34a;
           border: 1px solid rgba(16, 185, 129, 0.2);
         }
 
         .status-cell-badge.cancelled {
-          background: rgba(251, 191, 36, 0.15);
-          color: #f59e0b;
-          border: 1px solid rgba(251, 191, 36, 0.2);
+          background: rgba(245, 158, 11, 0.1);
+          color: #d97706;
+          border: 1px solid rgba(245, 158, 11, 0.2);
         }
 
         .created-details {
@@ -510,7 +510,7 @@ const ExtraClassesAdmin = () => {
 
         .created-time {
           font-size: 0.75rem;
-          color: var(--text-neutral, #94a3b8);
+          color: var(--app-text-muted, #64748b);
         }
 
         .action-buttons-group {
@@ -520,9 +520,9 @@ const ExtraClassesAdmin = () => {
         }
 
         .row-action-btn {
-          background: rgba(255,255,255,0.03);
-          border: 1px solid rgba(255,255,255,0.08);
-          color: var(--text-neutral, #94a3b8);
+          background: rgba(0, 0, 0, 0.02);
+          border: 1px solid var(--app-border, #e2e8f0);
+          color: var(--app-text-muted, #64748b);
           padding: 8px;
           border-radius: 6px;
           cursor: pointer;
@@ -530,7 +530,8 @@ const ExtraClassesAdmin = () => {
         }
 
         .row-action-btn:hover {
-          color: #ffffff;
+          color: var(--app-text, #0f172a);
+          background: rgba(0, 0, 0, 0.05);
         }
 
         .row-action-btn.edit:hover {
@@ -542,7 +543,7 @@ const ExtraClassesAdmin = () => {
         .row-action-btn.delete:hover {
           background: rgba(239, 68, 68, 0.15);
           border-color: rgba(239, 68, 68, 0.3);
-          color: #f87171;
+          color: #ef4444;
         }
 
         /* Modals */
@@ -552,7 +553,7 @@ const ExtraClassesAdmin = () => {
           left: 0;
           right: 0;
           bottom: 0;
-          background: rgba(0,0,0,0.6);
+          background: rgba(0,0,0,0.4);
           backdrop-filter: blur(4px);
           display: flex;
           align-items: center;
@@ -561,18 +562,18 @@ const ExtraClassesAdmin = () => {
         }
 
         .admin-modal {
-          background: #111827;
-          border: 1px solid rgba(255,255,255,0.08);
+          background: var(--app-card-bg, #ffffff);
+          border: 1px solid var(--app-border, #e2e8f0);
           padding: 32px;
           border-radius: 16px;
           max-width: 480px;
           width: 90%;
-          box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+          box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
         }
 
         .admin-modal h2 {
           font-size: 1.35rem;
-          color: #ffffff;
+          color: var(--app-text, #0f172a);
           margin: 0 0 12px 0;
           font-weight: 800;
         }
@@ -586,12 +587,12 @@ const ExtraClassesAdmin = () => {
 
         .modal-danger-header h2 {
           margin: 0;
-          color: #f87171;
+          color: #ef4444;
         }
 
         .modal-description {
           font-size: 0.875rem;
-          color: var(--text-neutral, #94a3b8);
+          color: var(--app-text-muted, #64748b);
           line-height: 1.6;
           margin-bottom: 24px;
         }
@@ -605,14 +606,14 @@ const ExtraClassesAdmin = () => {
           font-size: 0.85rem;
           font-weight: 600;
           margin-bottom: 8px;
-          color: #e2e8f0;
+          color: var(--app-text, #0f172a);
         }
 
         .date-input {
           width: 100%;
-          background: rgba(0,0,0,0.25);
-          border: 1px solid rgba(255,255,255,0.1);
-          color: #ffffff;
+          background: rgba(0, 0, 0, 0.02);
+          border: 1px solid var(--app-border, #e2e8f0);
+          color: var(--app-text, #0f172a);
           padding: 12px;
           border-radius: 8px;
           outline: none;
@@ -643,13 +644,13 @@ const ExtraClassesAdmin = () => {
         }
 
         .modal-btn.secondary {
-          background: rgba(255,255,255,0.05);
-          border: 1px solid rgba(255,255,255,0.1);
-          color: #e2e8f0;
+          background: rgba(0, 0, 0, 0.03);
+          border: 1px solid var(--app-border, #e2e8f0);
+          color: var(--app-text, #0f172a);
         }
 
         .modal-btn.secondary:hover {
-          background: rgba(255,255,255,0.08);
+          background: rgba(0, 0, 0, 0.06);
         }
 
         .modal-btn.primary {
