@@ -457,9 +457,9 @@ const VerifyCertificate = () => {
               </span>
             </div>
 
-            <div style={{ flex: 1, minHeight: '350px', borderRadius: '8px', overflow: 'hidden', border: '1px solid #e2e8f0' }}>
+            <div style={{ height: '400px', minHeight: '400px', borderRadius: '8px', overflow: 'hidden', border: '1px solid #e2e8f0' }}>
               <Editor
-                height="100%"
+                height="400px"
                 defaultLanguage="javascript"
                 theme="vs"
                 value={selectedAssignment.code}
