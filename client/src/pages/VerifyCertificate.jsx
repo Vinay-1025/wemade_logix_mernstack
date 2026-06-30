@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ShieldCheck, ShieldAlert, Award, Calendar, ExternalLink, FileText, CheckCircle2, AlertCircle, QrCode, Search, RefreshCw, ChevronDown, ChevronUp, BookOpen, Clock } from 'lucide-react';
 import axios from 'axios';
 import { Html5QrcodeScanner } from 'html5-qrcode';
-import Editor from '@monaco-editor/react';
+import CodeEditor from '../components/CodeEditor';
 
 const VerifyCertificate = () => {
   const { certId } = useParams();
@@ -19,6 +19,14 @@ const VerifyCertificate = () => {
   const [showAttendanceDetails, setShowAttendanceDetails] = useState(false);
   const [showAssignmentDetails, setShowAssignmentDetails] = useState(false);
   const [selectedAssignment, setSelectedAssignment] = useState(null);
+
+  const getParsedCode = (codeStr) => {
+    try {
+      return JSON.parse(codeStr);
+    } catch (e) {
+      return { html: '<!-- Plain Text Submission -->', css: '', js: '', plain: codeStr };
+    }
+  };
 
   useEffect(() => {
     if (!certId) {
@@ -355,6 +363,21 @@ const VerifyCertificate = () => {
               </div>
               
               <div className="collapsible-content">
+                <div style={{ 
+                  background: 'rgba(0, 71, 171, 0.04)',
+                  border: '1px solid rgba(0, 71, 171, 0.08)',
+                  borderRadius: '8px',
+                  padding: '8px 12px',
+                  fontSize: '0.78rem',
+                  color: '#0047AB',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  marginBottom: '12px'
+                }}>
+                  <AlertCircle size={14} color="#0047AB" />
+                  <span>Click on any assignment to view details & submitted code.</span>
+                </div>
                 <div className="engagement-summary-grid">
                   <div className="summary-stat-card">
                     <div className="summary-stat-val">{assignmentSubmissions.length}</div>
@@ -457,20 +480,12 @@ const VerifyCertificate = () => {
               </span>
             </div>
 
-            <div style={{ height: '400px', minHeight: '400px', borderRadius: '8px', overflow: 'hidden', border: '1px solid #e2e8f0' }}>
-              <Editor
-                height="400px"
-                defaultLanguage="javascript"
-                theme="vs"
-                value={selectedAssignment.code}
-                options={{
-                  readOnly: true,
-                  minimap: { enabled: false },
-                  fontSize: 13,
-                  lineNumbers: 'on',
-                  scrollBeyondLastLine: false,
-                  automaticLayout: true,
-                }}
+            <div style={{ minHeight: '450px', borderRadius: '8px', overflow: 'hidden', border: '1px solid #e2e8f0', textAlign: 'left' }}>
+              <CodeEditor
+                initialCode={getParsedCode(selectedAssignment.code)}
+                readOnly={true}
+                isBackend={selectedAssignment.topicId.startsWith('w6') || selectedAssignment.topicId.startsWith('w7')}
+                isReact={selectedAssignment.topicId.startsWith('w4') || selectedAssignment.topicId.startsWith('w5-d1') || selectedAssignment.topicId.startsWith('w5-d2') || selectedAssignment.topicId.startsWith('w5-d3')}
               />
             </div>
 
