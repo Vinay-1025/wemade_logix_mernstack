@@ -177,12 +177,12 @@ const Profile = () => {
         const qrImg = new Image();
         qrImg.src = blobURL;
         qrImg.onload = () => {
-          const qrWidthPercent = 0.085;
-          const qrHeightPercent = 85 / 707;
+          const qrWidthPercent = 0.080;
+          const qrHeightPercent = 80 / 707;
           const qrWidth = canvas.width * qrWidthPercent;
           const qrHeight = canvas.height * qrHeightPercent;
-          const qrX = canvas.width * (1 - 0.123 - qrWidthPercent);
-          const qrY = canvas.height * (1 - 0.125 - qrHeightPercent);
+          const qrX = canvas.width * (1 - 0.212 - qrWidthPercent);
+          const qrY = canvas.height * (1 - 0.128 - qrHeightPercent);
 
           ctx.drawImage(qrImg, qrX, qrY, qrWidth, qrHeight);
           const formattedName = (user?.name || 'student').trim().replace(/\s+/g, '_').toLowerCase();
@@ -907,20 +907,20 @@ const Profile = () => {
                           {/* Dynamically Overlayed Verification QR Code (Exact positioning over bottom-right placeholder) */}
                           <div style={{
                             position: 'absolute',
-                            bottom: '12.5%',
-                            right: '12.3%',
+                            bottom: '12.8%',
+                            right: '21.2%',
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
                             background: '#ffffff',
-                            padding: '4px',
+                            padding: '3px',
                             borderRadius: '4px',
                             border: '1px solid #e2e8f0',
                           }}>
                             <QRCodeSVG
                               id="certificate-qr-svg"
                               value={`${window.location.origin}/verify-certificate/${certificateId}`}
-                              size={85}
+                              size={80}
                               bgColor={"#ffffff"}
                               fgColor={"#000000"}
                               level={"H"}
