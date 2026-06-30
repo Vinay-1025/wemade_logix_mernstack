@@ -19,6 +19,16 @@ const Profile = () => {
   const [latestProfile, setLatestProfile] = useState(null);
   const [isCertificateOpen, setIsCertificateOpen] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generationStep, setGenerationStep] = useState(0);
+
+  const generationSteps = [
+    { text: "Analyzing course progress & module submissions...", percent: 15 },
+    { text: "Verifying attendance logs & class overrides...", percent: 35 },
+    { text: "Securing student identity & matching credentials...", percent: 60 },
+    { text: "Injecting SHA-256 cryptographic trust signature...", percent: 85 },
+    { text: "Assembling official digital MERN Stack Certificate...", percent: 100 }
+  ];
 
   const getNextMilestone = (streak) => {
     if (streak < 5) return 5;
@@ -118,6 +128,75 @@ const Profile = () => {
 
     fetchData();
   }, [user]);
+
+  const startGeneration = () => {
+    setIsGenerating(true);
+    setIsCertificateOpen(true);
+    setGenerationStep(0);
+
+    let currentStep = 0;
+    const interval = setInterval(() => {
+      currentStep++;
+      if (currentStep < generationSteps.length) {
+        setGenerationStep(currentStep);
+      } else {
+        clearInterval(interval);
+        setTimeout(() => {
+          setIsGenerating(false);
+        }, 500);
+      }
+    }, 600);
+  };
+
+  const handleDownloadImage = () => {
+    const img = new Image();
+    img.src = '/Certificate_template_enhanced.png';
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext('2d');
+
+      ctx.drawImage(img, 0, 0);
+
+      const nameX = canvas.width * 0.5;
+      const nameY = canvas.height * 0.455;
+      const fontSize = Math.round(canvas.width * 0.038);
+      ctx.font = `bold ${fontSize}px "Georgia", "Times New Roman", serif`;
+      ctx.fillStyle = '#1a1a1a';
+      ctx.textAlign = 'center';
+      ctx.fillText(user?.name || '', nameX, nameY);
+
+      const svgEl = document.getElementById('certificate-qr-svg');
+      if (svgEl) {
+        const svgString = new XMLSerializer().serializeToString(svgEl);
+        const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+        const URL = window.URL || window.webkitURL || window;
+        const blobURL = URL.createObjectURL(svgBlob);
+        const qrImg = new Image();
+        qrImg.src = blobURL;
+        qrImg.onload = () => {
+          const qrWidthPercent = 0.085;
+          const qrHeightPercent = 85 / 707;
+          const qrWidth = canvas.width * qrWidthPercent;
+          const qrHeight = canvas.height * qrHeightPercent;
+          const qrX = canvas.width * (1 - 0.123 - qrWidthPercent);
+          const qrY = canvas.height * (1 - 0.125 - qrHeightPercent);
+
+          ctx.drawImage(qrImg, qrX, qrY, qrWidth, qrHeight);
+          const formattedName = (user?.name || 'student').trim().replace(/\s+/g, '_').toLowerCase();
+          const dataUrl = canvas.toDataURL('image/png');
+          const link = document.createElement('a');
+          link.download = `${formattedName}_wemade_mernstack_certificate.png`;
+          link.href = dataUrl;
+          link.click();
+          
+          URL.revokeObjectURL(blobURL);
+        };
+      }
+    };
+  };
 
   // Compute student stats
   const studentSubmissions = userAssignments || [];
@@ -617,7 +696,7 @@ const Profile = () => {
                   </p>
                   {isUnlocked ? (
                     <button
-                      onClick={() => setIsCertificateOpen(true)}
+                      onClick={startGeneration}
                       style={{
                         background: 'linear-gradient(135deg, #d97706 0%, #fbbf24 100%)',
                         color: 'white',
@@ -664,6 +743,7 @@ const Profile = () => {
                 </div>
               </div>
             )}
+
 
             {/* Certificate Modal */}
             {isCertificateOpen && (
@@ -723,109 +803,185 @@ const Profile = () => {
                     </button>
                   </div>
 
-                  {/* Landscape Print Area with Scroll Wrapper */}
-                  <div className="certificate-scroll-wrapper" style={{ overflowX: 'auto', width: '100%', padding: '10px 0' }}>
-                    <div className="certificate-print-area" style={{
-                      position: 'relative',
-                      width: '1000px',
-                      height: '707px',
-                      backgroundImage: 'url(/Certificate_template_enhanced.png)',
-                      backgroundSize: 'contain',
-                      backgroundRepeat: 'no-repeat',
-                      backgroundPosition: 'center',
-                      margin: '0 auto',
-                      borderRadius: '8px',
-                      overflow: 'hidden',
-                      backgroundColor: '#ffffff',
-                      boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+                  {isGenerating ? (
+                    /* Futuristic Dynamic Generating Progress Loader */
+                    <div className="certificate-generation-loader" style={{
+                      padding: '60px 40px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      minHeight: '400px',
+                      color: '#ffffff',
+                      fontFamily: '"Inter", sans-serif',
                     }}>
-                      {/* Dynamically Overlayed Student Name */}
-                      <div style={{
-                        position: 'absolute',
-                        top: '48.5%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        fontSize: '2.5rem',
-                        fontFamily: '"Georgia", "Times New Roman", serif',
-                        fontWeight: 'bold',
-                        color: '#1a1a1a',
-                        textAlign: 'center',
-                        width: '80%',
-                        letterSpacing: '1px',
-                      }}>
-                        {user?.name}
-                      </div>
-
-                      {/* Dynamically Overlayed Verification QR Code */}
-                      <div style={{
-                        position: 'absolute',
-                        bottom: '12%',
-                        left: '8.5%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        gap: '4px',
-                        background: '#ffffff',
-                        padding: '6px',
-                        borderRadius: '6px',
-                        border: '1px solid #e2e8f0',
-                      }}>
-                        <QRCodeSVG
-                          value={`${window.location.origin}/verify-certificate/${certificateId}`}
-                          size={72}
-                          bgColor={"#ffffff"}
-                          fgColor={"#000000"}
-                          level={"H"}
-                        />
+                      <div className="futuristic-spinner-container" style={{ position: 'relative', marginBottom: '24px' }}>
+                        <div className="mini-spinner" style={{
+                          width: '72px',
+                          height: '72px',
+                          border: '3px solid rgba(0, 209, 209, 0.05)',
+                          borderTopColor: 'var(--primary-cyan, #00D1D1)',
+                          borderBottomColor: '#0047AB',
+                          borderRadius: '50%',
+                          animation: 'spin 1.5s linear infinite',
+                        }}></div>
                         <span style={{
-                          fontSize: '0.55rem',
-                          color: '#64748b',
-                          fontFamily: '"Inter", sans-serif',
-                          fontWeight: 700,
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.5px'
-                        }}>Scan to Verify</span>
+                          position: 'absolute',
+                          top: '50%',
+                          left: '50%',
+                          transform: 'translate(-50%, -50%)',
+                          fontSize: '1rem',
+                          fontWeight: '800',
+                          color: 'var(--primary-cyan, #00D1D1)',
+                        }}>
+                          {generationSteps[generationStep].percent}%
+                        </span>
+                      </div>
+                      
+                      <h3 style={{ fontSize: '1.25rem', fontWeight: '800', marginBottom: '8px', color: '#ffffff' }}>
+                        Generating Verified Certificate
+                      </h3>
+                      
+                      <p style={{
+                        fontSize: '0.9rem',
+                        color: '#94a3b8',
+                        marginBottom: '24px',
+                        minHeight: '20px',
+                        fontWeight: 500,
+                      }}>
+                        {generationSteps[generationStep].text}
+                      </p>
+
+                      <div style={{
+                        width: '100%',
+                        maxWidth: '400px',
+                        height: '6px',
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        borderRadius: '3px',
+                        overflow: 'hidden',
+                        border: '1px solid rgba(255, 255, 255, 0.08)'
+                      }}>
+                        <div style={{
+                          width: `${generationSteps[generationStep].percent}%`,
+                          height: '100%',
+                          background: 'linear-gradient(90deg, #00D1D1 0%, #0047AB 100%)',
+                          transition: 'width 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                        }}></div>
                       </div>
                     </div>
-                  </div>
+                  ) : (
+                    <>
+                      {/* Landscape Print Area with Scroll Wrapper */}
+                      <div className="certificate-scroll-wrapper" style={{ overflowX: 'auto', width: '100%', padding: '10px 0' }}>
+                        <div className="certificate-print-area" style={{
+                          position: 'relative',
+                          width: '1000px',
+                          height: '707px',
+                          backgroundImage: 'url(/Certificate_template_enhanced.png)',
+                          backgroundSize: 'contain',
+                          backgroundRepeat: 'no-repeat',
+                          backgroundPosition: 'center',
+                          margin: '0 auto',
+                          borderRadius: '8px',
+                          overflow: 'hidden',
+                          backgroundColor: '#ffffff',
+                          boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+                        }}>
+                          {/* Dynamically Overlayed Student Name */}
+                          <div style={{
+                            position: 'absolute',
+                            top: '45.5%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            fontSize: '2.5rem',
+                            fontFamily: '"Georgia", "Times New Roman", serif',
+                            fontWeight: 'bold',
+                            color: '#1a1a1a',
+                            textAlign: 'center',
+                            width: '80%',
+                            letterSpacing: '1px',
+                          }}>
+                            {user?.name}
+                          </div>
 
-                  <div className="certificate-modal-footer" style={{
-                    marginTop: '24px',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    gap: '16px'
-                  }}>
-                    <button
-                      onClick={() => setIsCertificateOpen(false)}
-                      className="btn-ghost"
-                      style={{
-                        background: 'rgba(255,255,255,0.05)',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        color: '#e2e8f0',
-                        padding: '10px 24px',
-                        borderRadius: '8px',
-                        cursor: 'pointer',
-                        fontWeight: 600,
-                      }}
-                    >
-                      Close Preview
-                    </button>
-                    <button
-                      onClick={() => window.print()}
-                      style={{
-                        background: 'var(--brand-gradient, linear-gradient(135deg, #00D1D1 0%, #0047AB 100%))',
-                        border: 'none',
-                        color: '#ffffff',
-                        padding: '10px 32px',
-                        borderRadius: '8px',
-                        cursor: 'pointer',
-                        fontWeight: 700,
-                        boxShadow: '0 4px 12px rgba(0, 209, 209, 0.2)',
-                      }}
-                    >
-                      Print / Save PDF
-                    </button>
-                  </div>
+                          {/* Dynamically Overlayed Verification QR Code (Exact positioning over bottom-right placeholder) */}
+                          <div style={{
+                            position: 'absolute',
+                            bottom: '12.5%',
+                            right: '12.3%',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            background: '#ffffff',
+                            padding: '4px',
+                            borderRadius: '4px',
+                            border: '1px solid #e2e8f0',
+                          }}>
+                            <QRCodeSVG
+                              id="certificate-qr-svg"
+                              value={`${window.location.origin}/verify-certificate/${certificateId}`}
+                              size={85}
+                              bgColor={"#ffffff"}
+                              fgColor={"#000000"}
+                              level={"H"}
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="certificate-modal-footer" style={{
+                        marginTop: '24px',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        gap: '16px'
+                      }}>
+                        <button
+                          onClick={() => setIsCertificateOpen(false)}
+                          className="btn-ghost"
+                          style={{
+                            background: 'rgba(255,255,255,0.05)',
+                            border: '1px solid rgba(255,255,255,0.1)',
+                            color: '#e2e8f0',
+                            padding: '10px 24px',
+                            borderRadius: '8px',
+                            cursor: 'pointer',
+                            fontWeight: 600,
+                          }}
+                        >
+                          Close Preview
+                        </button>
+                        <button
+                          onClick={handleDownloadImage}
+                          style={{
+                            background: 'rgba(0, 209, 209, 0.1)',
+                            border: '1px solid rgba(0, 209, 209, 0.3)',
+                            color: '#00D1D1',
+                            padding: '10px 24px',
+                            borderRadius: '8px',
+                            cursor: 'pointer',
+                            fontWeight: 700,
+                          }}
+                        >
+                          Download Image
+                        </button>
+                        <button
+                          onClick={() => window.print()}
+                          style={{
+                            background: 'var(--brand-gradient, linear-gradient(135deg, #00D1D1 0%, #0047AB 100%))',
+                            border: 'none',
+                            color: '#ffffff',
+                            padding: '10px 32px',
+                            borderRadius: '8px',
+                            cursor: 'pointer',
+                            fontWeight: 700,
+                            boxShadow: '0 4px 12px rgba(0, 209, 209, 0.2)',
+                          }}
+                        >
+                          Print / Save PDF
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             )}
@@ -834,6 +990,10 @@ const Profile = () => {
 
         <style dangerouslySetInnerHTML={{ __html: `
           @media print {
+            @page {
+              size: landscape;
+              margin: 0;
+            }
             body * {
               visibility: hidden !important;
             }
