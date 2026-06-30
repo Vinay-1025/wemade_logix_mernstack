@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ShieldCheck, ShieldAlert, Award, Calendar, ExternalLink, FileText, CheckCircle2, AlertCircle, QrCode, Search, RefreshCw, ChevronDown, ChevronUp, BookOpen, Clock } from 'lucide-react';
 import axios from 'axios';
 import { Html5QrcodeScanner } from 'html5-qrcode';
+import Editor from '@monaco-editor/react';
 
 const VerifyCertificate = () => {
   const { certId } = useParams();
@@ -17,6 +18,7 @@ const VerifyCertificate = () => {
   // Collapsible sections state
   const [showAttendanceDetails, setShowAttendanceDetails] = useState(false);
   const [showAssignmentDetails, setShowAssignmentDetails] = useState(false);
+  const [selectedAssignment, setSelectedAssignment] = useState(null);
 
   useEffect(() => {
     if (!certId) {
@@ -374,10 +376,15 @@ const VerifyCertificate = () => {
                       <p className="no-engagement-msg">No assignments submitted yet.</p>
                     ) : (
                       assignmentSubmissions.map((a, index) => (
-                        <div className="detail-list-item" key={index}>
+                        <div 
+                          className="detail-list-item clickable-row" 
+                          key={index}
+                          onClick={() => setSelectedAssignment(a)}
+                          style={{ cursor: 'pointer', transition: 'background 0.2s' }}
+                        >
                           <div>
                             <span className="detail-day-title">{a.topicId.toUpperCase().replace('-', ' ')}</span>
-                            <div className="detail-day-date">Submitted on {new Date(a.createdAt).toLocaleDateString()}</div>
+                            <div className="detail-day-date">Submitted on {new Date(a.submittedAt || a.createdAt).toLocaleDateString()}</div>
                           </div>
                           <span className={`status-pill ${a.status}`}>
                             {a.status.toUpperCase()}
@@ -409,6 +416,77 @@ const VerifyCertificate = () => {
         )}
       </main>
 
+      {/* Selected Assignment Code Preview Modal */}
+      {selectedAssignment && (
+        <div className="admin-modal-overlay no-print" style={{ 
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0,0,0,0.6)',
+          backdropFilter: 'blur(4px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 3000 
+        }}>
+          <div className="admin-modal" style={{
+            background: '#ffffff',
+            border: '1px solid #e2e8f0',
+            padding: '24px',
+            borderRadius: '16px',
+            maxWidth: '750px',
+            width: '90%',
+            boxShadow: '0 20px 50px rgba(0,0,0,0.08)',
+            display: 'flex',
+            flexDirection: 'column',
+            maxHeight: '85vh'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid #e2e8f0', paddingBottom: '12px' }}>
+              <div style={{ textAlign: 'left' }}>
+                <h2 style={{ fontSize: '1.15rem', color: '#0f172a', fontWeight: 800, margin: 0 }}>
+                  {selectedAssignment.topicId.toUpperCase().replace('-', ' ')}
+                </h2>
+                <p style={{ fontSize: '0.78rem', color: '#64748b', margin: '4px 0 0 0' }}>
+                  Submitted on {new Date(selectedAssignment.submittedAt || selectedAssignment.createdAt).toLocaleDateString()}
+                </p>
+              </div>
+              <span className={`status-pill ${selectedAssignment.status}`} style={{ fontSize: '0.7rem' }}>
+                {selectedAssignment.status.toUpperCase()}
+              </span>
+            </div>
+
+            <div style={{ flex: 1, minHeight: '350px', borderRadius: '8px', overflow: 'hidden', border: '1px solid #e2e8f0' }}>
+              <Editor
+                height="100%"
+                defaultLanguage="javascript"
+                theme="vs"
+                value={selectedAssignment.code}
+                options={{
+                  readOnly: true,
+                  minimap: { enabled: false },
+                  fontSize: 13,
+                  lineNumbers: 'on',
+                  scrollBeyondLastLine: false,
+                  automaticLayout: true,
+                }}
+              />
+            </div>
+
+            <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'flex-end' }}>
+              <button 
+                onClick={() => setSelectedAssignment(null)} 
+                className="action-button-btn secondary-btn"
+                style={{ width: 'auto', padding: '8px 24px' }}
+              >
+                Close Code
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <footer className="verify-footer">
         <p>© {new Date().getFullYear()} WeMade Logix Inc. All rights reserved. Secure cryptographic signatures protect this credential.</p>
       </footer>
@@ -424,7 +502,7 @@ const VerifyCertificate = () => {
           flex-direction: column;
           align-items: center;
           justify-content: space-between;
-          padding: 20px;
+          padding: 88px 20px 24px 20px;
           overflow-x: hidden;
         }
 
@@ -443,13 +521,20 @@ const VerifyCertificate = () => {
         }
 
         .verify-header {
-          width: 100%;
-          max-width: 520px;
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 64px;
+          background: rgba(248, 250, 252, 0.92);
+          backdrop-filter: blur(8px);
+          border-bottom: 1px solid #e2e8f0;
           display: flex;
           justify-content: space-between;
           align-items: center;
-          z-index: 1;
-          margin-bottom: 20px;
+          padding: 0 24px;
+          z-index: 1000;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
         }
 
         .verify-logo {
@@ -1106,6 +1191,16 @@ const VerifyCertificate = () => {
 
         .text-teal {
           color: #0047AB !important;
+        }
+
+        .clickable-row {
+          padding: 8px 8px !important;
+          margin: 0 -8px;
+          border-radius: 6px;
+        }
+
+        .clickable-row:hover {
+          background: #f1f5f9;
         }
 
         @media (max-width: 480px) {
