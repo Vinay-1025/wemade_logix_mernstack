@@ -181,8 +181,8 @@ const Profile = () => {
           const qrHeightPercent = 80 / 707;
           const qrWidth = canvas.width * qrWidthPercent;
           const qrHeight = canvas.height * qrHeightPercent;
-          const qrX = canvas.width * (1 - 0.212 - qrWidthPercent);
-          const qrY = canvas.height * (1 - 0.128 - qrHeightPercent);
+          const qrX = canvas.width * (1 - 0.176 - qrWidthPercent);
+          const qrY = canvas.height * (1 - 0.140 - qrHeightPercent);
 
           ctx.drawImage(qrImg, qrX, qrY, qrWidth, qrHeight);
           const formattedName = (user?.name || 'student').trim().replace(/\s+/g, '_').toLowerCase();
@@ -907,8 +907,8 @@ const Profile = () => {
                           {/* Dynamically Overlayed Verification QR Code (Exact positioning over bottom-right placeholder) */}
                           <div style={{
                             position: 'absolute',
-                            bottom: '12.8%',
-                            right: '21.2%',
+                            bottom: '14.0%',
+                            right: '17.6%',
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
