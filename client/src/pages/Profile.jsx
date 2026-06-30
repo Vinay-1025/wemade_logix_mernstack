@@ -964,21 +964,7 @@ const Profile = () => {
                         >
                           Download Image
                         </button>
-                        <button
-                          onClick={() => window.print()}
-                          style={{
-                            background: 'var(--brand-gradient, linear-gradient(135deg, #00D1D1 0%, #0047AB 100%))',
-                            border: 'none',
-                            color: '#ffffff',
-                            padding: '10px 32px',
-                            borderRadius: '8px',
-                            cursor: 'pointer',
-                            fontWeight: 700,
-                            boxShadow: '0 4px 12px rgba(0, 209, 209, 0.2)',
-                          }}
-                        >
-                          Print / Save PDF
-                        </button>
+
                       </div>
                     </>
                   )}
