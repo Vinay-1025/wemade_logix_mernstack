@@ -11,6 +11,9 @@ const {
   getMyAttendance,
   getAttendanceReport,
   updateStudentAttendance,
+  getExtraSessions,
+  updateExtraSession,
+  deleteExtraSession,
 } = require('../controllers/attendanceController');
 const { protect, admin } = require('../middleware/authMiddleware');
 
@@ -25,5 +28,10 @@ router.get('/stats/:studentId', protect, getAttendanceStats);
 router.get('/my', protect, getMyAttendance);
 router.post('/recording', protect, markRecordingAttendance);
 router.put('/update', protect, admin, updateStudentAttendance);
+
+// Extra Classes Admin routes
+router.get('/extra-sessions', protect, admin, getExtraSessions);
+router.put('/extra-sessions/:oldDayId', protect, admin, updateExtraSession);
+router.delete('/extra-sessions/:dayId', protect, admin, deleteExtraSession);
 
 module.exports = router;

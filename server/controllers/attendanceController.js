@@ -885,6 +885,91 @@ const updateStudentAttendance = async (req, res) => {
   }
 };
 
+// @desc    Get all extra sessions (Admin/Superadmin)
+// @route   GET /api/attendance/extra-sessions
+// @access  Private/Admin
+const getExtraSessions = async (req, res) => {
+  try {
+    const sessions = await AttendanceSession.find({ dayId: /^extra-/ }).sort({ createdAt: -1 });
+    res.status(200).json({ success: true, sessions });
+  } catch (error) {
+    console.error('Error fetching extra sessions:', error);
+    res.status(500).json({ success: false, message: 'Server error fetching extra sessions' });
+  }
+};
+
+// @desc    Update extra session date (Admin/Superadmin)
+// @route   PUT /api/attendance/extra-sessions/:oldDayId
+// @access  Private/Admin
+const updateExtraSession = async (req, res) => {
+  const { oldDayId } = req.params;
+  const { newDate } = req.body;
+
+  if (!newDate) {
+    return res.status(400).json({ success: false, message: 'newDate is required' });
+  }
+
+  try {
+    const newDayId = `extra-${newDate}`;
+
+    const existing = await AttendanceSession.findOne({ dayId: newDayId });
+    if (existing && newDayId !== oldDayId) {
+      return res.status(400).json({ success: false, message: `An extra class already exists on ${newDate}` });
+    }
+
+    await AttendanceSession.updateMany({ dayId: oldDayId }, { dayId: newDayId });
+    const recordsResult = await AttendanceRecord.updateMany(
+      { dayId: oldDayId },
+      { dayId: newDayId, date: newDate }
+    );
+
+    await logAction(
+      req.user,
+      'UPDATE_EXTRA_CLASS',
+      `Updated extra class from ${oldDayId} to ${newDayId}. Affected: ${recordsResult.modifiedCount} records.`,
+      req.user._id,
+      'Attendance'
+    );
+
+    res.status(200).json({
+      success: true,
+      message: `Successfully rescheduled extra class to ${newDate}`,
+      newDayId
+    });
+  } catch (error) {
+    console.error('Error updating extra session:', error);
+    res.status(500).json({ success: false, message: 'Server error updating extra session' });
+  }
+};
+
+// @desc    Delete extra session (Admin/Superadmin)
+// @route   DELETE /api/attendance/extra-sessions/:dayId
+// @access  Private/Admin
+const deleteExtraSession = async (req, res) => {
+  const { dayId } = req.params;
+
+  try {
+    const sessionResult = await AttendanceSession.deleteMany({ dayId });
+    const recordsResult = await AttendanceRecord.deleteMany({ dayId });
+
+    await logAction(
+      req.user,
+      'DELETE_EXTRA_CLASS',
+      `Deleted extra class ${dayId}. Deleted ${sessionResult.deletedCount} sessions and ${recordsResult.deletedCount} student records.`,
+      req.user._id,
+      'Attendance'
+    );
+
+    res.status(200).json({
+      success: true,
+      message: `Successfully deleted extra class ${dayId} and its associated student attendance records.`
+    });
+  } catch (error) {
+    console.error('Error deleting extra session:', error);
+    res.status(500).json({ success: false, message: 'Server error deleting extra session' });
+  }
+};
+
 module.exports = {
   enableAttendance,
   getActiveSession,
@@ -896,5 +981,8 @@ module.exports = {
   getMyAttendance,
   getAttendanceReport,
   updateStudentAttendance,
+  getExtraSessions,
+  updateExtraSession,
+  deleteExtraSession,
 };
 

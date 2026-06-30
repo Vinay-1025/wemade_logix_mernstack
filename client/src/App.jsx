@@ -8,6 +8,8 @@ import Profile from './pages/Profile';
 import Recordings from './pages/Recordings';
 import AuditLogs from './pages/AuditLogs';
 import AttendanceAdmin from './pages/AttendanceAdmin';
+import VerifyCertificate from './pages/VerifyCertificate';
+import ExtraClassesAdmin from './pages/ExtraClassesAdmin';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -17,6 +19,9 @@ function App() {
         {/* Auth Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        
+        {/* Public Verification Route */}
+        <Route path="/verify-certificate/:certId" element={<VerifyCertificate />} />
 
         {/* Protected Dashboard Route */}
         <Route element={<ProtectedRoute />}>
@@ -30,6 +35,7 @@ function App() {
           <Route path="/admin/users" element={<UsersList />} />
           <Route path="/admin/assignments" element={<AssignmentsList />} />
           <Route path="/admin/attendance" element={<AttendanceAdmin />} />
+          <Route path="/admin/extra-classes" element={<ExtraClassesAdmin />} />
         </Route>
 
         {/* SuperAdmin Routes */}

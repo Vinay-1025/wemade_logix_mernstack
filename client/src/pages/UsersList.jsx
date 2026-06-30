@@ -873,6 +873,50 @@ const UsersList = () => {
                     {selectedDetailUser.isActive ? 'AUTHORIZED' : 'REVOKED'}
                   </span>
                 </div>
+                {selectedDetailUser.role === 'student' && (
+                  <div className="summary-col">
+                    <span className="label">Certificate Access</span>
+                    <select
+                      value={selectedDetailUser.certificateOverride || 'auto'}
+                      onChange={async (e) => {
+                        const newOverride = e.target.value;
+                        try {
+                          const config = { headers: { Authorization: `Bearer ${currentUser.token}` } };
+                          const response = await axios.put(`/api/auth/users/${selectedDetailUser._id}/certificate-override`, {
+                            override: newOverride
+                          }, config);
+                          if (response.data && response.data.user) {
+                            const updatedUser = { 
+                              ...selectedDetailUser, 
+                              certificateOverride: response.data.user.certificateOverride 
+                            };
+                            setSelectedDetailUser(updatedUser);
+                            setUsers(users.map(u => u._id === selectedDetailUser._id ? { ...u, certificateOverride: response.data.user.certificateOverride } : u));
+                            showSnackbar(response.data.message || 'Certificate override updated.', 'success');
+                          }
+                        } catch (err) {
+                          console.error(err);
+                          showSnackbar(err.response?.data?.message || 'Failed to update certificate override.', 'error');
+                        }
+                      }}
+                      style={{
+                        background: 'rgba(0,0,0,0.03)',
+                        border: '1px solid var(--app-border)',
+                        color: 'var(--app-text)',
+                        padding: '4px 8px',
+                        borderRadius: '6px',
+                        marginTop: '4px',
+                        cursor: 'pointer',
+                        fontSize: '0.85rem',
+                        outline: 'none',
+                      }}
+                    >
+                      <option value="auto">Auto (100% Progress)</option>
+                      <option value="unlocked">Force Unlocked</option>
+                      <option value="locked">Force Locked</option>
+                    </select>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -1550,8 +1594,56 @@ const UsersList = () => {
                     <p>Manage access protocols and mission personnel</p>
                   </div>
                 </div>
+                <div className="header-actions-group">
+                  <select
+                    onChange={(e) => {
+                      const action = e.target.value;
+                      if (!action) return;
 
-                <div style={{ display: 'flex', gap: '12px' }}>
+                      const actionLabels = {
+                        unlocked: 'Force Unlock ALL Student Certificates',
+                        locked: 'Force Lock ALL Student Certificates',
+                        auto: 'Reset ALL Student Certificates to Auto'
+                      };
+
+                      showConfirm(
+                        'Global Certificate Update',
+                        `Are you sure you want to ${actionLabels[action]}? This override will apply to all students.`,
+                        async () => {
+                          try {
+                            const config = { headers: { Authorization: `Bearer ${currentUser.token}` } };
+                            const response = await axios.post('/api/auth/users/certificate-override-all', {
+                              override: action
+                            }, config);
+                            if (response.data) {
+                              showSnackbar(response.data.message || 'Global certificate status updated successfully.', 'success');
+                              fetchUsers();
+                            }
+                          } catch (err) {
+                            console.error(err);
+                            showSnackbar(err.response?.data?.message || 'Failed to update global certificates.', 'error');
+                          }
+                        }
+                      );
+                      e.target.value = "";
+                    }}
+                    style={{
+                      background: 'rgba(217, 119, 6, 0.08)',
+                      color: '#d97706',
+                      border: '1px solid rgba(217, 119, 6, 0.2)',
+                      padding: '10px 20px',
+                      borderRadius: '10px',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      fontSize: '0.85rem',
+                      outline: 'none',
+                    }}
+                  >
+                    <option value="">Certificates Action</option>
+                    <option value="unlocked">🔓 Unlock All Certificates</option>
+                    <option value="locked">🔒 Lock All Certificates</option>
+                    <option value="auto">🔄 Reset All to Auto</option>
+                  </select>
                   <button 
                     className="btn btn-secondary excel-import-btn" 
                     onClick={() => setIsExcelModalOpen(true)}
@@ -3027,8 +3119,6 @@ const UsersList = () => {
           100% { transform: rotate(360deg); }
         }
 
-
-
         .pagination-dots {
           display: inline-flex;
           align-items: center;
@@ -3043,9 +3133,34 @@ const UsersList = () => {
         }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .header-actions-group {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          flex-wrap: wrap;
+        }
+
+        @media (max-width: 768px) {
+          .header-actions-group {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            gap: 10px;
+            margin-top: 10px;
+          }
+          .header-actions-group > * {
+            width: 100% !important;
+            box-sizing: border-box;
+          }
+        }
       `}} />
     </MainLayout>
   );
 };
 
 export default UsersList;
+
+
+
+

@@ -200,6 +200,14 @@ const Sidebar = () => {
                 </div>
               </button>
             </Link>
+            <Link to="/admin/extra-classes" style={{ textDecoration: 'none', color: 'inherit', marginTop: '8px', display: 'block' }}>
+              <button className={`sidebar-toggle-btn week-btn admin-btn ${location.pathname === '/admin/extra-classes' ? 'active' : ''}`}>
+                <div className="btn-content">
+                  <Calendar size={20} color="#ea580c" />
+                  {!isSidebarCollapsed && <span>Extra Classes</span>}
+                </div>
+              </button>
+            </Link>
             
             
             {user?.role === 'superadmin' && (

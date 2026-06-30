@@ -2,6 +2,17 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const logAction = require('../utils/auditLogger');
 const { sendWelcomeEmail } = require('../utils/emailService');
+const crypto = require('crypto');
+const Assignment = require('../models/Assignment');
+
+const getCertificateId = (studentId) => {
+  const hash = crypto
+    .createHmac('sha256', process.env.JWT_SECRET || 'secret')
+    .update(studentId.toString())
+    .digest('hex')
+    .substring(0, 8);
+  return `WM-${studentId}-${hash}`;
+};
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -90,6 +101,8 @@ const getUserProfile = async (req, res) => {
       name: user.name,
       email: user.email,
       role: user.role,
+      certificateOverride: user.certificateOverride || null,
+      certificateId: getCertificateId(user._id),
     });
   } else {
     res.status(404).json({ message: 'User not found' });
@@ -102,7 +115,12 @@ const getUserProfile = async (req, res) => {
 const getUsers = async (req, res) => {
   try {
     const users = await User.find({}).select('-password');
-    res.json(users);
+    const usersWithCertId = users.map(u => {
+      const userObj = u.toObject();
+      userObj.certificateId = getCertificateId(u._id);
+      return userObj;
+    });
+    res.json(usersWithCertId);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -281,6 +299,144 @@ const updatePassword = async (req, res) => {
   }
 };
 
+// @desc    Verify student certificate
+// @route   GET /api/auth/verify-certificate/:certId
+// @access  Public
+const verifyCertificate = async (req, res) => {
+  const { certId } = req.params;
+
+  try {
+    if (!certId || !certId.startsWith('WM-')) {
+      return res.status(400).json({ message: 'Invalid Certificate Format', isValid: false });
+    }
+
+    const parts = certId.split('-');
+    if (parts.length !== 3) {
+      return res.status(400).json({ message: 'Invalid Certificate Format', isValid: false });
+    }
+
+    const [prefix, studentId, signature] = parts;
+
+    // Validate signature
+    const expectedSignature = crypto
+      .createHmac('sha256', process.env.JWT_SECRET || 'secret')
+      .update(studentId)
+      .digest('hex')
+      .substring(0, 8);
+
+    if (signature !== expectedSignature) {
+      return res.status(400).json({ message: 'Certificate Signature Invalid', isValid: false });
+    }
+
+    const student = await User.findById(studentId);
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found', isValid: false });
+    }
+
+    // Calculate progress
+    const acceptedCount = await Assignment.countDocuments({
+      student: studentId,
+      status: 'accepted',
+    });
+    const totalCourseDays = 43; // w1-d0 to w7-d6 = 43 days
+    const progressPercent = Math.min(Math.round((acceptedCount / totalCourseDays) * 100), 100);
+
+    const isUnlocked = student.certificateOverride === 'unlocked' || 
+                       (student.certificateOverride !== 'locked' && progressPercent >= 100);
+
+    if (!isUnlocked) {
+      return res.json({
+        isValid: false,
+        message: 'Certificate is currently locked by system policy or management.',
+        student: { name: student.name }
+      });
+    }
+
+    res.json({
+      isValid: true,
+      student: {
+        name: student.name,
+        email: student.email,
+      },
+      course: 'Full-Stack MERN Stack Development',
+      issueDate: student.createdAt,
+      completionDate: student.createdAt,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message, isValid: false });
+  }
+};
+
+// @desc    Update single student certificate override
+// @route   PUT /api/auth/users/:id/certificate-override
+// @access  Private/Admin
+const updateCertificateOverride = async (req, res) => {
+  const { override } = req.body;
+
+  try {
+    const student = await User.findById(req.params.id);
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+
+    const overrideValue = override === 'auto' ? null : override;
+    student.certificateOverride = overrideValue;
+    await student.save();
+
+    // Audit Log
+    await logAction(
+      req.user,
+      'Certificate Override Update',
+      `Certificate override set to [${override}] for ${student.email}`,
+      student._id,
+      'User'
+    );
+
+    res.json({
+      message: `Certificate status updated for ${student.name}`,
+      user: {
+        _id: student._id,
+        certificateOverride: student.certificateOverride,
+        certificateId: getCertificateId(student._id),
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Update all students certificate overrides
+// @route   POST /api/auth/users/certificate-override-all
+// @access  Private/Admin
+const updateAllCertificateOverrides = async (req, res) => {
+  const { override } = req.body;
+
+  try {
+    const overrideValue = override === 'auto' ? null : override;
+    
+    const result = await User.updateMany(
+      { role: 'student' },
+      { certificateOverride: overrideValue }
+    );
+
+    // Audit Log
+    await logAction(
+      req.user,
+      'Global Certificate Override',
+      `Set all student certificates override to [${override}]. Affected: ${result.modifiedCount} users.`,
+      req.user._id,
+      'User'
+    );
+
+    res.json({
+      message: `Successfully set all student certificates to ${override}`,
+      modifiedCount: result.modifiedCount
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
@@ -291,4 +447,7 @@ module.exports = {
   updateUserStatus,
   updateUser,
   updatePassword,
+  verifyCertificate,
+  updateCertificateOverride,
+  updateAllCertificateOverrides,
 };

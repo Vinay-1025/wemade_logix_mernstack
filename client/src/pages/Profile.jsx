@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { User, Shield, Award, Book, Clock, CheckCircle2, Flame, Calendar, Percent, Activity } from 'lucide-react';
 import MainLayout from '../components/MainLayout';
 import { courseData } from '../data/mockData';
+import { QRCodeSVG } from 'qrcode.react';
 import axios from 'axios';
 
 const Profile = () => {
@@ -15,6 +16,9 @@ const Profile = () => {
   const [hoveredCell, setHoveredCell] = useState(null);
   const [timeRange, setTimeRange] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [latestProfile, setLatestProfile] = useState(null);
+  const [isCertificateOpen, setIsCertificateOpen] = useState(false);
+  const [previewMode, setPreviewMode] = useState(false);
 
   const getNextMilestone = (streak) => {
     if (streak < 5) return 5;
@@ -65,6 +69,16 @@ const Profile = () => {
 
     const fetchData = async () => {
       try {
+        // Fetch latest profile status (override, certificateId)
+        try {
+          const profileRes = await axios.get('/api/auth/profile', {
+            headers: { 'Authorization': `Bearer ${user.token}` }
+          });
+          setLatestProfile(profileRes.data);
+        } catch (err) {
+          console.error('Failed to fetch latest profile info:', err);
+        }
+
         if (user.role === 'admin' || user.role === 'superadmin') {
           const response = await axios.get('/api/assignments', {
             headers: { 'Authorization': `Bearer ${user.token}` }
@@ -197,6 +211,9 @@ const Profile = () => {
     .slice(0, 5);
 
   const isAdmin = user?.role === 'admin' || user?.role === 'superadmin';
+  const override = latestProfile?.certificateOverride;
+  const isUnlocked = override === 'unlocked' || (override !== 'locked' && progressPercent >= 100) || previewMode;
+  const certificateId = latestProfile?.certificateId || `WM-${user?._id}-invalid`;
 
   return (
     <MainLayout showSidebar={!isAdmin}>
@@ -564,20 +581,251 @@ const Profile = () => {
                   display: 'flex', 
                   alignItems: 'center', 
                   justifyContent: 'center', 
-                  minHeight: '160px', 
-                  border: '1px dashed var(--light-tertiary)', 
-                  background: 'var(--light-secondary)', 
+                  minHeight: '180px', 
+                  border: isUnlocked ? '1px solid rgba(217, 119, 6, 0.25)' : '1px dashed var(--light-tertiary)', 
+                  background: isUnlocked ? 'rgba(217, 119, 6, 0.04)' : 'var(--light-secondary)', 
                   textAlign: 'center', 
                   flexDirection: 'column', 
-                  gap: '12px' 
+                  gap: '12px',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  position: 'relative',
                 }}
               >
-                <div style={{ padding: '16px', background: 'white', borderRadius: '50%', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
-                  <span style={{ fontSize: '1.8rem' }}>🔒</span>
+                <div style={{ 
+                  padding: '16px', 
+                  background: 'white', 
+                  borderRadius: '50%', 
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '56px',
+                  height: '56px',
+                }}>
+                  <span style={{ fontSize: '1.8rem' }}>{isUnlocked ? '🏆' : '🔒'}</span>
                 </div>
                 <div>
-                  <h3 style={{ fontSize: '1.1rem', fontWeight: '800', margin: '0 0 4px 0', color: 'var(--text-primary)' }}>Certificate of Completion</h3>
-                  <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-neutral)' }}>Complete all course modules to unlock your official MERN Stack Certification.</p>
+                  <h3 style={{ fontSize: '1.15rem', fontWeight: '800', margin: '0 0 4px 0', color: isUnlocked ? '#d97706' : 'var(--text-primary)' }}>
+                    {isUnlocked ? 'Official WeMade Certification Unlocked!' : 'Certificate of Completion'}
+                  </h3>
+                  <p style={{ margin: '0 0 12px 0', fontSize: '0.85rem', color: 'var(--text-neutral)' }}>
+                    {isUnlocked 
+                      ? 'Congratulations! You have completed all syllabus requirements. Your official WeMade Logix certificate is now active.'
+                      : 'Complete all course modules to unlock your official MERN Stack Certification.'
+                    }
+                  </p>
+                  {isUnlocked ? (
+                    <button
+                      onClick={() => setIsCertificateOpen(true)}
+                      style={{
+                        background: 'linear-gradient(135deg, #d97706 0%, #fbbf24 100%)',
+                        color: 'white',
+                        border: 'none',
+                        padding: '10px 24px',
+                        borderRadius: '8px',
+                        fontWeight: '750',
+                        cursor: 'pointer',
+                        boxShadow: '0 4px 12px rgba(217, 119, 6, 0.2)',
+                        transition: 'transform 0.2s',
+                      }}
+                      onMouseEnter={(e) => e.target.style.transform = 'translateY(-1px)'}
+                      onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
+                    >
+                      View & Print Certificate
+                    </button>
+                  ) : (
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-neutral)', fontStyle: 'italic' }}>
+                      Progress: {progressPercent}% (Requires 100%)
+                    </span>
+                  )}
+                </div>
+
+                {/* Developer / Instructor Preview Toggle */}
+                <div className="no-print" style={{ 
+                  position: 'absolute', 
+                  bottom: '12px', 
+                  right: '16px', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '6px',
+                  opacity: 0.7 
+                }}>
+                  <input 
+                    type="checkbox" 
+                    id="preview-cert-toggle" 
+                    checked={previewMode}
+                    onChange={(e) => setPreviewMode(e.target.checked)}
+                    style={{ cursor: 'pointer' }}
+                  />
+                  <label htmlFor="preview-cert-toggle" style={{ fontSize: '0.7rem', color: 'var(--text-neutral)', cursor: 'pointer', fontWeight: 600 }}>
+                    🧪 Preview Certificate
+                  </label>
+                </div>
+              </div>
+            )}
+
+            {/* Certificate Modal */}
+            {isCertificateOpen && (
+              <div className="admin-modal-overlay no-print" style={{ 
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: 'rgba(0,0,0,0.7)',
+                backdropFilter: 'blur(5px)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 2000 
+              }}>
+                <div className="certificate-modal-content" style={{
+                  background: '#111827',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  padding: '24px',
+                  borderRadius: '20px',
+                  maxWidth: '1050px',
+                  width: '95%',
+                  maxHeight: '95vh',
+                  overflowY: 'auto',
+                  boxShadow: '0 25px 50px rgba(0,0,0,0.5)',
+                  position: 'relative',
+                  textAlign: 'center',
+                }}>
+                  <div className="certificate-modal-header" style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '20px',
+                    borderBottom: '1px solid rgba(255,255,255,0.08)',
+                    paddingBottom: '12px'
+                  }}>
+                    <h2 style={{ margin: 0, fontSize: '1.25rem', color: '#ffffff', fontWeight: 800 }}>Your WeMade Official Certificate</h2>
+                    <button
+                      onClick={() => setIsCertificateOpen(false)}
+                      style={{
+                        background: 'rgba(255,255,255,0.05)',
+                        border: 'none',
+                        color: '#94a3b8',
+                        cursor: 'pointer',
+                        borderRadius: '50%',
+                        padding: '8px',
+                        width: '36px',
+                        height: '36px',
+                        fontSize: '1rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      ✕
+                    </button>
+                  </div>
+
+                  {/* Landscape Print Area with Scroll Wrapper */}
+                  <div className="certificate-scroll-wrapper" style={{ overflowX: 'auto', width: '100%', padding: '10px 0' }}>
+                    <div className="certificate-print-area" style={{
+                      position: 'relative',
+                      width: '1000px',
+                      height: '707px',
+                      backgroundImage: 'url(/Certificate_template_enhanced.png)',
+                      backgroundSize: 'contain',
+                      backgroundRepeat: 'no-repeat',
+                      backgroundPosition: 'center',
+                      margin: '0 auto',
+                      borderRadius: '8px',
+                      overflow: 'hidden',
+                      backgroundColor: '#ffffff',
+                      boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+                    }}>
+                      {/* Dynamically Overlayed Student Name */}
+                      <div style={{
+                        position: 'absolute',
+                        top: '48.5%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        fontSize: '2.5rem',
+                        fontFamily: '"Georgia", "Times New Roman", serif',
+                        fontWeight: 'bold',
+                        color: '#1a1a1a',
+                        textAlign: 'center',
+                        width: '80%',
+                        letterSpacing: '1px',
+                      }}>
+                        {user?.name}
+                      </div>
+
+                      {/* Dynamically Overlayed Verification QR Code */}
+                      <div style={{
+                        position: 'absolute',
+                        bottom: '12%',
+                        left: '8.5%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        gap: '4px',
+                        background: '#ffffff',
+                        padding: '6px',
+                        borderRadius: '6px',
+                        border: '1px solid #e2e8f0',
+                      }}>
+                        <QRCodeSVG
+                          value={`${window.location.origin}/verify-certificate/${certificateId}`}
+                          size={72}
+                          bgColor={"#ffffff"}
+                          fgColor={"#000000"}
+                          level={"H"}
+                        />
+                        <span style={{
+                          fontSize: '0.55rem',
+                          color: '#64748b',
+                          fontFamily: '"Inter", sans-serif',
+                          fontWeight: 700,
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.5px'
+                        }}>Scan to Verify</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="certificate-modal-footer" style={{
+                    marginTop: '24px',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    gap: '16px'
+                  }}>
+                    <button
+                      onClick={() => setIsCertificateOpen(false)}
+                      className="btn-ghost"
+                      style={{
+                        background: 'rgba(255,255,255,0.05)',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        color: '#e2e8f0',
+                        padding: '10px 24px',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        fontWeight: 600,
+                      }}
+                    >
+                      Close Preview
+                    </button>
+                    <button
+                      onClick={() => window.print()}
+                      style={{
+                        background: 'var(--brand-gradient, linear-gradient(135deg, #00D1D1 0%, #0047AB 100%))',
+                        border: 'none',
+                        color: '#ffffff',
+                        padding: '10px 32px',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        fontWeight: 700,
+                        boxShadow: '0 4px 12px rgba(0, 209, 209, 0.2)',
+                      }}
+                    >
+                      Print / Save PDF
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
@@ -585,16 +833,48 @@ const Profile = () => {
         )}
 
         <style dangerouslySetInnerHTML={{ __html: `
+          @media print {
+            body * {
+              visibility: hidden !important;
+            }
+            .certificate-print-area, .certificate-print-area * {
+              visibility: visible !important;
+            }
+            .certificate-print-area {
+              position: fixed !important;
+              left: 50% !important;
+              top: 50% !important;
+              transform: translate(-50%, -50%) !important;
+              width: 1000px !important;
+              height: 707px !important;
+              background-image: url(/Certificate_template_enhanced.png) !important;
+              background-size: contain !important;
+              background-repeat: no-repeat !important;
+              background-position: center !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              box-shadow: none !important;
+              border: none !important;
+              background-color: #ffffff !important;
+              z-index: 9999 !important;
+            }
+            .no-print {
+              display: none !important;
+            }
+          }
+
           .profile-page {
             padding: 40px;
             max-width: 1100px;
             margin: 0 auto;
             animation: fadeIn 0.5s ease;
           }
+
           .profile-hero {
             position: relative;
             margin-bottom: 80px;
           }
+
           .profile-cover {
             height: 160px;
             background: var(--brand-gradient);
