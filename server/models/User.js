@@ -29,11 +29,16 @@ const userSchema = new mongoose.Schema({
     enum: ['locked', 'unlocked', null],
     default: null,
   },
+  certificateUnlockedAt: {
+    type: Date,
+    default: null,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
   },
 });
+
 // Hash password before saving
 userSchema.pre('save', async function () {
   if (!this.isModified('password')) {

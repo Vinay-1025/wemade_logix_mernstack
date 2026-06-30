@@ -352,6 +352,22 @@ const verifyCertificate = async (req, res) => {
       });
     }
 
+    let issueDate = student.createdAt;
+    if (student.certificateOverride === 'unlocked') {
+      issueDate = student.certificateUnlockedAt || student.createdAt;
+    } else {
+      const lastAssignment = await Assignment.findOne({
+        student: studentId,
+        status: 'accepted',
+      }).sort({ updatedAt: -1 });
+      if (lastAssignment) {
+        issueDate = lastAssignment.updatedAt;
+      }
+    }
+    const AttendanceRecord = require('../models/AttendanceRecord');
+    const attendanceRecords = await AttendanceRecord.find({ student: studentId }).sort({ dayId: 1 });
+    const studentAssignments = await Assignment.find({ student: studentId }).sort({ topicId: 1 });
+
     res.json({
       isValid: true,
       student: {
@@ -359,8 +375,12 @@ const verifyCertificate = async (req, res) => {
         email: student.email,
       },
       course: 'Full-Stack MERN Stack Development',
-      issueDate: student.createdAt,
-      completionDate: student.createdAt,
+      issueDate: issueDate,
+      completionDate: issueDate,
+      engagement: {
+        attendance: attendanceRecords,
+        assignments: studentAssignments,
+      }
     });
   } catch (error) {
     res.status(500).json({ message: error.message, isValid: false });
@@ -381,6 +401,11 @@ const updateCertificateOverride = async (req, res) => {
 
     const overrideValue = override === 'auto' ? null : override;
     student.certificateOverride = overrideValue;
+    if (override === 'unlocked') {
+      student.certificateUnlockedAt = new Date();
+    } else {
+      student.certificateUnlockedAt = null;
+    }
     await student.save();
 
     // Audit Log
@@ -413,10 +438,16 @@ const updateAllCertificateOverrides = async (req, res) => {
 
   try {
     const overrideValue = override === 'auto' ? null : override;
+    const updateFields = { certificateOverride: overrideValue };
+    if (override === 'unlocked') {
+      updateFields.certificateUnlockedAt = new Date();
+    } else {
+      updateFields.certificateUnlockedAt = null;
+    }
     
     const result = await User.updateMany(
       { role: 'student' },
-      { certificateOverride: overrideValue }
+      updateFields
     );
 
     // Audit Log

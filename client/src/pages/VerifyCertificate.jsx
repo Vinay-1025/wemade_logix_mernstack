@@ -1,16 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { ShieldCheck, ShieldAlert, Award, Calendar, ExternalLink, FileText, CheckCircle2, AlertCircle } from 'lucide-react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { ShieldCheck, ShieldAlert, Award, Calendar, ExternalLink, FileText, CheckCircle2, AlertCircle, QrCode, Search, RefreshCw, ChevronDown, ChevronUp, BookOpen, Clock } from 'lucide-react';
 import axios from 'axios';
+import { Html5QrcodeScanner } from 'html5-qrcode';
 
 const VerifyCertificate = () => {
   const { certId } = useParams();
-  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  
+  const [loading, setLoading] = useState(!!certId);
   const [verification, setVerification] = useState(null);
   const [error, setError] = useState(null);
+  const [inputId, setInputId] = useState('');
+  const [scanning, setScanning] = useState(false);
+
+  // Collapsible sections state
+  const [showAttendanceDetails, setShowAttendanceDetails] = useState(false);
+  const [showAssignmentDetails, setShowAssignmentDetails] = useState(false);
 
   useEffect(() => {
+    if (!certId) {
+      setLoading(false);
+      setVerification(null);
+      setError(null);
+      return;
+    }
+
     const checkVerification = async () => {
+      setLoading(true);
+      setError(null);
       try {
         const res = await axios.get(`/api/auth/verify-certificate/${certId}`);
         setVerification(res.data);
@@ -21,10 +39,78 @@ const VerifyCertificate = () => {
         setLoading(false);
       }
     };
-    if (certId) {
-      checkVerification();
-    }
+    
+    checkVerification();
   }, [certId]);
+
+  // QR Code Scanner Effect
+  useEffect(() => {
+    if (scanning) {
+      const scanner = new Html5QrcodeScanner(
+        "qr-reader",
+        {
+          fps: 10,
+          qrbox: { width: 220, height: 220 },
+          aspectRatio: 1.0
+        },
+        false
+      );
+
+      const onScanSuccess = (decodedText) => {
+        let scannedId = decodedText.trim();
+        if (scannedId.includes('/verify-certificate/')) {
+          const parts = scannedId.split('/verify-certificate/');
+          scannedId = parts[parts.length - 1].trim();
+        }
+        
+        scannedId = scannedId.replace(/^[/#?]+|[/#?]+$/g, "");
+
+        scanner.clear().catch(err => console.error("Error clearing scanner", err));
+        setScanning(false);
+        navigate(`/verify-certificate/${scannedId}`);
+      };
+
+      const onScanFailure = (error) => {
+        // Quietly handle scanner frame errors
+      };
+
+      scanner.render(onScanSuccess, onScanFailure);
+
+      return () => {
+        scanner.clear().catch(err => console.error("Error clearing scanner on cleanup", err));
+      };
+    }
+  }, [scanning, navigate]);
+
+  const handleManualSearch = (e) => {
+    e.preventDefault();
+    if (inputId.trim()) {
+      let finalId = inputId.trim();
+      if (finalId.includes('/verify-certificate/')) {
+        const parts = finalId.split('/verify-certificate/');
+        finalId = parts[parts.length - 1].trim();
+      }
+      navigate(`/verify-certificate/${finalId}`);
+    }
+  };
+
+  const resetVerification = () => {
+    setScanning(false);
+    setInputId('');
+    setShowAttendanceDetails(false);
+    setShowAssignmentDetails(false);
+    navigate('/verify-certificate');
+  };
+
+  // Process details logs if verification succeeded
+  const attendanceRecords = verification?.engagement?.attendance || [];
+  const assignmentSubmissions = verification?.engagement?.assignments || [];
+
+  const liveAttendanceCount = attendanceRecords.filter(r => r.attendanceType === 'live').length;
+  const recordingAttendanceCount = attendanceRecords.filter(r => r.attendanceType === 'recording').length;
+  
+  const acceptedAssignmentsCount = assignmentSubmissions.filter(a => a.status === 'accepted').length;
+  const pendingAssignmentsCount = assignmentSubmissions.filter(a => a.status === 'pending').length;
 
   return (
     <div className="verify-container">
@@ -32,10 +118,11 @@ const VerifyCertificate = () => {
       
       <header className="verify-header">
         <div className="verify-logo">
-          <span className="logo-accent">WeMade</span> Logix
+          <img src="/fav_icon.png" alt="WeMade Logix logo" className="header-logo-img" />
+          <span><span className="logo-accent">WeMade</span> Logix</span>
         </div>
         <div className="protocol-badge">
-          <ShieldCheck size={14} color="#00D1D1" />
+          <ShieldCheck size={14} color="#0047AB" />
           <span>Trust Verification Protocol</span>
         </div>
       </header>
@@ -45,7 +132,64 @@ const VerifyCertificate = () => {
           <div className="verify-card loading-state">
             <div className="spinner"></div>
             <h3>Securing Verification Payload...</h3>
-            <p>Querying cryptographic certificate registry on the blockchain...</p>
+            <p>Querying cryptographic certificate registry on the database...</p>
+          </div>
+        ) : !certId ? (
+          <div className="verify-card portal-state">
+            <div className="portal-header-icon">
+              <img src="/fav_icon.png" alt="WeMade Logix logo" className="portal-logo-img" />
+            </div>
+            
+            <h1 className="portal-title">Credential Verification</h1>
+            <p className="portal-desc">
+              Scan a WeMade Logix student certificate QR code or enter the unique Certificate ID to verify its authenticity.
+            </p>
+
+            {scanning ? (
+              <div className="scanner-container">
+                <div id="qr-reader" className="qr-reader-box"></div>
+                <button 
+                  onClick={() => setScanning(false)} 
+                  className="action-button-btn secondary-btn cancel-scan-btn"
+                >
+                  Cancel Scan
+                </button>
+              </div>
+            ) : (
+              <div className="portal-actions-wrapper">
+                <button 
+                  onClick={() => setScanning(true)} 
+                  className="action-button-btn primary-btn scanner-trigger"
+                >
+                  <QrCode size={18} />
+                  <span>Scan Certificate QR</span>
+                </button>
+
+                <div className="divider-line">
+                  <span>OR</span>
+                </div>
+
+                <form onSubmit={handleManualSearch} className="search-form-group">
+                  <div className="search-input-wrapper">
+                    <Search size={18} className="search-icon" />
+                    <input 
+                      type="text" 
+                      placeholder="Enter Certificate ID (e.g. WM-studentId-signature)"
+                      value={inputId}
+                      onChange={(e) => setInputId(e.target.value)}
+                      className="search-text-input"
+                    />
+                  </div>
+                  <button type="submit" className="action-button-btn secondary-btn submit-search-btn">
+                    Verify ID
+                  </button>
+                </form>
+              </div>
+            )}
+
+            <div className="verify-info-footer">
+              <p>Trusted & verified cryptographic signature matching registry system.</p>
+            </div>
           </div>
         ) : error || !verification?.isValid ? (
           <div className="verify-card error-state">
@@ -77,9 +221,16 @@ const VerifyCertificate = () => {
               If you believe this is a system error, please contact support at <a href="mailto:support@wemadelogix.com">support@wemadelogix.com</a>
             </p>
 
-            <Link to="/login" className="action-button-btn secondary">
-              <span>Return to Login Portal</span>
-            </Link>
+            <div className="verify-actions">
+              <a href="https://wemade-logix-2026.web.app/" target="_blank" rel="noopener noreferrer" className="action-button-btn link-btn">
+                <span>About WeMade Logix</span>
+                <ExternalLink size={14} />
+              </a>
+              <button onClick={resetVerification} className="action-button-btn secondary-btn">
+                <RefreshCw size={14} />
+                <span>Verify Another</span>
+              </button>
+            </div>
           </div>
         ) : (
           <div className="verify-card success-state">
@@ -143,19 +294,116 @@ const VerifyCertificate = () => {
               </div>
             </div>
 
-            <div className="integrity-badge">
+            {/* Attendance Summary & Log Collapsible Section */}
+            <div className="collapsible-section">
+              <div className="collapsible-header" onClick={() => setShowAttendanceDetails(!showAttendanceDetails)}>
+                <h3>
+                  <Clock size={16} color="#0047AB" />
+                  <span>Attendance & Engagement</span>
+                </h3>
+                {showAttendanceDetails ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+              </div>
+              
+              <div className="collapsible-content">
+                <div className="engagement-summary-grid">
+                  <div className="summary-stat-card">
+                    <div className="summary-stat-val">{attendanceRecords.length}</div>
+                    <div className="summary-stat-label">Attended</div>
+                  </div>
+                  <div className="summary-stat-card">
+                    <div className="summary-stat-val">{liveAttendanceCount}</div>
+                    <div className="summary-stat-label">Live Check-ins</div>
+                  </div>
+                  <div className="summary-stat-card">
+                    <div className="summary-stat-val">{recordingAttendanceCount}</div>
+                    <div className="summary-stat-label">Recordings</div>
+                  </div>
+                </div>
+
+                {showAttendanceDetails && (
+                  <div className="collapsible-inner-list">
+                    {attendanceRecords.length === 0 ? (
+                      <p className="no-engagement-msg">No attendance records found for this student.</p>
+                    ) : (
+                      attendanceRecords.map((r, index) => (
+                        <div className="detail-list-item" key={index}>
+                          <div>
+                            <span className="detail-day-title">{r.dayId.toUpperCase().replace('-', ' ')}</span>
+                            <div className="detail-day-date">Marked via {r.attendanceType}</div>
+                          </div>
+                          <span className={`status-pill accepted`}>
+                            {r.attendanceType.toUpperCase()}
+                          </span>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Assignments Summary & Log Collapsible Section */}
+            <div className="collapsible-section">
+              <div className="collapsible-header" onClick={() => setShowAssignmentDetails(!showAssignmentDetails)}>
+                <h3>
+                  <BookOpen size={16} color="#0047AB" />
+                  <span>Syllabus Work & Assignments</span>
+                </h3>
+                {showAssignmentDetails ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+              </div>
+              
+              <div className="collapsible-content">
+                <div className="engagement-summary-grid">
+                  <div className="summary-stat-card">
+                    <div className="summary-stat-val">{assignmentSubmissions.length}</div>
+                    <div className="summary-stat-label">Submitted</div>
+                  </div>
+                  <div className="summary-stat-card">
+                    <div className="summary-stat-val">{acceptedAssignmentsCount}</div>
+                    <div className="summary-stat-label">Accepted</div>
+                  </div>
+                  <div className="summary-stat-card">
+                    <div className="summary-stat-val">{pendingAssignmentsCount}</div>
+                    <div className="summary-stat-label">Pending</div>
+                  </div>
+                </div>
+
+                {showAssignmentDetails && (
+                  <div className="collapsible-inner-list">
+                    {assignmentSubmissions.length === 0 ? (
+                      <p className="no-engagement-msg">No assignments submitted yet.</p>
+                    ) : (
+                      assignmentSubmissions.map((a, index) => (
+                        <div className="detail-list-item" key={index}>
+                          <div>
+                            <span className="detail-day-title">{a.topicId.toUpperCase().replace('-', ' ')}</span>
+                            <div className="detail-day-date">Submitted on {new Date(a.createdAt).toLocaleDateString()}</div>
+                          </div>
+                          <span className={`status-pill ${a.status}`}>
+                            {a.status.toUpperCase()}
+                          </span>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="integrity-badge" style={{ marginTop: '24px' }}>
               <ShieldCheck size={14} color="#10b981" />
               <span>Cryptographic Signature Matches Registered Records</span>
             </div>
 
             <div className="verify-actions">
-              <a href="https://wemadelogix.com" target="_blank" rel="noopener noreferrer" className="action-button-btn">
-                <span>About WeMade Academy</span>
+              <a href="https://wemade-logix-2026.web.app/" target="_blank" rel="noopener noreferrer" className="action-button-btn link-btn">
+                <span>About WeMade Logix</span>
                 <ExternalLink size={14} />
               </a>
-              <Link to="/login" className="action-button-btn secondary">
-                <span>Student Portal</span>
-              </Link>
+              <button onClick={resetVerification} className="action-button-btn secondary-btn">
+                <RefreshCw size={14} />
+                <span>Verify Another</span>
+              </button>
             </div>
           </div>
         )}
@@ -168,15 +416,15 @@ const VerifyCertificate = () => {
       <style dangerouslySetInnerHTML={{ __html: `
         .verify-container {
           min-height: 100vh;
-          background-color: #0b0f19;
-          color: #e2e8f0;
+          background-color: #f8fafc;
+          color: #1e293b;
           font-family: 'Inter', -apple-system, sans-serif;
           position: relative;
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: space-between;
-          padding: 24px;
+          padding: 20px;
           overflow-x: hidden;
         }
 
@@ -187,8 +435,8 @@ const VerifyCertificate = () => {
           right: 0;
           bottom: 0;
           background-image: 
-            linear-gradient(rgba(0, 209, 209, 0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0, 209, 209, 0.03) 1px, transparent 1px);
+            linear-gradient(rgba(0, 71, 171, 0.02) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 71, 171, 0.02) 1px, transparent 1px);
           background-size: 30px 30px;
           pointer-events: none;
           z-index: 0;
@@ -196,57 +444,194 @@ const VerifyCertificate = () => {
 
         .verify-header {
           width: 100%;
-          max-width: 600px;
+          max-width: 520px;
           display: flex;
           justify-content: space-between;
           align-items: center;
           z-index: 1;
-          margin-bottom: 24px;
+          margin-bottom: 20px;
         }
 
         .verify-logo {
-          font-size: 1.5rem;
+          font-size: 1.35rem;
           font-weight: 800;
           letter-spacing: -0.5px;
+          color: #0f172a;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .header-logo-img {
+          width: 28px;
+          height: 28px;
+          object-fit: contain;
         }
 
         .logo-accent {
-          color: #00D1D1;
+          color: #0047AB;
         }
 
         .protocol-badge {
           display: flex;
           align-items: center;
           gap: 6px;
-          background: rgba(0, 209, 209, 0.08);
-          border: 1px solid rgba(0, 209, 209, 0.15);
-          padding: 6px 12px;
+          background: rgba(0, 71, 171, 0.05);
+          border: 1px solid rgba(0, 71, 171, 0.12);
+          padding: 5px 12px;
           border-radius: 9999px;
-          font-size: 0.75rem;
-          color: #00D1D1;
+          font-size: 0.72rem;
+          color: #0047AB;
           font-weight: 600;
         }
 
         .verify-card-container {
           width: 100%;
-          max-width: 600px;
+          max-width: 520px;
           z-index: 1;
           flex: 1;
           display: flex;
           align-items: center;
           justify-content: center;
+          margin: 10px 0;
         }
 
         .verify-card {
           width: 100%;
-          background: rgba(17, 24, 39, 0.85);
-          backdrop-filter: blur(16px);
-          border: 1px solid rgba(255, 255, 255, 0.08);
-          border-radius: 20px;
-          padding: 40px;
-          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          border-radius: 16px;
+          padding: 24px 20px;
+          box-shadow: 0 10px 25px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.02);
           position: relative;
           overflow: hidden;
+        }
+
+        .portal-state {
+          text-align: center;
+        }
+
+        .portal-header-icon {
+          width: 64px;
+          height: 64px;
+          background: rgba(0, 71, 171, 0.04);
+          border: 1px solid rgba(0, 71, 171, 0.08);
+          border-radius: 16px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto 20px auto;
+        }
+
+        .portal-logo-img {
+          width: 36px;
+          height: 36px;
+          object-fit: contain;
+        }
+
+        .portal-title {
+          font-size: 1.4rem;
+          font-weight: 800;
+          color: #0f172a;
+          margin-bottom: 8px;
+          letter-spacing: -0.3px;
+        }
+
+        .portal-desc {
+          font-size: 0.88rem;
+          color: #64748b;
+          line-height: 1.5;
+          margin-bottom: 24px;
+        }
+
+        .scanner-container {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+          align-items: center;
+        }
+
+        .qr-reader-box {
+          width: 100%;
+          max-width: 380px;
+          border-radius: 12px;
+          overflow: hidden;
+          border: 1px solid #e2e8f0;
+          background: #fafafa;
+        }
+
+        .cancel-scan-btn {
+          width: auto !important;
+          padding: 8px 20px !important;
+          font-size: 0.85rem !important;
+        }
+
+        .portal-actions-wrapper {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+
+        .divider-line {
+          display: flex;
+          align-items: center;
+          text-align: center;
+          color: #94a3b8;
+          font-size: 0.75rem;
+          font-weight: 700;
+        }
+
+        .divider-line::before, .divider-line::after {
+          content: '';
+          flex: 1;
+          border-bottom: 1px solid #e2e8f0;
+        }
+
+        .divider-line span {
+          padding: 0 10px;
+        }
+
+        .search-form-group {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .search-input-wrapper {
+          position: relative;
+          width: 100%;
+        }
+
+        .search-icon {
+          position: absolute;
+          left: 12px;
+          top: 50%;
+          transform: translateY(-50%);
+          color: #94a3b8;
+        }
+
+        .search-text-input {
+          width: 100%;
+          padding: 11px 12px 11px 40px;
+          border: 1px solid #e2e8f0;
+          border-radius: 8px;
+          font-size: 0.88rem;
+          background: #f8fafc;
+          outline: none;
+          color: #0f172a;
+          transition: border-color 0.2s;
+        }
+
+        .search-text-input:focus {
+          border-color: #0047AB;
+          background: #ffffff;
+        }
+
+        .verify-info-footer {
+          margin-top: 24px;
+          font-size: 0.75rem;
+          color: #94a3b8;
         }
 
         .loading-state {
@@ -255,17 +640,17 @@ const VerifyCertificate = () => {
           align-items: center;
           justify-content: center;
           text-align: center;
-          padding: 60px 40px;
+          padding: 40px 20px;
         }
 
         .spinner {
-          width: 48px;
-          height: 48px;
-          border: 4px solid rgba(0, 209, 209, 0.1);
-          border-left-color: #00D1D1;
+          width: 40px;
+          height: 40px;
+          border: 3px solid rgba(0, 71, 171, 0.06);
+          border-left-color: #0047AB;
           border-radius: 50%;
           animation: spin 1s linear infinite;
-          margin-bottom: 24px;
+          margin-bottom: 20px;
         }
 
         @keyframes spin {
@@ -274,132 +659,131 @@ const VerifyCertificate = () => {
         }
 
         .status-icon-badge {
-          width: 80px;
-          height: 80px;
+          width: 64px;
+          height: 64px;
           border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
-          margin: 0 auto 24px auto;
+          margin: 0 auto 16px auto;
         }
 
         .status-icon-badge.success {
-          background: rgba(16, 185, 129, 0.1);
-          border: 1px solid rgba(16, 185, 129, 0.2);
-          box-shadow: 0 0 20px rgba(16, 185, 129, 0.1);
+          background: rgba(16, 185, 129, 0.08);
+          border: 1px solid rgba(16, 185, 129, 0.15);
         }
 
         .status-icon-badge.error {
-          background: rgba(239, 68, 68, 0.1);
-          border: 1px solid rgba(239, 68, 68, 0.2);
-          box-shadow: 0 0 20px rgba(239, 68, 68, 0.1);
+          background: rgba(239, 68, 68, 0.08);
+          border: 1px solid rgba(239, 68, 68, 0.15);
         }
 
         .trust-stamp {
           display: block;
           text-align: center;
-          font-size: 0.75rem;
+          font-size: 0.7rem;
           color: #d97706;
-          font-weight: 700;
-          letter-spacing: 2px;
-          margin-bottom: 8px;
+          font-weight: 750;
+          letter-spacing: 1.5px;
+          margin-bottom: 6px;
         }
 
         .success-title {
-          font-size: 1.85rem;
+          font-size: 1.45rem;
           font-weight: 800;
           text-align: center;
-          color: #ffffff;
-          margin-bottom: 12px;
-          letter-spacing: -0.5px;
+          color: #0f172a;
+          margin-bottom: 8px;
+          letter-spacing: -0.3px;
         }
 
         .error-title {
-          font-size: 1.85rem;
+          font-size: 1.45rem;
           font-weight: 800;
           text-align: center;
           color: #ef4444;
-          margin-bottom: 12px;
-          letter-spacing: -0.5px;
+          margin-bottom: 8px;
+          letter-spacing: -0.3px;
         }
 
         .success-banner {
-          background: rgba(16, 185, 129, 0.08);
-          border: 1px solid rgba(16, 185, 129, 0.15);
-          color: #34d399;
-          padding: 12px 16px;
+          background: rgba(16, 185, 129, 0.05);
+          border: 1px solid rgba(16, 185, 129, 0.12);
+          color: #047857;
+          padding: 10px 14px;
           border-radius: 8px;
           text-align: center;
-          font-size: 0.9rem;
-          margin-bottom: 28px;
+          font-size: 0.85rem;
+          margin-bottom: 20px;
         }
 
         .error-banner {
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 8px;
-          background: rgba(239, 68, 68, 0.08);
-          border: 1px solid rgba(239, 68, 68, 0.15);
-          color: #fca5a5;
-          padding: 12px 16px;
+          gap: 6px;
+          background: rgba(239, 68, 68, 0.05);
+          border: 1px solid rgba(239, 68, 68, 0.12);
+          color: #b91c1c;
+          padding: 10px 14px;
           border-radius: 8px;
           text-align: center;
-          font-size: 0.9rem;
-          margin-bottom: 28px;
+          font-size: 0.85rem;
+          margin-bottom: 20px;
         }
 
         .student-profile-info {
           display: flex;
           align-items: center;
-          gap: 16px;
-          background: rgba(255, 255, 255, 0.02);
-          border: 1px solid rgba(255, 255, 255, 0.05);
-          padding: 20px;
-          border-radius: 12px;
-          margin-bottom: 24px;
+          gap: 12px;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          padding: 14px;
+          border-radius: 10px;
+          margin-bottom: 20px;
+          text-align: left;
         }
 
         .profile-initial {
-          width: 48px;
-          height: 48px;
+          width: 40px;
+          height: 40px;
           border-radius: 50%;
-          background: var(--brand-gradient, linear-gradient(135deg, #00D1D1 0%, #0047AB 100%));
+          background: linear-gradient(135deg, #00D1D1 0%, #0047AB 100%);
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 1.25rem;
+          font-size: 1.15rem;
           font-weight: 700;
           color: white;
         }
 
         .student-profile-info h2 {
-          font-size: 1.15rem;
+          font-size: 1rem;
           font-weight: 700;
-          color: #ffffff;
-          margin: 0 0 2px 0;
+          color: #0f172a;
+          margin: 0 0 1px 0;
         }
 
         .student-email {
-          font-size: 0.85rem;
-          color: #94a3b8;
+          font-size: 0.8rem;
+          color: #64748b;
           margin: 0;
         }
 
         .verification-details-table {
-          background: rgba(0, 0, 0, 0.2);
-          border: 1px solid rgba(255, 255, 255, 0.05);
-          border-radius: 12px;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          border-radius: 10px;
           overflow: hidden;
-          margin-bottom: 24px;
+          margin-bottom: 20px;
         }
 
         .v-row {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: 14px 20px;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+          padding: 11px 14px;
+          border-bottom: 1px solid #e2e8f0;
         }
 
         .v-row:last-child {
@@ -409,62 +793,206 @@ const VerifyCertificate = () => {
         .v-label {
           display: flex;
           align-items: center;
-          gap: 10px;
-          color: #94a3b8;
-          font-size: 0.875rem;
+          gap: 8px;
+          color: #64748b;
+          font-size: 0.8rem;
         }
 
         .v-val {
-          font-size: 0.875rem;
+          font-size: 0.8rem;
           font-weight: 600;
-          color: #f1f5f9;
+          color: #0f172a;
           text-align: right;
         }
 
         .v-val.highlight {
-          color: #00D1D1;
+          color: #0047AB;
         }
 
         .cert-id-code {
           font-family: monospace;
-          background: rgba(255, 255, 255, 0.06);
-          padding: 2px 8px;
+          background: #e2e8f0;
+          padding: 1px 6px;
           border-radius: 4px;
-          color: #cbd5e1 !important;
+          color: #334155 !important;
+          font-size: 0.75rem;
+        }
+
+        .collapsible-section {
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          border-radius: 10px;
+          margin-top: 12px;
+          overflow: hidden;
+        }
+
+        .collapsible-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 12px 16px;
+          cursor: pointer;
+          background: #f8fafc;
+          border-bottom: 1px solid #e2e8f0;
+          transition: background 0.2s;
+        }
+
+        .collapsible-header:hover {
+          background: #f1f5f9;
+        }
+
+        .collapsible-header h3 {
+          margin: 0;
+          font-size: 0.88rem;
+          font-weight: 700;
+          color: #0f172a;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .collapsible-content {
+          padding: 12px 16px;
+          text-align: left;
+        }
+
+        .engagement-summary-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr 1fr;
+          gap: 8px;
+          margin-bottom: 10px;
+        }
+
+        .summary-stat-card {
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          padding: 8px 4px;
+          border-radius: 6px;
+          text-align: center;
+        }
+
+        .summary-stat-val {
+          font-size: 1.05rem;
+          font-weight: 800;
+          color: #0047AB;
+        }
+
+        .summary-stat-label {
+          font-size: 0.68rem;
+          color: #64748b;
+          margin-top: 2px;
+          font-weight: 600;
+        }
+
+        .collapsible-inner-list {
+          max-height: 200px;
+          overflow-y: auto;
+          border-top: 1px dashed #e2e8f0;
+          padding-top: 8px;
+          margin-top: 8px;
+        }
+
+        .detail-list-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 8px 0;
+          border-bottom: 1px solid #f1f5f9;
+        }
+
+        .detail-list-item:last-child {
+          border-bottom: none;
+        }
+
+        .detail-day-title {
+          font-size: 0.78rem;
+          font-weight: 600;
+          color: #1e293b;
+        }
+
+        .detail-day-date {
+          font-size: 0.7rem;
+          color: #94a3b8;
+        }
+
+        .status-pill {
+          font-size: 0.68rem;
+          font-weight: 700;
+          padding: 2px 8px;
+          border-radius: 9999px;
+        }
+
+        .status-pill.accepted {
+          background: rgba(16, 185, 129, 0.08);
+          border: 1px solid rgba(16, 185, 129, 0.15);
+          color: #047857;
+        }
+
+        .status-pill.pending {
+          background: rgba(245, 158, 11, 0.08);
+          border: 1px solid rgba(245, 158, 11, 0.15);
+          color: #b45309;
+        }
+
+        .status-pill.rejected {
+          background: rgba(239, 68, 68, 0.08);
+          border: 1px solid rgba(239, 68, 68, 0.15);
+          color: #b91c1c;
+        }
+
+        .status-pill.live {
+          background: rgba(16, 185, 129, 0.08);
+          border: 1px solid rgba(16, 185, 129, 0.15);
+          color: #047857;
+        }
+
+        .status-pill.recording {
+          background: rgba(0, 71, 171, 0.08);
+          border: 1px solid rgba(0, 71, 171, 0.15);
+          color: #0047AB;
+        }
+
+        .no-engagement-msg {
+          font-size: 0.78rem;
+          color: #94a3b8;
+          text-align: center;
+          padding: 12px 0;
+          margin: 0;
         }
 
         .integrity-badge {
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 6px;
-          font-size: 0.75rem;
+          gap: 5px;
+          font-size: 0.72rem;
           color: #10b981;
-          margin-bottom: 32px;
+          margin-bottom: 20px;
           font-weight: 600;
         }
 
         .verify-actions {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 16px;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
         }
 
         .action-button-btn {
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 8px;
-          background: var(--brand-gradient, linear-gradient(135deg, #00D1D1 0%, #0047AB 100%));
+          gap: 6px;
+          background: linear-gradient(135deg, #0047AB 0%, #00D1D1 100%);
           border: none;
           color: #ffffff;
-          padding: 14px;
+          padding: 11px;
           border-radius: 8px;
-          font-weight: 600;
-          font-size: 0.9rem;
+          font-weight: 700;
+          font-size: 0.85rem;
           cursor: pointer;
           text-decoration: none;
           transition: transform 0.2s, opacity 0.2s;
+          width: 100%;
         }
 
         .action-button-btn:hover {
@@ -472,56 +1000,57 @@ const VerifyCertificate = () => {
           transform: translateY(-1px);
         }
 
-        .action-button-btn.secondary {
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          color: #e2e8f0;
+        .action-button-btn.secondary-btn {
+          background: #f1f5f9;
+          border: 1px solid #e2e8f0;
+          color: #334155;
         }
 
-        .action-button-btn.secondary:hover {
-          background: rgba(255, 255, 255, 0.08);
+        .action-button-btn.secondary-btn:hover {
+          background: #e2e8f0;
         }
 
         .gold-ribbon-seal {
           position: absolute;
           top: -10px;
-          right: 30px;
-          width: 50px;
-          height: 70px;
+          right: 20px;
+          width: 40px;
+          height: 56px;
           background: linear-gradient(135deg, #d97706 0%, #fbbf24 100%);
-          border-radius: 0 0 6px 6px;
+          border-radius: 0 0 5px 5px;
           display: flex;
           align-items: flex-end;
           justify-content: center;
-          padding-bottom: 8px;
-          box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+          padding-bottom: 6px;
+          box-shadow: 0 3px 8px rgba(0,0,0,0.1);
         }
 
         .seal-star {
-          font-size: 1.25rem;
+          font-size: 1rem;
         }
 
         .details-box {
-          background: rgba(0, 0, 0, 0.2);
-          border: 1px solid rgba(255, 255, 255, 0.05);
-          padding: 20px;
-          border-radius: 12px;
-          margin-bottom: 24px;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          padding: 14px;
+          border-radius: 10px;
+          margin-bottom: 20px;
+          text-align: left;
         }
 
         .details-desc {
-          font-size: 0.85rem;
-          color: #94a3b8;
-          margin: 0 0 16px 0;
-          line-height: 1.5;
+          font-size: 0.8rem;
+          color: #64748b;
+          margin: 0 0 12px 0;
+          line-height: 1.45;
         }
 
         .details-row {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: 10px 0;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+          padding: 8px 0;
+          border-bottom: 1px solid #e2e8f0;
         }
 
         .details-row:last-child {
@@ -529,71 +1058,68 @@ const VerifyCertificate = () => {
         }
 
         .details-label {
-          font-size: 0.85rem;
-          color: #94a3b8;
+          font-size: 0.8rem;
+          color: #64748b;
         }
 
         .details-val {
-          font-size: 0.85rem;
+          font-size: 0.8rem;
           font-weight: 600;
         }
 
         .status-badge-failed {
-          background: rgba(239, 68, 68, 0.15);
-          border: 1px solid rgba(239, 68, 68, 0.3);
-          color: #f87171;
-          padding: 2px 8px;
+          background: rgba(239, 68, 68, 0.08);
+          border: 1px solid rgba(239, 68, 68, 0.15);
+          color: #dc2626;
+          padding: 2px 6px;
           border-radius: 4px;
-          font-size: 0.75rem;
-          font-weight: 700;
+          font-size: 0.72rem;
+          font-weight: 750;
         }
 
         .contact-help {
           text-align: center;
-          font-size: 0.8rem;
+          font-size: 0.75rem;
           color: #64748b;
-          margin-bottom: 28px;
-          line-height: 1.5;
+          margin-bottom: 20px;
+          line-height: 1.45;
         }
 
         .contact-help a {
-          color: #00D1D1;
+          color: #0047AB;
           text-decoration: none;
         }
 
         .verify-footer {
           width: 100%;
-          max-width: 600px;
+          max-width: 520px;
           text-align: center;
           z-index: 1;
-          margin-top: 24px;
+          margin-top: 20px;
         }
 
         .verify-footer p {
-          font-size: 0.75rem;
-          color: #475569;
-          line-height: 1.5;
+          font-size: 0.7rem;
+          color: #64748b;
+          line-height: 1.45;
         }
 
         .text-teal {
-          color: #00D1D1 !important;
+          color: #0047AB !important;
         }
 
         @media (max-width: 480px) {
-          .verify-actions {
-            grid-template-columns: 1fr;
-            gap: 12px;
-          }
           .verify-card {
-            padding: 24px;
+            padding: 20px 16px;
+            border-radius: 12px;
           }
           .verify-header {
-            flex-direction: column;
-            gap: 12px;
-            align-items: center;
+            flex-direction: row;
+            gap: 0;
+            justify-content: space-between;
           }
           .success-title, .error-title {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
           }
         }
       `}} />

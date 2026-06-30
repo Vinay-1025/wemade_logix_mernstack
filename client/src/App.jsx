@@ -22,6 +22,7 @@ function App() {
         
         {/* Public Verification Route */}
         <Route path="/verify-certificate/:certId" element={<VerifyCertificate />} />
+        <Route path="/verify-certificate" element={<VerifyCertificate />} />
 
         {/* Protected Dashboard Route */}
         <Route element={<ProtectedRoute />}>
