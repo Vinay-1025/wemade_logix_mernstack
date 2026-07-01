@@ -444,23 +444,29 @@ const VerifyCertificate = () => {
         )}
       </main>
 
-      {/* Selected Assignment Code Preview Modal */}
       {selectedAssignment && (
-        <div className="admin-modal-overlay no-print" style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0,0,0,0.6)',
-          backdropFilter: 'blur(4px)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 3000
-        }}>
-          <div className="admin-modal" style={{
-            background: '#ffffff',
+        <div 
+          className="admin-modal-overlay no-print" 
+          onClick={() => setSelectedAssignment(null)}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0,0,0,0.6)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 3000
+          }}
+        >
+          <div 
+            className="admin-modal" 
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: '#ffffff',
             border: '1px solid #e2e8f0',
             padding: '24px',
             borderRadius: '16px',
