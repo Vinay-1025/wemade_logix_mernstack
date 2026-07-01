@@ -102,6 +102,7 @@ const FinalProjectSubmissionView = () => {
   const [snackbar, setSnackbar] = useState({ visible: false, message: '', type: 'success' });
   const [assignedProject, setAssignedProject] = useState(null);
   const [assignedLoading, setAssignedLoading] = useState(true);
+  const [showSubmitModal, setShowSubmitModal] = useState(false);
 
   const showSnackbar = (message, type = 'success') => {
     setSnackbar({ visible: true, message, type });
@@ -209,41 +210,11 @@ const FinalProjectSubmissionView = () => {
       padding: '30px',
       boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
       fontFamily: '"Inter", sans-serif',
-      color: '#1e293b'
+      color: '#1e293b',
+      position: 'relative'
     }}>
-      {/* Premium Header */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '16px',
-        borderBottom: '1px solid #e2e8f0',
-        paddingBottom: '20px',
-        marginBottom: '24px'
-      }}>
-        <div style={{
-          background: 'linear-gradient(135deg, #0047ab 0%, #002f80 100%)',
-          color: 'white',
-          borderRadius: '12px',
-          padding: '12px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          boxShadow: '0 8px 16px rgba(0, 71, 171, 0.15)'
-        }}>
-          <Laptop size={28} />
-        </div>
-        <div>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0f172a', margin: 0, letterSpacing: '-0.5px' }}>
-            Final Capstone Project
-          </h2>
-          <p style={{ fontSize: '0.875rem', color: '#64748b', margin: '4px 0 0' }}>
-            The final milestone to unlock your official graduation certification
-          </p>
-        </div>
-      </div>
-
       {assignedLoading ? (
-        <div style={{ padding: '30px', textAlign: 'center', color: '#64748b', fontStyle: 'italic' }}>
+        <div style={{ padding: '60px', textAlign: 'center', color: '#64748b', fontStyle: 'italic' }}>
           Allocating your unique Capstone Project topic...
         </div>
       ) : !assignedProject ? (
@@ -260,256 +231,549 @@ const FinalProjectSubmissionView = () => {
       ) : (() => {
         const details = capstoneRegistry[assignedProject.projectCode];
         if (!details) return null;
-        return (
-          <div style={{
-            background: '#f8fafc',
-            border: '1px solid #e2e8f0',
-            borderRadius: '16px',
-            padding: '24px',
-            marginBottom: '30px'
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
-              <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800, color: '#0f172a' }}>
-                Your Unique Project Topic: {assignedProject.projectCode} — {details.title}
-              </h3>
-              <span style={{
-                background: '#dcfce7',
-                color: '#15803d',
-                fontWeight: 700,
-                fontSize: '0.75rem',
-                padding: '4px 10px',
-                borderRadius: '20px',
-                textTransform: 'uppercase'
-              }}>
-                Topic Allocated
-              </span>
-            </div>
-            
-            <p style={{ margin: '0 0 20px 0', fontSize: '0.925rem', color: '#475569', lineHeight: '1.6' }}>
-              {details.explanation}
-            </p>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '20px', marginTop: '16px' }}>
-              <div>
-                <strong style={{ display: 'block', fontSize: '0.85rem', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>
-                  Project Phases
-                </strong>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  {details.progression.map((phase, idx) => (
-                    <div key={idx} style={{ background: 'white', border: '1px solid #f1f5f9', padding: '12px 16px', borderRadius: '10px' }}>
-                      <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#0047ab', textTransform: 'uppercase' }}>{phase.level}</span>
-                      <h4 style={{ margin: '4px 0 2px 0', fontSize: '0.9rem', fontWeight: 700, color: '#1e293b' }}>{phase.title}</h4>
-                      <p style={{ margin: 0, fontSize: '0.8rem', color: '#64748b', lineHeight: '1.4' }}>{phase.content}</p>
-                    </div>
-                  ))}
+        const isRichProject = !!details.techStack;
+
+        return (
+          <>
+            {/* Sticky Fixed Header */}
+            <div style={{
+              position: 'sticky',
+              top: 0,
+              background: 'rgba(255, 255, 255, 0.96)',
+              backdropFilter: 'blur(8px)',
+              borderBottom: '1px solid #cbd5e1',
+              zIndex: 100,
+              margin: '-30px -30px 30px -30px',
+              padding: '20px 30px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              borderRadius: '16px 16px 0 0',
+              boxShadow: '0 4px 12px -2px rgba(0, 0, 0, 0.03)'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                <span style={{
+                  background: '#eff6ff',
+                  color: '#0047ab',
+                  fontWeight: 800,
+                  fontSize: '0.8rem',
+                  padding: '4px 10px',
+                  borderRadius: '6px',
+                  border: '1.5px solid #dbeafe'
+                }}>
+                  {assignedProject.projectCode}
+                </span>
+                <h2 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#0f172a', margin: 0, letterSpacing: '-0.5px' }}>
+                  {details.projectTitle || details.title}
+                </h2>
+                {details.difficulty && (
+                  <span style={{
+                    background: '#fef3c7',
+                    color: '#d97706',
+                    fontWeight: 700,
+                    fontSize: '0.75rem',
+                    padding: '2px 8px',
+                    borderRadius: '12px',
+                    textTransform: 'uppercase'
+                  }}>
+                    {details.difficulty}
+                  </span>
+                )}
+              </div>
+              <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                {capstoneSubmission && (
+                  <span style={{
+                    background: capstoneSubmission.status === 'accepted' ? '#d1fae5' : capstoneSubmission.status === 'rejected' ? '#fee2e2' : '#e0f2fe',
+                    color: capstoneSubmission.status === 'accepted' ? '#065f46' : capstoneSubmission.status === 'rejected' ? '#991b1b' : '#0369a1',
+                    fontWeight: 700,
+                    fontSize: '0.8rem',
+                    padding: '6px 14px',
+                    borderRadius: '8px'
+                  }}>
+                    {capstoneSubmission.status === 'accepted' ? 'Approved' : capstoneSubmission.status === 'rejected' ? 'Revision Needed' : 'Awaiting Grading'}
+                  </span>
+                )}
+                <button
+                  onClick={() => setShowSubmitModal(true)}
+                  style={{
+                    background: 'linear-gradient(135deg, #0047ab 0%, #002f80 100%)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '10px 20px',
+                    borderRadius: '10px',
+                    fontWeight: 700,
+                    fontSize: '0.85rem',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 10px rgba(0, 71, 171, 0.15)'
+                  }}
+                >
+                  {capstoneSubmission ? 'View / Resubmit' : 'Submit Project'}
+                </button>
+              </div>
+            </div>
+
+            {/* Submission Status Alert (At Top of Body Page) */}
+            {capstoneSubmission && (
+              <div style={{
+                borderRadius: '12px',
+                padding: '20px',
+                marginBottom: '30px',
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '12px',
+                background: capstoneSubmission.status === 'accepted' ? '#ecfdf5' : capstoneSubmission.status === 'rejected' ? '#fef2f2' : '#f0f9ff',
+                border: `1px solid ${capstoneSubmission.status === 'accepted' ? '#bbf7d0' : capstoneSubmission.status === 'rejected' ? '#fecaca' : '#bae6fd'}`
+              }}>
+                <div style={{ marginTop: '2px' }}>
+                  {capstoneSubmission.status === 'accepted' ? (
+                    <CheckCircle2 size={20} color="#10b981" />
+                  ) : capstoneSubmission.status === 'rejected' ? (
+                    <XCircle size={20} color="#ef4444" />
+                  ) : (
+                    <Clock size={20} color="#0284c7" />
+                  )}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <h4 style={{
+                    margin: 0,
+                    fontSize: '0.95rem',
+                    fontWeight: 700,
+                    color: capstoneSubmission.status === 'accepted' ? '#065f46' : capstoneSubmission.status === 'rejected' ? '#991b1b' : '#075985'
+                  }}>
+                    Submission Status: {
+                      capstoneSubmission.status === 'accepted' 
+                        ? 'Accepted & Approved' 
+                        : capstoneSubmission.status === 'rejected' 
+                        ? 'Revision Required' 
+                        : 'Pending Instructor Review'
+                    }
+                  </h4>
+                  {capstoneSubmission.feedback && (
+                    <p style={{
+                      margin: '8px 0 0',
+                      fontSize: '0.875rem',
+                      lineHeight: '1.5',
+                      color: capstoneSubmission.status === 'accepted' ? '#047857' : capstoneSubmission.status === 'rejected' ? '#b91c1c' : '#0369a1',
+                      whiteSpace: 'pre-wrap'
+                    }}>
+                      <strong>Instructor Feedback:</strong> {capstoneSubmission.feedback}
+                    </p>
+                  )}
+                  {capstoneSubmission.status === 'accepted' && (
+                    <p style={{ margin: '12px 0 0', fontSize: '0.85rem', fontWeight: 600, color: '#065f46' }}>
+                      🎉 Your certificate has been unlocked! Go to your Profile page to view and download it.
+                    </p>
+                  )}
                 </div>
               </div>
+            )}
 
-              <div style={{ background: 'white', border: '1px solid #e2e8f0', padding: '20px', borderRadius: '12px' }}>
-                <strong style={{ display: 'block', fontSize: '0.85rem', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '12px' }}>
-                  Implementation Standards & Best Practices
-                </strong>
-                <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '0.85rem', color: '#475569', lineHeight: '1.6' }}>
-                  {details.detailedReference.bestPractices.map((bp, idx) => (
-                    <li key={idx} style={{ marginBottom: '6px' }}>{bp}</li>
-                  ))}
-                </ul>
+            {isRichProject ? (
+              /* Rich Project Specifications Render Block */
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
+                
+                {/* Section 1: Overview, Problem Statement & Tech Stack */}
+                <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
+                  <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px' }}>
+                    <h3 style={{ margin: '0 0 12px 0', color: '#0f172a', fontWeight: 800, fontSize: '1.1rem' }}>Project Overview</h3>
+                    <p style={{ margin: 0, color: '#475569', fontSize: '0.925rem', lineHeight: '1.6' }}>{details.overview}</p>
+                    
+                    <h4 style={{ margin: '20px 0 10px 0', color: '#1e293b', fontWeight: 700, fontSize: '0.95rem' }}>Problem Statement</h4>
+                    <ul style={{ margin: 0, paddingLeft: '20px', color: '#475569', fontSize: '0.9rem', lineHeight: '1.6' }}>
+                      {details.problemStatement.map((prob, idx) => <li key={idx} style={{ marginBottom: '6px' }}>{prob}</li>)}
+                    </ul>
+                  </div>
+                  
+                  <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px' }}>
+                    <h3 style={{ margin: '0 0 12px 0', color: '#0f172a', fontWeight: 800, fontSize: '1.1rem' }}>Tech Stack</h3>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                      {details.techStack.map((tech, idx) => (
+                        <span key={idx} style={{
+                          background: '#eff6ff',
+                          color: '#0047ab',
+                          fontWeight: 700,
+                          fontSize: '0.75rem',
+                          padding: '4px 10px',
+                          borderRadius: '20px',
+                          border: '1.5px solid #dbeafe'
+                        }}>
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section 2: Objectives & Roles */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+                  <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px' }}>
+                    <h3 style={{ margin: '0 0 12px 0', color: '#0f172a', fontWeight: 800, fontSize: '1.1rem' }}>Project Objectives</h3>
+                    <ul style={{ margin: 0, paddingLeft: '20px', color: '#475569', fontSize: '0.9rem', lineHeight: '1.6' }}>
+                      {details.objectives.map((obj, idx) => <li key={idx} style={{ marginBottom: '6px' }}>{obj}</li>)}
+                    </ul>
+                  </div>
+
+                  <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px' }}>
+                    <h3 style={{ margin: '0 0 12px 0', color: '#0f172a', fontWeight: 800, fontSize: '1.1rem' }}>User Roles & Features</h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      {Object.keys(details.roles).map((role, idx) => (
+                        <div key={idx} style={{ background: 'white', border: '1px solid #f1f5f9', borderRadius: '10px', padding: '12px 16px' }}>
+                          <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#0047ab', textTransform: 'uppercase' }}>{role}</span>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '6px' }}>
+                            {details.roles[role].map((feat, fIdx) => (
+                              <span key={fIdx} style={{ background: '#f8fafc', color: '#475569', fontSize: '0.75rem', padding: '2px 8px', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+                                {feat}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section 3: Modules, Pages & Database Collections */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px' }}>
+                  <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '20px' }}>
+                    <h3 style={{ margin: '0 0 12px 0', color: '#0f172a', fontWeight: 800, fontSize: '1rem' }}>Modules</h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      {details.modules.map((m, idx) => (
+                        <div key={idx} style={{ background: 'white', padding: '8px 12px', borderRadius: '8px', fontSize: '0.825rem', color: '#475569', border: '1px solid #f1f5f9', fontWeight: 600 }}>
+                          {m}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '20px' }}>
+                    <h3 style={{ margin: '0 0 12px 0', color: '#0f172a', fontWeight: 800, fontSize: '1rem' }}>Pages Map</h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      {Object.keys(details.pages).map((pGroup, idx) => (
+                        <div key={idx}>
+                          <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase' }}>{pGroup} Pages</span>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '4px' }}>
+                            {details.pages[pGroup].map((page, pIdx) => (
+                              <span key={pIdx} style={{ background: 'white', color: '#475569', fontSize: '0.725rem', padding: '2px 6px', borderRadius: '4px', border: '1px solid #cbd5e1' }}>
+                                {page}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '20px' }}>
+                    <h3 style={{ margin: '0 0 12px 0', color: '#0f172a', fontWeight: 800, fontSize: '1rem' }}>DB Collections</h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      {details.databaseCollections.map((col, idx) => (
+                        <div key={idx} style={{ background: 'white', padding: '8px 12px', borderRadius: '8px', fontSize: '0.825rem', color: '#475569', border: '1px solid #f1f5f9', fontWeight: 600, display: 'flex', gap: '8px', alignItems: 'center' }}>
+                          <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#0047ab' }}></span>
+                          <span>{col}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section 4: Mandatory & Bonus Features */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '24px' }}>
+                  <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px' }}>
+                    <h3 style={{ margin: '0 0 16px 0', color: '#0f172a', fontWeight: 800, fontSize: '1.1rem' }}>Mandatory Features</h3>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                      {Object.keys(details.mandatoryFeatures).map((key, idx) => (
+                        <div key={idx} style={{ background: 'white', border: '1px solid #f1f5f9', padding: '14px', borderRadius: '12px' }}>
+                          <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#0047ab', textTransform: 'uppercase' }}>{key}</span>
+                          <ul style={{ margin: '8px 0 0 0', paddingLeft: '16px', fontSize: '0.8rem', color: '#64748b', lineHeight: '1.5' }}>
+                            {details.mandatoryFeatures[key].map((feat, fIdx) => <li key={fIdx}>{feat}</li>)}
+                          </ul>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px' }}>
+                    <h3 style={{ margin: '0 0 12px 0', color: '#0f172a', fontWeight: 800, fontSize: '1.1rem' }}>Bonus/Premium Features</h3>
+                    <ul style={{ margin: 0, paddingLeft: '20px', color: '#475569', fontSize: '0.9rem', lineHeight: '1.6' }}>
+                      {details.bonusFeatures.map((feat, idx) => <li key={idx} style={{ marginBottom: '6px' }}>{feat}</li>)}
+                    </ul>
+                  </div>
+                </div>
+
+                {/* Section 5: Timeline & Checklist */}
+                <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
+                  <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px' }}>
+                    <h3 style={{ margin: '0 0 16px 0', color: '#0f172a', fontWeight: 800, fontSize: '1.1rem' }}>Project Roadmap Timeline</h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      {Object.keys(details.timeline).map((day, idx) => (
+                        <div key={idx} style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                          <span style={{
+                            background: '#f1f5f9',
+                            color: '#475569',
+                            fontWeight: 800,
+                            fontSize: '0.7rem',
+                            padding: '3px 8px',
+                            borderRadius: '6px',
+                            minWidth: '70px',
+                            textAlign: 'center',
+                            textTransform: 'uppercase'
+                          }}>
+                            {day}
+                          </span>
+                          <p style={{ margin: 0, fontSize: '0.85rem', color: '#475569', lineHeight: '1.4' }}>{details.timeline[day]}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                    <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '20px' }}>
+                      <h3 style={{ margin: '0 0 12px 0', color: '#0f172a', fontWeight: 800, fontSize: '1rem' }}>Key Milestones</h3>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        {details.milestones.map((m, idx) => (
+                          <div key={idx} style={{ background: 'white', padding: '10px', borderRadius: '8px', border: '1px solid #f1f5f9' }}>
+                            <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#0047ab' }}>Day {m.day} Deliverable</span>
+                            <p style={{ margin: '2px 0 0 0', fontSize: '0.8rem', color: '#475569' }}>{m.deliverable}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '20px' }}>
+                      <h3 style={{ margin: '0 0 12px 0', color: '#0f172a', fontWeight: 800, fontSize: '1rem' }}>Submission Checklist</h3>
+                      <ul style={{ margin: 0, paddingLeft: '20px', color: '#475569', fontSize: '0.85rem', lineHeight: '1.6' }}>
+                        {details.submissionChecklist.map((item, idx) => <li key={idx} style={{ marginBottom: '4px' }}>{item}</li>)}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section 6: Evaluation Rubrics */}
+                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px' }}>
+                  <h3 style={{ margin: '0 0 16px 0', color: '#0f172a', fontWeight: 800, fontSize: '1.1rem' }}>Evaluation Rubrics (100 Marks)</h3>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '16px' }}>
+                    {Object.keys(details.evaluation).map((key, idx) => (
+                      <div key={idx} style={{ background: 'white', border: '1px solid #cbd5e1', padding: '14px 10px', borderRadius: '10px', textAlign: 'center' }}>
+                        <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', display: 'block', height: '32px', overflow: 'hidden' }}>{key.replace('_', ' ')}</span>
+                        <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0047ab', marginTop: '6px' }}>{details.evaluation[key]}%</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            ) : (
+              /* Backward Compatibility Specs Render Block (For normal simple project arrays) */
+              <div style={{
+                background: '#f8fafc',
+                border: '1px solid #e2e8f0',
+                borderRadius: '16px',
+                padding: '24px'
+              }}>
+                <p style={{ margin: '0 0 20px 0', fontSize: '0.925rem', color: '#475569', lineHeight: '1.6' }}>
+                  {details.explanation}
+                </p>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '20px', marginTop: '16px' }}>
+                  <div>
+                    <strong style={{ display: 'block', fontSize: '0.85rem', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>
+                      Project Phases
+                    </strong>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      {details.progression.map((phase, idx) => (
+                        <div key={idx} style={{ background: 'white', border: '1px solid #f1f5f9', padding: '12px 16px', borderRadius: '10px' }}>
+                          <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#0047ab', textTransform: 'uppercase' }}>{phase.level}</span>
+                          <h4 style={{ margin: '4px 0 2px 0', fontSize: '0.9rem', fontWeight: 700, color: '#1e293b' }}>{phase.title}</h4>
+                          <p style={{ margin: 0, fontSize: '0.8rem', color: '#64748b', lineHeight: '1.4' }}>{phase.content}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div style={{ background: 'white', border: '1px solid #e2e8f0', padding: '20px', borderRadius: '12px' }}>
+                    <strong style={{ display: 'block', fontSize: '0.85rem', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '12px' }}>
+                      Implementation Standards & Best Practices
+                    </strong>
+                    <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '0.85rem', color: '#475569', lineHeight: '1.6' }}>
+                      {details.detailedReference.bestPractices.map((bp, idx) => (
+                        <li key={idx} style={{ marginBottom: '6px' }}>{bp}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Submission Overlay Modal */}
+            {showSubmitModal && (
+              <div 
+                onClick={() => setShowSubmitModal(false)}
+                style={{
+                  position: 'fixed',
+                  top: 0,
+                  left: 0,
+                  width: '100vw',
+                  height: '100vh',
+                  zIndex: 9999,
+                  background: 'rgba(15, 23, 42, 0.4)',
+                  backdropFilter: 'blur(4px)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '20px',
+                  boxSizing: 'border-box'
+                }}
+              >
+                <div 
+                  onClick={(e) => e.stopPropagation()}
+                  style={{
+                    background: 'white',
+                    borderRadius: '24px',
+                    border: '1px solid #cbd5e1',
+                    width: '100%',
+                    maxWidth: '560px',
+                    maxHeight: '90vh',
+                    overflowY: 'auto',
+                    boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)',
+                    boxSizing: 'border-box'
+                  }}
+                >
+                  {/* Modal Header */}
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    borderBottom: '1px solid #f1f5f9',
+                    padding: '20px 24px',
+                    position: 'sticky',
+                    top: 0,
+                    background: 'white',
+                    zIndex: 1
+                  }}>
+                    <div>
+                      <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, color: '#0f172a' }}>
+                        Submit Capstone Project
+                      </h3>
+                      <span style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600 }}>
+                        Deliverable checklist items must be functional.
+                      </span>
+                    </div>
+                    <button 
+                      onClick={() => setShowSubmitModal(false)}
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.5rem', color: '#64748b', fontWeight: 'bold' }}
+                    >
+                      ×
+                    </button>
+                  </div>
+
+                  {/* Modal Body */}
+                  <div style={{ padding: '24px' }}>
+                    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                      <div>
+                        <label htmlFor="githubUrl" style={{ display: 'block', fontSize: '0.875rem', fontWeight: 700, color: '#334155', marginBottom: '8px' }}>
+                          GitHub Repository URL <span style={{ color: '#ef4444' }}>*</span>
+                        </label>
+                        <input
+                          type="url"
+                          id="githubUrl"
+                          placeholder="https://github.com/your-username/your-repo"
+                          value={githubUrl}
+                          onChange={(e) => setGithubUrl(e.target.value)}
+                          disabled={capstoneSubmission?.status === 'accepted' || submitting}
+                          style={{
+                            width: '100%',
+                            padding: '12px 16px',
+                            borderRadius: '8px',
+                            border: '1px solid #cbd5e1',
+                            fontSize: '0.9rem',
+                            outline: 'none',
+                            transition: 'border-color 0.2s',
+                            boxSizing: 'border-box'
+                          }}
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label htmlFor="liveUrl" style={{ display: 'block', fontSize: '0.875rem', fontWeight: 700, color: '#334155', marginBottom: '8px' }}>
+                          Live Deployment URL (e.g. Render, Firebase)
+                        </label>
+                        <input
+                          type="url"
+                          id="liveUrl"
+                          placeholder="https://your-app.web.app"
+                          value={liveUrl}
+                          onChange={(e) => setLiveUrl(e.target.value)}
+                          disabled={capstoneSubmission?.status === 'accepted' || submitting}
+                          style={{
+                            width: '100%',
+                            padding: '12px 16px',
+                            borderRadius: '8px',
+                            border: '1px solid #cbd5e1',
+                            fontSize: '0.9rem',
+                            outline: 'none',
+                            transition: 'border-color 0.2s',
+                            boxSizing: 'border-box'
+                          }}
+                        />
+                      </div>
+
+                      <div>
+                        <label htmlFor="description" style={{ display: 'block', fontSize: '0.875rem', fontWeight: 700, color: '#334155', marginBottom: '8px' }}>
+                          Project Summary & Architecture Overview
+                        </label>
+                        <textarea
+                          id="description"
+                          rows="4"
+                          placeholder="Brief summary of your project features, schema collections, third-party libraries..."
+                          value={description}
+                          onChange={(e) => setDescription(e.target.value)}
+                          disabled={capstoneSubmission?.status === 'accepted' || submitting}
+                          style={{
+                            width: '100%',
+                            padding: '12px 16px',
+                            borderRadius: '8px',
+                            border: '1px solid #cbd5e1',
+                            fontSize: '0.9rem',
+                            outline: 'none',
+                            boxSizing: 'border-box',
+                            resize: 'vertical'
+                          }}
+                        />
+                      </div>
+
+                      {capstoneSubmission?.status !== 'accepted' && (
+                        <button
+                          type="submit"
+                          disabled={submitting}
+                          style={{
+                            background: 'linear-gradient(135deg, #0047ab 0%, #002f80 100%)',
+                            color: 'white',
+                            border: 'none',
+                            padding: '14px 28px',
+                            borderRadius: '8px',
+                            fontSize: '1rem',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '8px',
+                            boxShadow: '0 4px 14px rgba(0, 71, 171, 0.2)',
+                            marginTop: '10px'
+                          }}
+                        >
+                          {submitting ? 'Submitting Project...' : 'Submit Capstone Project'}
+                        </button>
+                      )}
+                    </form>
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
         );
       })()}
-
-      {/* Submission Status Alert */}
-      {capstoneSubmission && (
-        <div style={{
-          borderRadius: '12px',
-          padding: '20px',
-          marginBottom: '24px',
-          display: 'flex',
-          alignItems: 'flex-start',
-          gap: '12px',
-          background: capstoneSubmission.status === 'accepted' 
-            ? '#ecfdf5' 
-            : capstoneSubmission.status === 'rejected' 
-            ? '#fef2f2' 
-            : '#f0f9ff',
-          border: `1px solid ${
-            capstoneSubmission.status === 'accepted' 
-              ? '#bbf7d0' 
-              : capstoneSubmission.status === 'rejected' 
-              ? '#fecaca' 
-              : '#bae6fd'
-          }`
-        }}>
-          <div style={{ marginTop: '2px' }}>
-            {capstoneSubmission.status === 'accepted' ? (
-              <CheckCircle2 size={20} color="#10b981" />
-            ) : capstoneSubmission.status === 'rejected' ? (
-              <XCircle size={20} color="#ef4444" />
-            ) : (
-              <Clock size={20} color="#0284c7" />
-            )}
-          </div>
-          <div style={{ flex: 1 }}>
-            <h4 style={{
-              margin: 0,
-              fontSize: '0.95rem',
-              fontWeight: 700,
-              color: capstoneSubmission.status === 'accepted' 
-                ? '#065f46' 
-                : capstoneSubmission.status === 'rejected' 
-                ? '#991b1b' 
-                : '#075985'
-            }}>
-              Submission Status: {
-                capstoneSubmission.status === 'accepted' 
-                  ? 'Accepted & Approved' 
-                  : capstoneSubmission.status === 'rejected' 
-                  ? 'Revision Required' 
-                  : 'Pending Instructor Review'
-              }
-            </h4>
-            {capstoneSubmission.feedback && (
-              <p style={{
-                margin: '8px 0 0',
-                fontSize: '0.875rem',
-                lineHeight: '1.5',
-                color: capstoneSubmission.status === 'accepted' 
-                  ? '#047857' 
-                  : capstoneSubmission.status === 'rejected' 
-                  ? '#b91c1c' 
-                  : '#0369a1',
-                whiteSpace: 'pre-wrap'
-              }}>
-                <strong>Instructor Feedback:</strong> {capstoneSubmission.feedback}
-              </p>
-            )}
-            {capstoneSubmission.status === 'accepted' && (
-              <p style={{
-                margin: '12px 0 0',
-                fontSize: '0.85rem',
-                fontWeight: 600,
-                color: '#065f46'
-              }}>
-                🎉 Your certificate has been unlocked! Go to your Profile page to view and download it.
-              </p>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Submission Form */}
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-        <div>
-          <label htmlFor="githubUrl" style={{ display: 'block', fontSize: '0.875rem', fontWeight: 700, color: '#334155', marginBottom: '8px' }}>
-            GitHub Repository URL <span style={{ color: '#ef4444' }}>*</span>
-          </label>
-          <div style={{ position: 'relative' }}>
-            <input
-              type="url"
-              id="githubUrl"
-              placeholder="https://github.com/your-username/your-repo"
-              value={githubUrl}
-              onChange={(e) => setGithubUrl(e.target.value)}
-              disabled={capstoneSubmission?.status === 'accepted' || submitting}
-              style={{
-                width: '100%',
-                padding: '12px 16px',
-                borderRadius: '8px',
-                border: '1px solid #cbd5e1',
-                fontSize: '0.9rem',
-                outline: 'none',
-                transition: 'border-color 0.2s',
-                boxSizing: 'border-box'
-              }}
-              required
-            />
-          </div>
-        </div>
-
-        <div>
-          <label htmlFor="liveUrl" style={{ display: 'block', fontSize: '0.875rem', fontWeight: 700, color: '#334155', marginBottom: '8px' }}>
-            Live Deployment URL (e.g. Render, Firebase, Netlify)
-          </label>
-          <input
-            type="url"
-            id="liveUrl"
-            placeholder="https://your-app.web.app"
-            value={liveUrl}
-            onChange={(e) => setLiveUrl(e.target.value)}
-            disabled={capstoneSubmission?.status === 'accepted' || submitting}
-            style={{
-              width: '100%',
-              padding: '12px 16px',
-              borderRadius: '8px',
-              border: '1px solid #cbd5e1',
-              fontSize: '0.9rem',
-              outline: 'none',
-              transition: 'border-color 0.2s',
-              boxSizing: 'border-box'
-            }}
-          />
-        </div>
-
-        <div>
-          <label htmlFor="description" style={{ display: 'block', fontSize: '0.875rem', fontWeight: 700, color: '#334155', marginBottom: '8px' }}>
-            Project Summary & Architecture Overview
-          </label>
-          <textarea
-            id="description"
-            rows="5"
-            placeholder="Provide a brief summary of your project features, schema models used, libraries, and challenges faced..."
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            disabled={capstoneSubmission?.status === 'accepted' || submitting}
-            style={{
-              width: '100%',
-              padding: '12px 16px',
-              borderRadius: '8px',
-              border: '1px solid #cbd5e1',
-              fontSize: '0.9rem',
-              outline: 'none',
-              transition: 'border-color 0.2s',
-              boxSizing: 'border-box',
-              resize: 'vertical'
-            }}
-          />
-        </div>
-
-        {capstoneSubmission?.status !== 'accepted' && (
-          <button
-            type="submit"
-            disabled={submitting}
-            style={{
-              background: 'linear-gradient(135deg, #0047ab 0%, #002f80 100%)',
-              color: 'white',
-              border: 'none',
-              padding: '14px 28px',
-              borderRadius: '8px',
-              fontSize: '1rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px',
-              boxShadow: '0 4px 14px rgba(0, 71, 171, 0.2)',
-              marginTop: '10px',
-              transition: 'transform 0.2s, box-shadow 0.2s'
-            }}
-          >
-            {submitting ? (
-              <span>Submitting Project...</span>
-            ) : (
-              <>
-                <ArrowUpRight size={18} />
-                <span>Submit Capstone Project</span>
-              </>
-            )}
-          </button>
-        )}
-      </form>
 
       {/* Local Snackbar */}
       {snackbar.visible && (
@@ -527,8 +791,7 @@ const FinalProjectSubmissionView = () => {
           alignItems: 'center',
           gap: '8px',
           fontSize: '0.9rem',
-          fontWeight: 600,
-          animation: 'slideUp 0.3s ease-out'
+          fontWeight: 600
         }}>
           {snackbar.type === 'success' ? <CheckCircle2 size={18} /> : <XCircle size={18} />}
           <span>{snackbar.message}</span>
