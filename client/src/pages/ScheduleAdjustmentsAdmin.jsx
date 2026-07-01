@@ -16,6 +16,9 @@ const ScheduleAdjustmentsAdmin = () => {
     const getDayNumber = (id) => {
       if (!id) return 1;
       const str = id.toString().trim().toLowerCase();
+      if (str === 'final-project-day' || str === 'final-project') {
+        return 43;
+      }
       if (/^\d+$/.test(str)) {
         return parseInt(str, 10);
       }

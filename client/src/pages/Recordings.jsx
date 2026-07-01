@@ -124,7 +124,7 @@ const Recordings = () => {
 
   // Timer logic for video engagement tracking
   useEffect(() => {
-    if (activeVideoUrl && activeDayData && !isAdmin) {
+    if (activeVideoUrl && activeDayData && !isAdmin && activeDayData.dayId !== 'final-project-day') {
       const hasAttended = myAttendance.some(
         a => a.dayId && normalizeDayId(a.dayId) === normalizeDayId(activeDayData.dayId)
       );
@@ -345,7 +345,7 @@ const Recordings = () => {
             </div>
             {/* Top Header Verification Tools on the right */}
             <div className="theater-header-right">
-              {activeDayData && !isAdmin && (
+              {activeDayData && !isAdmin && activeDayData.dayId !== 'final-project-day' && (
                 <div className="theater-tools-wrap">
                   {(() => {
                     const matchedAttendance = myAttendance.find(

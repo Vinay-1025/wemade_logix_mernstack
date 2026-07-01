@@ -26,6 +26,9 @@ const getCalendarDateForDay = (dayId) => {
   const getDayNumber = (id) => {
     if (!id) return 1;
     const str = id.toString().trim().toLowerCase();
+    if (str === 'final-project-day' || str === 'final-project') {
+      return 43;
+    }
     if (/^\d+$/.test(str)) {
       return parseInt(str, 10);
     }
@@ -167,6 +170,9 @@ const scanQR = async (req, res) => {
 
     // 2. Check if student already marked attendance for this course day
     const normalizedDayId = normalizeDayId(session.dayId);
+    if (normalizedDayId === 'final-project-day' || normalizedDayId === 'final-project') {
+      return res.status(403).json({ message: 'Final Project milestone attendance can only be marked by instructors/admins.' });
+    }
     const existingRecord = await AttendanceRecord.findOne({
       student: req.user._id,
       dayId: normalizedDayId,
@@ -443,6 +449,9 @@ const markRecordingAttendance = async (req, res) => {
   }
 
   const formattedDayId = normalizeDayId(dayId);
+  if (formattedDayId === 'final-project-day' || formattedDayId === 'final-project') {
+    return res.status(403).json({ message: 'Final Project milestone attendance can only be marked by instructors/admins.' });
+  }
 
   try {
     // 1. Check if student already marked attendance for this course day
