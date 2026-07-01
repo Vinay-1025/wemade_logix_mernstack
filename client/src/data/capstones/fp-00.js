@@ -163,40 +163,6 @@ export const fp00Data = {
     "Dark mode",
     "Activity logs"
   ],
-  timeline: {
-    "day1": "Requirement analysis, workflow understanding, GitHub repository",
-    "day2": "Project setup, React, Express, MongoDB configuration",
-    "day3": "Authentication with JWT and roles",
-    "day4": "Database schema and models",
-    "days5to7": "Core CRUD modules",
-    "days8to10": "Business workflow implementation",
-    "day11": "Dashboard, search, filter, pagination",
-    "day12": "Testing, validation, bug fixing",
-    "day13": "Deployment",
-    "day14": "Documentation, presentation, final submission"
-  },
-  milestones: [
-    {
-      "day": 3,
-      "deliverable": "Project setup and authentication completed"
-    },
-    {
-      "day": 7,
-      "deliverable": "Core CRUD modules completed"
-    },
-    {
-      "day": 10,
-      "deliverable": "Business workflow completed"
-    },
-    {
-      "day": 12,
-      "deliverable": "Testing and dashboard completed"
-    },
-    {
-      "day": 14,
-      "deliverable": "Final deployed project with documentation"
-    }
-  ],
   submissionChecklist: [
     "GitHub Repository",
     "Frontend URL",
@@ -206,19 +172,6 @@ export const fp00Data = {
     "Postman Collection",
     "Presentation",
     "Project Demo"
-  ],
-  evaluation: {
-    "UI_UX": 15,
-    "React": 15,
-    "Backend_APIs": 20,
-    "MongoDB": 15,
-    "Authentication": 10,
-    "CRUD": 10,
-    "Search_Filter_Pagination": 5,
-    "Validation_ErrorHandling": 5,
-    "Documentation_CodeQuality": 5,
-    "Demo_Viva": 10,
-    "Total": 100
-  }
+  ]
 };
 export default fp00Data;

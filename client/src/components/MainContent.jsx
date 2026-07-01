@@ -114,6 +114,7 @@ const FinalProjectSubmissionView = () => {
   const [completedModules, setCompletedModules] = useState([]);
   const [completedPages, setCompletedPages] = useState([]);
   const [completedCollections, setCompletedCollections] = useState([]);
+  const [uncheckReasons, setUncheckReasons] = useState({});
   const [savingProgress, setSavingProgress] = useState(false);
 
   // Fetch assigned unique capstone topic from backend
@@ -133,6 +134,7 @@ const FinalProjectSubmissionView = () => {
           setCompletedModules(prog.completedModules || []);
           setCompletedPages(prog.completedPages || []);
           setCompletedCollections(prog.completedCollections || []);
+          setUncheckReasons(prog.uncheckReasons || {});
         }
       } catch (err) {
         console.error('Error fetching assigned capstone project:', err);
@@ -205,7 +207,7 @@ const FinalProjectSubmissionView = () => {
     }
   };
 
-  const autoSaveProgress = async (modules, pages, collections) => {
+  const autoSaveProgress = async (modules, pages, collections, reasons) => {
     setSavingProgress(true);
     try {
       const user = JSON.parse(localStorage.getItem('user'));
@@ -215,7 +217,8 @@ const FinalProjectSubmissionView = () => {
       await axios.post('/api/capstone/progress', {
         completedModules: modules,
         completedPages: pages,
-        completedCollections: collections
+        completedCollections: collections,
+        uncheckReasons: reasons || {}
       }, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -227,27 +230,67 @@ const FinalProjectSubmissionView = () => {
   };
 
   const handleToggleModule = async (moduleName) => {
-    const updated = completedModules.includes(moduleName)
-      ? completedModules.filter(m => m !== moduleName)
-      : [...completedModules, moduleName];
-    setCompletedModules(updated);
-    await autoSaveProgress(updated, completedPages, completedCollections);
+    const isCurrentlyCompleted = completedModules.includes(moduleName);
+    const key = `module:${moduleName}`;
+    let updatedReasons = { ...uncheckReasons };
+    let updatedModules;
+
+    if (isCurrentlyCompleted) {
+      const reason = window.prompt(`Please enter the reason for unchecking Module "${moduleName}" (tutors will see this):`);
+      if (reason === null) return; // cancel uncheck
+      updatedReasons[key] = reason.trim() || "Incomplete/needs refactoring";
+      updatedModules = completedModules.filter(m => m !== moduleName);
+    } else {
+      delete updatedReasons[key];
+      updatedModules = [...completedModules, moduleName];
+    }
+
+    setCompletedModules(updatedModules);
+    setUncheckReasons(updatedReasons);
+    await autoSaveProgress(updatedModules, completedPages, completedCollections, updatedReasons);
   };
 
   const handleTogglePage = async (pageName) => {
-    const updated = completedPages.includes(pageName)
-      ? completedPages.filter(p => p !== pageName)
-      : [...completedPages, pageName];
-    setCompletedPages(updated);
-    await autoSaveProgress(completedModules, updated, completedCollections);
+    const isCurrentlyCompleted = completedPages.includes(pageName);
+    const label = pageName.split(':')[1] || pageName;
+    const key = `page:${pageName}`;
+    let updatedReasons = { ...uncheckReasons };
+    let updatedPages;
+
+    if (isCurrentlyCompleted) {
+      const reason = window.prompt(`Please enter the reason for unchecking Page "${label}" (tutors will see this):`);
+      if (reason === null) return; // cancel uncheck
+      updatedReasons[key] = reason.trim() || "Incomplete/needs refactoring";
+      updatedPages = completedPages.filter(p => p !== pageName);
+    } else {
+      delete updatedReasons[key];
+      updatedPages = [...completedPages, pageName];
+    }
+
+    setCompletedPages(updatedPages);
+    setUncheckReasons(updatedReasons);
+    await autoSaveProgress(completedModules, updatedPages, completedCollections, updatedReasons);
   };
 
   const handleToggleCollection = async (colName) => {
-    const updated = completedCollections.includes(colName)
-      ? completedCollections.filter(c => c !== colName)
-      : [...completedCollections, colName];
-    setCompletedCollections(updated);
-    await autoSaveProgress(completedModules, completedPages, updated);
+    const isCurrentlyCompleted = completedCollections.includes(colName);
+    const key = `collection:${colName}`;
+    let updatedReasons = { ...uncheckReasons };
+    let updatedCollections;
+
+    if (isCurrentlyCompleted) {
+      const reason = window.prompt(`Please enter the reason for unchecking DB Collection "${colName}" (tutors will see this):`);
+      if (reason === null) return; // cancel uncheck
+      updatedReasons[key] = reason.trim() || "Incomplete/needs refactoring";
+      updatedCollections = completedCollections.filter(c => c !== colName);
+    } else {
+      delete updatedReasons[key];
+      updatedCollections = [...completedCollections, colName];
+    }
+
+    setCompletedCollections(updatedCollections);
+    setUncheckReasons(updatedReasons);
+    await autoSaveProgress(completedModules, completedPages, updatedCollections, updatedReasons);
   };
 
   return (
@@ -732,65 +775,82 @@ const FinalProjectSubmissionView = () => {
                 </div>
 
                 {/* Section 5: Timeline & Checklist */}
-                <div className="capstone-grid-2-1">
-                  <div className="capstone-info-card">
-                    <h3 style={{ margin: '0 0 16px 0', color: '#0f172a', fontWeight: 800, fontSize: '1.1rem' }}>Project Roadmap Timeline</h3>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                      {Object.keys(details.timeline).map((day, idx) => (
-                        <div key={idx} style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                          <span style={{
-                            background: '#f1f5f9',
-                            color: '#475569',
-                            fontWeight: 800,
-                            fontSize: '0.7rem',
-                            padding: '3px 8px',
-                            borderRadius: '6px',
-                            minWidth: '70px',
-                            textAlign: 'center',
-                            textTransform: 'uppercase'
-                          }}>
-                            {day}
-                          </span>
-                          <p style={{ margin: 0, fontSize: '0.85rem', color: '#475569', lineHeight: '1.4' }}>{details.timeline[day]}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                    <div className="capstone-info-card compact">
-                      <h3 style={{ margin: '0 0 12px 0', color: '#0f172a', fontWeight: 800, fontSize: '1rem' }}>Key Milestones</h3>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                        {details.milestones.map((m, idx) => (
-                          <div key={idx} style={{ background: 'white', padding: '10px', borderRadius: '8px', border: '1px solid #f1f5f9' }}>
-                            <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#0047ab' }}>Day {m.day} Deliverable</span>
-                            <p style={{ margin: '2px 0 0 0', fontSize: '0.8rem', color: '#475569' }}>{m.deliverable}</p>
+                {details.timeline ? (
+                  <div className="capstone-grid-2-1">
+                    <div className="capstone-info-card">
+                      <h3 style={{ margin: '0 0 16px 0', color: '#0f172a', fontWeight: 800, fontSize: '1.1rem' }}>Project Roadmap Timeline</h3>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        {Object.keys(details.timeline).map((day, idx) => (
+                          <div key={idx} style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                            <span style={{
+                              background: '#f1f5f9',
+                              color: '#475569',
+                              fontWeight: 800,
+                              fontSize: '0.7rem',
+                              padding: '3px 8px',
+                              borderRadius: '6px',
+                              minWidth: '70px',
+                              textAlign: 'center',
+                              textTransform: 'uppercase'
+                            }}>
+                              {day}
+                            </span>
+                            <p style={{ margin: 0, fontSize: '0.85rem', color: '#475569', lineHeight: '1.4' }}>{details.timeline[day]}</p>
                           </div>
                         ))}
                       </div>
                     </div>
-                    
-                    <div className="capstone-info-card compact">
-                      <h3 style={{ margin: '0 0 12px 0', color: '#0f172a', fontWeight: 800, fontSize: '1rem' }}>Submission Checklist</h3>
-                      <ul style={{ margin: 0, paddingLeft: '20px', color: '#475569', fontSize: '0.85rem', lineHeight: '1.6' }}>
-                        {details.submissionChecklist.map((item, idx) => <li key={idx} style={{ marginBottom: '4px' }}>{item}</li>)}
-                      </ul>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                      {details.milestones && (
+                        <div className="capstone-info-card compact">
+                          <h3 style={{ margin: '0 0 12px 0', color: '#0f172a', fontWeight: 800, fontSize: '1rem' }}>Key Milestones</h3>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                            {details.milestones.map((m, idx) => (
+                              <div key={idx} style={{ background: 'white', padding: '10px', borderRadius: '8px', border: '1px solid #f1f5f9' }}>
+                                <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#0047ab' }}>Day {m.day} Deliverable</span>
+                                <p style={{ margin: '2px 0 0 0', fontSize: '0.8rem', color: '#475569' }}>{m.deliverable}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
+                      <div className="capstone-info-card compact">
+                        <h3 style={{ margin: '0 0 12px 0', color: '#0f172a', fontWeight: 800, fontSize: '1rem' }}>Submission Checklist</h3>
+                        <ul style={{ margin: 0, paddingLeft: '20px', color: '#475569', fontSize: '0.85rem', lineHeight: '1.6' }}>
+                          {details.submissionChecklist.map((item, idx) => <li key={idx} style={{ marginBottom: '4px' }}>{item}</li>)}
+                        </ul>
+                      </div>
                     </div>
                   </div>
-                </div>
+                ) : (
+                  details.submissionChecklist && (
+                    <div style={{ marginBottom: '24px' }}>
+                      <div className="capstone-info-card">
+                        <h3 style={{ margin: '0 0 12px 0', color: '#0f172a', fontWeight: 800, fontSize: '1.1rem' }}>Submission Checklist</h3>
+                        <ul style={{ margin: 0, paddingLeft: '20px', color: '#475569', fontSize: '0.9rem', lineHeight: '1.6' }}>
+                          {details.submissionChecklist.map((item, idx) => <li key={idx} style={{ marginBottom: '6px' }}>{item}</li>)}
+                        </ul>
+                      </div>
+                    </div>
+                  )
+                )}
 
                 {/* Section 6: Evaluation Rubrics */}
-                <div className="capstone-info-card">
-                  <h3 style={{ margin: '0 0 16px 0', color: '#0f172a', fontWeight: 800, fontSize: '1.1rem' }}>Evaluation Rubrics (100 Marks)</h3>
-                  <div className="capstone-grid-eval">
-                    {Object.keys(details.evaluation).map((key, idx) => (
-                      <div key={idx} style={{ background: 'white', border: '1px solid #cbd5e1', padding: '14px 10px', borderRadius: '10px', textAlign: 'center' }}>
-                        <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', display: 'block', height: '32px', overflow: 'hidden' }}>{key.replace('_', ' ')}</span>
-                        <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0047ab', marginTop: '6px' }}>{details.evaluation[key]}%</div>
-                      </div>
-                    ))}
+                {details.evaluation && (
+                  <div className="capstone-info-card" style={{ marginBottom: '24px' }}>
+                    <h3 style={{ margin: '0 0 16px 0', color: '#0f172a', fontWeight: 800, fontSize: '1.1rem' }}>Evaluation Rubrics (100 Marks)</h3>
+                    <div className="capstone-grid-eval">
+                      {Object.keys(details.evaluation).map((key, idx) => (
+                        <div key={idx} style={{ background: 'white', border: '1px solid #cbd5e1', padding: '14px 10px', borderRadius: '10px', textAlign: 'center' }}>
+                          <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', display: 'block', height: '32px', overflow: 'hidden' }}>{key.replace('_', ' ')}</span>
+                          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0047ab', marginTop: '6px' }}>{details.evaluation[key]}%</div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             ) : (
               /* Backward Compatibility Specs Render Block (For normal simple project arrays) */

@@ -196,7 +196,7 @@ const releaseCapstoneAllocation = async (req, res) => {
 // @route   POST /api/capstone/progress
 // @access  Private
 const updateCapstoneProgress = async (req, res) => {
-  const { completedModules, completedPages, completedCollections } = req.body;
+  const { completedModules, completedPages, completedCollections, uncheckReasons } = req.body;
 
   try {
     let project;
@@ -213,8 +213,12 @@ const updateCapstoneProgress = async (req, res) => {
     project.progress = {
       completedModules: completedModules || [],
       completedPages: completedPages || [],
-      completedCollections: completedCollections || []
+      completedCollections: completedCollections || [],
+      uncheckReasons: uncheckReasons || {}
     };
+
+    // Explicitly mark progress as modified because it contains a Mixed type (uncheckReasons Map/Object)
+    project.markModified('progress');
 
     await project.save();
 

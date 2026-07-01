@@ -752,10 +752,18 @@ const CapstonesAdmin = () => {
                                   <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', maxHeight: '150px', overflowY: 'auto', background: 'white', padding: '8px', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
                                     {regDetails.modules.map((m, idx) => {
                                       const checked = compModules.includes(m);
+                                      const reason = selectedProject.progress?.uncheckReasons?.[`module:${m}`];
                                       return (
-                                        <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '6px', opacity: checked ? 1 : 0.5 }}>
-                                          <span style={{ color: checked ? '#10b981' : '#94a3b8', fontWeight: 'bold' }}>{checked ? '✓' : '○'}</span>
-                                          <span style={{ textDecoration: checked ? 'line-through' : 'none', color: '#334155' }}>{m}</span>
+                                        <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '2px', opacity: checked ? 1 : 0.8 }}>
+                                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                            <span style={{ color: checked ? '#10b981' : '#94a3b8', fontWeight: 'bold' }}>{checked ? '✓' : '○'}</span>
+                                            <span style={{ textDecoration: checked ? 'line-through' : 'none', color: '#334155' }}>{m}</span>
+                                          </div>
+                                          {!checked && reason && (
+                                            <span style={{ fontSize: '0.7rem', color: '#b45309', background: '#fffbeb', border: '1px dashed #fcd34d', padding: '1px 5px', borderRadius: '4px', marginLeft: '14px', display: 'inline-block', width: 'fit-content' }}>
+                                              ⚠️ Reason: "{reason}"
+                                            </span>
+                                          )}
                                         </div>
                                       );
                                     })}
@@ -769,10 +777,18 @@ const CapstonesAdmin = () => {
                                   <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', maxHeight: '150px', overflowY: 'auto', background: 'white', padding: '8px', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
                                     {regDetails.databaseCollections.map((col, idx) => {
                                       const checked = compCollections.includes(col);
+                                      const reason = selectedProject.progress?.uncheckReasons?.[`collection:${col}`];
                                       return (
-                                        <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '6px', opacity: checked ? 1 : 0.5 }}>
-                                          <span style={{ color: checked ? '#10b981' : '#94a3b8', fontWeight: 'bold' }}>{checked ? '✓' : '○'}</span>
-                                          <span style={{ textDecoration: checked ? 'line-through' : 'none', color: '#334155' }}>{col}</span>
+                                        <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '2px', opacity: checked ? 1 : 0.8 }}>
+                                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                            <span style={{ color: checked ? '#10b981' : '#94a3b8', fontWeight: 'bold' }}>{checked ? '✓' : '○'}</span>
+                                            <span style={{ textDecoration: checked ? 'line-through' : 'none', color: '#334155' }}>{col}</span>
+                                          </div>
+                                          {!checked && reason && (
+                                            <span style={{ fontSize: '0.7rem', color: '#b45309', background: '#fffbeb', border: '1px dashed #fcd34d', padding: '1px 5px', borderRadius: '4px', marginLeft: '14px', display: 'inline-block', width: 'fit-content' }}>
+                                              ⚠️ Reason: "{reason}"
+                                            </span>
+                                          )}
                                         </div>
                                       );
                                     })}
@@ -887,12 +903,20 @@ const CapstonesAdmin = () => {
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', background: 'white', padding: '10px', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
                                   {regDetails.modules.map((m, idx) => {
                                     const checked = compModules.includes(m);
+                                    const reason = selectedProject.progress?.uncheckReasons?.[`module:${m}`];
                                     return (
-                                      <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                        <input type="checkbox" checked={checked} disabled style={{ margin: 0, width: '13px', height: '13px' }} />
-                                        <span style={{ textDecoration: checked ? 'line-through' : 'none', color: checked ? '#0f172a' : '#64748b', fontWeight: checked ? 600 : 'normal' }}>
-                                          {m}
-                                        </span>
+                                      <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                          <input type="checkbox" checked={checked} disabled style={{ margin: 0, width: '13px', height: '13px' }} />
+                                          <span style={{ textDecoration: checked ? 'line-through' : 'none', color: checked ? '#0f172a' : '#64748b', fontWeight: checked ? 600 : 'normal' }}>
+                                            {m}
+                                          </span>
+                                        </div>
+                                        {!checked && reason && (
+                                          <span style={{ fontSize: '0.7rem', color: '#b45309', background: '#fffbeb', border: '1px dashed #fcd34d', padding: '1px 5px', borderRadius: '4px', marginLeft: '21px', display: 'inline-block', width: 'fit-content' }}>
+                                            ⚠️ Reason: "{reason}"
+                                          </span>
+                                        )}
                                       </div>
                                     );
                                   })}
@@ -905,12 +929,20 @@ const CapstonesAdmin = () => {
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', background: 'white', padding: '10px', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
                                   {regDetails.databaseCollections.map((col, idx) => {
                                     const checked = compCollections.includes(col);
+                                    const reason = selectedProject.progress?.uncheckReasons?.[`collection:${col}`];
                                     return (
-                                      <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                        <input type="checkbox" checked={checked} disabled style={{ margin: 0, width: '13px', height: '13px' }} />
-                                        <span style={{ textDecoration: checked ? 'line-through' : 'none', color: checked ? '#0f172a' : '#64748b', fontWeight: checked ? 600 : 'normal' }}>
-                                          {col}
-                                        </span>
+                                      <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                          <input type="checkbox" checked={checked} disabled style={{ margin: 0, width: '13px', height: '13px' }} />
+                                          <span style={{ textDecoration: checked ? 'line-through' : 'none', color: checked ? '#0f172a' : '#64748b', fontWeight: checked ? 600 : 'normal' }}>
+                                            {col}
+                                          </span>
+                                        </div>
+                                        {!checked && reason && (
+                                          <span style={{ fontSize: '0.7rem', color: '#b45309', background: '#fffbeb', border: '1px dashed #fcd34d', padding: '1px 5px', borderRadius: '4px', marginLeft: '21px', display: 'inline-block', width: 'fit-content' }}>
+                                            ⚠️ Reason: "{reason}"
+                                          </span>
+                                        )}
                                       </div>
                                     );
                                   })}
@@ -926,16 +958,20 @@ const CapstonesAdmin = () => {
                                   regDetails.pages[pGroup].map((page, pIdx) => {
                                     const pageKey = `${pGroup}:${page}`;
                                     const checked = compPages.includes(pageKey);
+                                    const reason = selectedProject.progress?.uncheckReasons?.[`page:${pageKey}`];
                                     return (
                                       <span 
                                         key={pIdx} 
+                                        title={reason ? `⚠️ Uncheck Reason: "${reason}"` : undefined}
                                         style={{ 
                                           fontSize: '0.725rem', 
                                           padding: '3px 6px', 
                                           borderRadius: '4px', 
-                                          border: `1px solid ${checked ? '#bbf7d0' : '#cbd5e1'}`, 
-                                          background: checked ? '#ecfdf5' : 'white', 
-                                          color: checked ? '#065f46' : '#64748b',
+                                          border: reason 
+                                            ? '1.5px dashed #f59e0b' 
+                                            : `1px solid ${checked ? '#bbf7d0' : '#cbd5e1'}`, 
+                                          background: checked ? '#ecfdf5' : reason ? '#fffbeb' : 'white', 
+                                          color: checked ? '#065f46' : reason ? '#b45309' : '#64748b',
                                           display: 'inline-flex',
                                           alignItems: 'center',
                                           gap: '4px'

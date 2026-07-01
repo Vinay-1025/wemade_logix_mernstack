@@ -33,6 +33,10 @@ const capstonePoolSchema = new mongoose.Schema({
     completedCollections: {
       type: [String],
       default: []
+    },
+    uncheckReasons: {
+      type: mongoose.Schema.Types.Mixed,
+      default: {}
     }
   }
 }, {
