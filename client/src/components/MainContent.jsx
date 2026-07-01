@@ -236,22 +236,86 @@ const FinalProjectSubmissionView = () => {
 
         return (
           <>
+            {/* Responsive Styles Injection */}
+            <style dangerouslySetInnerHTML={{
+              __html: `
+              .capstone-sticky-header {
+                position: sticky;
+                top: 0;
+                background: rgba(255, 255, 255, 0.98);
+                backdrop-filter: blur(8px);
+                border-bottom: 1px solid #cbd5e1;
+                z-index: 100;
+                margin: -30px -30px 30px -30px;
+                padding: 20px 30px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-radius: 16px 16px 0 0;
+                box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.03);
+              }
+              .capstone-grid-2-1 {
+                display: grid;
+                grid-template-columns: 2fr 1fr;
+                gap: 24px;
+                margin-bottom: 24px;
+              }
+              .capstone-grid-1-1 {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 24px;
+                margin-bottom: 24px;
+              }
+              .capstone-grid-1-1-1 {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 20px;
+                margin-bottom: 24px;
+              }
+              .capstone-grid-15-1 {
+                display: grid;
+                grid-template-columns: 1.5fr 1fr;
+                gap: 24px;
+                margin-bottom: 24px;
+              }
+              .capstone-grid-eval {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+                gap: 16px;
+              }
+              @media (max-width: 768px) {
+                .capstone-sticky-header {
+                  flex-direction: column !important;
+                  align-items: flex-start !important;
+                  gap: 16px !important;
+                  padding: 16px 20px !important;
+                  margin: -30px -30px 20px -30px !important;
+                }
+                .capstone-header-actions {
+                  width: 100% !important;
+                  display: flex !important;
+                  justify-content: space-between !important;
+                  align-items: center !important;
+                  margin-top: 4px !important;
+                }
+                .capstone-grid-2-1,
+                .capstone-grid-1-1,
+                .capstone-grid-1-1-1,
+                .capstone-grid-15-1 {
+                  grid-template-columns: 1fr !important;
+                  gap: 16px !important;
+                  margin-bottom: 16px !important;
+                }
+                .capstone-grid-eval {
+                  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)) !important;
+                  gap: 10px !important;
+                }
+              }
+              `
+            }} />
+
             {/* Sticky Fixed Header */}
-            <div style={{
-              position: 'sticky',
-              top: 0,
-              background: 'rgba(255, 255, 255, 0.96)',
-              backdropFilter: 'blur(8px)',
-              borderBottom: '1px solid #cbd5e1',
-              zIndex: 100,
-              margin: '-30px -30px 30px -30px',
-              padding: '20px 30px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              borderRadius: '16px 16px 0 0',
-              boxShadow: '0 4px 12px -2px rgba(0, 0, 0, 0.03)'
-            }}>
+            <div className="capstone-sticky-header">
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
                 <span style={{
                   background: '#eff6ff',
@@ -281,7 +345,7 @@ const FinalProjectSubmissionView = () => {
                   </span>
                 )}
               </div>
-              <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+              <div className="capstone-header-actions" style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                 {capstoneSubmission && (
                   <span style={{
                     background: capstoneSubmission.status === 'accepted' ? '#d1fae5' : capstoneSubmission.status === 'rejected' ? '#fee2e2' : '#e0f2fe',
@@ -374,7 +438,7 @@ const FinalProjectSubmissionView = () => {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
                 
                 {/* Section 1: Overview, Problem Statement & Tech Stack */}
-                <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
+                <div className="capstone-grid-2-1">
                   <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px' }}>
                     <h3 style={{ margin: '0 0 12px 0', color: '#0f172a', fontWeight: 800, fontSize: '1.1rem' }}>Project Overview</h3>
                     <p style={{ margin: 0, color: '#475569', fontSize: '0.925rem', lineHeight: '1.6' }}>{details.overview}</p>
@@ -406,7 +470,7 @@ const FinalProjectSubmissionView = () => {
                 </div>
 
                 {/* Section 2: Objectives & Roles */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+                <div className="capstone-grid-1-1">
                   <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px' }}>
                     <h3 style={{ margin: '0 0 12px 0', color: '#0f172a', fontWeight: 800, fontSize: '1.1rem' }}>Project Objectives</h3>
                     <ul style={{ margin: 0, paddingLeft: '20px', color: '#475569', fontSize: '0.9rem', lineHeight: '1.6' }}>
@@ -434,7 +498,7 @@ const FinalProjectSubmissionView = () => {
                 </div>
 
                 {/* Section 3: Modules, Pages & Database Collections */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px' }}>
+                <div className="capstone-grid-1-1-1">
                   <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '20px' }}>
                     <h3 style={{ margin: '0 0 12px 0', color: '#0f172a', fontWeight: 800, fontSize: '1rem' }}>Modules</h3>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
@@ -478,7 +542,7 @@ const FinalProjectSubmissionView = () => {
                 </div>
 
                 {/* Section 4: Mandatory & Bonus Features */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '24px' }}>
+                <div className="capstone-grid-15-1">
                   <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px' }}>
                     <h3 style={{ margin: '0 0 16px 0', color: '#0f172a', fontWeight: 800, fontSize: '1.1rem' }}>Mandatory Features</h3>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
@@ -502,7 +566,7 @@ const FinalProjectSubmissionView = () => {
                 </div>
 
                 {/* Section 5: Timeline & Checklist */}
-                <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
+                <div className="capstone-grid-2-1">
                   <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px' }}>
                     <h3 style={{ margin: '0 0 16px 0', color: '#0f172a', fontWeight: 800, fontSize: '1.1rem' }}>Project Roadmap Timeline</h3>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -552,7 +616,7 @@ const FinalProjectSubmissionView = () => {
                 {/* Section 6: Evaluation Rubrics */}
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px' }}>
                   <h3 style={{ margin: '0 0 16px 0', color: '#0f172a', fontWeight: 800, fontSize: '1.1rem' }}>Evaluation Rubrics (100 Marks)</h3>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '16px' }}>
+                  <div className="capstone-grid-eval">
                     {Object.keys(details.evaluation).map((key, idx) => (
                       <div key={idx} style={{ background: 'white', border: '1px solid #cbd5e1', padding: '14px 10px', borderRadius: '10px', textAlign: 'center' }}>
                         <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', display: 'block', height: '32px', overflow: 'hidden' }}>{key.replace('_', ' ')}</span>
