@@ -294,6 +294,11 @@ const FinalProjectSubmissionView = () => {
                 grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
                 gap: 16px;
               }
+              .capstone-inner-grid-2 {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+              }
               @media (max-width: 768px) {
                 .capstone-submission-view {
                   padding: 12px !important;
@@ -333,6 +338,10 @@ const FinalProjectSubmissionView = () => {
                 .capstone-grid-eval {
                   grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)) !important;
                   gap: 8px !important;
+                }
+                .capstone-inner-grid-2 {
+                  grid-template-columns: 1fr !important;
+                  gap: 12px !important;
                 }
               }
               `
@@ -569,7 +578,7 @@ const FinalProjectSubmissionView = () => {
                 <div className="capstone-grid-15-1">
                   <div className="capstone-info-card">
                     <h3 style={{ margin: '0 0 16px 0', color: '#0f172a', fontWeight: 800, fontSize: '1.1rem' }}>Mandatory Features</h3>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                    <div className="capstone-inner-grid-2">
                       {Object.keys(details.mandatoryFeatures).map((key, idx) => (
                         <div key={idx} style={{ background: 'white', border: '1px solid #f1f5f9', padding: '14px', borderRadius: '12px' }}>
                           <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#0047ab', textTransform: 'uppercase' }}>{key}</span>
