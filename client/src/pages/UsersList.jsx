@@ -528,6 +528,12 @@ const UsersList = () => {
     }
   };
 
+  useEffect(() => {
+    if (activeDetailTab === 'capstone' && selectedUser) {
+      fetchDetailUserCapstone(selectedUser);
+    }
+  }, [activeDetailTab, selectedUser]);
+
   const getDayAssignmentTopic = (day) => {
     if (!day || !day.topics || day.topics.length === 0) return null;
     return day.topics.find(t => t.title.toLowerCase().includes('assignment'))
@@ -1750,7 +1756,7 @@ const UsersList = () => {
                       {/* Agile Kanban Tasks */}
                       <div className="detail-section-card">
                         <h3 style={{ margin: '0 0 14px 0', color: 'var(--app-text)', fontWeight: 800, fontSize: '1rem' }}>Sprint Kanban Board</h3>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px' }}>
                           {['todo', 'in_progress', 'done'].map(status => {
                             const cards = planner.filter(c => c.status === status);
                             const labelMap = { todo: 'To Do', in_progress: 'In Progress', done: 'Done' };

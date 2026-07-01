@@ -37,6 +37,7 @@ const CapstonesAdmin = () => {
   const [gradingLoading, setGradingLoading] = useState(false);
   const [modalTab, setModalTab] = useState('submission'); // 'submission' or 'spec'
   const [releaseConfirmId, setReleaseConfirmId] = useState(null);
+  const [loadingFreshProject, setLoadingFreshProject] = useState(false);
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
@@ -94,11 +95,36 @@ const CapstonesAdmin = () => {
     }
   };
 
+  const fetchFreshProjectDetails = async (project) => {
+    if (!currentUser?.token || !project?.assignedTo?._id) return;
+    setLoadingFreshProject(true);
+    try {
+      const config = { headers: { Authorization: `Bearer ${currentUser.token}` } };
+      const { data } = await axios.get(`/api/capstone/my?studentId=${project.assignedTo._id}`, config);
+      if (data?.success && data.project) {
+        setSelectedProject(data.project);
+        setCapstoneList(prevList => 
+          prevList.map(item => item._id === data.project._id ? data.project : item)
+        );
+      }
+    } catch (e) {
+      console.error("Error fetching fresh capstone details:", e);
+    } finally {
+      setLoadingFreshProject(false);
+    }
+  };
+
   useEffect(() => {
     if (currentUser?.token) {
       fetchCapstoneStatus();
     }
   }, [currentUser]);
+
+  useEffect(() => {
+    if (selectedProject && selectedProject.assignedTo) {
+      fetchFreshProjectDetails(selectedProject);
+    }
+  }, [modalTab]);
 
   const handleRelease = async (projectCode) => {
     if (!currentUser?.token) return;
@@ -443,6 +469,7 @@ const CapstonesAdmin = () => {
                               onClick={() => { 
                                 setSelectedProject(project); 
                                 setModalTab(project.submission ? 'submission' : 'spec'); 
+                                fetchFreshProjectDetails(project);
                               }}
                               style={{ 
                                 borderBottom: '1px solid #f1f5f9', 
@@ -491,6 +518,7 @@ const CapstonesAdmin = () => {
                                         setReleaseConfirmId(null);
                                         setSelectedProject(project);
                                         setModalTab('submission');
+                                        fetchFreshProjectDetails(project);
                                       }}
                                       style={{
                                         background: 'linear-gradient(135deg, #0047ab 0%, #002f80 100%)',
@@ -819,8 +847,11 @@ const CapstonesAdmin = () => {
 
             {/* Title & Profile Detail */}
             <div>
-              <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: '#0f172a', margin: '0 0 8px 0' }}>
+              <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: '#0f172a', margin: '0 0 8px 0', display: 'flex', alignItems: 'center', gap: '10px' }}>
                 {selectedProject.title}
+                {loadingFreshProject && (
+                  <span className="spinner-mini" style={{ width: '18px', height: '18px', border: '2px solid rgba(0,71,171,0.1)', borderTopColor: '#0047ab', borderRadius: '50%', display: 'inline-block' }} />
+                )}
               </h2>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.9rem' }}>
                 {selectedProject.assignedTo ? (
@@ -1495,7 +1526,7 @@ const CapstonesAdmin = () => {
                   return (
                     <div style={{ background: '#f8fafc', padding: '20px', borderRadius: '16px', border: '1px solid #cbd5e1' }}>
                       <h4 style={{ margin: '0 0 14px 0', color: '#0f172a', fontWeight: 800, fontSize: '1rem' }}>Sprint Kanban Board</h4>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px' }}>
                         {['todo', 'in_progress', 'done'].map(status => {
                           const cards = planner.filter(c => c.status === status);
                           const labelMap = { todo: 'To Do', in_progress: 'In Progress', done: 'Done' };

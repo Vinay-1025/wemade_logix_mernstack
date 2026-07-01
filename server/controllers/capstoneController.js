@@ -340,9 +340,7 @@ const deleteCustomTask = async (req, res) => {
     if (!project.progress) project.progress = {};
     if (!project.progress.customChecklist) project.progress.customChecklist = [];
 
-    project.progress.customChecklist = project.progress.customChecklist.filter(
-      item => item._id.toString() !== taskId
-    );
+    project.progress.customChecklist.pull(taskId);
     project.markModified('progress');
     await project.save();
 
@@ -436,7 +434,7 @@ const deletePlannerCard = async (req, res) => {
 
     if (!project.planner) project.planner = [];
 
-    project.planner = project.planner.filter(card => card._id && card._id.toString() !== cardId);
+    project.planner.pull(cardId);
     await project.save();
 
     res.status(200).json({ success: true, project });
@@ -488,7 +486,7 @@ const deleteTimesheetLog = async (req, res) => {
 
     if (!project.timesheet) project.timesheet = [];
 
-    project.timesheet = project.timesheet.filter(log => log._id && log._id.toString() !== logId);
+    project.timesheet.pull(logId);
     await project.save();
 
     res.status(200).json({ success: true, project });

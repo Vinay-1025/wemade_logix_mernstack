@@ -149,6 +149,7 @@ const FinalProjectSubmissionView = () => {
   const [plannerSubmitting, setPlannerSubmitting] = useState(false);
   const [timesheetSubmitting, setTimesheetSubmitting] = useState(false);
   const [customSubmitting, setCustomSubmitting] = useState(false);
+  const [updatingCardId, setUpdatingCardId] = useState(null);
 
   // Workspace Addon handlers
   const handleAddCustomTask = async (e) => {
@@ -192,6 +193,7 @@ const FinalProjectSubmissionView = () => {
   };
 
   const handleDeleteCustomTask = async (taskId) => {
+    if (!window.confirm("Are you sure you want to remove this custom task?")) return;
     try {
       const user = JSON.parse(localStorage.getItem('user'));
       const token = user?.token;
@@ -236,6 +238,7 @@ const FinalProjectSubmissionView = () => {
   };
 
   const handleUpdateCardStatus = async (cardId, newStatus) => {
+    setUpdatingCardId(cardId);
     try {
       const user = JSON.parse(localStorage.getItem('user'));
       const token = user?.token;
@@ -247,10 +250,13 @@ const FinalProjectSubmissionView = () => {
       }
     } catch (err) {
       showSnackbar(err.response?.data?.message || 'Error updating planner card', 'error');
+    } finally {
+      setUpdatingCardId(null);
     }
   };
 
   const handleDeletePlannerCard = async (cardId) => {
+    if (!window.confirm("Are you sure you want to delete this planner card?")) return;
     try {
       const user = JSON.parse(localStorage.getItem('user'));
       const token = user?.token;
@@ -292,6 +298,7 @@ const FinalProjectSubmissionView = () => {
   };
 
   const handleDeleteTimesheetLog = async (logId) => {
+    if (!window.confirm("Are you sure you want to delete this timesheet log entry?")) return;
     try {
       const user = JSON.parse(localStorage.getItem('user'));
       const token = user?.token;
@@ -1398,7 +1405,7 @@ const FinalProjectSubmissionView = () => {
                 </form>
 
                 {/* Kanban Columns Grid */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', minHeight: '400px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', minHeight: '400px' }}>
                   {[
                     { id: 'todo', label: 'To Do', color: '#64748b', bg: '#f1f5f9' },
                     { id: 'in_progress', label: 'In Progress', color: '#0284c7', bg: '#e0f2fe' },
@@ -1466,25 +1473,32 @@ const FinalProjectSubmissionView = () => {
                                   )}
                                 </div>
                                 {/* Column Switcher Dropdown */}
-                                <select
-                                  value={card.status}
-                                  onChange={(e) => handleUpdateCardStatus(card._id, e.target.value)}
-                                  style={{
-                                    marginTop: '8px',
-                                    padding: '6px 10px',
-                                    borderRadius: '6px',
-                                    border: '1px solid var(--app-border)',
-                                    background: 'var(--app-card-bg)',
-                                    color: 'var(--app-text)',
-                                    fontSize: '0.75rem',
-                                    cursor: 'pointer',
-                                    fontWeight: 700
-                                  }}
-                                >
-                                  <option value="todo">Move to To Do</option>
-                                  <option value="in_progress">Move to In Progress</option>
-                                  <option value="done">Move to Done</option>
-                                </select>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
+                                  <select
+                                    value={card.status}
+                                    onChange={(e) => handleUpdateCardStatus(card._id, e.target.value)}
+                                    disabled={updatingCardId === card._id}
+                                    style={{
+                                      padding: '6px 10px',
+                                      borderRadius: '6px',
+                                      border: '1px solid var(--app-border)',
+                                      background: 'var(--app-card-bg)',
+                                      color: 'var(--app-text)',
+                                      fontSize: '0.75rem',
+                                      cursor: updatingCardId === card._id ? 'not-allowed' : 'pointer',
+                                      opacity: updatingCardId === card._id ? 0.7 : 1,
+                                      fontWeight: 700,
+                                      flex: 1
+                                    }}
+                                  >
+                                    <option value="todo">Move to To Do</option>
+                                    <option value="in_progress">Move to In Progress</option>
+                                    <option value="done">Move to Done</option>
+                                  </select>
+                                  {updatingCardId === card._id && (
+                                    <span className="spinner-mini" style={{ width: '12px', height: '12px', border: '1.5px solid rgba(0,0,0,0.1)', borderTopColor: '#0047ab', borderRadius: '50%', display: 'inline-block' }} />
+                                  )}
+                                </div>
                               </div>
                             ))
                           )}
@@ -1499,7 +1513,7 @@ const FinalProjectSubmissionView = () => {
             {/* Work Timesheet Log View */}
             {activeCapstoneTab === 'timesheet' && (
               <div className="capstone-timesheet-view" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '24px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px' }}>
                   {/* Left Column: Form & Summary Stats */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                     {/* Summary Stats */}
