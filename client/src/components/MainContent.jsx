@@ -112,9 +112,15 @@ const FinalProjectSubmissionView = () => {
 
   // Fetch assigned unique capstone topic from backend
   useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user?.role === 'admin' || user?.role === 'superadmin') {
+      setAssignedProject({ projectCode: 'FP-00', title: 'MERN Sandbox & Reference Template' });
+      setAssignedLoading(false);
+      return;
+    }
+
     const fetchAssignedProject = async () => {
       try {
-        const user = JSON.parse(localStorage.getItem('user'));
         const token = user?.token;
         if (!token) return;
         

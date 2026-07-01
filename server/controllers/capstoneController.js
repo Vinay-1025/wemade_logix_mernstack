@@ -2,12 +2,13 @@ const CapstonePool = require('../models/CapstonePool');
 const Assignment = require('../models/Assignment');
 const logAction = require('../utils/auditLogger');
 
-// @desc    Seed 32 Capstone projects on startup if pool is empty
+// @desc    Seed Capstone projects on startup if pool is empty or missing FP-00
 const seedCapstonePool = async () => {
   try {
     const count = await CapstonePool.countDocuments({});
     if (count === 0) {
       const projects = [
+        { projectCode: "FP-00", title: "MERN Sandbox & Reference Template" },
         { projectCode: "FP-01", title: "E-Commerce Marketplace Platform" },
         { projectCode: "FP-02", title: "Healthcare Booking & Consultation Portal" },
         { projectCode: "FP-03", title: "Real-Time Collaborative Project Board" },
@@ -42,7 +43,14 @@ const seedCapstonePool = async () => {
         { projectCode: "FP-32", title: "Online Art Gallery & Artist Portfolio Studio" }
       ];
       await CapstonePool.insertMany(projects);
-      console.log('[Seed] 32 Capstone Projects seeded successfully.');
+      console.log('[Seed] 33 Capstone Projects seeded successfully.');
+    } else {
+      // Make sure FP-00 is seeded in existing databases
+      const fp00Exists = await CapstonePool.findOne({ projectCode: 'FP-00' });
+      if (!fp00Exists) {
+        await CapstonePool.create({ projectCode: 'FP-00', title: 'MERN Sandbox & Reference Template' });
+        console.log('[Seed] Seeded missing FP-00 reference project.');
+      }
     }
   } catch (err) {
     console.error('[Seed] Capstone seeding error:', err);
@@ -58,8 +66,8 @@ const getMyAssignedProject = async (req, res) => {
     let project = await CapstonePool.findOne({ assignedTo: req.user._id });
     
     if (!project) {
-      // Find an available project that is not assigned to anyone
-      const availableProject = await CapstonePool.findOne({ assignedTo: null });
+      // Find an available project that is not assigned to anyone, excluding FP-00 sandbox
+      const availableProject = await CapstonePool.findOne({ assignedTo: null, projectCode: { $ne: 'FP-00' } });
       
       if (!availableProject) {
         return res.status(400).json({ 
@@ -105,7 +113,8 @@ const getMyAssignedProject = async (req, res) => {
 // @access  Private (Admin/SuperAdmin)
 const getAdminCapstones = async (req, res) => {
   try {
-    const list = await CapstonePool.find({})
+    // Exclude FP-00 template from normal allocation lists
+    const list = await CapstonePool.find({ projectCode: { $ne: 'FP-00' } })
       .populate('assignedTo', 'name email')
       .lean();
 

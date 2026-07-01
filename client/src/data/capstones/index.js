@@ -1,3 +1,4 @@
+import { fp00Data } from './fp-00.js';
 import { fp01Data } from './fp-01.js';
 import { fp02Data } from './fp-02.js';
 import { fp03Data } from './fp-03.js';
@@ -32,6 +33,7 @@ import { fp31Data } from './fp-31.js';
 import { fp32Data } from './fp-32.js';
 
 export const capstoneRegistry = {
+  "FP-00": fp00Data,
   "FP-01": fp01Data,
   "FP-02": fp02Data,
   "FP-03": fp03Data,
