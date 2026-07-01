@@ -116,6 +116,14 @@ const FinalProjectSubmissionView = () => {
   const [completedCollections, setCompletedCollections] = useState([]);
   const [uncheckReasons, setUncheckReasons] = useState({});
   const [savingProgress, setSavingProgress] = useState(false);
+  const [uncheckConfirmModal, setUncheckConfirmModal] = useState({
+    isOpen: false,
+    itemKey: '',
+    itemLabel: '',
+    category: '',
+    reason: '',
+    onConfirm: null
+  });
 
   // Fetch assigned unique capstone topic from backend
   useEffect(() => {
@@ -236,18 +244,28 @@ const FinalProjectSubmissionView = () => {
     let updatedModules;
 
     if (isCurrentlyCompleted) {
-      const reason = window.prompt(`Please enter the reason for unchecking Module "${moduleName}" (tutors will see this):`);
-      if (reason === null) return; // cancel uncheck
-      updatedReasons[key] = reason.trim() || "Incomplete/needs refactoring";
-      updatedModules = completedModules.filter(m => m !== moduleName);
+      setUncheckConfirmModal({
+        isOpen: true,
+        itemKey: key,
+        itemLabel: moduleName,
+        category: 'Module',
+        reason: '',
+        onConfirm: async (enteredReason) => {
+          const text = enteredReason.trim() || "Incomplete/needs refactoring";
+          const newReasons = { ...uncheckReasons, [key]: text };
+          const newModules = completedModules.filter(m => m !== moduleName);
+          setCompletedModules(newModules);
+          setUncheckReasons(newReasons);
+          await autoSaveProgress(newModules, completedPages, completedCollections, newReasons);
+        }
+      });
     } else {
       delete updatedReasons[key];
       updatedModules = [...completedModules, moduleName];
+      setCompletedModules(updatedModules);
+      setUncheckReasons(updatedReasons);
+      await autoSaveProgress(updatedModules, completedPages, completedCollections, updatedReasons);
     }
-
-    setCompletedModules(updatedModules);
-    setUncheckReasons(updatedReasons);
-    await autoSaveProgress(updatedModules, completedPages, completedCollections, updatedReasons);
   };
 
   const handleTogglePage = async (pageName) => {
@@ -258,18 +276,28 @@ const FinalProjectSubmissionView = () => {
     let updatedPages;
 
     if (isCurrentlyCompleted) {
-      const reason = window.prompt(`Please enter the reason for unchecking Page "${label}" (tutors will see this):`);
-      if (reason === null) return; // cancel uncheck
-      updatedReasons[key] = reason.trim() || "Incomplete/needs refactoring";
-      updatedPages = completedPages.filter(p => p !== pageName);
+      setUncheckConfirmModal({
+        isOpen: true,
+        itemKey: key,
+        itemLabel: label,
+        category: 'Page',
+        reason: '',
+        onConfirm: async (enteredReason) => {
+          const text = enteredReason.trim() || "Incomplete/needs refactoring";
+          const newReasons = { ...uncheckReasons, [key]: text };
+          const newPages = completedPages.filter(p => p !== pageName);
+          setCompletedPages(newPages);
+          setUncheckReasons(newReasons);
+          await autoSaveProgress(completedModules, newPages, completedCollections, newReasons);
+        }
+      });
     } else {
       delete updatedReasons[key];
       updatedPages = [...completedPages, pageName];
+      setCompletedPages(updatedPages);
+      setUncheckReasons(updatedReasons);
+      await autoSaveProgress(completedModules, updatedPages, completedCollections, updatedReasons);
     }
-
-    setCompletedPages(updatedPages);
-    setUncheckReasons(updatedReasons);
-    await autoSaveProgress(completedModules, updatedPages, completedCollections, updatedReasons);
   };
 
   const handleToggleCollection = async (colName) => {
@@ -279,18 +307,28 @@ const FinalProjectSubmissionView = () => {
     let updatedCollections;
 
     if (isCurrentlyCompleted) {
-      const reason = window.prompt(`Please enter the reason for unchecking DB Collection "${colName}" (tutors will see this):`);
-      if (reason === null) return; // cancel uncheck
-      updatedReasons[key] = reason.trim() || "Incomplete/needs refactoring";
-      updatedCollections = completedCollections.filter(c => c !== colName);
+      setUncheckConfirmModal({
+        isOpen: true,
+        itemKey: key,
+        itemLabel: colName,
+        category: 'DB Collection',
+        reason: '',
+        onConfirm: async (enteredReason) => {
+          const text = enteredReason.trim() || "Incomplete/needs refactoring";
+          const newReasons = { ...uncheckReasons, [key]: text };
+          const newCollections = completedCollections.filter(c => c !== colName);
+          setCompletedCollections(newCollections);
+          setUncheckReasons(newReasons);
+          await autoSaveProgress(completedModules, completedPages, newCollections, newReasons);
+        }
+      });
     } else {
       delete updatedReasons[key];
       updatedCollections = [...completedCollections, colName];
+      setCompletedCollections(updatedCollections);
+      setUncheckReasons(updatedReasons);
+      await autoSaveProgress(completedModules, completedPages, updatedCollections, updatedReasons);
     }
-
-    setCompletedCollections(updatedCollections);
-    setUncheckReasons(updatedReasons);
-    await autoSaveProgress(completedModules, completedPages, updatedCollections, updatedReasons);
   };
 
   return (
@@ -318,6 +356,95 @@ const FinalProjectSubmissionView = () => {
 
         return (
           <>
+            {uncheckConfirmModal.isOpen && (
+              <div style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                width: '100vw',
+                height: '100vh',
+                zIndex: 99999,
+                background: 'rgba(15, 23, 42, 0.4)',
+                backdropFilter: 'blur(4px)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '20px'
+              }}>
+                <div style={{
+                  background: 'white',
+                  borderRadius: '20px',
+                  border: '1px solid #cbd5e1',
+                  padding: '24px',
+                  width: '100%',
+                  maxWidth: '420px',
+                  boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)',
+                  boxSizing: 'border-box'
+                }} onClick={(e) => e.stopPropagation()}>
+                  <h4 style={{ margin: '0 0 8px 0', fontSize: '1.1rem', fontWeight: 800, color: '#0f172a' }}>
+                    Confirm Reopening Task
+                  </h4>
+                  <p style={{ margin: '0 0 16px 0', fontSize: '0.85rem', color: '#64748b', lineHeight: '1.4' }}>
+                    You are unchecking the {uncheckConfirmModal.category} <strong>"{uncheckConfirmModal.itemLabel}"</strong>. Please provide a reason to inform your instructors.
+                  </p>
+                  <textarea
+                    rows="3"
+                    placeholder="e.g. Needs code refactoring / DB schema changes required..."
+                    value={uncheckConfirmModal.reason}
+                    onChange={(e) => setUncheckConfirmModal({ ...uncheckConfirmModal, reason: e.target.value })}
+                    style={{
+                      width: '100%',
+                      padding: '10px',
+                      borderRadius: '8px',
+                      border: '1px solid #cbd5e1',
+                      fontSize: '0.85rem',
+                      outline: 'none',
+                      resize: 'none',
+                      boxSizing: 'border-box',
+                      fontFamily: 'inherit',
+                      marginBottom: '16px'
+                    }}
+                  />
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+                    <button
+                      onClick={() => setUncheckConfirmModal({ ...uncheckConfirmModal, isOpen: false })}
+                      style={{
+                        background: '#f1f5f9',
+                        color: '#475569',
+                        border: '1px solid #cbd5e1',
+                        padding: '8px 16px',
+                        borderRadius: '8px',
+                        fontSize: '0.8rem',
+                        fontWeight: 700,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={() => {
+                        uncheckConfirmModal.onConfirm(uncheckConfirmModal.reason);
+                        setUncheckConfirmModal({ ...uncheckConfirmModal, isOpen: false });
+                      }}
+                      style={{
+                        background: '#dc2626',
+                        color: 'white',
+                        border: 'none',
+                        padding: '8px 16px',
+                        borderRadius: '8px',
+                        fontSize: '0.8rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        boxShadow: '0 4px 6px -1px rgba(220, 38, 38, 0.15)'
+                      }}
+                    >
+                      Confirm Reopen
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Responsive Styles Injection */}
             <style dangerouslySetInnerHTML={{
               __html: `
