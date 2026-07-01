@@ -34,6 +34,7 @@ const CapstonesAdmin = () => {
   const [feedback, setFeedback] = useState('');
   const [gradingLoading, setGradingLoading] = useState(false);
   const [modalTab, setModalTab] = useState('submission'); // 'submission' or 'spec'
+  const [releaseConfirmId, setReleaseConfirmId] = useState(null);
   
   // Notification states (Snackbar)
   const [snackbar, setSnackbar] = useState({ open: false, message: '', type: 'success' });
@@ -68,8 +69,6 @@ const CapstonesAdmin = () => {
 
   const handleRelease = async (projectCode) => {
     if (!currentUser?.token) return;
-    const confirm = window.confirm(`Are you sure you want to release Capstone Project ${projectCode}? This will remove the student's unique allocation and return the project back to the available pool.`);
-    if (!confirm) return;
 
     try {
       const response = await axios.post('/api/capstone/admin/release', 
@@ -394,11 +393,12 @@ const CapstonesAdmin = () => {
                                 })()}
                               </td>
                               <td style={{ padding: '20px 24px', textAlign: 'right' }}>
-                                <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                                <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', position: 'relative' }}>
                                   {project.submission && (
                                     <button
                                       onClick={(e) => {
                                         e.stopPropagation();
+                                        setReleaseConfirmId(null);
                                         setSelectedProject(project);
                                         setModalTab('submission');
                                       }}
@@ -419,7 +419,7 @@ const CapstonesAdmin = () => {
                                   <button
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      handleRelease(project.projectCode);
+                                      setReleaseConfirmId(releaseConfirmId === project._id ? null : project._id);
                                     }}
                                     style={{
                                       background: '#fef2f2',
@@ -434,6 +434,72 @@ const CapstonesAdmin = () => {
                                   >
                                     Release
                                   </button>
+
+                                  {releaseConfirmId === project._id && (
+                                    <div 
+                                      onClick={(e) => e.stopPropagation()}
+                                      style={{
+                                        position: 'absolute',
+                                        right: '0',
+                                        top: '100%',
+                                        marginTop: '8px',
+                                        background: 'white',
+                                        border: '1px solid #cbd5e1',
+                                        borderRadius: '12px',
+                                        padding: '12px 16px',
+                                        boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)',
+                                        zIndex: 10,
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        gap: '8px',
+                                        minWidth: '220px',
+                                        textAlign: 'left'
+                                      }}
+                                    >
+                                      <span style={{ fontSize: '0.8rem', color: '#1e293b', fontWeight: 600, whiteSpace: 'normal', lineHeight: '1.4' }}>
+                                        Release Capstone Project? This clears student progress.
+                                      </span>
+                                      <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                                        <button 
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            setReleaseConfirmId(null);
+                                          }}
+                                          style={{
+                                            padding: '6px 12px',
+                                            borderRadius: '6px',
+                                            border: '1px solid #cbd5e1',
+                                            background: '#f8fafc',
+                                            color: '#64748b',
+                                            fontSize: '0.75rem',
+                                            fontWeight: 700,
+                                            cursor: 'pointer'
+                                          }}
+                                        >
+                                          No
+                                        </button>
+                                        <button 
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            setReleaseConfirmId(null);
+                                            handleRelease(project.projectCode);
+                                          }}
+                                          style={{
+                                            padding: '6px 12px',
+                                            borderRadius: '6px',
+                                            border: 'none',
+                                            background: '#ef4444',
+                                            color: 'white',
+                                            fontSize: '0.75rem',
+                                            fontWeight: 700,
+                                            cursor: 'pointer'
+                                          }}
+                                        >
+                                          Yes, Release
+                                        </button>
+                                      </div>
+                                    </div>
+                                  )}
                                 </div>
                               </td>
                             </tr>
