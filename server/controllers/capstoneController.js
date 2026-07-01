@@ -62,6 +62,12 @@ const seedCapstonePool = async () => {
 // @access  Private (Student)
 const getMyAssignedProject = async (req, res) => {
   try {
+    // If admin or superadmin, return FP-00 sandbox project from DB
+    if (req.user.role === 'admin' || req.user.role === 'superadmin') {
+      const project = await CapstonePool.findOne({ projectCode: 'FP-00' });
+      return res.status(200).json({ success: true, project });
+    }
+
     // Find if student is already assigned a project
     let project = await CapstonePool.findOne({ assignedTo: req.user._id });
     
@@ -186,9 +192,43 @@ const releaseCapstoneAllocation = async (req, res) => {
   }
 };
 
+// @desc    Update progress checkboxes for a student's assigned project
+// @route   POST /api/capstone/progress
+// @access  Private
+const updateCapstoneProgress = async (req, res) => {
+  const { completedModules, completedPages, completedCollections } = req.body;
+
+  try {
+    let project;
+    if (req.user.role === 'admin' || req.user.role === 'superadmin') {
+      project = await CapstonePool.findOne({ projectCode: 'FP-00' });
+    } else {
+      project = await CapstonePool.findOne({ assignedTo: req.user._id });
+    }
+
+    if (!project) {
+      return res.status(404).json({ success: false, message: 'You do not have a Capstone project assigned.' });
+    }
+
+    project.progress = {
+      completedModules: completedModules || [],
+      completedPages: completedPages || [],
+      completedCollections: completedCollections || []
+    };
+
+    await project.save();
+
+    res.status(200).json({ success: true, message: 'Progress saved successfully', progress: project.progress });
+  } catch (error) {
+    console.error('Update capstone progress error:', error);
+    res.status(500).json({ success: false, message: 'Server error saving progress' });
+  }
+};
+
 module.exports = {
   seedCapstonePool,
   getMyAssignedProject,
   getAdminCapstones,
-  releaseCapstoneAllocation
+  releaseCapstoneAllocation,
+  updateCapstoneProgress
 };

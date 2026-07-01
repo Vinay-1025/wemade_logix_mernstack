@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import MainLayout from '../components/MainLayout';
 import axios from 'axios';
+import { capstoneRegistry } from '../data/capstones';
 import { 
   Laptop, 
   Search, 
@@ -344,6 +345,7 @@ const CapstonesAdmin = () => {
                     <th style={{ padding: '16px 24px', fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Code</th>
                     <th style={{ padding: '16px 24px', fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Topic Title</th>
                     <th style={{ padding: '16px 24px', fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Assigned Student</th>
+                    <th style={{ padding: '16px 24px', fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Checklist Progress</th>
                     <th style={{ padding: '16px 24px', fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Submission Status</th>
                     <th style={{ padding: '16px 24px', fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', textAlign: 'right' }}>Actions</th>
                   </tr>
@@ -351,45 +353,96 @@ const CapstonesAdmin = () => {
                 <tbody>
                   {filteredAllocated.length === 0 ? (
                     <tr>
-                      <td colSpan="5" style={{ padding: '40px', textAlign: 'center', color: '#94a3b8', fontStyle: 'italic' }}>
+                      <td colSpan="6" style={{ padding: '40px', textAlign: 'center', color: '#94a3b8', fontStyle: 'italic' }}>
                         No allocated capstones found.
                       </td>
                     </tr>
                   ) : (
-                    filteredAllocated.map((project) => (
-                      <tr key={project._id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                        <td style={{ padding: '20px 24px' }}>
-                          <span style={{
-                            background: '#eff6ff',
-                            color: '#0047ab',
-                            fontWeight: 700,
-                            fontSize: '0.75rem',
-                            padding: '4px 8px',
-                            borderRadius: '6px'
-                          }}>
-                            {project.projectCode}
-                          </span>
-                        </td>
-                        <td style={{ padding: '20px 24px', fontWeight: 600, color: '#1e293b' }}>
-                          {project.title}
-                        </td>
-                        <td style={{ padding: '20px 24px' }}>
-                          <div style={{ display: 'flex', flexDirection: 'column' }}>
-                            <span style={{ fontWeight: 700, color: '#334155', fontSize: '0.9rem' }}>{project.assignedTo?.name}</span>
-                            <span style={{ color: '#94a3b8', fontSize: '0.8rem' }}>{project.assignedTo?.email}</span>
-                          </div>
-                        </td>
-                        <td style={{ padding: '20px 24px' }}>
-                          {(() => {
-                            const sub = project.submission;
-                            if (!sub) return <span style={{ background: '#f1f5f9', color: '#64748b', padding: '4px 10px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 700 }}>Not Started</span>;
-                            if (sub.status === 'accepted') return <span style={{ background: '#d1fae5', color: '#065f46', padding: '4px 10px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 700 }}>Approved</span>;
-                            if (sub.status === 'rejected') return <span style={{ background: '#fee2e2', color: '#991b1b', padding: '4px 10px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 700 }}>Needs Revision</span>;
-                            return <span style={{ background: '#e0f2fe', color: '#0369a1', padding: '4px 10px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 700 }}>Awaiting Review</span>;
-                          })()}
-                        </td>
-                        <td style={{ padding: '20px 24px', textAlign: 'right' }}>
-                          <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                    filteredAllocated.map((project) => {
+                      const details = capstoneRegistry[project.projectCode] || {};
+                      
+                      // Modules counts
+                      const modulesTotal = details.modules?.length || 0;
+                      const modulesCompleted = project.progress?.completedModules?.length || 0;
+                      
+                      // Pages counts
+                      let pagesTotal = 0;
+                      if (details.pages) {
+                        Object.keys(details.pages).forEach(cat => {
+                          pagesTotal += details.pages[cat].length;
+                        });
+                      }
+                      const pagesCompleted = project.progress?.completedPages?.length || 0;
+                      
+                      // Collections counts
+                      const collectionsTotal = details.databaseCollections?.length || 0;
+                      const collectionsCompleted = project.progress?.completedCollections?.length || 0;
+
+                      return (
+                        <tr key={project._id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                          <td style={{ padding: '20px 24px' }}>
+                            <span style={{
+                              background: '#eff6ff',
+                              color: '#0047ab',
+                              fontWeight: 700,
+                              fontSize: '0.75rem',
+                              padding: '4px 8px',
+                              borderRadius: '6px'
+                            }}>
+                              {project.projectCode}
+                            </span>
+                          </td>
+                          <td style={{ padding: '20px 24px', fontWeight: 600, color: '#1e293b' }}>
+                            {project.title}
+                          </td>
+                          <td style={{ padding: '20px 24px' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                              <span style={{ fontWeight: 700, color: '#334155', fontSize: '0.9rem' }}>{project.assignedTo?.name}</span>
+                              <span style={{ color: '#94a3b8', fontSize: '0.8rem' }}>{project.assignedTo?.email}</span>
+                            </div>
+                          </td>
+                          <td style={{ padding: '20px 24px' }}>
+                            {details.modules ? (
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', width: '130px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem' }}>
+                                  <span style={{ color: '#64748b' }}>Modules</span>
+                                  <span style={{ fontWeight: 700, color: '#0047ab' }}>{modulesCompleted}/{modulesTotal}</span>
+                                </div>
+                                <div style={{ background: '#e2e8f0', height: '4px', borderRadius: '2px', overflow: 'hidden' }}>
+                                  <div style={{ background: '#0047ab', height: '100%', width: `${modulesTotal ? (modulesCompleted / modulesTotal) * 100 : 0}%` }}></div>
+                                </div>
+
+                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', marginTop: '3px' }}>
+                                  <span style={{ color: '#64748b' }}>Pages</span>
+                                  <span style={{ fontWeight: 700, color: '#3b82f6' }}>{pagesCompleted}/{pagesTotal}</span>
+                                </div>
+                                <div style={{ background: '#e2e8f0', height: '4px', borderRadius: '2px', overflow: 'hidden' }}>
+                                  <div style={{ background: '#3b82f6', height: '100%', width: `${pagesTotal ? (pagesCompleted / pagesTotal) * 100 : 0}%` }}></div>
+                                </div>
+
+                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', marginTop: '3px' }}>
+                                  <span style={{ color: '#64748b' }}>DB Colls</span>
+                                  <span style={{ fontWeight: 700, color: '#10b981' }}>{collectionsCompleted}/{collectionsTotal}</span>
+                                </div>
+                                <div style={{ background: '#e2e8f0', height: '4px', borderRadius: '2px', overflow: 'hidden' }}>
+                                  <div style={{ background: '#10b981', height: '100%', width: `${collectionsTotal ? (collectionsCompleted / collectionsTotal) * 100 : 0}%` }}></div>
+                                </div>
+                              </div>
+                            ) : (
+                              <span style={{ color: '#94a3b8', fontSize: '0.8rem', fontStyle: 'italic' }}>N/A (Simple)</span>
+                            )}
+                          </td>
+                          <td style={{ padding: '20px 24px' }}>
+                            {(() => {
+                              const sub = project.submission;
+                              if (!sub) return <span style={{ background: '#f1f5f9', color: '#64748b', padding: '4px 10px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 700 }}>Not Started</span>;
+                              if (sub.status === 'accepted') return <span style={{ background: '#d1fae5', color: '#065f46', padding: '4px 10px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 700 }}>Approved</span>;
+                              if (sub.status === 'rejected') return <span style={{ background: '#fee2e2', color: '#991b1b', padding: '4px 10px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 700 }}>Needs Revision</span>;
+                              return <span style={{ background: '#e0f2fe', color: '#0369a1', padding: '4px 10px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 700 }}>Awaiting Review</span>;
+                            })()}
+                          </td>
+                          <td style={{ padding: '20px 24px', textAlign: 'right' }}>
+                            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
                             {project.submission && (
                               <button
                                 onClick={() => setSelectedProject(project)}
@@ -425,8 +478,9 @@ const CapstonesAdmin = () => {
                           </div>
                         </td>
                       </tr>
-                    ))
-                  )}
+                    );
+                  })
+                )}
                 </tbody>
               </table>
             </div>
@@ -611,6 +665,97 @@ const CapstonesAdmin = () => {
                           {details.description || 'No description provided.'}
                         </p>
                       </div>
+
+                      {/* Project Checklist Progress Display */}
+                      {(() => {
+                        const regDetails = capstoneRegistry[selectedProject.projectCode] || {};
+                        if (!regDetails.modules) return null;
+
+                        const compModules = selectedProject.progress?.completedModules || [];
+                        const compPages = selectedProject.progress?.completedPages || [];
+                        const compCollections = selectedProject.progress?.completedCollections || [];
+
+                        return (
+                          <div style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '16px', padding: '18px' }}>
+                            <strong style={{ color: '#0f172a', fontSize: '0.9rem', display: 'block', marginBottom: '12px' }}>
+                              Student Checklist Progress Timeline
+                            </strong>
+
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', fontSize: '0.85rem' }}>
+                              {/* Modules List */}
+                              <div>
+                                <h5 style={{ margin: '0 0 6px 0', color: '#0047ab', fontWeight: 800 }}>
+                                  Modules ({compModules.length}/{regDetails.modules.length})
+                                </h5>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', maxHeight: '180px', overflowY: 'auto', background: 'white', padding: '8px', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
+                                  {regDetails.modules.map((m, idx) => {
+                                    const checked = compModules.includes(m);
+                                    return (
+                                      <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '6px', opacity: checked ? 1 : 0.5 }}>
+                                        <span style={{ color: checked ? '#10b981' : '#94a3b8', fontWeight: 'bold' }}>
+                                          {checked ? '✓' : '○'}
+                                        </span>
+                                        <span style={{ textDecoration: checked ? 'line-through' : 'none', color: '#334155' }}>{m}</span>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+
+                              {/* DB Collections List */}
+                              <div>
+                                <h5 style={{ margin: '0 0 6px 0', color: '#10b981', fontWeight: 800 }}>
+                                  DB Collections ({compCollections.length}/{regDetails.databaseCollections.length})
+                                </h5>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', maxHeight: '180px', overflowY: 'auto', background: 'white', padding: '8px', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
+                                  {regDetails.databaseCollections.map((col, idx) => {
+                                    const checked = compCollections.includes(col);
+                                    return (
+                                      <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '6px', opacity: checked ? 1 : 0.5 }}>
+                                        <span style={{ color: checked ? '#10b981' : '#94a3b8', fontWeight: 'bold' }}>
+                                          {checked ? '✓' : '○'}
+                                        </span>
+                                        <span style={{ textDecoration: checked ? 'line-through' : 'none', color: '#334155' }}>{col}</span>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Pages List */}
+                            <div style={{ marginTop: '16px' }}>
+                              <h5 style={{ margin: '0 0 6px 0', color: '#3b82f6', fontWeight: 800, fontSize: '0.85rem' }}>
+                                Pages Map Completion Status
+                              </h5>
+                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', maxHeight: '120px', overflowY: 'auto', background: 'white', padding: '8px', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
+                                {Object.keys(regDetails.pages).map(pGroup => 
+                                  regDetails.pages[pGroup].map((page, pIdx) => {
+                                    const pageKey = `${pGroup}:${page}`;
+                                    const checked = compPages.includes(pageKey);
+                                    return (
+                                      <span 
+                                        key={pIdx} 
+                                        style={{ 
+                                          fontSize: '0.7rem', 
+                                          padding: '2px 6px', 
+                                          borderRadius: '4px', 
+                                          border: `1.5px solid ${checked ? '#bbf7d0' : '#cbd5e1'}`, 
+                                          background: checked ? '#ecfdf5' : 'white', 
+                                          color: checked ? '#065f46' : '#64748b',
+                                          opacity: checked ? 1 : 0.6
+                                        }}
+                                      >
+                                        {checked ? '✓ ' : '○ '}{page} ({pGroup})
+                                      </span>
+                                    );
+                                  })
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })()}
 
                       <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '20px' }}>
                         <label htmlFor="modalFeedback" style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#475569', marginBottom: '8px' }}>

@@ -20,6 +20,20 @@ const capstonePoolSchema = new mongoose.Schema({
   assignedAt: {
     type: Date,
     default: null
+  },
+  progress: {
+    completedModules: {
+      type: [String],
+      default: []
+    },
+    completedPages: {
+      type: [String],
+      default: []
+    },
+    completedCollections: {
+      type: [String],
+      default: []
+    }
   }
 }, {
   timestamps: true

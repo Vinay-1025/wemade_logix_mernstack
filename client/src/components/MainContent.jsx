@@ -111,25 +111,28 @@ const FinalProjectSubmissionView = () => {
 
   const capstoneSubmission = [...userAssignments].reverse().find(a => a.topicId === 'final-project-topic');
 
+  const [completedModules, setCompletedModules] = useState([]);
+  const [completedPages, setCompletedPages] = useState([]);
+  const [completedCollections, setCompletedCollections] = useState([]);
+  const [savingProgress, setSavingProgress] = useState(false);
+
   // Fetch assigned unique capstone topic from backend
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (user?.role === 'admin' || user?.role === 'superadmin') {
-      setAssignedProject({ projectCode: 'FP-00', title: 'MERN Sandbox & Reference Template' });
-      setAssignedLoading(false);
-      return;
-    }
-
     const fetchAssignedProject = async () => {
       try {
+        const user = JSON.parse(localStorage.getItem('user'));
         const token = user?.token;
         if (!token) return;
         
         const response = await axios.get('/api/capstone/my', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
-        if (response.data?.success) {
+        if (response.data?.success && response.data.project) {
           setAssignedProject(response.data.project);
+          const prog = response.data.project.progress || {};
+          setCompletedModules(prog.completedModules || []);
+          setCompletedPages(prog.completedPages || []);
+          setCompletedCollections(prog.completedCollections || []);
         }
       } catch (err) {
         console.error('Error fetching assigned capstone project:', err);
@@ -200,6 +203,51 @@ const FinalProjectSubmissionView = () => {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const autoSaveProgress = async (modules, pages, collections) => {
+    setSavingProgress(true);
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      const token = user?.token;
+      if (!token) return;
+
+      await axios.post('/api/capstone/progress', {
+        completedModules: modules,
+        completedPages: pages,
+        completedCollections: collections
+      }, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+    } catch (err) {
+      console.error('Error saving capstone progress:', err);
+    } finally {
+      setSavingProgress(false);
+    }
+  };
+
+  const handleToggleModule = async (moduleName) => {
+    const updated = completedModules.includes(moduleName)
+      ? completedModules.filter(m => m !== moduleName)
+      : [...completedModules, moduleName];
+    setCompletedModules(updated);
+    await autoSaveProgress(updated, completedPages, completedCollections);
+  };
+
+  const handleTogglePage = async (pageName) => {
+    const updated = completedPages.includes(pageName)
+      ? completedPages.filter(p => p !== pageName)
+      : [...completedPages, pageName];
+    setCompletedPages(updated);
+    await autoSaveProgress(completedModules, updated, completedCollections);
+  };
+
+  const handleToggleCollection = async (colName) => {
+    const updated = completedCollections.includes(colName)
+      ? completedCollections.filter(c => c !== colName)
+      : [...completedCollections, colName];
+    setCompletedCollections(updated);
+    await autoSaveProgress(completedModules, completedPages, updated);
   };
 
   return (
@@ -379,6 +427,11 @@ const FinalProjectSubmissionView = () => {
                 )}
               </div>
               <div className="capstone-header-actions" style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                {savingProgress && (
+                  <span style={{ fontSize: '0.75rem', color: '#64748b', fontStyle: 'italic', marginRight: '8px' }}>
+                    Auto-saving progress...
+                  </span>
+                )}
                 {capstoneSubmission && (
                   <span style={{
                     background: capstoneSubmission.status === 'accepted' ? '#d1fae5' : capstoneSubmission.status === 'rejected' ? '#fee2e2' : '#e0f2fe',
@@ -535,11 +588,38 @@ const FinalProjectSubmissionView = () => {
                   <div className="capstone-info-card compact">
                     <h3 style={{ margin: '0 0 12px 0', color: '#0f172a', fontWeight: 800, fontSize: '1rem' }}>Modules</h3>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                      {details.modules.map((m, idx) => (
-                        <div key={idx} style={{ background: 'white', padding: '8px 12px', borderRadius: '8px', fontSize: '0.825rem', color: '#475569', border: '1px solid #f1f5f9', fontWeight: 600 }}>
-                          {m}
-                        </div>
-                      ))}
+                      {details.modules.map((m, idx) => {
+                        const isCompleted = completedModules.includes(m);
+                        return (
+                          <div 
+                            key={idx} 
+                            onClick={() => handleToggleModule(m)}
+                            style={{
+                              background: 'white',
+                              padding: '8px 12px',
+                              borderRadius: '8px',
+                              fontSize: '0.825rem',
+                              color: isCompleted ? '#0f172a' : '#475569',
+                              border: `1.5px solid ${isCompleted ? '#0047ab' : '#f1f5f9'}`,
+                              fontWeight: 600,
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '8px',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s',
+                              opacity: isCompleted ? 1 : 0.8
+                            }}
+                          >
+                            <input 
+                              type="checkbox" 
+                              checked={isCompleted} 
+                              onChange={() => {}}
+                              style={{ cursor: 'pointer', width: '14px', height: '14px' }} 
+                            />
+                            <span style={{ textDecoration: isCompleted ? 'line-through' : 'none' }}>{m}</span>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                   
@@ -549,12 +629,40 @@ const FinalProjectSubmissionView = () => {
                       {Object.keys(details.pages).map((pGroup, idx) => (
                         <div key={idx}>
                           <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase' }}>{pGroup} Pages</span>
-                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '4px' }}>
-                            {details.pages[pGroup].map((page, pIdx) => (
-                              <span key={pIdx} style={{ background: 'white', color: '#475569', fontSize: '0.725rem', padding: '2px 6px', borderRadius: '4px', border: '1px solid #cbd5e1' }}>
-                                {page}
-                              </span>
-                            ))}
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '6px' }}>
+                            {details.pages[pGroup].map((page, pIdx) => {
+                              const pageKey = `${pGroup}:${page}`;
+                              const isCompleted = completedPages.includes(pageKey);
+                              return (
+                                <span 
+                                  key={pIdx} 
+                                  onClick={() => handleTogglePage(pageKey)}
+                                  style={{ 
+                                    background: isCompleted ? '#eff6ff' : 'white', 
+                                    color: isCompleted ? '#0047ab' : '#475569', 
+                                    fontSize: '0.725rem', 
+                                    padding: '4px 8px', 
+                                    borderRadius: '6px', 
+                                    border: `1.5px solid ${isCompleted ? '#0047ab' : '#cbd5e1'}`,
+                                    cursor: 'pointer',
+                                    fontWeight: 600,
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '4px',
+                                    transition: 'all 0.2s',
+                                    textDecoration: isCompleted ? 'line-through' : 'none'
+                                  }}
+                                >
+                                  <input 
+                                    type="checkbox" 
+                                    checked={isCompleted}
+                                    onChange={() => {}}
+                                    style={{ cursor: 'pointer', width: '11px', height: '11px', margin: 0 }} 
+                                  />
+                                  <span>{page}</span>
+                                </span>
+                              );
+                            })}
                           </div>
                         </div>
                       ))}
@@ -564,12 +672,37 @@ const FinalProjectSubmissionView = () => {
                   <div className="capstone-info-card compact">
                     <h3 style={{ margin: '0 0 12px 0', color: '#0f172a', fontWeight: 800, fontSize: '1rem' }}>DB Collections</h3>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                      {details.databaseCollections.map((col, idx) => (
-                        <div key={idx} style={{ background: 'white', padding: '8px 12px', borderRadius: '8px', fontSize: '0.825rem', color: '#475569', border: '1px solid #f1f5f9', fontWeight: 600, display: 'flex', gap: '8px', alignItems: 'center' }}>
-                          <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#0047ab' }}></span>
-                          <span>{col}</span>
-                        </div>
-                      ))}
+                      {details.databaseCollections.map((col, idx) => {
+                        const isCompleted = completedCollections.includes(col);
+                        return (
+                          <div 
+                            key={idx} 
+                            onClick={() => handleToggleCollection(col)}
+                            style={{
+                              background: 'white',
+                              padding: '8px 12px',
+                              borderRadius: '8px',
+                              fontSize: '0.825rem',
+                              color: isCompleted ? '#0f172a' : '#475569',
+                              border: `1.5px solid ${isCompleted ? '#0047ab' : '#f1f5f9'}`,
+                              fontWeight: 600,
+                              display: 'flex',
+                              gap: '8px',
+                              alignItems: 'center',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s'
+                            }}
+                          >
+                            <input 
+                              type="checkbox" 
+                              checked={isCompleted}
+                              onChange={() => {}}
+                              style={{ cursor: 'pointer', width: '14px', height: '14px' }} 
+                            />
+                            <span style={{ textDecoration: isCompleted ? 'line-through' : 'none' }}>{col}</span>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
