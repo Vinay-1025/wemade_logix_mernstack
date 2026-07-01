@@ -331,7 +331,7 @@ const toggleCustomTask = async (req, res) => {
 const deleteCustomTask = async (req, res) => {
   try {
     const { taskId } = req.params;
-    const studentId = req.body.studentId || req.query.studentId;
+    const studentId = req.body?.studentId || req.query.studentId;
 
     if (!mongoose.isValidObjectId(taskId)) {
       return res.status(400).json({ success: false, message: 'Invalid custom task ID format.' });
@@ -434,7 +434,7 @@ const updatePlannerCard = async (req, res) => {
 const deletePlannerCard = async (req, res) => {
   try {
     const { cardId } = req.params;
-    const studentId = req.body.studentId || req.query.studentId;
+    const studentId = req.body?.studentId || req.query.studentId;
 
     if (!mongoose.isValidObjectId(cardId)) {
       return res.status(400).json({ success: false, message: 'Invalid planner card ID format.' });
@@ -494,7 +494,7 @@ const addTimesheetLog = async (req, res) => {
 const deleteTimesheetLog = async (req, res) => {
   try {
     const { logId } = req.params;
-    const studentId = req.body.studentId || req.query.studentId;
+    const studentId = req.body?.studentId || req.query.studentId;
 
     if (!mongoose.isValidObjectId(logId)) {
       return res.status(400).json({ success: false, message: 'Invalid timesheet log ID format.' });
