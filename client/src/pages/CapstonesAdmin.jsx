@@ -18,7 +18,9 @@ import {
   Unlock,
   Lock,
   MessageSquare,
-  AlertCircle
+  AlertCircle,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 
 const CapstonesAdmin = () => {
@@ -35,12 +37,43 @@ const CapstonesAdmin = () => {
   const [gradingLoading, setGradingLoading] = useState(false);
   const [modalTab, setModalTab] = useState('submission'); // 'submission' or 'spec'
   const [releaseConfirmId, setReleaseConfirmId] = useState(null);
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   
   // Notification states (Snackbar)
   const [snackbar, setSnackbar] = useState({ open: false, message: '', type: 'success' });
   const showSnackbar = (message, type = 'success') => {
     setSnackbar({ open: true, message, type });
     setTimeout(() => setSnackbar(prev => ({ ...prev, open: false })), 4000);
+  };
+
+  const getPaginationRange = (currPage, totPages) => {
+    const delta = 1;
+    const range = [];
+    const rangeWithDots = [];
+    let l;
+
+    for (let i = 1; i <= totPages; i++) {
+      if (i === 1 || i === totPages || (i >= currPage - delta && i <= currPage + delta)) {
+        range.push(i);
+      }
+    }
+
+    for (let i of range) {
+      if (l) {
+        if (i - l === 2) {
+          rangeWithDots.push(l + 1);
+        } else if (i - l > 2) {
+          rangeWithDots.push('...');
+        }
+      }
+      rangeWithDots.push(i);
+      l = i;
+    }
+
+    return rangeWithDots;
   };
 
   const fetchCapstoneStatus = async () => {
@@ -123,6 +156,20 @@ const CapstonesAdmin = () => {
     return p.projectCode.toLowerCase().includes(query) ||
            p.title.toLowerCase().includes(query);
   });
+
+  // Reset page when criteria changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, activeTab, itemsPerPage]);
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+
+  const totalAllocatedPages = Math.ceil(filteredAllocated.length / itemsPerPage);
+  const totalUnallocatedPages = Math.ceil(filteredUnallocated.length / itemsPerPage);
+
+  const paginatedAllocated = filteredAllocated.slice(indexOfFirstItem, indexOfLastItem);
+  const paginatedUnallocated = filteredUnallocated.slice(indexOfFirstItem, indexOfLastItem);
 
   // Helper to parse student links from JSON payload
   const getSubDetails = (codeStr) => {
@@ -287,29 +334,72 @@ const CapstonesAdmin = () => {
                 </button>
               </div>
 
-              {/* Search Box */}
+              {/* Controls Group: Search Box & Rows Per Page Dropdown */}
               <div style={{
-                position: 'relative',
+                display: 'flex',
+                gap: '12px',
+                alignItems: 'center',
+                flexWrap: 'wrap',
                 width: '100%',
-                maxWidth: '360px'
+                maxWidth: '520px',
+                justifyContent: 'flex-end'
               }}>
-                <Search size={16} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
-                <input
-                  type="text"
-                  placeholder={activeTab === 'allocated' ? "Search student, email, or code..." : "Search available project code..."}
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '12px 16px 12px 42px',
-                    borderRadius: '12px',
-                    border: '1px solid #cbd5e1',
-                    fontSize: '0.9rem',
-                    outline: 'none',
-                    background: 'white',
-                    boxSizing: 'border-box'
-                  }}
-                />
+                {/* Search Box */}
+                <div style={{
+                  position: 'relative',
+                  flex: 1,
+                  minWidth: '240px'
+                }}>
+                  <Search size={16} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+                  <input
+                    type="text"
+                    placeholder={activeTab === 'allocated' ? "Search student, email, or code..." : "Search available project code..."}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px 12px 42px',
+                      borderRadius: '12px',
+                      border: '1px solid #cbd5e1',
+                      fontSize: '0.9rem',
+                      outline: 'none',
+                      background: 'white',
+                      boxSizing: 'border-box'
+                    }}
+                  />
+                </div>
+
+                {/* Rows Per Page Dropdown */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  background: 'white',
+                  border: '1px solid #cbd5e1',
+                  borderRadius: '12px',
+                  padding: '0 16px',
+                  height: '45px',
+                  boxSizing: 'border-box'
+                }}>
+                  <select
+                    value={itemsPerPage}
+                    onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                    style={{
+                      border: 'none',
+                      background: 'transparent',
+                      outline: 'none',
+                      fontSize: '0.9rem',
+                      fontWeight: 700,
+                      color: '#475569',
+                      cursor: 'pointer',
+                      height: '100%'
+                    }}
+                  >
+                    <option value={10}>10 Rows</option>
+                    <option value={20}>20 Rows</option>
+                    <option value={50}>50 Rows</option>
+                  </select>
+                </div>
               </div>
             </div>
 
@@ -346,7 +436,7 @@ const CapstonesAdmin = () => {
                           </td>
                         </tr>
                       ) : (
-                        filteredAllocated.map((project) => {
+                        paginatedAllocated.map((project) => {
                           return (
                             <tr 
                               key={project._id} 
@@ -517,7 +607,7 @@ const CapstonesAdmin = () => {
                       No unallocated capstone slots available in the pool.
                     </div>
                   ) : (
-                    filteredUnallocated.map((project) => (
+                    paginatedUnallocated.map((project) => (
                       <div 
                         key={project._id} 
                         style={{
@@ -550,6 +640,76 @@ const CapstonesAdmin = () => {
                         </p>
                       </div>
                     ))
+                  )}
+                </div>
+              )}
+
+              {/* Pagination Controls */}
+              {((activeTab === 'allocated' && filteredAllocated.length > 0) || 
+                (activeTab === 'unallocated' && filteredUnallocated.length > 0)) && (
+                <div className="audit-pagination" style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '20px 24px',
+                  background: '#f8fafc',
+                  borderTop: '1px solid #e2e8f0',
+                  flexWrap: 'wrap',
+                  gap: '16px'
+                }}>
+                  <div className="pagination-info" style={{ fontSize: '0.9rem', color: '#64748b' }}>
+                    Showing <span style={{ fontWeight: 700, color: '#0f172a' }}>
+                      {indexOfFirstItem + 1}
+                    </span> to <span style={{ fontWeight: 700, color: '#0f172a' }}>
+                      {Math.min(indexOfLastItem, activeTab === 'allocated' ? filteredAllocated.length : filteredUnallocated.length)}
+                    </span> of <span style={{ fontWeight: 700, color: '#0f172a' }}>
+                      {activeTab === 'allocated' ? filteredAllocated.length : filteredUnallocated.length}
+                    </span> records
+                  </div>
+
+                  {((activeTab === 'allocated' && totalAllocatedPages > 1) || 
+                    (activeTab === 'unallocated' && totalUnallocatedPages > 1)) && (
+                    <div className="page-navigation" style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px'
+                    }}>
+                      <button 
+                        disabled={currentPage === 1}
+                        onClick={() => setCurrentPage(currentPage - 1)}
+                        className="page-btn"
+                      >
+                        <ChevronLeft size={18} />
+                      </button>
+
+                      <div className="page-numbers" style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px'
+                      }}>
+                        {getPaginationRange(currentPage, activeTab === 'allocated' ? totalAllocatedPages : totalUnallocatedPages).map((p, idx) => (
+                          p === '...' ? (
+                            <span key={`dots-${idx}`} className="pagination-dots" style={{ padding: '0 8px', color: '#94a3b8' }}>...</span>
+                          ) : (
+                            <button
+                              key={p}
+                              onClick={() => setCurrentPage(p)}
+                              className={`page-btn ${currentPage === p ? 'active' : ''}`}
+                            >
+                              {p}
+                            </button>
+                          )
+                        ))}
+                      </div>
+
+                      <button 
+                        disabled={currentPage === (activeTab === 'allocated' ? totalAllocatedPages : totalUnallocatedPages)}
+                        onClick={() => setCurrentPage(currentPage + 1)}
+                        className="page-btn"
+                      >
+                        <ChevronRight size={18} />
+                      </button>
+                    </div>
                   )}
                 </div>
               )}
@@ -1291,6 +1451,39 @@ const CapstonesAdmin = () => {
         @keyframes snackbarSlideIn { 
           0% { transform: translateY(100px) scale(0.9); opacity: 0; }
           100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        /* Pagination Styles */
+        .page-btn { 
+          min-width: 36px; 
+          height: 36px; 
+          display: flex; 
+          align-items: center; 
+          justify-content: center; 
+          border-radius: 10px; 
+          border: 1px solid #cbd5e1; 
+          background: white; 
+          color: #64748b; 
+          font-weight: 700; 
+          font-size: 0.85rem; 
+          cursor: pointer; 
+          transition: all 0.2s; 
+        }
+        .page-btn:hover:not(:disabled) { 
+          border-color: #0047ab; 
+          color: #0047ab; 
+          background: rgba(0, 71, 171, 0.05); 
+          transform: translateY(-2px); 
+        }
+        .page-btn.active { 
+          background: #0047ab; 
+          color: white; 
+          border-color: #0047ab; 
+          box-shadow: 0 4px 12px rgba(0, 71, 171, 0.2); 
+        }
+        .page-btn:disabled { 
+          opacity: 0.3; 
+          cursor: not-allowed; 
         }
         `
       }} />
