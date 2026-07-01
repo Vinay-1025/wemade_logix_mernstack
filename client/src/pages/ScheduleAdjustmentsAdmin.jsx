@@ -6,6 +6,49 @@ import axios from 'axios';
 
 const ScheduleAdjustmentsAdmin = () => {
   const { user } = useSelector((state) => state.auth);
+
+  const getCalendarDateForDay = (dayId) => {
+    if (dayId && dayId.toString().startsWith('extra-')) {
+      return dayId.toString().substring(6);
+    }
+    const baseDate = new Date(Date.UTC(2026, 4, 18)); // May 18, 2026 (Month is 0-indexed, UTC)
+
+    const getDayNumber = (id) => {
+      if (!id) return 1;
+      const str = id.toString().trim().toLowerCase();
+      if (/^\d+$/.test(str)) {
+        return parseInt(str, 10);
+      }
+      const match = str.match(/^w(\d+)-d(\d+)$/);
+      if (match) {
+        const week = parseInt(match[1], 10);
+        const day = parseInt(match[2], 10);
+        if (week === 1 && day === 0) return 0;
+        return (week - 1) * 6 + day;
+      }
+      return 1;
+    };
+
+    const dayNo = getDayNumber(dayId);
+    if (dayNo === 0) {
+      return '2026-05-18';
+    }
+
+    let targetDate = new Date(baseDate.getTime());
+    let nonSundayDaysAdded = 0;
+
+    while (nonSundayDaysAdded < dayNo - 1) {
+      targetDate.setUTCDate(targetDate.getUTCDate() + 1);
+      if (targetDate.getUTCDay() !== 0) { // 0 is Sunday
+        nonSundayDaysAdded++;
+      }
+    }
+
+    const yyyy = targetDate.getUTCFullYear();
+    const mm = String(targetDate.getUTCMonth() + 1).padStart(2, '0');
+    const dd = String(targetDate.getUTCDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  };
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
@@ -227,15 +270,21 @@ const ScheduleAdjustmentsAdmin = () => {
                 <tbody>
                   {filteredSessions.map((session) => {
                     const isExtra = session.dayId.startsWith('extra-');
-                    const dateStr = isExtra ? session.dayId.substring(6) : session.dayId;
+                    const dateStr = getCalendarDateForDay(session.dayId);
                     let formattedDate = 'N/A';
                     try {
                       if (dateStr) {
-                        formattedDate = new Date(dateStr).toLocaleDateString('en-US', {
+                        // Use UTC timezone mapping if date is YYYY-MM-DD to prevent local timezone offsets
+                        const parts = dateStr.split('-');
+                        const targetDate = parts.length === 3 
+                          ? new Date(Date.UTC(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2])))
+                          : new Date(dateStr);
+                        formattedDate = targetDate.toLocaleDateString('en-US', {
                           weekday: 'short',
                           year: 'numeric',
                           month: 'short',
                           day: 'numeric',
+                          timeZone: 'UTC'
                         });
                       }
                     } catch (e) {}
@@ -248,8 +297,13 @@ const ScheduleAdjustmentsAdmin = () => {
                           </span>
                         </td>
                         <td>
-                          <div className="session-id-badge">
-                            <span className="code-font">{session.dayId}</span>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                            <div className="session-id-badge" style={{ width: 'fit-content' }}>
+                              <span className="code-font">{session.dayId}</span>
+                            </div>
+                            <span style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600 }}>
+                              {formattedDate}
+                            </span>
                           </div>
                         </td>
                         <td>
@@ -325,15 +379,20 @@ const ScheduleAdjustmentsAdmin = () => {
             <div className="mobile-cards-grid">
               {filteredSessions.map((session) => {
                 const isExtra = session.dayId.startsWith('extra-');
-                const dateStr = isExtra ? session.dayId.substring(6) : session.dayId;
+                const dateStr = getCalendarDateForDay(session.dayId);
                 let formattedDate = 'N/A';
                 try {
                   if (dateStr) {
-                    formattedDate = new Date(dateStr).toLocaleDateString('en-US', {
+                    const parts = dateStr.split('-');
+                    const targetDate = parts.length === 3 
+                      ? new Date(Date.UTC(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2])))
+                      : new Date(dateStr);
+                    formattedDate = targetDate.toLocaleDateString('en-US', {
                       weekday: 'short',
                       year: 'numeric',
                       month: 'short',
                       day: 'numeric',
+                      timeZone: 'UTC'
                     });
                   }
                 } catch (e) {}
@@ -356,7 +415,10 @@ const ScheduleAdjustmentsAdmin = () => {
                     <div className="card-body">
                       <div className="card-row">
                         <span className="label">Identifier:</span>
-                        <span className="value code-font">{session.dayId}</span>
+                        <span className="value code-font" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '2px' }}>
+                          <span>{session.dayId}</span>
+                          <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 600 }}>({formattedDate})</span>
+                        </span>
                       </div>
                       <div className="card-row">
                         <span className="label">Target Date:</span>
