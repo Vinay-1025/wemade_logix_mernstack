@@ -96,6 +96,20 @@ const getUserProfile = async (req, res) => {
   const user = await User.findById(req.user._id);
 
   if (user) {
+    let issueDate = user.createdAt;
+    if (user.certificateOverride === 'unlocked') {
+      issueDate = user.certificateUnlockedAt || user.createdAt;
+    } else {
+      const Assignment = require('../models/Assignment');
+      const lastAssignment = await Assignment.findOne({
+        student: user._id,
+        status: 'accepted',
+      }).sort({ updatedAt: -1 });
+      if (lastAssignment) {
+        issueDate = lastAssignment.updatedAt;
+      }
+    }
+
     res.json({
       _id: user._id,
       name: user.name,
@@ -103,6 +117,7 @@ const getUserProfile = async (req, res) => {
       role: user.role,
       certificateOverride: user.certificateOverride || null,
       certificateId: getCertificateId(user._id),
+      certificateIssueDate: issueDate,
     });
   } else {
     res.status(404).json({ message: 'User not found' });

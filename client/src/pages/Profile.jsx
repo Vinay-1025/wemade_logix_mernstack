@@ -185,6 +185,25 @@ const Profile = () => {
           const qrY = canvas.height * (1 - 0.140 - qrHeightPercent);
 
           ctx.drawImage(qrImg, qrX, qrY, qrWidth, qrHeight);
+
+          // Draw certificate details (Duration, ID, Issue Date) on the high-res download canvas
+          const detailsFontSize = Math.round(canvas.width * 0.013);
+          ctx.font = `bold ${detailsFontSize}px "Inter", -apple-system, sans-serif`;
+          ctx.fillStyle = '#1a1a1a';
+          ctx.textAlign = 'left';
+          
+          // Draw Duration
+          ctx.fillText("45 Days", canvas.width * 0.342, canvas.height * 0.770);
+          
+          // Draw Certificate ID
+          ctx.fillText(certificateId, canvas.width * 0.633, canvas.height * 0.770);
+          
+          // Draw Date of Issue
+          const issueDateStr = latestProfile?.certificateIssueDate 
+            ? new Date(latestProfile.certificateIssueDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) 
+            : new Date(user?.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+          ctx.fillText(issueDateStr, canvas.width * 0.633, canvas.height * 0.838);
+
           const formattedName = (user?.name || 'student').trim().replace(/\s+/g, '_').toLowerCase();
           const dataUrl = canvas.toDataURL('image/png');
           const link = document.createElement('a');
@@ -747,32 +766,40 @@ const Profile = () => {
 
             {/* Certificate Modal */}
             {isCertificateOpen && (
-              <div className="admin-modal-overlay no-print" style={{ 
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                background: 'rgba(0,0,0,0.7)',
-                backdropFilter: 'blur(5px)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                zIndex: 2000 
-              }}>
-                <div className="certificate-modal-content" style={{
-                  background: '#111827',
-                  border: '1px solid rgba(255,255,255,0.08)',
-                  padding: '24px',
-                  borderRadius: '20px',
-                  maxWidth: '1050px',
-                  width: '95%',
-                  maxHeight: '95vh',
-                  overflowY: 'auto',
-                  boxShadow: '0 25px 50px rgba(0,0,0,0.5)',
-                  position: 'relative',
-                  textAlign: 'center',
-                }}>
+              <div 
+                className="admin-modal-overlay no-print" 
+                onClick={() => setIsCertificateOpen(false)}
+                style={{ 
+                  position: 'fixed',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  background: 'rgba(0,0,0,0.7)',
+                  backdropFilter: 'blur(5px)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  zIndex: 2000 
+                }}
+              >
+                <div 
+                  className="certificate-modal-content" 
+                  onClick={(e) => e.stopPropagation()}
+                  style={{
+                    background: '#111827',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    padding: '24px',
+                    borderRadius: '20px',
+                    maxWidth: '1050px',
+                    width: '95%',
+                    maxHeight: '95vh',
+                    overflowY: 'auto',
+                    boxShadow: '0 25px 50px rgba(0,0,0,0.5)',
+                    position: 'relative',
+                    textAlign: 'center',
+                  }}
+                >
                   <div className="certificate-modal-header" style={{
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -902,6 +929,47 @@ const Profile = () => {
                             letterSpacing: '1px',
                           }}>
                             {user?.name}
+                          </div>
+
+                          {/* Dynamically Overlayed Duration */}
+                          <div style={{
+                            position: 'absolute',
+                            top: '77.0%',
+                            left: '34.2%',
+                            fontSize: '0.85rem',
+                            fontWeight: 'bold',
+                            color: '#1a1a1a',
+                            fontFamily: '"Inter", sans-serif',
+                          }}>
+                            45 Days
+                          </div>
+
+                          {/* Dynamically Overlayed Certificate ID */}
+                          <div style={{
+                            position: 'absolute',
+                            top: '77.0%',
+                            left: '63.3%',
+                            fontSize: '0.85rem',
+                            fontWeight: 'bold',
+                            color: '#1a1a1a',
+                            fontFamily: '"Inter", sans-serif',
+                          }}>
+                            {certificateId}
+                          </div>
+
+                          {/* Dynamically Overlayed Date of Issue */}
+                          <div style={{
+                            position: 'absolute',
+                            top: '83.8%',
+                            left: '63.3%',
+                            fontSize: '0.85rem',
+                            fontWeight: 'bold',
+                            color: '#1a1a1a',
+                            fontFamily: '"Inter", sans-serif',
+                          }}>
+                            {latestProfile?.certificateIssueDate 
+                              ? new Date(latestProfile.certificateIssueDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) 
+                              : new Date(user?.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                           </div>
 
                           {/* Dynamically Overlayed Verification QR Code (Exact positioning over bottom-right placeholder) */}
