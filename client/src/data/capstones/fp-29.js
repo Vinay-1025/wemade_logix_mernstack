@@ -1,39 +1,144 @@
 export const fp29Data = {
+  projectId: 29,
   projectCode: "FP-29",
-  title: "Weather Station & Geospatial Sensor Portal",
-  explanation: "Build an analytics app parsing weather station metrics, history trends, interactive charts, and local alerts.",
-  progression: [
-    {
-      level: "Phase 1: Architecture & Design",
-      title: "Database Schemas & API Endpoints",
-      content: "Map out the REST API endpoints and define database schemas for your application modules."
-    },
-    {
-      level: "Phase 2: Core Development",
-      title: "Frontend Components & Business Logic",
-      content: "Build responsive React components and hook them up to your backend servers with state verification."
-    },
-    {
-      level: "Phase 3: Production Release",
-      title: "Security Auditing & Deployed Server Hosting",
-      content: "Secure passwords using bcrypt, configure JWT authorization, and deploy to staging environments."
-    }
+  projectTitle: "Weather Station & Geospatial Sensor Portal",
+  difficulty: "Intermediate",
+  duration: {
+    totalDays: 14,
+    expectedEffortHours: "40-50",
+    objective: "Design, develop, test and deploy a complete intermediate MERN Stack application in 2 weeks."
+  },
+  techStack: [
+  "React.js",
+  "Node.js",
+  "Express.js",
+  "MongoDB",
+  "JWT Authentication",
+  "Multer"
+],
+  overview: "Build an analytics app parsing weather station metrics, history trends, interactive charts, and local alerts.",
+  problemStatement: [
+    "Manual and error-prone tracking of Weather Station & Geospatial Sensor Portal events.",
+    "Difficulty in coordinating user roles and data access controls.",
+    "Inefficient application workflow and status visibility.",
+    "Lack of real-time stats and visual dashboard insights."
   ],
-  detailedReference: {
-    summary: "Build a highly scalable MERN stack implementation of a Weather Station & Geospatial Sensor Portal showing production-ready practices.",
-    keyConcepts: [
-      { term: "Schema Integrity", definition: "Enforcing validation constraints on your MongoDB collection layouts." },
-      { term: "User Isolation", definition: "Ensuring users can only query, modify, or delete their own custom data documents." }
+  objectives: [
+    "Build a robust and secure MERN stack web application.",
+    "Implement isolated user experience pipelines for different roles.",
+    "Ensure strict database schema constraints and integrity rules.",
+    "Deploy the complete working systems to production cloud hosts."
+  ],
+  roles: {
+    "Admin": [
+        "Approve alumni registries",
+        "Approve association job boards",
+        "Monitor platform violations",
+        "Audit systems logs"
     ],
-    bestPractices: [
-      "Secure sensitive API operations using custom express validation middleware.",
-      "Manage component states in React to keep rendering speed high and responsive."
+    "Alumni": [
+        "Create alumni profile details",
+        "Post job vacancy referrals",
+        "Organize reunion events",
+        "Search peer directories"
+    ],
+    "Student": [
+        "Search alumni rosters",
+        "Apply for job referrals",
+        "Inquire alumni guidance",
+        "Register for reunions"
+    ]
+},
+  modules: [
+  "Authentication",
+  "Alumni Directory",
+  "Referral Board",
+  "Reunion Planner",
+  "Messaging Hub"
+],
+  pages: {
+    "Public": [
+        "Home",
+        "Alumni Explorer",
+        "Association Info",
+        "Login",
+        "Register"
+    ],
+    "Student": [
+        "Dashboard",
+        "Alumni Finder",
+        "Referrals Desk",
+        "Reunion Schedule"
+    ],
+    "Alumni": [
+        "Dashboard",
+        "Profile Editor",
+        "Post Referral",
+        "Alumni Chats"
+    ],
+    "Admin": [
+        "Dashboard",
+        "Verify Alumni",
+        "System configurations"
+    ]
+},
+  databaseCollections: [
+  "Users",
+  "AlumniProfiles",
+  "Referrals",
+  "Events",
+  "Messages",
+  "Associations"
+],
+  mandatoryFeatures: {
+    "authentication": [
+      "Register",
+      "Login",
+      "JWT",
+      "Password Hashing"
+    ],
+    "frontend": [
+      "React",
+      "React Router",
+      "Responsive UI",
+      "Form Validation"
+    ],
+    "backend": [
+      "Express",
+      "REST APIs",
+      "MVC",
+      "Middleware",
+      "Error Handling"
+    ],
+    "database": [
+      "MongoDB",
+      "Minimum 5 collections",
+      "Relationships"
+    ],
+    "general": [
+      "CRUD Operations",
+      "Search",
+      "Filter",
+      "Dashboard Panels",
+      "Profile Management",
+      "Deployment"
     ]
   },
-  codeTemplate: {
-    html: `<!-- FP-29 Capstone Client Index -->\n<div id="fp-29-root">\n  <h2>Weather Station & Geospatial Sensor Portal Workspace</h2>\n  <p>Submission Panel</p>\n</div>`,
-    css: `/* FP-29 layout constraints */\n#fp-29-root {\n  padding: 2rem;\n  background: #fafafa;\n  border-radius: 8px;\n}`,
-    js: `// FP-29 Handshake initialization\nconst AppInitializer = {\n  name: "Weather Station & Geospatial Sensor Portal",\n  code: "FP-29",\n  status: "Draft",\n  init() {\n    console.log(this.name + " running...");\n  }\n};`
-  },
-  assessment: "Verify that your repository contains backend models, route controllers, and frontend React views matching the requirements."
+  bonusFeatures: [
+  "Interactive peer map search",
+  "Alumni stats dashboard charts",
+  "Newsletter PDF creator",
+  "Email invite templates",
+  "Dark mode"
+],
+  submissionChecklist: [
+    "GitHub Repository",
+    "Frontend URL",
+    "Backend URL",
+    "README",
+    "ER Diagram",
+    "Postman Collection",
+    "Presentation"
+  ]
 };
+export default fp29Data;

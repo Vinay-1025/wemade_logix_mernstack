@@ -1,39 +1,146 @@
 export const fp07Data = {
+  projectId: 7,
   projectCode: "FP-07",
-  title: "Real-Time Chat & Instant Messenger Hub",
-  explanation: "Build a Slack clone featuring persistent chat channels, private direct messaging, presence indicators, and message history searches.",
-  progression: [
-    {
-      level: "Phase 1: Architecture & Design",
-      title: "Database Schemas & API Endpoints",
-      content: "Map out the REST API endpoints and define database schemas for your application modules."
-    },
-    {
-      level: "Phase 2: Core Development",
-      title: "Frontend Components & Business Logic",
-      content: "Build responsive React components and hook them up to your backend servers with state verification."
-    },
-    {
-      level: "Phase 3: Production Release",
-      title: "Security Auditing & Deployed Server Hosting",
-      content: "Secure passwords using bcrypt, configure JWT authorization, and deploy to staging environments."
-    }
+  projectTitle: "Real-Time Chat & Instant Messenger Hub",
+  difficulty: "Advanced",
+  duration: {
+    totalDays: 14,
+    expectedEffortHours: "40-50",
+    objective: "Design, develop, test and deploy a complete advanced MERN Stack application in 2 weeks."
+  },
+  techStack: [
+  "React.js",
+  "Node.js",
+  "Express.js",
+  "MongoDB",
+  "JWT Authentication",
+  "Stripe API",
+  "Socket.io"
+],
+  overview: "Build a Slack clone featuring persistent chat channels, private direct messaging, presence indicators, and message history searches.",
+  problemStatement: [
+    "Manual and error-prone tracking of Real-Time Chat & Instant Messenger Hub events.",
+    "Difficulty in coordinating user roles and data access controls.",
+    "Inefficient application workflow and status visibility.",
+    "Lack of real-time stats and visual dashboard insights."
   ],
-  detailedReference: {
-    summary: "Build a highly scalable MERN stack implementation of a Real-Time Chat & Instant Messenger Hub showing production-ready practices.",
-    keyConcepts: [
-      { term: "Schema Integrity", definition: "Enforcing validation constraints on your MongoDB collection layouts." },
-      { term: "User Isolation", definition: "Ensuring users can only query, modify, or delete their own custom data documents." }
+  objectives: [
+    "Build a robust and secure MERN stack web application.",
+    "Implement isolated user experience pipelines for different roles.",
+    "Ensure strict database schema constraints and integrity rules.",
+    "Deploy the complete working systems to production cloud hosts."
+  ],
+  roles: {
+    "Admin": [
+        "Manage disputation files",
+        "Approve categories & services",
+        "View platform commission summaries",
+        "Audit user databases"
     ],
-    bestPractices: [
-      "Secure sensitive API operations using custom express validation middleware.",
-      "Manage component states in React to keep rendering speed high and responsive."
+    "Seller": [
+        "Build seller profile & service gigs",
+        "Manage work timelines & deliveries",
+        "Manage gig inquiries",
+        "View earnings reports"
+    ],
+    "Buyer": [
+        "Search & filter services directory",
+        "Order services via Stripe checkout",
+        "Track project milestones",
+        "Submit reviews & feedback"
+    ]
+},
+  modules: [
+  "Authentication",
+  "Gigs Directory",
+  "Ordering Pipeline",
+  "Milestone Tracking",
+  "Messaging System",
+  "Ratings Hub"
+],
+  pages: {
+    "Public": [
+        "Home",
+        "Gigs Marketplace",
+        "Seller Directory",
+        "Login",
+        "Register"
+    ],
+    "Buyer": [
+        "Dashboard",
+        "My Orders",
+        "Milestone Manager",
+        "Invoice Center"
+    ],
+    "Seller": [
+        "Dashboard",
+        "My Gigs Builder",
+        "Active Orders",
+        "Revenue Charts"
+    ],
+    "Admin": [
+        "Dashboard",
+        "Gig Approvals",
+        "Escrows Registry"
+    ]
+},
+  databaseCollections: [
+  "Users",
+  "Gigs",
+  "Orders",
+  "Milestones",
+  "Messages",
+  "Reviews"
+],
+  mandatoryFeatures: {
+    "authentication": [
+      "Register",
+      "Login",
+      "JWT",
+      "Password Hashing"
+    ],
+    "frontend": [
+      "React",
+      "React Router",
+      "Responsive UI",
+      "Form Validation"
+    ],
+    "backend": [
+      "Express",
+      "REST APIs",
+      "MVC",
+      "Middleware",
+      "Error Handling"
+    ],
+    "database": [
+      "MongoDB",
+      "Minimum 5 collections",
+      "Relationships"
+    ],
+    "general": [
+      "CRUD Operations",
+      "Search",
+      "Filter",
+      "Dashboard Panels",
+      "Profile Management",
+      "Deployment"
     ]
   },
-  codeTemplate: {
-    html: `<!-- FP-07 Capstone Client Index -->\n<div id="fp-07-root">\n  <h2>Real-Time Chat & Instant Messenger Hub Workspace</h2>\n  <p>Submission Panel</p>\n</div>`,
-    css: `/* FP-07 layout constraints */\n#fp-07-root {\n  padding: 2rem;\n  background: #fafafa;\n  border-radius: 8px;\n}`,
-    js: `// FP-07 Handshake initialization\nconst AppInitializer = {\n  name: "Real-Time Chat & Instant Messenger Hub",\n  code: "FP-07",\n  status: "Draft",\n  init() {\n    console.log(this.name + " running...");\n  }\n};`
-  },
-  assessment: "Verify that your repository contains backend models, route controllers, and frontend React views matching the requirements."
+  bonusFeatures: [
+  "Stripe payment processing",
+  "Project milestone tracker",
+  "Live buyer-seller messaging",
+  "Invoice PDF export",
+  "Dark mode"
+],
+  submissionChecklist: [
+    "GitHub Repository",
+    "Frontend URL",
+    "Backend URL",
+    "README",
+    "ER Diagram",
+    "Postman Collection",
+    "Presentation"
+  ]
 };
+export default fp07Data;

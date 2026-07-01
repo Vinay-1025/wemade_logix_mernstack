@@ -1,39 +1,143 @@
 export const fp23Data = {
+  projectId: 23,
   projectCode: "FP-23",
-  title: "Interactive Trivia & Gamified Learning Platform",
-  explanation: "Build a quiz app supporting trivia categories, timed responses, leaderboard scores, and user quiz creator pipelines.",
-  progression: [
-    {
-      level: "Phase 1: Architecture & Design",
-      title: "Database Schemas & API Endpoints",
-      content: "Map out the REST API endpoints and define database schemas for your application modules."
-    },
-    {
-      level: "Phase 2: Core Development",
-      title: "Frontend Components & Business Logic",
-      content: "Build responsive React components and hook them up to your backend servers with state verification."
-    },
-    {
-      level: "Phase 3: Production Release",
-      title: "Security Auditing & Deployed Server Hosting",
-      content: "Secure passwords using bcrypt, configure JWT authorization, and deploy to staging environments."
-    }
+  projectTitle: "Interactive Trivia & Gamified Learning Platform",
+  difficulty: "Intermediate",
+  duration: {
+    totalDays: 14,
+    expectedEffortHours: "40-50",
+    objective: "Design, develop, test and deploy a complete intermediate MERN Stack application in 2 weeks."
+  },
+  techStack: [
+  "React.js",
+  "Node.js",
+  "Express.js",
+  "MongoDB",
+  "JWT Authentication",
+  "Chart.js"
+],
+  overview: "Build a quiz app supporting trivia categories, timed responses, leaderboard scores, and user quiz creator pipelines.",
+  problemStatement: [
+    "Manual and error-prone tracking of Interactive Trivia & Gamified Learning Platform events.",
+    "Difficulty in coordinating user roles and data access controls.",
+    "Inefficient application workflow and status visibility.",
+    "Lack of real-time stats and visual dashboard insights."
   ],
-  detailedReference: {
-    summary: "Build a highly scalable MERN stack implementation of a Interactive Trivia & Gamified Learning Platform showing production-ready practices.",
-    keyConcepts: [
-      { term: "Schema Integrity", definition: "Enforcing validation constraints on your MongoDB collection layouts." },
-      { term: "User Isolation", definition: "Ensuring users can only query, modify, or delete their own custom data documents." }
+  objectives: [
+    "Build a robust and secure MERN stack web application.",
+    "Implement isolated user experience pipelines for different roles.",
+    "Ensure strict database schema constraints and integrity rules.",
+    "Deploy the complete working systems to production cloud hosts."
+  ],
+  roles: {
+    "Admin": [
+        "Access database settings",
+        "Configure role permissions",
+        "Monitor company activities",
+        "Audit security reports"
     ],
-    bestPractices: [
-      "Secure sensitive API operations using custom express validation middleware.",
-      "Manage component states in React to keep rendering speed high and responsive."
+    "Manager": [
+        "Manage sales agents profiles",
+        "Set team sales goals",
+        "View dashboard aggregates",
+        "Export leads reports"
+    ],
+    "Agent": [
+        "Log client lead listings",
+        "Record sales progress details",
+        "Log client interaction histories",
+        "Track sales targets"
+    ]
+},
+  modules: [
+  "Authentication",
+  "Lead Pipeline",
+  "Interactions Ledger",
+  "Sales Dashboards",
+  "Goals Controller"
+],
+  pages: {
+    "Public": [
+        "Home",
+        "Pricing Tiers",
+        "Login",
+        "Register"
+    ],
+    "Agent": [
+        "Dashboard",
+        "My Leads",
+        "Activity Logger",
+        "Target Progress"
+    ],
+    "Manager": [
+        "Dashboard",
+        "Sales Pipelines",
+        "Team Directory",
+        "Goal settings"
+    ],
+    "Admin": [
+        "Dashboard",
+        "System Audits",
+        "Organization settings"
+    ]
+},
+  databaseCollections: [
+  "Users",
+  "Leads",
+  "Interactions",
+  "SalesGoals",
+  "Organizations",
+  "Logs"
+],
+  mandatoryFeatures: {
+    "authentication": [
+      "Register",
+      "Login",
+      "JWT",
+      "Password Hashing"
+    ],
+    "frontend": [
+      "React",
+      "React Router",
+      "Responsive UI",
+      "Form Validation"
+    ],
+    "backend": [
+      "Express",
+      "REST APIs",
+      "MVC",
+      "Middleware",
+      "Error Handling"
+    ],
+    "database": [
+      "MongoDB",
+      "Minimum 5 collections",
+      "Relationships"
+    ],
+    "general": [
+      "CRUD Operations",
+      "Search",
+      "Filter",
+      "Dashboard Panels",
+      "Profile Management",
+      "Deployment"
     ]
   },
-  codeTemplate: {
-    html: `<!-- FP-23 Capstone Client Index -->\n<div id="fp-23-root">\n  <h2>Interactive Trivia & Gamified Learning Platform Workspace</h2>\n  <p>Submission Panel</p>\n</div>`,
-    css: `/* FP-23 layout constraints */\n#fp-23-root {\n  padding: 2rem;\n  background: #fafafa;\n  border-radius: 8px;\n}`,
-    js: `// FP-23 Handshake initialization\nconst AppInitializer = {\n  name: "Interactive Trivia & Gamified Learning Platform",\n  code: "FP-23",\n  status: "Draft",\n  init() {\n    console.log(this.name + " running...");\n  }\n};`
-  },
-  assessment: "Verify that your repository contains backend models, route controllers, and frontend React views matching the requirements."
+  bonusFeatures: [
+  "Interactive sales pipeline charts",
+  "Overdue lead email alerts",
+  "Leads report PDF export",
+  "Dark mode",
+  "Activity logs"
+],
+  submissionChecklist: [
+    "GitHub Repository",
+    "Frontend URL",
+    "Backend URL",
+    "README",
+    "ER Diagram",
+    "Postman Collection",
+    "Presentation"
+  ]
 };
+export default fp23Data;

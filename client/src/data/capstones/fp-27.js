@@ -1,39 +1,144 @@
 export const fp27Data = {
+  projectId: 27,
   projectCode: "FP-27",
-  title: "Issue Tracker & Bug Ticketing Platform",
-  explanation: "Build a ticketing app tracking issue priorities, assignees, state history status (open/fixed/closed), and logs.",
-  progression: [
-    {
-      level: "Phase 1: Architecture & Design",
-      title: "Database Schemas & API Endpoints",
-      content: "Map out the REST API endpoints and define database schemas for your application modules."
-    },
-    {
-      level: "Phase 2: Core Development",
-      title: "Frontend Components & Business Logic",
-      content: "Build responsive React components and hook them up to your backend servers with state verification."
-    },
-    {
-      level: "Phase 3: Production Release",
-      title: "Security Auditing & Deployed Server Hosting",
-      content: "Secure passwords using bcrypt, configure JWT authorization, and deploy to staging environments."
-    }
+  projectTitle: "Issue Tracker & Bug Ticketing Platform",
+  difficulty: "Intermediate",
+  duration: {
+    totalDays: 14,
+    expectedEffortHours: "40-50",
+    objective: "Design, develop, test and deploy a complete intermediate MERN Stack application in 2 weeks."
+  },
+  techStack: [
+  "React.js",
+  "Node.js",
+  "Express.js",
+  "MongoDB",
+  "JWT Authentication",
+  "Multer"
+],
+  overview: "Build a ticketing app tracking issue priorities, assignees, state history status (open/fixed/closed), and logs.",
+  problemStatement: [
+    "Manual and error-prone tracking of Issue Tracker & Bug Ticketing Platform events.",
+    "Difficulty in coordinating user roles and data access controls.",
+    "Inefficient application workflow and status visibility.",
+    "Lack of real-time stats and visual dashboard insights."
   ],
-  detailedReference: {
-    summary: "Build a highly scalable MERN stack implementation of a Issue Tracker & Bug Ticketing Platform showing production-ready practices.",
-    keyConcepts: [
-      { term: "Schema Integrity", definition: "Enforcing validation constraints on your MongoDB collection layouts." },
-      { term: "User Isolation", definition: "Ensuring users can only query, modify, or delete their own custom data documents." }
+  objectives: [
+    "Build a robust and secure MERN stack web application.",
+    "Implement isolated user experience pipelines for different roles.",
+    "Ensure strict database schema constraints and integrity rules.",
+    "Deploy the complete working systems to production cloud hosts."
+  ],
+  roles: {
+    "Admin": [
+        "Moderate recipe feedback",
+        "Monitor catalog categories",
+        "Audit system databases",
+        "Manage configs"
     ],
-    bestPractices: [
-      "Secure sensitive API operations using custom express validation middleware.",
-      "Manage component states in React to keep rendering speed high and responsive."
+    "Creator": [
+        "Upload recipes and schedules",
+        "Manage cookbook categories",
+        "Track recipe upvote statistics",
+        "Manage comments"
+    ],
+    "User": [
+        "Browse recipes using filters",
+        "Construct daily meal planners",
+        "Generate grocery shopping lists",
+        "Write reviews"
+    ]
+},
+  modules: [
+  "Authentication",
+  "Recipes Catalog",
+  "Meal Planners",
+  "Grocery Lists",
+  "Upvotes Hub"
+],
+  pages: {
+    "Public": [
+        "Home",
+        "Recipes Search",
+        "Trending Feed",
+        "Login",
+        "Register"
+    ],
+    "User": [
+        "Dashboard",
+        "Meal Planner",
+        "My Lists",
+        "My Cookbooks"
+    ],
+    "Creator": [
+        "Dashboard",
+        "Recipe Publisher",
+        "My Analytics",
+        "Feedback Panel"
+    ],
+    "Admin": [
+        "Dashboard",
+        "Categories Directory",
+        "Content Review"
+    ]
+},
+  databaseCollections: [
+  "Users",
+  "Recipes",
+  "MealPlans",
+  "GroceryLists",
+  "Ratings",
+  "Categories"
+],
+  mandatoryFeatures: {
+    "authentication": [
+      "Register",
+      "Login",
+      "JWT",
+      "Password Hashing"
+    ],
+    "frontend": [
+      "React",
+      "React Router",
+      "Responsive UI",
+      "Form Validation"
+    ],
+    "backend": [
+      "Express",
+      "REST APIs",
+      "MVC",
+      "Middleware",
+      "Error Handling"
+    ],
+    "database": [
+      "MongoDB",
+      "Minimum 5 collections",
+      "Relationships"
+    ],
+    "general": [
+      "CRUD Operations",
+      "Search",
+      "Filter",
+      "Dashboard Panels",
+      "Profile Management",
+      "Deployment"
     ]
   },
-  codeTemplate: {
-    html: `<!-- FP-27 Capstone Client Index -->\n<div id="fp-27-root">\n  <h2>Issue Tracker & Bug Ticketing Platform Workspace</h2>\n  <p>Submission Panel</p>\n</div>`,
-    css: `/* FP-27 layout constraints */\n#fp-27-root {\n  padding: 2rem;\n  background: #fafafa;\n  border-radius: 8px;\n}`,
-    js: `// FP-27 Handshake initialization\nconst AppInitializer = {\n  name: "Issue Tracker & Bug Ticketing Platform",\n  code: "FP-27",\n  status: "Draft",\n  init() {\n    console.log(this.name + " running...");\n  }\n};`
-  },
-  assessment: "Verify that your repository contains backend models, route controllers, and frontend React views matching the requirements."
+  bonusFeatures: [
+  "Grocery List PDF export",
+  "Calorie counter calculators",
+  "Recipe rating & reviews",
+  "Dark mode",
+  "Activity logs"
+],
+  submissionChecklist: [
+    "GitHub Repository",
+    "Frontend URL",
+    "Backend URL",
+    "README",
+    "ER Diagram",
+    "Postman Collection",
+    "Presentation"
+  ]
 };
+export default fp27Data;

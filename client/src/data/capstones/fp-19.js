@@ -1,39 +1,144 @@
 export const fp19Data = {
+  projectId: 19,
   projectCode: "FP-19",
-  title: "Stock Portfolio & Investment Analytics Portal",
-  explanation: "Build a market tracker managing watchlist portfolios, asset buy/sell transaction logs, and real-time pricing simulations.",
-  progression: [
-    {
-      level: "Phase 1: Architecture & Design",
-      title: "Database Schemas & API Endpoints",
-      content: "Map out the REST API endpoints and define database schemas for your application modules."
-    },
-    {
-      level: "Phase 2: Core Development",
-      title: "Frontend Components & Business Logic",
-      content: "Build responsive React components and hook them up to your backend servers with state verification."
-    },
-    {
-      level: "Phase 3: Production Release",
-      title: "Security Auditing & Deployed Server Hosting",
-      content: "Secure passwords using bcrypt, configure JWT authorization, and deploy to staging environments."
-    }
+  projectTitle: "Stock Portfolio & Investment Analytics Portal",
+  difficulty: "Intermediate",
+  duration: {
+    totalDays: 14,
+    expectedEffortHours: "40-50",
+    objective: "Design, develop, test and deploy a complete intermediate MERN Stack application in 2 weeks."
+  },
+  techStack: [
+  "React.js",
+  "Node.js",
+  "Express.js",
+  "MongoDB",
+  "JWT Authentication",
+  "Multer"
+],
+  overview: "Build a market tracker managing watchlist portfolios, asset buy/sell transaction logs, and real-time pricing simulations.",
+  problemStatement: [
+    "Manual and error-prone tracking of Stock Portfolio & Investment Analytics Portal events.",
+    "Difficulty in coordinating user roles and data access controls.",
+    "Inefficient application workflow and status visibility.",
+    "Lack of real-time stats and visual dashboard insights."
   ],
-  detailedReference: {
-    summary: "Build a highly scalable MERN stack implementation of a Stock Portfolio & Investment Analytics Portal showing production-ready practices.",
-    keyConcepts: [
-      { term: "Schema Integrity", definition: "Enforcing validation constraints on your MongoDB collection layouts." },
-      { term: "User Isolation", definition: "Ensuring users can only query, modify, or delete their own custom data documents." }
+  objectives: [
+    "Build a robust and secure MERN stack web application.",
+    "Implement isolated user experience pipelines for different roles.",
+    "Ensure strict database schema constraints and integrity rules.",
+    "Deploy the complete working systems to production cloud hosts."
+  ],
+  roles: {
+    "Admin": [
+        "Manage system database",
+        "Configure template structures",
+        "Audit log files",
+        "Approve editor layouts"
     ],
-    bestPractices: [
-      "Secure sensitive API operations using custom express validation middleware.",
-      "Manage component states in React to keep rendering speed high and responsive."
+    "Editor": [
+        "Write blog articles",
+        "Upload article cover photos",
+        "Tag articles by category",
+        "Track article view stats"
+    ],
+    "Reader": [
+        "Read published articles",
+        "Add comments in sections",
+        "Bookmark articles",
+        "Share articles"
+    ]
+},
+  modules: [
+  "Authentication",
+  "Articles Catalog",
+  "Rich Content Builder",
+  "Comments Desk",
+  "Article Analytics"
+],
+  pages: {
+    "Public": [
+        "Home",
+        "Blogs Feed",
+        "Blog Details",
+        "Login",
+        "Register"
+    ],
+    "Reader": [
+        "Dashboard",
+        "Saved Articles",
+        "Notifications",
+        "My Comments"
+    ],
+    "Editor": [
+        "Dashboard",
+        "New Article",
+        "Drafts Manager",
+        "View Charts"
+    ],
+    "Admin": [
+        "Dashboard",
+        "System Setup",
+        "Content Moderations"
+    ]
+},
+  databaseCollections: [
+  "Users",
+  "Articles",
+  "Comments",
+  "Categories",
+  "ReadStats",
+  "Bookmarks"
+],
+  mandatoryFeatures: {
+    "authentication": [
+      "Register",
+      "Login",
+      "JWT",
+      "Password Hashing"
+    ],
+    "frontend": [
+      "React",
+      "React Router",
+      "Responsive UI",
+      "Form Validation"
+    ],
+    "backend": [
+      "Express",
+      "REST APIs",
+      "MVC",
+      "Middleware",
+      "Error Handling"
+    ],
+    "database": [
+      "MongoDB",
+      "Minimum 5 collections",
+      "Relationships"
+    ],
+    "general": [
+      "CRUD Operations",
+      "Search",
+      "Filter",
+      "Dashboard Panels",
+      "Profile Management",
+      "Deployment"
     ]
   },
-  codeTemplate: {
-    html: `<!-- FP-19 Capstone Client Index -->\n<div id="fp-19-root">\n  <h2>Stock Portfolio & Investment Analytics Portal Workspace</h2>\n  <p>Submission Panel</p>\n</div>`,
-    css: `/* FP-19 layout constraints */\n#fp-19-root {\n  padding: 2rem;\n  background: #fafafa;\n  border-radius: 8px;\n}`,
-    js: `// FP-19 Handshake initialization\nconst AppInitializer = {\n  name: "Stock Portfolio & Investment Analytics Portal",\n  code: "FP-19",\n  status: "Draft",\n  init() {\n    console.log(this.name + " running...");\n  }\n};`
-  },
-  assessment: "Verify that your repository contains backend models, route controllers, and frontend React views matching the requirements."
+  bonusFeatures: [
+  "Rich text markdown publisher",
+  "Article visitor analytics charts",
+  "Newsletter email triggers",
+  "Dark mode",
+  "Activity logs"
+],
+  submissionChecklist: [
+    "GitHub Repository",
+    "Frontend URL",
+    "Backend URL",
+    "README",
+    "ER Diagram",
+    "Postman Collection",
+    "Presentation"
+  ]
 };
+export default fp19Data;

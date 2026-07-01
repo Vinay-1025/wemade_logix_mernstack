@@ -1,39 +1,131 @@
 export const fp28Data = {
+  projectId: 28,
   projectCode: "FP-28",
-  title: "Charity Donation & Crowdfunding Platform",
-  explanation: "Build a fundraising portal tracking donation goals, backer comments, campaign categories, and transparency logs.",
-  progression: [
-    {
-      level: "Phase 1: Architecture & Design",
-      title: "Database Schemas & API Endpoints",
-      content: "Map out the REST API endpoints and define database schemas for your application modules."
-    },
-    {
-      level: "Phase 2: Core Development",
-      title: "Frontend Components & Business Logic",
-      content: "Build responsive React components and hook them up to your backend servers with state verification."
-    },
-    {
-      level: "Phase 3: Production Release",
-      title: "Security Auditing & Deployed Server Hosting",
-      content: "Secure passwords using bcrypt, configure JWT authorization, and deploy to staging environments."
-    }
+  projectTitle: "Charity Donation & Crowdfunding Platform",
+  difficulty: "Intermediate",
+  duration: {
+    totalDays: 14,
+    expectedEffortHours: "40-50",
+    objective: "Design, develop, test and deploy a complete intermediate MERN Stack application in 2 weeks."
+  },
+  techStack: [
+  "React.js",
+  "Node.js",
+  "Express.js",
+  "MongoDB",
+  "JWT Authentication",
+  "Chart.js"
+],
+  overview: "Build a fundraising portal tracking donation goals, backer comments, campaign categories, and transparency logs.",
+  problemStatement: [
+    "Manual and error-prone tracking of Charity Donation & Crowdfunding Platform events.",
+    "Difficulty in coordinating user roles and data access controls.",
+    "Inefficient application workflow and status visibility.",
+    "Lack of real-time stats and visual dashboard insights."
   ],
-  detailedReference: {
-    summary: "Build a highly scalable MERN stack implementation of a Charity Donation & Crowdfunding Platform showing production-ready practices.",
-    keyConcepts: [
-      { term: "Schema Integrity", definition: "Enforcing validation constraints on your MongoDB collection layouts." },
-      { term: "User Isolation", definition: "Ensuring users can only query, modify, or delete their own custom data documents." }
+  objectives: [
+    "Build a robust and secure MERN stack web application.",
+    "Implement isolated user experience pipelines for different roles.",
+    "Ensure strict database schema constraints and integrity rules.",
+    "Deploy the complete working systems to production cloud hosts."
+  ],
+  roles: {
+    "Admin": [
+        "Manage system dictionaries",
+        "Monitor server activity logs",
+        "Oversee account registrations",
+        "Access parameters"
     ],
-    bestPractices: [
-      "Secure sensitive API operations using custom express validation middleware.",
-      "Manage component states in React to keep rendering speed high and responsive."
+    "User": [
+        "Write daily journal inputs",
+        "Configure personal habit trackers",
+        "Analyze habit consistency charts",
+        "Set routine alerts"
+    ]
+},
+  modules: [
+  "Authentication",
+  "Journal Entries",
+  "Habits Tracker",
+  "Analytical Charts",
+  "Alerts Scheduler"
+],
+  pages: {
+    "Public": [
+        "Home",
+        "Features Overview",
+        "Self Care Guide",
+        "Login",
+        "Register"
+    ],
+    "User": [
+        "Dashboard",
+        "Journal Board",
+        "Habits Ledger",
+        "Analytical Progress"
+    ],
+    "Admin": [
+        "Dashboard",
+        "System Diagnostic",
+        "Configuration logs"
+    ]
+},
+  databaseCollections: [
+  "Users",
+  "Entries",
+  "Habits",
+  "ProgressLogs",
+  "Alerts"
+],
+  mandatoryFeatures: {
+    "authentication": [
+      "Register",
+      "Login",
+      "JWT",
+      "Password Hashing"
+    ],
+    "frontend": [
+      "React",
+      "React Router",
+      "Responsive UI",
+      "Form Validation"
+    ],
+    "backend": [
+      "Express",
+      "REST APIs",
+      "MVC",
+      "Middleware",
+      "Error Handling"
+    ],
+    "database": [
+      "MongoDB",
+      "Minimum 5 collections",
+      "Relationships"
+    ],
+    "general": [
+      "CRUD Operations",
+      "Search",
+      "Filter",
+      "Dashboard Panels",
+      "Profile Management",
+      "Deployment"
     ]
   },
-  codeTemplate: {
-    html: `<!-- FP-28 Capstone Client Index -->\n<div id="fp-28-root">\n  <h2>Charity Donation & Crowdfunding Platform Workspace</h2>\n  <p>Submission Panel</p>\n</div>`,
-    css: `/* FP-28 layout constraints */\n#fp-28-root {\n  padding: 2rem;\n  background: #fafafa;\n  border-radius: 8px;\n}`,
-    js: `// FP-28 Handshake initialization\nconst AppInitializer = {\n  name: "Charity Donation & Crowdfunding Platform",\n  code: "FP-28",\n  status: "Draft",\n  init() {\n    console.log(this.name + " running...");\n  }\n};`
-  },
-  assessment: "Verify that your repository contains backend models, route controllers, and frontend React views matching the requirements."
+  bonusFeatures: [
+  "Interactive consistency charts",
+  "Daily reminder email triggers",
+  "Journal PDF backup export",
+  "Dark mode",
+  "Activity logs"
+],
+  submissionChecklist: [
+    "GitHub Repository",
+    "Frontend URL",
+    "Backend URL",
+    "README",
+    "ER Diagram",
+    "Postman Collection",
+    "Presentation"
+  ]
 };
+export default fp28Data;

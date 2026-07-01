@@ -1,39 +1,145 @@
 export const fp20Data = {
+  projectId: 20,
   projectCode: "FP-20",
-  title: "Real Estate Listing & Broker Connection Hub",
-  explanation: "Build a property search app featuring filters for pricing, location, dimensions, and broker connection forms.",
-  progression: [
-    {
-      level: "Phase 1: Architecture & Design",
-      title: "Database Schemas & API Endpoints",
-      content: "Map out the REST API endpoints and define database schemas for your application modules."
-    },
-    {
-      level: "Phase 2: Core Development",
-      title: "Frontend Components & Business Logic",
-      content: "Build responsive React components and hook them up to your backend servers with state verification."
-    },
-    {
-      level: "Phase 3: Production Release",
-      title: "Security Auditing & Deployed Server Hosting",
-      content: "Secure passwords using bcrypt, configure JWT authorization, and deploy to staging environments."
-    }
+  projectTitle: "Real Estate Listing & Broker Connection Hub",
+  difficulty: "Advanced",
+  duration: {
+    totalDays: 14,
+    expectedEffortHours: "40-50",
+    objective: "Design, develop, test and deploy a complete advanced MERN Stack application in 2 weeks."
+  },
+  techStack: [
+  "React.js",
+  "Node.js",
+  "Express.js",
+  "MongoDB",
+  "JWT Authentication",
+  "Multer",
+  "GridFS"
+],
+  overview: "Build a property search app featuring filters for pricing, location, dimensions, and broker connection forms.",
+  problemStatement: [
+    "Manual and error-prone tracking of Real Estate Listing & Broker Connection Hub events.",
+    "Difficulty in coordinating user roles and data access controls.",
+    "Inefficient application workflow and status visibility.",
+    "Lack of real-time stats and visual dashboard insights."
   ],
-  detailedReference: {
-    summary: "Build a highly scalable MERN stack implementation of a Real Estate Listing & Broker Connection Hub showing production-ready practices.",
-    keyConcepts: [
-      { term: "Schema Integrity", definition: "Enforcing validation constraints on your MongoDB collection layouts." },
-      { term: "User Isolation", definition: "Ensuring users can only query, modify, or delete their own custom data documents." }
+  objectives: [
+    "Build a robust and secure MERN stack web application.",
+    "Implement isolated user experience pipelines for different roles.",
+    "Ensure strict database schema constraints and integrity rules.",
+    "Deploy the complete working systems to production cloud hosts."
+  ],
+  roles: {
+    "Admin": [
+        "Moderate media directories",
+        "Audit platform financials",
+        "Monitor streaming latency",
+        "Manage user data"
     ],
-    bestPractices: [
-      "Secure sensitive API operations using custom express validation middleware.",
-      "Manage component states in React to keep rendering speed high and responsive."
+    "Artist": [
+        "Upload audio music files",
+        "Create album listings",
+        "Manage artist public profile",
+        "Analyze stream charts"
+    ],
+    "Listener": [
+        "Search artist song directories",
+        "Create personal song playlists",
+        "Listen to live stream audio",
+        "Upvote tracks"
+    ]
+},
+  modules: [
+  "Authentication",
+  "Audio Streaming",
+  "Playlists Hub",
+  "Music Catalog",
+  "Artist Analytics"
+],
+  pages: {
+    "Public": [
+        "Home",
+        "Explore Tracks",
+        "Artist Finder",
+        "Login",
+        "Register"
+    ],
+    "Listener": [
+        "Dashboard",
+        "Playlists",
+        "Favorites",
+        "History"
+    ],
+    "Artist": [
+        "Dashboard",
+        "Upload Track",
+        "My Albums",
+        "Streaming Charts"
+    ],
+    "Admin": [
+        "Dashboard",
+        "Media Audit",
+        "Platform Metrics"
+    ]
+},
+  databaseCollections: [
+  "Users",
+  "Tracks",
+  "Albums",
+  "Playlists",
+  "StreamLogs",
+  "ArtistProfiles"
+],
+  mandatoryFeatures: {
+    "authentication": [
+      "Register",
+      "Login",
+      "JWT",
+      "Password Hashing"
+    ],
+    "frontend": [
+      "React",
+      "React Router",
+      "Responsive UI",
+      "Form Validation"
+    ],
+    "backend": [
+      "Express",
+      "REST APIs",
+      "MVC",
+      "Middleware",
+      "Error Handling"
+    ],
+    "database": [
+      "MongoDB",
+      "Minimum 5 collections",
+      "Relationships"
+    ],
+    "general": [
+      "CRUD Operations",
+      "Search",
+      "Filter",
+      "Dashboard Panels",
+      "Profile Management",
+      "Deployment"
     ]
   },
-  codeTemplate: {
-    html: `<!-- FP-20 Capstone Client Index -->\n<div id="fp-20-root">\n  <h2>Real Estate Listing & Broker Connection Hub Workspace</h2>\n  <p>Submission Panel</p>\n</div>`,
-    css: `/* FP-20 layout constraints */\n#fp-20-root {\n  padding: 2rem;\n  background: #fafafa;\n  border-radius: 8px;\n}`,
-    js: `// FP-20 Handshake initialization\nconst AppInitializer = {\n  name: "Real Estate Listing & Broker Connection Hub",\n  code: "FP-20",\n  status: "Draft",\n  init() {\n    console.log(this.name + " running...");\n  }\n};`
-  },
-  assessment: "Verify that your repository contains backend models, route controllers, and frontend React views matching the requirements."
+  bonusFeatures: [
+  "Live audio streaming integration",
+  "Interactive stream metrics charts",
+  "Email analytics reports",
+  "Dark mode",
+  "Activity logs"
+],
+  submissionChecklist: [
+    "GitHub Repository",
+    "Frontend URL",
+    "Backend URL",
+    "README",
+    "ER Diagram",
+    "Postman Collection",
+    "Presentation"
+  ]
 };
+export default fp20Data;

@@ -1,39 +1,144 @@
 export const fp16Data = {
+  projectId: 16,
   projectCode: "FP-16",
-  title: "Event Management & Ticketing Organizer",
-  explanation: "Build an event catalog supporting ticket reservations, check-in QR scan logs, and organizer dashboards.",
-  progression: [
-    {
-      level: "Phase 1: Architecture & Design",
-      title: "Database Schemas & API Endpoints",
-      content: "Map out the REST API endpoints and define database schemas for your application modules."
-    },
-    {
-      level: "Phase 2: Core Development",
-      title: "Frontend Components & Business Logic",
-      content: "Build responsive React components and hook them up to your backend servers with state verification."
-    },
-    {
-      level: "Phase 3: Production Release",
-      title: "Security Auditing & Deployed Server Hosting",
-      content: "Secure passwords using bcrypt, configure JWT authorization, and deploy to staging environments."
-    }
+  projectTitle: "Event Management & Ticketing Organizer",
+  difficulty: "Intermediate",
+  duration: {
+    totalDays: 14,
+    expectedEffortHours: "40-50",
+    objective: "Design, develop, test and deploy a complete intermediate MERN Stack application in 2 weeks."
+  },
+  techStack: [
+  "React.js",
+  "Node.js",
+  "Express.js",
+  "MongoDB",
+  "JWT Authentication",
+  "Multer"
+],
+  overview: "Build an event catalog supporting ticket reservations, check-in QR scan logs, and organizer dashboards.",
+  problemStatement: [
+    "Manual and error-prone tracking of Event Management & Ticketing Organizer events.",
+    "Difficulty in coordinating user roles and data access controls.",
+    "Inefficient application workflow and status visibility.",
+    "Lack of real-time stats and visual dashboard insights."
   ],
-  detailedReference: {
-    summary: "Build a highly scalable MERN stack implementation of a Event Management & Ticketing Organizer showing production-ready practices.",
-    keyConcepts: [
-      { term: "Schema Integrity", definition: "Enforcing validation constraints on your MongoDB collection layouts." },
-      { term: "User Isolation", definition: "Ensuring users can only query, modify, or delete their own custom data documents." }
+  objectives: [
+    "Build a robust and secure MERN stack web application.",
+    "Implement isolated user experience pipelines for different roles.",
+    "Ensure strict database schema constraints and integrity rules.",
+    "Deploy the complete working systems to production cloud hosts."
+  ],
+  roles: {
+    "Admin": [
+        "Moderate recipe feedback",
+        "Monitor catalog tags",
+        "Audit system databases",
+        "Manage configurations"
     ],
-    bestPractices: [
-      "Secure sensitive API operations using custom express validation middleware.",
-      "Manage component states in React to keep rendering speed high and responsive."
+    "Creator": [
+        "Create recipes instructions",
+        "Upload recipe images",
+        "Tag recipe attributes",
+        "View user upvotes"
+    ],
+    "User": [
+        "Browse recipes with filters",
+        "Build daily meal planners",
+        "Generate shopping grocery lists",
+        "Submit ratings"
+    ]
+},
+  modules: [
+  "Authentication",
+  "Recipes Catalog",
+  "Meal Planner",
+  "Grocery Lists",
+  "Upvotes Hub"
+],
+  pages: {
+    "Public": [
+        "Home",
+        "Recipes Search",
+        "Trending Feed",
+        "Login",
+        "Register"
+    ],
+    "User": [
+        "Dashboard",
+        "Meal Planner",
+        "My Lists",
+        "My Cookbooks"
+    ],
+    "Creator": [
+        "Dashboard",
+        "Recipe Publisher",
+        "My Analytics",
+        "Feedback Panel"
+    ],
+    "Admin": [
+        "Dashboard",
+        "Categories Directory",
+        "Content Review"
+    ]
+},
+  databaseCollections: [
+  "Users",
+  "Recipes",
+  "MealPlans",
+  "GroceryLists",
+  "Ratings",
+  "Categories"
+],
+  mandatoryFeatures: {
+    "authentication": [
+      "Register",
+      "Login",
+      "JWT",
+      "Password Hashing"
+    ],
+    "frontend": [
+      "React",
+      "React Router",
+      "Responsive UI",
+      "Form Validation"
+    ],
+    "backend": [
+      "Express",
+      "REST APIs",
+      "MVC",
+      "Middleware",
+      "Error Handling"
+    ],
+    "database": [
+      "MongoDB",
+      "Minimum 5 collections",
+      "Relationships"
+    ],
+    "general": [
+      "CRUD Operations",
+      "Search",
+      "Filter",
+      "Dashboard Panels",
+      "Profile Management",
+      "Deployment"
     ]
   },
-  codeTemplate: {
-    html: `<!-- FP-16 Capstone Client Index -->\n<div id="fp-16-root">\n  <h2>Event Management & Ticketing Organizer Workspace</h2>\n  <p>Submission Panel</p>\n</div>`,
-    css: `/* FP-16 layout constraints */\n#fp-16-root {\n  padding: 2rem;\n  background: #fafafa;\n  border-radius: 8px;\n}`,
-    js: `// FP-16 Handshake initialization\nconst AppInitializer = {\n  name: "Event Management & Ticketing Organizer",\n  code: "FP-16",\n  status: "Draft",\n  init() {\n    console.log(this.name + " running...");\n  }\n};`
-  },
-  assessment: "Verify that your repository contains backend models, route controllers, and frontend React views matching the requirements."
+  bonusFeatures: [
+  "Grocery List PDF export",
+  "Calorie counter calculators",
+  "Recipe rating & reviews",
+  "Dark mode",
+  "Activity logs"
+],
+  submissionChecklist: [
+    "GitHub Repository",
+    "Frontend URL",
+    "Backend URL",
+    "README",
+    "ER Diagram",
+    "Postman Collection",
+    "Presentation"
+  ]
 };
+export default fp16Data;

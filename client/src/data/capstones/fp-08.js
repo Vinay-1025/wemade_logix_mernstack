@@ -1,39 +1,138 @@
 export const fp08Data = {
+  projectId: 8,
   projectCode: "FP-08",
-  title: "Customer Relationship Management (CRM) Suite",
-  explanation: "Build a business dashboard managing lead sales pipelines, customer communication timelines, sales reporting, and meeting logs.",
-  progression: [
-    {
-      level: "Phase 1: Architecture & Design",
-      title: "Database Schemas & API Endpoints",
-      content: "Map out the REST API endpoints and define database schemas for your application modules."
-    },
-    {
-      level: "Phase 2: Core Development",
-      title: "Frontend Components & Business Logic",
-      content: "Build responsive React components and hook them up to your backend servers with state verification."
-    },
-    {
-      level: "Phase 3: Production Release",
-      title: "Security Auditing & Deployed Server Hosting",
-      content: "Secure passwords using bcrypt, configure JWT authorization, and deploy to staging environments."
-    }
+  projectTitle: "Customer Relationship Management (CRM) Suite",
+  difficulty: "Intermediate",
+  duration: {
+    totalDays: 14,
+    expectedEffortHours: "40-50",
+    objective: "Design, develop, test and deploy a complete intermediate MERN Stack application in 2 weeks."
+  },
+  techStack: [
+  "React.js",
+  "Node.js",
+  "Express.js",
+  "MongoDB",
+  "JWT Authentication",
+  "Multer"
+],
+  overview: "Build a business dashboard managing lead sales pipelines, customer communication timelines, sales reporting, and meeting logs.",
+  problemStatement: [
+    "Manual and error-prone tracking of Customer Relationship Management (CRM) Suite events.",
+    "Difficulty in coordinating user roles and data access controls.",
+    "Inefficient application workflow and status visibility.",
+    "Lack of real-time stats and visual dashboard insights."
   ],
-  detailedReference: {
-    summary: "Build a highly scalable MERN stack implementation of a Customer Relationship Management (CRM) Suite showing production-ready practices.",
-    keyConcepts: [
-      { term: "Schema Integrity", definition: "Enforcing validation constraints on your MongoDB collection layouts." },
-      { term: "User Isolation", definition: "Ensuring users can only query, modify, or delete their own custom data documents." }
+  objectives: [
+    "Build a robust and secure MERN stack web application.",
+    "Implement isolated user experience pipelines for different roles.",
+    "Ensure strict database schema constraints and integrity rules.",
+    "Deploy the complete working systems to production cloud hosts."
+  ],
+  roles: {
+    "Admin": [
+        "Manage server parameters",
+        "Manage channels and themes",
+        "Moderate flagged postings",
+        "View activity logs"
     ],
-    bestPractices: [
-      "Secure sensitive API operations using custom express validation middleware.",
-      "Manage component states in React to keep rendering speed high and responsive."
+    "Moderator": [
+        "Audit post reports",
+        "Ban abusive profiles",
+        "Pin informational posts",
+        "Review comment queues"
+    ],
+    "User": [
+        "Manage user profile",
+        "Publish posts with image uploads",
+        "Comment & reply in forums",
+        "Upvote/Downvote content"
+    ]
+},
+  modules: [
+  "Authentication",
+  "Feed Generator",
+  "Post Builder",
+  "Comment Threading",
+  "Moderation Registry"
+],
+  pages: {
+    "Public": [
+        "Home",
+        "Explore Feed",
+        "Forum Categories",
+        "Login",
+        "Register"
+    ],
+    "User": [
+        "Dashboard",
+        "My Profile",
+        "Publish Post",
+        "Bookmarked Posts"
+    ],
+    "Admin": [
+        "Dashboard",
+        "Reported Content",
+        "User Permissions"
+    ]
+},
+  databaseCollections: [
+  "Users",
+  "Posts",
+  "Comments",
+  "Subforums",
+  "Reports",
+  "Upvotes"
+],
+  mandatoryFeatures: {
+    "authentication": [
+      "Register",
+      "Login",
+      "JWT",
+      "Password Hashing"
+    ],
+    "frontend": [
+      "React",
+      "React Router",
+      "Responsive UI",
+      "Form Validation"
+    ],
+    "backend": [
+      "Express",
+      "REST APIs",
+      "MVC",
+      "Middleware",
+      "Error Handling"
+    ],
+    "database": [
+      "MongoDB",
+      "Minimum 5 collections",
+      "Relationships"
+    ],
+    "general": [
+      "CRUD Operations",
+      "Search",
+      "Filter",
+      "Dashboard Panels",
+      "Profile Management",
+      "Deployment"
     ]
   },
-  codeTemplate: {
-    html: `<!-- FP-08 Capstone Client Index -->\n<div id="fp-08-root">\n  <h2>Customer Relationship Management (CRM) Suite Workspace</h2>\n  <p>Submission Panel</p>\n</div>`,
-    css: `/* FP-08 layout constraints */\n#fp-08-root {\n  padding: 2rem;\n  background: #fafafa;\n  border-radius: 8px;\n}`,
-    js: `// FP-08 Handshake initialization\nconst AppInitializer = {\n  name: "Customer Relationship Management (CRM) Suite",\n  code: "FP-08",\n  status: "Draft",\n  init() {\n    console.log(this.name + " running...");\n  }\n};`
-  },
-  assessment: "Verify that your repository contains backend models, route controllers, and frontend React views matching the requirements."
+  bonusFeatures: [
+  "Image upload support",
+  "Real-time feed updates",
+  "CSV Post Export",
+  "Activity logs",
+  "Dark mode"
+],
+  submissionChecklist: [
+    "GitHub Repository",
+    "Frontend URL",
+    "Backend URL",
+    "README",
+    "ER Diagram",
+    "Postman Collection",
+    "Presentation"
+  ]
 };
+export default fp08Data;

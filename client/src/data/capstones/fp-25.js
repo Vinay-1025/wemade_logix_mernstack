@@ -1,39 +1,144 @@
 export const fp25Data = {
+  projectId: 25,
   projectCode: "FP-25",
-  title: "Freelance Developer Freelancer Bid Board",
-  explanation: "Build a job board featuring client projects, developer bids, milestone budgets, and direct messaging portals.",
-  progression: [
-    {
-      level: "Phase 1: Architecture & Design",
-      title: "Database Schemas & API Endpoints",
-      content: "Map out the REST API endpoints and define database schemas for your application modules."
-    },
-    {
-      level: "Phase 2: Core Development",
-      title: "Frontend Components & Business Logic",
-      content: "Build responsive React components and hook them up to your backend servers with state verification."
-    },
-    {
-      level: "Phase 3: Production Release",
-      title: "Security Auditing & Deployed Server Hosting",
-      content: "Secure passwords using bcrypt, configure JWT authorization, and deploy to staging environments."
-    }
+  projectTitle: "Freelance Developer Freelancer Bid Board",
+  difficulty: "Advanced",
+  duration: {
+    totalDays: 14,
+    expectedEffortHours: "40-50",
+    objective: "Design, develop, test and deploy a complete advanced MERN Stack application in 2 weeks."
+  },
+  techStack: [
+  "React.js",
+  "Node.js",
+  "Express.js",
+  "MongoDB",
+  "JWT Authentication",
+  "Stripe API"
+],
+  overview: "Build a job board featuring client projects, developer bids, milestone budgets, and direct messaging portals.",
+  problemStatement: [
+    "Manual and error-prone tracking of Freelance Developer Freelancer Bid Board events.",
+    "Difficulty in coordinating user roles and data access controls.",
+    "Inefficient application workflow and status visibility.",
+    "Lack of real-time stats and visual dashboard insights."
   ],
-  detailedReference: {
-    summary: "Build a highly scalable MERN stack implementation of a Freelance Developer Freelancer Bid Board showing production-ready practices.",
-    keyConcepts: [
-      { term: "Schema Integrity", definition: "Enforcing validation constraints on your MongoDB collection layouts." },
-      { term: "User Isolation", definition: "Ensuring users can only query, modify, or delete their own custom data documents." }
+  objectives: [
+    "Build a robust and secure MERN stack web application.",
+    "Implement isolated user experience pipelines for different roles.",
+    "Ensure strict database schema constraints and integrity rules.",
+    "Deploy the complete working systems to production cloud hosts."
+  ],
+  roles: {
+    "Admin": [
+        "Approve hotel registries",
+        "Configure menu boards & listings",
+        "View platform analytics",
+        "Audit backend databases"
     ],
-    bestPractices: [
-      "Secure sensitive API operations using custom express validation middleware.",
-      "Manage component states in React to keep rendering speed high and responsive."
+    "Manager": [
+        "Create room catalog items",
+        "Manage reservation schedules",
+        "View client checkout logs",
+        "Analyze room revenue charts"
+    ],
+    "Customer": [
+        "Browse hotel room directories",
+        "Book room reservations securely",
+        "Submit post-stay reviews",
+        "Download reservation PDFs"
+    ]
+},
+  modules: [
+  "Authentication",
+  "Rooms Directory",
+  "Reservations System",
+  "Billing Desk",
+  "Reviews Hub"
+],
+  pages: {
+    "Public": [
+        "Home",
+        "Rooms Catalog",
+        "Room Details",
+        "Login",
+        "Register"
+    ],
+    "Customer": [
+        "Dashboard",
+        "My Reservations",
+        "Saved Hotels",
+        "Receipts"
+    ],
+    "Manager": [
+        "Dashboard",
+        "Catalog editor",
+        "Bookings Calendar",
+        "Earnings Reports"
+    ],
+    "Admin": [
+        "Dashboard",
+        "Hotels Directory",
+        "Finances Audit"
+    ]
+},
+  databaseCollections: [
+  "Users",
+  "Hotels",
+  "Rooms",
+  "Reservations",
+  "Reviews",
+  "BillingStats"
+],
+  mandatoryFeatures: {
+    "authentication": [
+      "Register",
+      "Login",
+      "JWT",
+      "Password Hashing"
+    ],
+    "frontend": [
+      "React",
+      "React Router",
+      "Responsive UI",
+      "Form Validation"
+    ],
+    "backend": [
+      "Express",
+      "REST APIs",
+      "MVC",
+      "Middleware",
+      "Error Handling"
+    ],
+    "database": [
+      "MongoDB",
+      "Minimum 5 collections",
+      "Relationships"
+    ],
+    "general": [
+      "CRUD Operations",
+      "Search",
+      "Filter",
+      "Dashboard Panels",
+      "Profile Management",
+      "Deployment"
     ]
   },
-  codeTemplate: {
-    html: `<!-- FP-25 Capstone Client Index -->\n<div id="fp-25-root">\n  <h2>Freelance Developer Freelancer Bid Board Workspace</h2>\n  <p>Submission Panel</p>\n</div>`,
-    css: `/* FP-25 layout constraints */\n#fp-25-root {\n  padding: 2rem;\n  background: #fafafa;\n  border-radius: 8px;\n}`,
-    js: `// FP-25 Handshake initialization\nconst AppInitializer = {\n  name: "Freelance Developer Freelancer Bid Board",\n  code: "FP-25",\n  status: "Draft",\n  init() {\n    console.log(this.name + " running...");\n  }\n};`
-  },
-  assessment: "Verify that your repository contains backend models, route controllers, and frontend React views matching the requirements."
+  bonusFeatures: [
+  "Stripe booking payment",
+  "Invoice receipt PDF generator",
+  "Overbooking validation engine",
+  "Email booking confirmation",
+  "Dark mode"
+],
+  submissionChecklist: [
+    "GitHub Repository",
+    "Frontend URL",
+    "Backend URL",
+    "README",
+    "ER Diagram",
+    "Postman Collection",
+    "Presentation"
+  ]
 };
+export default fp25Data;

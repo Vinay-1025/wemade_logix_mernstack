@@ -1,39 +1,145 @@
 export const fp13Data = {
+  projectId: 13,
   projectCode: "FP-13",
-  title: "Social Media & Community Networking Feed",
-  explanation: "Build a micro-blogging platform featuring text feeds, image uploads, post commenting, like toggles, and user follower relationships.",
-  progression: [
-    {
-      level: "Phase 1: Architecture & Design",
-      title: "Database Schemas & API Endpoints",
-      content: "Map out the REST API endpoints and define database schemas for your application modules."
-    },
-    {
-      level: "Phase 2: Core Development",
-      title: "Frontend Components & Business Logic",
-      content: "Build responsive React components and hook them up to your backend servers with state verification."
-    },
-    {
-      level: "Phase 3: Production Release",
-      title: "Security Auditing & Deployed Server Hosting",
-      content: "Secure passwords using bcrypt, configure JWT authorization, and deploy to staging environments."
-    }
+  projectTitle: "Social Media & Community Networking Feed",
+  difficulty: "Advanced",
+  duration: {
+    totalDays: 14,
+    expectedEffortHours: "40-50",
+    objective: "Design, develop, test and deploy a complete advanced MERN Stack application in 2 weeks."
+  },
+  techStack: [
+  "React.js",
+  "Node.js",
+  "Express.js",
+  "MongoDB",
+  "JWT Authentication",
+  "Multer",
+  "PDF-Kit"
+],
+  overview: "Build a micro-blogging platform featuring text feeds, image uploads, post commenting, like toggles, and user follower relationships.",
+  problemStatement: [
+    "Manual and error-prone tracking of Social Media & Community Networking Feed events.",
+    "Difficulty in coordinating user roles and data access controls.",
+    "Inefficient application workflow and status visibility.",
+    "Lack of real-time stats and visual dashboard insights."
   ],
-  detailedReference: {
-    summary: "Build a highly scalable MERN stack implementation of a Social Media & Community Networking Feed showing production-ready practices.",
-    keyConcepts: [
-      { term: "Schema Integrity", definition: "Enforcing validation constraints on your MongoDB collection layouts." },
-      { term: "User Isolation", definition: "Ensuring users can only query, modify, or delete their own custom data documents." }
+  objectives: [
+    "Build a robust and secure MERN stack web application.",
+    "Implement isolated user experience pipelines for different roles.",
+    "Ensure strict database schema constraints and integrity rules.",
+    "Deploy the complete working systems to production cloud hosts."
+  ],
+  roles: {
+    "Admin": [
+        "Manage company directories",
+        "Configure job boards access",
+        "Monitor system audits",
+        "Manage configurations"
     ],
-    bestPractices: [
-      "Secure sensitive API operations using custom express validation middleware.",
-      "Manage component states in React to keep rendering speed high and responsive."
+    "Recruiter": [
+        "Post job vacancies",
+        "Browse applicant resumes",
+        "Schedule applicant interviews",
+        "Update recruitment status"
+    ],
+    "Candidate": [
+        "Manage candidate profile",
+        "Upload resume files",
+        "Search & apply for jobs",
+        "Track application updates"
+    ]
+},
+  modules: [
+  "Authentication",
+  "Job Openings",
+  "Resume Processing",
+  "Application Funnel",
+  "Interview Scheduler"
+],
+  pages: {
+    "Public": [
+        "Home",
+        "Job Board",
+        "Company Profiles",
+        "Login",
+        "Register"
+    ],
+    "Candidate": [
+        "Dashboard",
+        "My Resume",
+        "Job Applications",
+        "Interviews"
+    ],
+    "Recruiter": [
+        "Dashboard",
+        "Job Postings",
+        "Candidate Review",
+        "Schedule Panel"
+    ],
+    "Admin": [
+        "Dashboard",
+        "Recruiters Directory",
+        "Audit Log"
+    ]
+},
+  databaseCollections: [
+  "Users",
+  "Jobs",
+  "Applications",
+  "Resumes",
+  "Interviews",
+  "Companies"
+],
+  mandatoryFeatures: {
+    "authentication": [
+      "Register",
+      "Login",
+      "JWT",
+      "Password Hashing"
+    ],
+    "frontend": [
+      "React",
+      "React Router",
+      "Responsive UI",
+      "Form Validation"
+    ],
+    "backend": [
+      "Express",
+      "REST APIs",
+      "MVC",
+      "Middleware",
+      "Error Handling"
+    ],
+    "database": [
+      "MongoDB",
+      "Minimum 5 collections",
+      "Relationships"
+    ],
+    "general": [
+      "CRUD Operations",
+      "Search",
+      "Filter",
+      "Dashboard Panels",
+      "Profile Management",
+      "Deployment"
     ]
   },
-  codeTemplate: {
-    html: `<!-- FP-13 Capstone Client Index -->\n<div id="fp-13-root">\n  <h2>Social Media & Community Networking Feed Workspace</h2>\n  <p>Submission Panel</p>\n</div>`,
-    css: `/* FP-13 layout constraints */\n#fp-13-root {\n  padding: 2rem;\n  background: #fafafa;\n  border-radius: 8px;\n}`,
-    js: `// FP-13 Handshake initialization\nconst AppInitializer = {\n  name: "Social Media & Community Networking Feed",\n  code: "FP-13",\n  status: "Draft",\n  init() {\n    console.log(this.name + " running...");\n  }\n};`
-  },
-  assessment: "Verify that your repository contains backend models, route controllers, and frontend React views matching the requirements."
+  bonusFeatures: [
+  "Resume PDF parser & generator",
+  "Interview email notifications",
+  "Applicant status pipeline",
+  "Dark mode",
+  "Activity logs"
+],
+  submissionChecklist: [
+    "GitHub Repository",
+    "Frontend URL",
+    "Backend URL",
+    "README",
+    "ER Diagram",
+    "Postman Collection",
+    "Presentation"
+  ]
 };
+export default fp13Data;
