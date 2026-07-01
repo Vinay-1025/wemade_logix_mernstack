@@ -32,6 +32,7 @@ const CapstonesAdmin = () => {
   const [selectedProject, setSelectedProject] = useState(null);
   const [feedback, setFeedback] = useState('');
   const [gradingLoading, setGradingLoading] = useState(false);
+  const [modalTab, setModalTab] = useState('submission'); // 'submission' or 'spec'
   
   // Notification states
   const [statusMessage, setStatusMessage] = useState({ type: '', text: '' });
@@ -379,7 +380,20 @@ const CapstonesAdmin = () => {
                       const collectionsCompleted = project.progress?.completedCollections?.length || 0;
 
                       return (
-                        <tr key={project._id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                        <tr 
+                          key={project._id} 
+                          onClick={() => { 
+                            setSelectedProject(project); 
+                            setModalTab(project.submission ? 'submission' : 'spec'); 
+                          }}
+                          style={{ 
+                            borderBottom: '1px solid #f1f5f9', 
+                            cursor: 'pointer',
+                            transition: 'background-color 0.2s'
+                          }}
+                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
+                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                        >
                           <td style={{ padding: '20px 24px' }}>
                             <span style={{
                               background: '#eff6ff',
@@ -443,13 +457,36 @@ const CapstonesAdmin = () => {
                           </td>
                           <td style={{ padding: '20px 24px', textAlign: 'right' }}>
                             <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                            {project.submission && (
+                              {project.submission && (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedProject(project);
+                                    setModalTab('submission');
+                                  }}
+                                  style={{
+                                    background: 'linear-gradient(135deg, #0047ab 0%, #002f80 100%)',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '8px 14px',
+                                    borderRadius: '8px',
+                                    fontWeight: 700,
+                                    fontSize: '0.8rem',
+                                    cursor: 'pointer'
+                                  }}
+                                >
+                                  Review Code
+                                </button>
+                              )}
                               <button
-                                onClick={() => setSelectedProject(project)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleRelease(project.projectCode);
+                                }}
                                 style={{
-                                  background: 'linear-gradient(135deg, #0047ab 0%, #002f80 100%)',
-                                  color: 'white',
-                                  border: 'none',
+                                  background: '#fef2f2',
+                                  color: '#ef4444',
+                                  border: '1px solid #fecaca',
                                   padding: '8px 14px',
                                   borderRadius: '8px',
                                   fontWeight: 700,
@@ -457,30 +494,14 @@ const CapstonesAdmin = () => {
                                   cursor: 'pointer'
                                 }}
                               >
-                                Review Code
+                                Release Project
                               </button>
-                            )}
-                            <button
-                              onClick={() => handleRelease(project.projectCode)}
-                              style={{
-                                background: '#fef2f2',
-                                color: '#ef4444',
-                                border: '1px solid #fecaca',
-                                padding: '8px 14px',
-                                borderRadius: '8px',
-                                fontWeight: 700,
-                                fontSize: '0.8rem',
-                                cursor: 'pointer'
-                              }}
-                            >
-                              Release Project
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
                 </tbody>
               </table>
             </div>
@@ -566,7 +587,7 @@ const CapstonesAdmin = () => {
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 borderBottom: '1px solid #f1f5f9',
-                padding: '24px',
+                padding: '24px 24px 16px 24px',
                 position: 'sticky',
                 top: 0,
                 background: 'white',
@@ -574,7 +595,7 @@ const CapstonesAdmin = () => {
               }}>
                 <div>
                   <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800, color: '#0f172a' }}>
-                    Review Capstone Submission
+                    Capstone Project Review Center
                   </h3>
                   <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 600 }}>
                     Project: {selectedProject.projectCode} - {selectedProject.title}
@@ -588,134 +609,308 @@ const CapstonesAdmin = () => {
                 </button>
               </div>
 
+              {/* Sub-tabs header */}
+              <div style={{ display: 'flex', borderBottom: '1px solid #e2e8f0', padding: '0 24px', background: '#f8fafc' }}>
+                <button
+                  onClick={() => {
+                    if (selectedProject.submission) {
+                      setModalTab('submission');
+                    }
+                  }}
+                  style={{
+                    padding: '12px 16px',
+                    fontSize: '0.85rem',
+                    fontWeight: 700,
+                    background: 'none',
+                    border: 'none',
+                    borderBottom: modalTab === 'submission' ? '3px solid #0047ab' : '3px solid transparent',
+                    color: modalTab === 'submission' ? '#0047ab' : '#64748b',
+                    cursor: selectedProject.submission ? 'pointer' : 'not-allowed',
+                    opacity: selectedProject.submission ? 1 : 0.5,
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  Submission & Review {selectedProject.submission ? '' : '(No Submission)'}
+                </button>
+                <button
+                  onClick={() => setModalTab('spec')}
+                  style={{
+                    padding: '12px 16px',
+                    fontSize: '0.85rem',
+                    fontWeight: 700,
+                    background: 'none',
+                    border: 'none',
+                    borderBottom: modalTab === 'spec' ? '3px solid #0047ab' : '3px solid transparent',
+                    color: modalTab === 'spec' ? '#0047ab' : '#64748b',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    marginLeft: '12px'
+                  }}
+                >
+                  Project Spec & Live Progress
+                </button>
+              </div>
+
               {/* Modal Body */}
               <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                {(() => {
-                  const details = getSubDetails(selectedProject.submission?.code);
-                  return (
-                    <>
-                      <div>
-                        <strong style={{ color: '#475569', fontSize: '0.85rem', display: 'block', marginBottom: '6px' }}>Student Assignee:</strong>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <User size={16} color="#64748b" />
-                          <span style={{ fontWeight: 700, color: '#1e293b' }}>{selectedProject.assignedTo?.name}</span>
-                          <span style={{ color: '#94a3b8', fontSize: '0.85rem' }}>({selectedProject.assignedTo?.email})</span>
+                {modalTab === 'submission' ? (
+                  /* TAB 1: Student Submission & Grading */
+                  selectedProject.submission ? (
+                    (() => {
+                      const details = getSubDetails(selectedProject.submission.code);
+                      const regDetails = capstoneRegistry[selectedProject.projectCode] || {};
+                      const compModules = selectedProject.progress?.completedModules || [];
+                      const compPages = selectedProject.progress?.completedPages || [];
+                      const compCollections = selectedProject.progress?.completedCollections || [];
+                      
+                      return (
+                        <>
+                          <div>
+                            <strong style={{ color: '#475569', fontSize: '0.85rem', display: 'block', marginBottom: '6px' }}>Student Assignee:</strong>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <User size={16} color="#64748b" />
+                              <span style={{ fontWeight: 700, color: '#1e293b' }}>{selectedProject.assignedTo?.name}</span>
+                              <span style={{ color: '#94a3b8', fontSize: '0.85rem' }}>({selectedProject.assignedTo?.email})</span>
+                            </div>
+                          </div>
+
+                          <div>
+                            <strong style={{ color: '#475569', fontSize: '0.85rem', display: 'block', marginBottom: '8px' }}>GitHub Code Repository:</strong>
+                            <a 
+                              href={details.githubUrl} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                color: '#0047ab',
+                                textDecoration: 'underline',
+                                fontWeight: 700,
+                                wordBreak: 'break-all'
+                              }}
+                            >
+                              {details.githubUrl || 'N/A'}
+                              <ExternalLink size={14} />
+                            </a>
+                          </div>
+
+                          <div>
+                            <strong style={{ color: '#475569', fontSize: '0.85rem', display: 'block', marginBottom: '8px' }}>Live Deployed Landing URL:</strong>
+                            {details.liveUrl ? (
+                              <a 
+                                href={details.liveUrl} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '6px',
+                                  color: '#10b981',
+                                  textDecoration: 'underline',
+                                  fontWeight: 700,
+                                  wordBreak: 'break-all'
+                                }}
+                              >
+                                {details.liveUrl}
+                                <ExternalLink size={14} />
+                              </a>
+                            ) : (
+                              <span style={{ color: '#94a3b8', fontStyle: 'italic' }}>No deployment link submitted.</span>
+                            )}
+                          </div>
+
+                          <div>
+                            <strong style={{ color: '#475569', fontSize: '0.85rem', display: 'block', marginBottom: '8px' }}>Student Architecture Description:</strong>
+                            <p style={{
+                              margin: 0,
+                              background: '#f8fafc',
+                              padding: '16px',
+                              borderRadius: '12px',
+                              border: '1px solid #cbd5e1',
+                              whiteSpace: 'pre-wrap',
+                              fontSize: '0.9rem',
+                              color: '#334155',
+                              lineHeight: '1.5'
+                            }}>
+                              {details.description || 'No description provided.'}
+                            </p>
+                          </div>
+
+                          {/* Quick Progress Summary */}
+                          {regDetails.modules && (
+                            <div style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '16px', padding: '18px' }}>
+                              <strong style={{ color: '#0f172a', fontSize: '0.9rem', display: 'block', marginBottom: '12px' }}>
+                                Student Checklist Progress Timeline
+                              </strong>
+
+                              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', fontSize: '0.85rem' }}>
+                                <div>
+                                  <h5 style={{ margin: '0 0 6px 0', color: '#0047ab', fontWeight: 800 }}>
+                                    Modules ({compModules.length}/{regDetails.modules.length})
+                                  </h5>
+                                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', maxHeight: '150px', overflowY: 'auto', background: 'white', padding: '8px', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
+                                    {regDetails.modules.map((m, idx) => {
+                                      const checked = compModules.includes(m);
+                                      return (
+                                        <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '6px', opacity: checked ? 1 : 0.5 }}>
+                                          <span style={{ color: checked ? '#10b981' : '#94a3b8', fontWeight: 'bold' }}>{checked ? '✓' : '○'}</span>
+                                          <span style={{ textDecoration: checked ? 'line-through' : 'none', color: '#334155' }}>{m}</span>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+
+                                <div>
+                                  <h5 style={{ margin: '0 0 6px 0', color: '#10b981', fontWeight: 800 }}>
+                                    DB Collections ({compCollections.length}/{regDetails.databaseCollections.length})
+                                  </h5>
+                                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', maxHeight: '150px', overflowY: 'auto', background: 'white', padding: '8px', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
+                                    {regDetails.databaseCollections.map((col, idx) => {
+                                      const checked = compCollections.includes(col);
+                                      return (
+                                        <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '6px', opacity: checked ? 1 : 0.5 }}>
+                                          <span style={{ color: checked ? '#10b981' : '#94a3b8', fontWeight: 'bold' }}>{checked ? '✓' : '○'}</span>
+                                          <span style={{ textDecoration: checked ? 'line-through' : 'none', color: '#334155' }}>{col}</span>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '20px' }}>
+                            <label htmlFor="modalFeedback" style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#475569', marginBottom: '8px' }}>
+                              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <MessageSquare size={16} />
+                                <span>Add Review Comments / Tutor Feedback</span>
+                              </span>
+                            </label>
+                            <textarea
+                              id="modalFeedback"
+                              rows="4"
+                              placeholder="Provide detailed feedback on what features were checked, or write revision instructions if rejecting..."
+                              value={feedback || selectedProject.submission?.feedback || ''}
+                              onChange={(e) => setFeedback(e.target.value)}
+                              style={{
+                                width: '100%',
+                                padding: '12px',
+                                borderRadius: '8px',
+                                border: '1px solid #cbd5e1',
+                                fontSize: '0.9rem',
+                                outline: 'none',
+                                resize: 'vertical',
+                                boxSizing: 'border-box'
+                              }}
+                            />
+                          </div>
+                        </>
+                      );
+                    })()
+                  ) : (
+                    <div style={{ padding: '40px 20px', textAlign: 'center', color: '#64748b' }}>
+                      <Laptop size={48} style={{ color: '#cbd5e1', marginBottom: '16px' }} />
+                      <h4 style={{ margin: '0 0 8px 0', fontWeight: 800, color: '#1e293b' }}>No Submission Yet</h4>
+                      <p style={{ margin: 0, fontSize: '0.875rem', color: '#64748b' }}>
+                        The student has not submitted this project for review yet. You can inspect their live specifications progress in the <strong>Project Spec</strong> tab!
+                      </p>
+                    </div>
+                  )
+                ) : (
+                  /* TAB 2: Full Project Specification & Progress */
+                  (() => {
+                    const regDetails = capstoneRegistry[selectedProject.projectCode] || {};
+                    const compModules = selectedProject.progress?.completedModules || [];
+                    const compPages = selectedProject.progress?.completedPages || [];
+                    const compCollections = selectedProject.progress?.completedCollections || [];
+
+                    return (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                        <div>
+                          <strong style={{ color: '#475569', fontSize: '0.85rem', display: 'block', marginBottom: '6px' }}>Assigned Student:</strong>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <User size={16} color="#64748b" />
+                            <span style={{ fontWeight: 700, color: '#1e293b' }}>{selectedProject.assignedTo?.name}</span>
+                            <span style={{ color: '#94a3b8', fontSize: '0.85rem' }}>({selectedProject.assignedTo?.email})</span>
+                          </div>
                         </div>
-                      </div>
 
-                      <div>
-                        <strong style={{ color: '#475569', fontSize: '0.85rem', display: 'block', marginBottom: '8px' }}>GitHub Code Repository:</strong>
-                        <a 
-                          href={details.githubUrl} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '6px',
-                            color: '#0047ab',
-                            textDecoration: 'underline',
-                            fontWeight: 700,
-                            wordBreak: 'break-all'
-                          }}
-                        >
-                          {details.githubUrl || 'N/A'}
-                          <ExternalLink size={14} />
-                        </a>
-                      </div>
+                        {/* Overview Card */}
+                        <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #cbd5e1' }}>
+                          <h4 style={{ margin: '0 0 8px 0', color: '#0f172a', fontWeight: 800 }}>Project Overview</h4>
+                          <p style={{ margin: 0, fontSize: '0.875rem', color: '#475569', lineHeight: '1.5' }}>{regDetails.overview}</p>
+                          
+                          {regDetails.problemStatement && (
+                            <>
+                              <h5 style={{ margin: '14px 0 6px 0', color: '#1e293b', fontWeight: 700 }}>Problem Statement</h5>
+                              <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '0.85rem', color: '#475569', lineHeight: '1.5' }}>
+                                {regDetails.problemStatement.map((prob, idx) => <li key={idx}>{prob}</li>)}
+                              </ul>
+                            </>
+                          )}
+                        </div>
 
-                      <div>
-                        <strong style={{ color: '#475569', fontSize: '0.85rem', display: 'block', marginBottom: '8px' }}>Live Deployed Landing URL:</strong>
-                        {details.liveUrl ? (
-                          <a 
-                            href={details.liveUrl} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            style={{
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '6px',
-                              color: '#10b981',
-                              textDecoration: 'underline',
-                              fontWeight: 700,
-                              wordBreak: 'break-all'
-                            }}
-                          >
-                            {details.liveUrl}
-                            <ExternalLink size={14} />
-                          </a>
-                        ) : (
-                          <span style={{ color: '#94a3b8', fontStyle: 'italic' }}>No deployment link submitted.</span>
+                        {/* Tech Stack Card */}
+                        <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #cbd5e1' }}>
+                          <h4 style={{ margin: '0 0 10px 0', color: '#0f172a', fontWeight: 800 }}>Tech Stack</h4>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                            {regDetails.techStack?.map((tech, idx) => (
+                              <span key={idx} style={{ background: '#eff6ff', color: '#0047ab', fontWeight: 700, fontSize: '0.725rem', padding: '2px 8px', borderRadius: '12px', border: '1px solid #dbeafe' }}>
+                                {tech}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Objectives Card */}
+                        {regDetails.objectives && (
+                          <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #cbd5e1' }}>
+                            <h4 style={{ margin: '0 0 8px 0', color: '#0f172a', fontWeight: 800 }}>Project Objectives</h4>
+                            <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '0.85rem', color: '#475569', lineHeight: '1.5' }}>
+                              {regDetails.objectives.map((obj, idx) => <li key={idx}>{obj}</li>)}
+                            </ul>
+                          </div>
                         )}
-                      </div>
 
-                      <div>
-                        <strong style={{ color: '#475569', fontSize: '0.85rem', display: 'block', marginBottom: '8px' }}>Student Architecture Description:</strong>
-                        <p style={{
-                          margin: 0,
-                          background: '#f8fafc',
-                          padding: '16px',
-                          borderRadius: '12px',
-                          border: '1px solid #cbd5e1',
-                          whiteSpace: 'pre-wrap',
-                          fontSize: '0.9rem',
-                          color: '#334155',
-                          lineHeight: '1.5'
-                        }}>
-                          {details.description || 'No description provided.'}
-                        </p>
-                      </div>
-
-                      {/* Project Checklist Progress Display */}
-                      {(() => {
-                        const regDetails = capstoneRegistry[selectedProject.projectCode] || {};
-                        if (!regDetails.modules) return null;
-
-                        const compModules = selectedProject.progress?.completedModules || [];
-                        const compPages = selectedProject.progress?.completedPages || [];
-                        const compCollections = selectedProject.progress?.completedCollections || [];
-
-                        return (
-                          <div style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '16px', padding: '18px' }}>
-                            <strong style={{ color: '#0f172a', fontSize: '0.9rem', display: 'block', marginBottom: '12px' }}>
-                              Student Checklist Progress Timeline
-                            </strong>
-
+                        {/* Checklist Progress */}
+                        {regDetails.modules && (
+                          <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #cbd5e1' }}>
+                            <h4 style={{ margin: '0 0 12px 0', color: '#0f172a', fontWeight: 800 }}>Live Checklist Completion</h4>
+                            
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', fontSize: '0.85rem' }}>
-                              {/* Modules List */}
+                              {/* Modules Checklist */}
                               <div>
-                                <h5 style={{ margin: '0 0 6px 0', color: '#0047ab', fontWeight: 800 }}>
-                                  Modules ({compModules.length}/{regDetails.modules.length})
-                                </h5>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', maxHeight: '180px', overflowY: 'auto', background: 'white', padding: '8px', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
+                                <h5 style={{ margin: '0 0 6px 0', color: '#0047ab', fontWeight: 700 }}>Modules</h5>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', background: 'white', padding: '10px', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
                                   {regDetails.modules.map((m, idx) => {
                                     const checked = compModules.includes(m);
                                     return (
-                                      <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '6px', opacity: checked ? 1 : 0.5 }}>
-                                        <span style={{ color: checked ? '#10b981' : '#94a3b8', fontWeight: 'bold' }}>
-                                          {checked ? '✓' : '○'}
+                                      <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <input type="checkbox" checked={checked} disabled style={{ margin: 0, width: '13px', height: '13px' }} />
+                                        <span style={{ textDecoration: checked ? 'line-through' : 'none', color: checked ? '#0f172a' : '#64748b', fontWeight: checked ? 600 : 'normal' }}>
+                                          {m}
                                         </span>
-                                        <span style={{ textDecoration: checked ? 'line-through' : 'none', color: '#334155' }}>{m}</span>
                                       </div>
                                     );
                                   })}
                                 </div>
                               </div>
 
-                              {/* DB Collections List */}
+                              {/* DB Collections Checklist */}
                               <div>
-                                <h5 style={{ margin: '0 0 6px 0', color: '#10b981', fontWeight: 800 }}>
-                                  DB Collections ({compCollections.length}/{regDetails.databaseCollections.length})
-                                </h5>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', maxHeight: '180px', overflowY: 'auto', background: 'white', padding: '8px', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
+                                <h5 style={{ margin: '0 0 6px 0', color: '#10b981', fontWeight: 700 }}>DB Collections</h5>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', background: 'white', padding: '10px', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
                                   {regDetails.databaseCollections.map((col, idx) => {
                                     const checked = compCollections.includes(col);
                                     return (
-                                      <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '6px', opacity: checked ? 1 : 0.5 }}>
-                                        <span style={{ color: checked ? '#10b981' : '#94a3b8', fontWeight: 'bold' }}>
-                                          {checked ? '✓' : '○'}
+                                      <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <input type="checkbox" checked={checked} disabled style={{ margin: 0, width: '13px', height: '13px' }} />
+                                        <span style={{ textDecoration: checked ? 'line-through' : 'none', color: checked ? '#0f172a' : '#64748b', fontWeight: checked ? 600 : 'normal' }}>
+                                          {col}
                                         </span>
-                                        <span style={{ textDecoration: checked ? 'line-through' : 'none', color: '#334155' }}>{col}</span>
                                       </div>
                                     );
                                   })}
@@ -723,12 +918,10 @@ const CapstonesAdmin = () => {
                               </div>
                             </div>
 
-                            {/* Pages List */}
+                            {/* Pages Checklist */}
                             <div style={{ marginTop: '16px' }}>
-                              <h5 style={{ margin: '0 0 6px 0', color: '#3b82f6', fontWeight: 800, fontSize: '0.85rem' }}>
-                                Pages Map Completion Status
-                              </h5>
-                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', maxHeight: '120px', overflowY: 'auto', background: 'white', padding: '8px', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
+                              <h5 style={{ margin: '0 0 6px 0', color: '#3b82f6', fontWeight: 700 }}>Pages Map</h5>
+                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', background: 'white', padding: '10px', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
                                 {Object.keys(regDetails.pages).map(pGroup => 
                                   regDetails.pages[pGroup].map((page, pIdx) => {
                                     const pageKey = `${pGroup}:${page}`;
@@ -737,16 +930,19 @@ const CapstonesAdmin = () => {
                                       <span 
                                         key={pIdx} 
                                         style={{ 
-                                          fontSize: '0.7rem', 
-                                          padding: '2px 6px', 
+                                          fontSize: '0.725rem', 
+                                          padding: '3px 6px', 
                                           borderRadius: '4px', 
-                                          border: `1.5px solid ${checked ? '#bbf7d0' : '#cbd5e1'}`, 
+                                          border: `1px solid ${checked ? '#bbf7d0' : '#cbd5e1'}`, 
                                           background: checked ? '#ecfdf5' : 'white', 
                                           color: checked ? '#065f46' : '#64748b',
-                                          opacity: checked ? 1 : 0.6
+                                          display: 'inline-flex',
+                                          alignItems: 'center',
+                                          gap: '4px'
                                         }}
                                       >
-                                        {checked ? '✓ ' : '○ '}{page} ({pGroup})
+                                        <input type="checkbox" checked={checked} disabled style={{ margin: 0, width: '10px', height: '10px' }} />
+                                        <span>{page} ({pGroup})</span>
                                       </span>
                                     );
                                   })
@@ -754,37 +950,66 @@ const CapstonesAdmin = () => {
                               </div>
                             </div>
                           </div>
-                        );
-                      })()}
+                        )}
 
-                      <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '20px' }}>
-                        <label htmlFor="modalFeedback" style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#475569', marginBottom: '8px' }}>
-                          <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <MessageSquare size={16} />
-                            <span>Add Review Comments / Tutor Feedback</span>
-                          </span>
-                        </label>
-                        <textarea
-                          id="modalFeedback"
-                          rows="4"
-                          placeholder="Provide detailed feedback on what features were checked, or write revision instructions if rejecting..."
-                          value={feedback || selectedProject.submission?.feedback || ''}
-                          onChange={(e) => setFeedback(e.target.value)}
-                          style={{
-                            width: '100%',
-                            padding: '12px',
-                            borderRadius: '8px',
-                            border: '1px solid #cbd5e1',
-                            fontSize: '0.9rem',
-                            outline: 'none',
-                            resize: 'vertical',
-                            boxSizing: 'border-box'
-                          }}
-                        />
+                        {/* User Roles */}
+                        {regDetails.roles && (
+                          <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #cbd5e1' }}>
+                            <h4 style={{ margin: '0 0 10px 0', color: '#0f172a', fontWeight: 800 }}>User Roles & Features</h4>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                              {Object.keys(regDetails.roles).map((role, idx) => (
+                                <div key={idx} style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '10px 14px' }}>
+                                  <span style={{ fontSize: '0.725rem', fontWeight: 800, color: '#0047ab', textTransform: 'uppercase' }}>{role}</span>
+                                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '6px' }}>
+                                    {regDetails.roles[role].map((feat, fIdx) => (
+                                      <span key={fIdx} style={{ background: '#f8fafc', color: '#475569', fontSize: '0.725rem', padding: '2px 6px', borderRadius: '4px', border: '1px solid #cbd5e1' }}>
+                                        {feat}
+                                      </span>
+                                    ))}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Mandatory Features */}
+                        {regDetails.mandatoryFeatures && (
+                          <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #cbd5e1' }}>
+                            <h4 style={{ margin: '0 0 12px 0', color: '#0f172a', fontWeight: 800 }}>Mandatory Features Specifications</h4>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                              {Object.keys(regDetails.mandatoryFeatures).map((key, idx) => (
+                                <div key={idx} style={{ background: 'white', border: '1px solid #e2e8f0', padding: '12px', borderRadius: '8px' }}>
+                                  <span style={{ fontSize: '0.725rem', fontWeight: 800, color: '#0047ab', textTransform: 'uppercase' }}>{key}</span>
+                                  <ul style={{ margin: '6px 0 0 0', paddingLeft: '16px', fontSize: '0.75rem', color: '#64748b', lineHeight: '1.4' }}>
+                                    {regDetails.mandatoryFeatures[key].map((feat, fIdx) => <li key={fIdx}>{feat}</li>)}
+                                  </ul>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Timeline Roadmap */}
+                        {regDetails.timeline && (
+                          <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #cbd5e1' }}>
+                            <h4 style={{ margin: '0 0 12px 0', color: '#0f172a', fontWeight: 800 }}>Roadmap & Timeline</h4>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                              {Object.keys(regDetails.timeline).map((day, idx) => (
+                                <div key={idx} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+                                  <span style={{ background: '#e2e8f0', color: '#475569', fontWeight: 800, fontSize: '0.675rem', padding: '2px 6px', borderRadius: '4px', minWidth: '60px', textAlign: 'center', textTransform: 'uppercase' }}>
+                                    {day}
+                                  </span>
+                                  <p style={{ margin: 0, fontSize: '0.8rem', color: '#475569', lineHeight: '1.4' }}>{regDetails.timeline[day]}</p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
-                    </>
-                  );
-                })()}
+                    );
+                  })()
+                )}
               </div>
 
               {/* Modal Footer */}
@@ -800,41 +1025,59 @@ const CapstonesAdmin = () => {
                 zIndex: 1
               }}>
                 <button
-                  disabled={gradingLoading}
-                  onClick={() => handleGrade('rejected')}
+                  onClick={() => { setSelectedProject(null); setFeedback(''); }}
                   style={{
-                    background: '#fee2e2',
-                    color: '#ef4444',
-                    border: '1px solid #fecaca',
+                    background: '#f1f5f9',
+                    color: '#475569',
+                    border: '1px solid #cbd5e1',
                     padding: '10px 20px',
                     borderRadius: '10px',
                     fontWeight: 700,
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px'
+                    cursor: 'pointer'
                   }}
                 >
-                  <XCircle size={16} /> Reject / Request Edits
+                  Close
                 </button>
-                <button
-                  disabled={gradingLoading}
-                  onClick={() => handleGrade('accepted')}
-                  style={{
-                    background: '#d1fae5',
-                    color: '#065f46',
-                    border: '1px solid #bbf7d0',
-                    padding: '10px 20px',
-                    borderRadius: '10px',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px'
-                  }}
-                >
-                  <CheckCircle2 size={16} /> Approve & Unlock
-                </button>
+                {modalTab === 'submission' && selectedProject.submission && (
+                  <>
+                    <button
+                      disabled={gradingLoading}
+                      onClick={() => handleGrade('rejected')}
+                      style={{
+                        background: '#fee2e2',
+                        color: '#ef4444',
+                        border: '1px solid #fecaca',
+                        padding: '10px 20px',
+                        borderRadius: '10px',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}
+                    >
+                      <XCircle size={16} /> Reject / Request Edits
+                    </button>
+                    <button
+                      disabled={gradingLoading}
+                      onClick={() => handleGrade('accepted')}
+                      style={{
+                        background: '#d1fae5',
+                        color: '#065f46',
+                        border: '1px solid #bbf7d0',
+                        padding: '10px 20px',
+                        borderRadius: '10px',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}
+                    >
+                      <CheckCircle2 size={16} /> Approve & Unlock
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </div>
