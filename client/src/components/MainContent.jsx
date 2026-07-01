@@ -97,7 +97,12 @@ const FinalProjectSubmissionView = () => {
   const { userAssignments, refreshAssignments } = useCourse();
   const [githubUrl, setGithubUrl] = useState('');
   const [liveUrl, setLiveUrl] = useState('');
+  const [backendUrl, setBackendUrl] = useState('');
   const [description, setDescription] = useState('');
+  const [erDiagramUrl, setErDiagramUrl] = useState('');
+  const [postmanCollectionUrl, setPostmanCollectionUrl] = useState('');
+  const [presentationUrl, setPresentationUrl] = useState('');
+  const [demoVideoUrl, setDemoVideoUrl] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [snackbar, setSnackbar] = useState({ visible: false, message: '', type: 'success' });
   const [assignedProject, setAssignedProject] = useState(null);
@@ -162,7 +167,12 @@ const FinalProjectSubmissionView = () => {
         const parsed = JSON.parse(capstoneSubmission.code);
         setGithubUrl(parsed.githubUrl || '');
         setLiveUrl(parsed.liveUrl || '');
+        setBackendUrl(parsed.backendUrl || '');
         setDescription(parsed.description || '');
+        setErDiagramUrl(parsed.erDiagramUrl || '');
+        setPostmanCollectionUrl(parsed.postmanCollectionUrl || '');
+        setPresentationUrl(parsed.presentationUrl || '');
+        setDemoVideoUrl(parsed.demoVideoUrl || '');
       } catch (e) {
         // Fallback for raw text
         setDescription(capstoneSubmission.code);
@@ -185,7 +195,12 @@ const FinalProjectSubmissionView = () => {
       const payload = JSON.stringify({
         githubUrl: githubUrl.trim(),
         liveUrl: liveUrl.trim(),
+        backendUrl: backendUrl.trim(),
         description: description.trim(),
+        erDiagramUrl: erDiagramUrl.trim(),
+        postmanCollectionUrl: postmanCollectionUrl.trim(),
+        presentationUrl: presentationUrl.trim(),
+        demoVideoUrl: demoVideoUrl.trim(),
         html: `<!-- Capstone Submission -->\n<!-- Github Link: ${githubUrl.trim()} -->\n<!-- Live Link: ${liveUrl.trim()} -->`,
         css: `/* Project Description */\n${description.trim()}`,
         js: `// Capstone URLs\nconst GithubUrl = "${githubUrl.trim()}";\nconst DeployedUrl = "${liveUrl.trim()}";`
@@ -1148,6 +1163,126 @@ const FinalProjectSubmissionView = () => {
                           placeholder="https://your-app.web.app"
                           value={liveUrl}
                           onChange={(e) => setLiveUrl(e.target.value)}
+                          disabled={capstoneSubmission?.status === 'accepted' || submitting}
+                          style={{
+                            width: '100%',
+                            padding: '12px 16px',
+                            borderRadius: '8px',
+                            border: '1px solid #cbd5e1',
+                            fontSize: '0.9rem',
+                            outline: 'none',
+                            transition: 'border-color 0.2s',
+                            boxSizing: 'border-box'
+                          }}
+                        />
+                      </div>
+
+                      <div>
+                        <label htmlFor="backendUrl" style={{ display: 'block', fontSize: '0.875rem', fontWeight: 700, color: '#334155', marginBottom: '8px' }}>
+                          Backend API URL (e.g. Render, Heroku)
+                        </label>
+                        <input
+                          type="url"
+                          id="backendUrl"
+                          placeholder="https://your-backend-api.onrender.com"
+                          value={backendUrl}
+                          onChange={(e) => setBackendUrl(e.target.value)}
+                          disabled={capstoneSubmission?.status === 'accepted' || submitting}
+                          style={{
+                            width: '100%',
+                            padding: '12px 16px',
+                            borderRadius: '8px',
+                            border: '1px solid #cbd5e1',
+                            fontSize: '0.9rem',
+                            outline: 'none',
+                            transition: 'border-color 0.2s',
+                            boxSizing: 'border-box'
+                          }}
+                        />
+                      </div>
+
+                      <div>
+                        <label htmlFor="erDiagramUrl" style={{ display: 'block', fontSize: '0.875rem', fontWeight: 700, color: '#334155', marginBottom: '8px' }}>
+                          ER Diagram URL (Lucidchart, dbdiagram.io, or GitHub link)
+                        </label>
+                        <input
+                          type="url"
+                          id="erDiagramUrl"
+                          placeholder="https://dbdiagram.io/d/your-diagram-id"
+                          value={erDiagramUrl}
+                          onChange={(e) => setErDiagramUrl(e.target.value)}
+                          disabled={capstoneSubmission?.status === 'accepted' || submitting}
+                          style={{
+                            width: '100%',
+                            padding: '12px 16px',
+                            borderRadius: '8px',
+                            border: '1px solid #cbd5e1',
+                            fontSize: '0.9rem',
+                            outline: 'none',
+                            transition: 'border-color 0.2s',
+                            boxSizing: 'border-box'
+                          }}
+                        />
+                      </div>
+
+                      <div>
+                        <label htmlFor="postmanCollectionUrl" style={{ display: 'block', fontSize: '0.875rem', fontWeight: 700, color: '#334155', marginBottom: '8px' }}>
+                          Postman Collection Share URL
+                        </label>
+                        <input
+                          type="url"
+                          id="postmanCollectionUrl"
+                          placeholder="https://documenter.getpostman.com/view/..."
+                          value={postmanCollectionUrl}
+                          onChange={(e) => setPostmanCollectionUrl(e.target.value)}
+                          disabled={capstoneSubmission?.status === 'accepted' || submitting}
+                          style={{
+                            width: '100%',
+                            padding: '12px 16px',
+                            borderRadius: '8px',
+                            border: '1px solid #cbd5e1',
+                            fontSize: '0.9rem',
+                            outline: 'none',
+                            transition: 'border-color 0.2s',
+                            boxSizing: 'border-box'
+                          }}
+                        />
+                      </div>
+
+                      <div>
+                        <label htmlFor="presentationUrl" style={{ display: 'block', fontSize: '0.875rem', fontWeight: 700, color: '#334155', marginBottom: '8px' }}>
+                          Presentation Slides URL (Google Slides, Canva, or PowerPoint link)
+                        </label>
+                        <input
+                          type="url"
+                          id="presentationUrl"
+                          placeholder="https://docs.google.com/presentation/d/..."
+                          value={presentationUrl}
+                          onChange={(e) => setPresentationUrl(e.target.value)}
+                          disabled={capstoneSubmission?.status === 'accepted' || submitting}
+                          style={{
+                            width: '100%',
+                            padding: '12px 16px',
+                            borderRadius: '8px',
+                            border: '1px solid #cbd5e1',
+                            fontSize: '0.9rem',
+                            outline: 'none',
+                            transition: 'border-color 0.2s',
+                            boxSizing: 'border-box'
+                          }}
+                        />
+                      </div>
+
+                      <div>
+                        <label htmlFor="demoVideoUrl" style={{ display: 'block', fontSize: '0.875rem', fontWeight: 700, color: '#334155', marginBottom: '8px' }}>
+                          Project Demo Video URL (Loom, YouTube, or Drive Link)
+                        </label>
+                        <input
+                          type="url"
+                          id="demoVideoUrl"
+                          placeholder="https://www.loom.com/share/..."
+                          value={demoVideoUrl}
+                          onChange={(e) => setDemoVideoUrl(e.target.value)}
                           disabled={capstoneSubmission?.status === 'accepted' || submitting}
                           style={{
                             width: '100%',

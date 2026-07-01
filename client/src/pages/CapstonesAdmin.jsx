@@ -674,50 +674,193 @@ const CapstonesAdmin = () => {
                             </div>
                           </div>
 
-                          <div>
-                            <strong style={{ color: '#475569', fontSize: '0.85rem', display: 'block', marginBottom: '8px' }}>GitHub Code Repository:</strong>
-                            <a 
-                              href={details.githubUrl} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              style={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: '6px',
-                                color: '#0047ab',
-                                textDecoration: 'underline',
-                                fontWeight: 700,
-                                wordBreak: 'break-all'
-                              }}
-                            >
-                              {details.githubUrl || 'N/A'}
-                              <ExternalLink size={14} />
-                            </a>
-                          </div>
-
-                          <div>
-                            <strong style={{ color: '#475569', fontSize: '0.85rem', display: 'block', marginBottom: '8px' }}>Live Deployed Landing URL:</strong>
-                            {details.liveUrl ? (
+                          {/* Deliverables URL Grid */}
+                          <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                            gap: '16px',
+                            background: '#f8fafc',
+                            padding: '20px',
+                            borderRadius: '16px',
+                            border: '1px solid #cbd5e1'
+                          }}>
+                            <div>
+                              <strong style={{ color: '#475569', fontSize: '0.825rem', display: 'block', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.025em' }}>GitHub Code Repository:</strong>
                               <a 
-                                href={details.liveUrl} 
+                                href={details.githubUrl} 
                                 target="_blank" 
                                 rel="noopener noreferrer"
                                 style={{
                                   display: 'inline-flex',
                                   alignItems: 'center',
                                   gap: '6px',
-                                  color: '#10b981',
+                                  color: '#0047ab',
                                   textDecoration: 'underline',
                                   fontWeight: 700,
+                                  fontSize: '0.9rem',
                                   wordBreak: 'break-all'
                                 }}
                               >
-                                {details.liveUrl}
-                                <ExternalLink size={14} />
+                                {details.githubUrl || 'N/A'}
+                                <ExternalLink size={13} />
                               </a>
-                            ) : (
-                              <span style={{ color: '#94a3b8', fontStyle: 'italic' }}>No deployment link submitted.</span>
-                            )}
+                            </div>
+
+                            <div>
+                              <strong style={{ color: '#475569', fontSize: '0.825rem', display: 'block', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.025em' }}>Live Deployed URL (Frontend):</strong>
+                              {details.liveUrl ? (
+                                <a 
+                                  href={details.liveUrl} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '6px',
+                                    color: '#10b981',
+                                    textDecoration: 'underline',
+                                    fontWeight: 700,
+                                    fontSize: '0.9rem',
+                                    wordBreak: 'break-all'
+                                  }}
+                                >
+                                  {details.liveUrl}
+                                  <ExternalLink size={13} />
+                                </a>
+                              ) : (
+                                <span style={{ color: '#94a3b8', fontStyle: 'italic', fontSize: '0.9rem' }}>N/A</span>
+                              )}
+                            </div>
+
+                            <div>
+                              <strong style={{ color: '#475569', fontSize: '0.825rem', display: 'block', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.025em' }}>Backend API URL:</strong>
+                              {details.backendUrl ? (
+                                <a 
+                                  href={details.backendUrl} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '6px',
+                                    color: '#8b5cf6',
+                                    textDecoration: 'underline',
+                                    fontWeight: 700,
+                                    fontSize: '0.9rem',
+                                    wordBreak: 'break-all'
+                                  }}
+                                >
+                                  {details.backendUrl}
+                                  <ExternalLink size={13} />
+                                </a>
+                              ) : (
+                                <span style={{ color: '#94a3b8', fontStyle: 'italic', fontSize: '0.9rem' }}>N/A</span>
+                              )}
+                            </div>
+
+                            <div>
+                              <strong style={{ color: '#475569', fontSize: '0.825rem', display: 'block', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.025em' }}>ER Diagram URL:</strong>
+                              {details.erDiagramUrl ? (
+                                <a 
+                                  href={details.erDiagramUrl} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '6px',
+                                    color: '#f59e0b',
+                                    textDecoration: 'underline',
+                                    fontWeight: 700,
+                                    fontSize: '0.9rem',
+                                    wordBreak: 'break-all'
+                                  }}
+                                >
+                                  {details.erDiagramUrl}
+                                  <ExternalLink size={13} />
+                                </a>
+                              ) : (
+                                <span style={{ color: '#94a3b8', fontStyle: 'italic', fontSize: '0.9rem' }}>N/A</span>
+                              )}
+                            </div>
+
+                            <div>
+                              <strong style={{ color: '#475569', fontSize: '0.825rem', display: 'block', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.025em' }}>Postman Collection URL:</strong>
+                              {details.postmanCollectionUrl ? (
+                                <a 
+                                  href={details.postmanCollectionUrl} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '6px',
+                                    color: '#ec4899',
+                                    textDecoration: 'underline',
+                                    fontWeight: 700,
+                                    fontSize: '0.9rem',
+                                    wordBreak: 'break-all'
+                                  }}
+                                >
+                                  {details.postmanCollectionUrl}
+                                  <ExternalLink size={13} />
+                                </a>
+                              ) : (
+                                <span style={{ color: '#94a3b8', fontStyle: 'italic', fontSize: '0.9rem' }}>N/A</span>
+                              )}
+                            </div>
+
+                            <div>
+                              <strong style={{ color: '#475569', fontSize: '0.825rem', display: 'block', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.025em' }}>Presentation Slides URL:</strong>
+                              {details.presentationUrl ? (
+                                <a 
+                                  href={details.presentationUrl} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '6px',
+                                    color: '#f43f5e',
+                                    textDecoration: 'underline',
+                                    fontWeight: 700,
+                                    fontSize: '0.9rem',
+                                    wordBreak: 'break-all'
+                                  }}
+                                >
+                                  {details.presentationUrl}
+                                  <ExternalLink size={13} />
+                                </a>
+                              ) : (
+                                <span style={{ color: '#94a3b8', fontStyle: 'italic', fontSize: '0.9rem' }}>N/A</span>
+                              )}
+                            </div>
+
+                            <div style={{ gridColumn: 'span 2' }}>
+                              <strong style={{ color: '#475569', fontSize: '0.825rem', display: 'block', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.025em' }}>Project Demo Video Link:</strong>
+                              {details.demoVideoUrl ? (
+                                <a 
+                                  href={details.demoVideoUrl} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '6px',
+                                    color: '#06b6d4',
+                                    textDecoration: 'underline',
+                                    fontWeight: 700,
+                                    fontSize: '0.9rem',
+                                    wordBreak: 'break-all'
+                                  }}
+                                >
+                                  {details.demoVideoUrl}
+                                  <ExternalLink size={13} />
+                                </a>
+                              ) : (
+                                <span style={{ color: '#94a3b8', fontStyle: 'italic', fontSize: '0.9rem' }}>N/A</span>
+                              )}
+                            </div>
                           </div>
 
                           <div>
