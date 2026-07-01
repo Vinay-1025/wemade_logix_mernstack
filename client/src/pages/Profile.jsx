@@ -247,8 +247,9 @@ const Profile = () => {
   // Helper to calculate progress for specific week numbers
   const getWeekProgress = (weekNums) => {
     const targetDays = courseData.filter(w => {
-      const wNum = parseInt(w.weekId.replace('w', ''));
-      return weekNums.includes(wNum);
+      if (!w.weekId.startsWith('w')) return false;
+      const wNum = parseInt(w.weekId.replace('w', ''), 10);
+      return !isNaN(wNum) && weekNums.includes(wNum);
     }).flatMap(w => w.days);
     
     if (targetDays.length === 0) return 0;
@@ -328,7 +329,9 @@ const Profile = () => {
 
   const isAdmin = user?.role === 'admin' || user?.role === 'superadmin';
   const override = latestProfile?.certificateOverride;
-  const isUnlocked = override === 'unlocked' || (override !== 'locked' && progressPercent >= 100) || previewMode;
+  const finalProjectSubmitted = studentSubmissions?.find(a => a.topicId === 'final-project-topic');
+  const finalProjectAccepted = finalProjectSubmitted?.status === 'accepted';
+  const isUnlocked = override === 'unlocked' || (override !== 'locked' && progressPercent >= 100 && finalProjectAccepted) || previewMode;
   const certificateId = latestProfile?.certificateId || `WM-${user?._id}-invalid`;
 
   return (

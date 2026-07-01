@@ -76,9 +76,16 @@ const Sidebar = () => {
     let prevDayId = '';
     if (dayIndex > 0) {
       prevDayId = courseData[weekIndex].days[dayIndex - 1].dayId;
-    } else if (weekIndex > 0) {
-      const prevWeek = courseData[weekIndex - 1];
-      prevDayId = prevWeek.days[prevWeek.days.length - 1].dayId;
+    } else {
+      let wIdx = weekIndex - 1;
+      while (wIdx >= 0) {
+        const prevWeek = courseData[wIdx];
+        if (prevWeek?.days && prevWeek.days.length > 0) {
+          prevDayId = prevWeek.days[prevWeek.days.length - 1].dayId;
+          break;
+        }
+        wIdx--;
+      }
     }
 
     // If the previous day is the Prerequisite Day, it has no assignment, so this day is unlocked automatically

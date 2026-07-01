@@ -92,6 +92,340 @@ import {
   StructureVisualizer
 } from './Day4Visualizers';
 
+const FinalProjectSubmissionView = () => {
+  const { userAssignments, refreshAssignments } = useCourse();
+  const [githubUrl, setGithubUrl] = useState('');
+  const [liveUrl, setLiveUrl] = useState('');
+  const [description, setDescription] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [snackbar, setSnackbar] = useState({ visible: false, message: '', type: 'success' });
+
+  const showSnackbar = (message, type = 'success') => {
+    setSnackbar({ visible: true, message, type });
+    setTimeout(() => setSnackbar(prev => ({ ...prev, visible: false })), 3000);
+  };
+
+  const capstoneSubmission = [...userAssignments].reverse().find(a => a.topicId === 'final-project-topic');
+
+  // Pre-fill inputs if already submitted
+  useEffect(() => {
+    if (capstoneSubmission?.code) {
+      try {
+        const parsed = JSON.parse(capstoneSubmission.code);
+        setGithubUrl(parsed.githubUrl || '');
+        setLiveUrl(parsed.liveUrl || '');
+        setDescription(parsed.description || '');
+      } catch (e) {
+        // Fallback for raw text
+        setDescription(capstoneSubmission.code);
+      }
+    }
+  }, [capstoneSubmission]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!githubUrl.trim()) {
+      showSnackbar('GitHub Repository URL is required!', 'error');
+      return;
+    }
+    setSubmitting(true);
+
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      const token = user?.token;
+
+      const payload = JSON.stringify({
+        githubUrl: githubUrl.trim(),
+        liveUrl: liveUrl.trim(),
+        description: description.trim(),
+        html: `<!-- Capstone Submission -->\n<!-- Github Link: ${githubUrl.trim()} -->\n<!-- Live Link: ${liveUrl.trim()} -->`,
+        css: `/* Project Description */\n${description.trim()}`,
+        js: `// Capstone URLs\nconst GithubUrl = "${githubUrl.trim()}";\nconst DeployedUrl = "${liveUrl.trim()}";`
+      });
+
+      const response = await axios.post('/api/assignments', {
+        topicId: 'final-project-topic',
+        topicTitle: 'MERN Stack Final Capstone Project',
+        dayTitle: 'Final Project: Capstone Milestone',
+        weekTitle: 'Final Capstone Project Milestone',
+        code: payload
+      }, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (response.status === 201) {
+        showSnackbar('Capstone Project submitted successfully!', 'success');
+        if (typeof refreshAssignments === 'function') {
+          refreshAssignments();
+        }
+      } else {
+        showSnackbar('Submission failed, please try again.', 'error');
+      }
+    } catch (err) {
+      showSnackbar(err.response?.data?.message || 'Error submitting Capstone Project', 'error');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="capstone-submission-view" style={{
+      background: 'white',
+      borderRadius: '16px',
+      border: '1px solid #cbd5e1',
+      padding: '30px',
+      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
+      fontFamily: '"Inter", sans-serif',
+      color: '#1e293b'
+    }}>
+      {/* Premium Header */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '16px',
+        borderBottom: '1px solid #e2e8f0',
+        paddingBottom: '20px',
+        marginBottom: '24px'
+      }}>
+        <div style={{
+          background: 'linear-gradient(135deg, #0047ab 0%, #002f80 100%)',
+          color: 'white',
+          borderRadius: '12px',
+          padding: '12px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: '0 8px 16px rgba(0, 71, 171, 0.15)'
+        }}>
+          <Laptop size={28} />
+        </div>
+        <div>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0f172a', margin: 0, letterSpacing: '-0.5px' }}>
+            Final Capstone Project
+          </h2>
+          <p style={{ fontSize: '0.875rem', color: '#64748b', margin: '4px 0 0' }}>
+            The final milestone to unlock your official graduation certification
+          </p>
+        </div>
+      </div>
+
+      {/* Submission Status Alert */}
+      {capstoneSubmission && (
+        <div style={{
+          borderRadius: '12px',
+          padding: '20px',
+          marginBottom: '24px',
+          display: 'flex',
+          alignItems: 'flex-start',
+          gap: '12px',
+          background: capstoneSubmission.status === 'accepted' 
+            ? '#ecfdf5' 
+            : capstoneSubmission.status === 'rejected' 
+            ? '#fef2f2' 
+            : '#f0f9ff',
+          border: `1px solid ${
+            capstoneSubmission.status === 'accepted' 
+              ? '#bbf7d0' 
+              : capstoneSubmission.status === 'rejected' 
+              ? '#fecaca' 
+              : '#bae6fd'
+          }`
+        }}>
+          <div style={{ marginTop: '2px' }}>
+            {capstoneSubmission.status === 'accepted' ? (
+              <CheckCircle2 size={20} color="#10b981" />
+            ) : capstoneSubmission.status === 'rejected' ? (
+              <XCircle size={20} color="#ef4444" />
+            ) : (
+              <Clock size={20} color="#0284c7" />
+            )}
+          </div>
+          <div style={{ flex: 1 }}>
+            <h4 style={{
+              margin: 0,
+              fontSize: '0.95rem',
+              fontWeight: 700,
+              color: capstoneSubmission.status === 'accepted' 
+                ? '#065f46' 
+                : capstoneSubmission.status === 'rejected' 
+                ? '#991b1b' 
+                : '#075985'
+            }}>
+              Submission Status: {
+                capstoneSubmission.status === 'accepted' 
+                  ? 'Accepted & Approved' 
+                  : capstoneSubmission.status === 'rejected' 
+                  ? 'Revision Required' 
+                  : 'Pending Instructor Review'
+              }
+            </h4>
+            {capstoneSubmission.feedback && (
+              <p style={{
+                margin: '8px 0 0',
+                fontSize: '0.875rem',
+                lineHeight: '1.5',
+                color: capstoneSubmission.status === 'accepted' 
+                  ? '#047857' 
+                  : capstoneSubmission.status === 'rejected' 
+                  ? '#b91c1c' 
+                  : '#0369a1',
+                whiteSpace: 'pre-wrap'
+              }}>
+                <strong>Instructor Feedback:</strong> {capstoneSubmission.feedback}
+              </p>
+            )}
+            {capstoneSubmission.status === 'accepted' && (
+              <p style={{
+                margin: '12px 0 0',
+                fontSize: '0.85rem',
+                fontWeight: 600,
+                color: '#065f46'
+              }}>
+                🎉 Your certificate has been unlocked! Go to your Profile page to view and download it.
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Submission Form */}
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <div>
+          <label htmlFor="githubUrl" style={{ display: 'block', fontSize: '0.875rem', fontWeight: 700, color: '#334155', marginBottom: '8px' }}>
+            GitHub Repository URL <span style={{ color: '#ef4444' }}>*</span>
+          </label>
+          <div style={{ position: 'relative' }}>
+            <input
+              type="url"
+              id="githubUrl"
+              placeholder="https://github.com/your-username/your-repo"
+              value={githubUrl}
+              onChange={(e) => setGithubUrl(e.target.value)}
+              disabled={capstoneSubmission?.status === 'accepted' || submitting}
+              style={{
+                width: '100%',
+                padding: '12px 16px',
+                borderRadius: '8px',
+                border: '1px solid #cbd5e1',
+                fontSize: '0.9rem',
+                outline: 'none',
+                transition: 'border-color 0.2s',
+                boxSizing: 'border-box'
+              }}
+              required
+            />
+          </div>
+        </div>
+
+        <div>
+          <label htmlFor="liveUrl" style={{ display: 'block', fontSize: '0.875rem', fontWeight: 700, color: '#334155', marginBottom: '8px' }}>
+            Live Deployment URL (e.g. Render, Firebase, Netlify)
+          </label>
+          <input
+            type="url"
+            id="liveUrl"
+            placeholder="https://your-app.web.app"
+            value={liveUrl}
+            onChange={(e) => setLiveUrl(e.target.value)}
+            disabled={capstoneSubmission?.status === 'accepted' || submitting}
+            style={{
+              width: '100%',
+              padding: '12px 16px',
+              borderRadius: '8px',
+              border: '1px solid #cbd5e1',
+              fontSize: '0.9rem',
+              outline: 'none',
+              transition: 'border-color 0.2s',
+              boxSizing: 'border-box'
+            }}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="description" style={{ display: 'block', fontSize: '0.875rem', fontWeight: 700, color: '#334155', marginBottom: '8px' }}>
+            Project Summary & Architecture Overview
+          </label>
+          <textarea
+            id="description"
+            rows="5"
+            placeholder="Provide a brief summary of your project features, schema models used, libraries, and challenges faced..."
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            disabled={capstoneSubmission?.status === 'accepted' || submitting}
+            style={{
+              width: '100%',
+              padding: '12px 16px',
+              borderRadius: '8px',
+              border: '1px solid #cbd5e1',
+              fontSize: '0.9rem',
+              outline: 'none',
+              transition: 'border-color 0.2s',
+              boxSizing: 'border-box',
+              resize: 'vertical'
+            }}
+          />
+        </div>
+
+        {capstoneSubmission?.status !== 'accepted' && (
+          <button
+            type="submit"
+            disabled={submitting}
+            style={{
+              background: 'linear-gradient(135deg, #0047ab 0%, #002f80 100%)',
+              color: 'white',
+              border: 'none',
+              padding: '14px 28px',
+              borderRadius: '8px',
+              fontSize: '1rem',
+              fontWeight: 700,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              boxShadow: '0 4px 14px rgba(0, 71, 171, 0.2)',
+              marginTop: '10px',
+              transition: 'transform 0.2s, box-shadow 0.2s'
+            }}
+          >
+            {submitting ? (
+              <span>Submitting Project...</span>
+            ) : (
+              <>
+                <ArrowUpRight size={18} />
+                <span>Submit Capstone Project</span>
+              </>
+            )}
+          </button>
+        )}
+      </form>
+
+      {/* Local Snackbar */}
+      {snackbar.visible && (
+        <div style={{
+          position: 'fixed',
+          bottom: '24px',
+          right: '24px',
+          zIndex: 9999,
+          background: snackbar.type === 'success' ? '#10b981' : '#ef4444',
+          color: 'white',
+          padding: '12px 24px',
+          borderRadius: '8px',
+          boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          fontSize: '0.9rem',
+          fontWeight: 600,
+          animation: 'slideUp 0.3s ease-out'
+        }}>
+          {snackbar.type === 'success' ? <CheckCircle2 size={18} /> : <XCircle size={18} />}
+          <span>{snackbar.message}</span>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const EMPTY_CODE = { html: '', css: '', js: '' };
 
@@ -479,9 +813,16 @@ const MainContent = () => {
     let prevDayId = '';
     if (dayIndex > 0) {
       prevDayId = courseData[weekIndex].days[dayIndex - 1].dayId;
-    } else if (weekIndex > 0) {
-      const prevWeek = courseData[weekIndex - 1];
-      prevDayId = prevWeek.days[prevWeek.days.length - 1].dayId;
+    } else {
+      let wIdx = weekIndex - 1;
+      while (wIdx >= 0) {
+        const prevWeek = courseData[wIdx];
+        if (prevWeek?.days && prevWeek.days.length > 0) {
+          prevDayId = prevWeek.days[prevWeek.days.length - 1].dayId;
+          break;
+        }
+        wIdx--;
+      }
     }
 
     if (prevDayId === 'w1-d0') return true;
@@ -769,7 +1110,8 @@ const MainContent = () => {
     'HTMLParagraphsInteractive': <HTMLParagraphsInteractive />,
     'HTMLFormattingInteractive': <HTMLFormattingInteractive />,
     'HTMLEntitiesInteractive': <HTMLEntitiesInteractive />,
-    'HTMLPortfolioInteractive': <HTMLPortfolioInteractive />
+    'HTMLPortfolioInteractive': <HTMLPortfolioInteractive />,
+    'FinalProjectSubmissionView': <FinalProjectSubmissionView />
   };
 
   if (!selectedTopic) return <div className="main-content">Select a topic to start learning</div>;
@@ -4967,6 +5309,25 @@ const MainContent = () => {
             }
           }
         `}} />
+      </main>
+    );
+  }
+
+  if (selectedTopic.customComponent === 'FinalProjectSubmissionView') {
+    return (
+      <main className="main-content">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={selectedTopic.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            style={{ padding: '2rem' }}
+          >
+            <FinalProjectSubmissionView />
+          </motion.div>
+        </AnimatePresence>
       </main>
     );
   }

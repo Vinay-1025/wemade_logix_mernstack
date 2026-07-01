@@ -36,6 +36,7 @@ import { w7d3Data } from './w7-d3.js';
 import { w7d4Data } from './w7-d4.js';
 import { w7d5Data } from './w7-d5.js';
 import { w7d6Data } from './w7-d6.js';
+import { finalProjectData } from './final-project.js';
 
 export const courseData = [
   {
@@ -1851,5 +1852,11 @@ export const courseData = [
     "weekId": "w8",
     "weekTitle": "Week 8: Capstone Project & Deployments",
     "days": []
+  },
+  {
+    "weekId": "final-project",
+    "weekTitle": "Final Capstone Project Milestone",
+    "days": [finalProjectData]
   }
 ];
+

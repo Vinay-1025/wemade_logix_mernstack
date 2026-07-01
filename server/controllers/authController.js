@@ -348,16 +348,22 @@ const verifyCertificate = async (req, res) => {
       return res.status(404).json({ message: 'Student not found', isValid: false });
     }
 
-    // Calculate progress
+    // Calculate progress (w1-d0 to w7-d6 = 43 days + 1 Final Project = 44 days total)
     const acceptedCount = await Assignment.countDocuments({
       student: studentId,
       status: 'accepted',
     });
-    const totalCourseDays = 43; // w1-d0 to w7-d6 = 43 days
+    const totalCourseDays = 44; 
     const progressPercent = Math.min(Math.round((acceptedCount / totalCourseDays) * 100), 100);
 
+    const finalProjectAccepted = await Assignment.findOne({
+      student: studentId,
+      topicId: 'final-project-topic',
+      status: 'accepted'
+    });
+
     const isUnlocked = student.certificateOverride === 'unlocked' || 
-                       (student.certificateOverride !== 'locked' && progressPercent >= 100);
+                       (student.certificateOverride !== 'locked' && progressPercent >= 100 && finalProjectAccepted);
 
     if (!isUnlocked) {
       return res.json({

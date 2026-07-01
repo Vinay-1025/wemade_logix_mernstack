@@ -499,9 +499,16 @@ const UsersList = () => {
     let prevDay = null;
     if (dIndex > 0) {
       prevDay = courseData[wIndex].days[dIndex - 1];
-    } else if (wIndex > 0) {
-      const prevWeek = courseData[wIndex - 1];
-      prevDay = prevWeek.days[prevWeek.days.length - 1];
+    } else {
+      let prevWIdx = wIndex - 1;
+      while (prevWIdx >= 0) {
+        const prevWeek = courseData[prevWIdx];
+        if (prevWeek?.days && prevWeek.days.length > 0) {
+          prevDay = prevWeek.days[prevWeek.days.length - 1];
+          break;
+        }
+        prevWIdx--;
+      }
     }
 
     if (!prevDay) return true;

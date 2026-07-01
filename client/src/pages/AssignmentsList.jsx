@@ -276,14 +276,69 @@ const AssignmentsList = () => {
                   </div>
                 </div>
 
-                <div className="code-review-section">
-                  <div className="section-label">
-                    <Code size={18} /> <span>Submitted Code & Live Preview</span>
+                {selectedAssignment.topicId === 'final-project-topic' ? (
+                  <div className="capstone-review-card" style={{
+                    background: '#f8fafc',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    marginBottom: '30px'
+                  }}>
+                    <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#1e293b', marginBottom: '16px' }}>
+                      🎓 Capstone Project Submission Details
+                    </h3>
+                    {(() => {
+                      let parsedJson = {};
+                      try {
+                        parsedJson = JSON.parse(selectedAssignment.code);
+                      } catch (e) {
+                        try {
+                          const parsed = getParsedCode(selectedAssignment.code);
+                          parsedJson = parsed;
+                        } catch (err) {}
+                      }
+                      const ghUrl = parsedJson.githubUrl || '';
+                      const liveUrl = parsedJson.liveUrl || '';
+                      const desc = parsedJson.description || '';
+
+                      return (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                          <div>
+                            <strong style={{ color: '#475569', fontSize: '0.875rem' }}>GitHub Repository:</strong>
+                            <div style={{ marginTop: '4px' }}>
+                              <a href={ghUrl} target="_blank" rel="noopener noreferrer" style={{ color: '#0047ab', textDecoration: 'underline', fontWeight: 600, wordBreak: 'break-all' }}>
+                                {ghUrl || 'No Github URL submitted'}
+                              </a>
+                            </div>
+                          </div>
+                          <div>
+                            <strong style={{ color: '#475569', fontSize: '0.875rem' }}>Live Deployed Site:</strong>
+                            <div style={{ marginTop: '4px' }}>
+                              <a href={liveUrl} target="_blank" rel="noopener noreferrer" style={{ color: '#10b981', textDecoration: 'underline', fontWeight: 600, wordBreak: 'break-all' }}>
+                                {liveUrl || 'No Deployment URL submitted'}
+                              </a>
+                            </div>
+                          </div>
+                          <div>
+                            <strong style={{ color: '#475569', fontSize: '0.875rem' }}>Project Summary:</strong>
+                            <p style={{ marginTop: '6px', whiteSpace: 'pre-wrap', color: '#334155', lineHeight: '1.6', background: 'white', padding: '12px', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+                              {desc || 'No summary description submitted'}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </div>
-                  <CodeEditor
-                    initialCode={getParsedCode(selectedAssignment.code)}
-                  />
-                </div>
+                ) : (
+                  <div className="code-review-section">
+                    <div className="section-label">
+                      <Code size={18} /> <span>Submitted Code & Live Preview</span>
+                    </div>
+                    <CodeEditor
+                      initialCode={getParsedCode(selectedAssignment.code)}
+                    />
+                  </div>
+                )}
 
                 {selectedAssignment.status === 'pending' || isChangingAction ? (
                   <div className="feedback-section" style={{ background: isChangingAction ? '#fefce8' : 'white', border: isChangingAction ? '1px solid #fef3c7' : 'none', padding: isChangingAction ? '24px' : '0', borderRadius: isChangingAction ? '16px' : '0' }}>
