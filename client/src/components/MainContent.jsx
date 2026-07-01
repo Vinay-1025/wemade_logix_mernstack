@@ -122,6 +122,7 @@ const FinalProjectSubmissionView = () => {
     itemLabel: '',
     category: '',
     reason: '',
+    validationError: '',
     onConfirm: null
   });
 
@@ -397,20 +398,37 @@ const FinalProjectSubmissionView = () => {
                     rows="3"
                     placeholder="e.g. Needs code refactoring / DB schema changes required..."
                     value={uncheckConfirmModal.reason}
-                    onChange={(e) => setUncheckConfirmModal({ ...uncheckConfirmModal, reason: e.target.value })}
+                    onChange={(e) => setUncheckConfirmModal({ 
+                      ...uncheckConfirmModal, 
+                      reason: e.target.value,
+                      validationError: ''
+                    })}
                     style={{
                       width: '100%',
                       padding: '10px',
                       borderRadius: '8px',
-                      border: '1px solid #cbd5e1',
+                      border: `1.5px solid ${uncheckConfirmModal.validationError ? '#ef4444' : '#cbd5e1'}`,
                       fontSize: '0.85rem',
                       outline: 'none',
                       resize: 'none',
                       boxSizing: 'border-box',
                       fontFamily: 'inherit',
-                      marginBottom: '16px'
+                      marginBottom: '10px'
                     }}
                   />
+                  {uncheckConfirmModal.validationError && (
+                    <div style={{
+                      color: '#ef4444',
+                      fontSize: '0.75rem',
+                      fontWeight: 600,
+                      marginBottom: '12px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px'
+                    }}>
+                      ⚠️ {uncheckConfirmModal.validationError}
+                    </div>
+                  )}
                   <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
                     <button
                       onClick={() => setUncheckConfirmModal({ ...uncheckConfirmModal, isOpen: false })}
@@ -429,6 +447,14 @@ const FinalProjectSubmissionView = () => {
                     </button>
                     <button
                       onClick={() => {
+                        const words = uncheckConfirmModal.reason.trim().split(/\s+/).filter(Boolean);
+                        if (words.length < 4) {
+                          setUncheckConfirmModal(prev => ({
+                            ...prev,
+                            validationError: 'Please provide at least 4 words for your reason.'
+                          }));
+                          return;
+                        }
                         uncheckConfirmModal.onConfirm(uncheckConfirmModal.reason);
                         setUncheckConfirmModal({ ...uncheckConfirmModal, isOpen: false });
                       }}
