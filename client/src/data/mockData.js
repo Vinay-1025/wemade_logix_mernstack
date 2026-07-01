@@ -1849,11 +1849,6 @@ export const courseData = [
     ]
   },
   {
-    "weekId": "w8",
-    "weekTitle": "Week 8: Capstone Project & Deployments",
-    "days": []
-  },
-  {
     "weekId": "final-project",
     "weekTitle": "Final Capstone Project Milestone",
     "days": [finalProjectData]
