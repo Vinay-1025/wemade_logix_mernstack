@@ -17,7 +17,8 @@ import {
   Grid,
   Unlock,
   Lock,
-  MessageSquare
+  MessageSquare,
+  AlertCircle
 } from 'lucide-react';
 
 const CapstonesAdmin = () => {
@@ -34,8 +35,12 @@ const CapstonesAdmin = () => {
   const [gradingLoading, setGradingLoading] = useState(false);
   const [modalTab, setModalTab] = useState('submission'); // 'submission' or 'spec'
   
-  // Notification states
-  const [statusMessage, setStatusMessage] = useState({ type: '', text: '' });
+  // Notification states (Snackbar)
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', type: 'success' });
+  const showSnackbar = (message, type = 'success') => {
+    setSnackbar({ open: true, message, type });
+    setTimeout(() => setSnackbar(prev => ({ ...prev, open: false })), 4000);
+  };
 
   const fetchCapstoneStatus = async () => {
     if (!currentUser?.token) return;
@@ -49,7 +54,7 @@ const CapstonesAdmin = () => {
       }
     } catch (err) {
       console.error('Failed to fetch capstones:', err);
-      setStatusMessage({ type: 'error', text: 'Failed to fetch Capstone pool details.' });
+      showSnackbar('Failed to fetch Capstone pool details.', 'error');
     } finally {
       setLoading(false);
     }
@@ -72,12 +77,12 @@ const CapstonesAdmin = () => {
         { headers: { 'Authorization': `Bearer ${currentUser.token}` } }
       );
       if (response.data?.success) {
-        setStatusMessage({ type: 'success', text: `Project ${projectCode} released successfully.` });
+        showSnackbar(`Project ${projectCode} released successfully.`, 'success');
         fetchCapstoneStatus();
       }
     } catch (err) {
       console.error('Failed to release capstone:', err);
-      setStatusMessage({ type: 'error', text: err.response?.data?.message || 'Error releasing Capstone project.' });
+      showSnackbar(err.response?.data?.message || 'Error releasing Capstone project.', 'error');
     }
   };
 
@@ -90,17 +95,14 @@ const CapstonesAdmin = () => {
         { headers: { 'Authorization': `Bearer ${currentUser.token}` } }
       );
       if (response.data) {
-        setStatusMessage({ 
-          type: 'success', 
-          text: `Capstone submission successfully graded as ${status.toUpperCase()}.` 
-        });
+        showSnackbar(`Capstone submission successfully graded as ${status.toUpperCase()}.`, 'success');
         setSelectedProject(null);
         setFeedback('');
         fetchCapstoneStatus();
       }
     } catch (err) {
       console.error('Grading Capstone error:', err);
-      setStatusMessage({ type: 'error', text: 'Error submitting review.' });
+      showSnackbar('Error submitting review.', 'error');
     } finally {
       setGradingLoading(false);
     }
@@ -181,26 +183,11 @@ const CapstonesAdmin = () => {
           </button>
         </div>
 
-        {/* Status Alerts */}
-        {statusMessage.text && (
-          <div style={{
-            background: statusMessage.type === 'success' ? '#ecfdf5' : '#fef2f2',
-            border: `1px solid ${statusMessage.type === 'success' ? '#bbf7d0' : '#fecaca'}`,
-            color: statusMessage.type === 'success' ? '#065f46' : '#991b1b',
-            borderRadius: '12px',
-            padding: '16px 20px',
-            marginBottom: '30px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center'
-          }}>
-            <span>{statusMessage.text}</span>
-            <button 
-              onClick={() => setStatusMessage({ type: '', text: '' })}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', fontWeight: 'bold', fontSize: '1.1rem' }}
-            >
-              ×
-            </button>
+        {/* Snackbar Notification */}
+        {snackbar.open && (
+          <div className={`snackbar-notification ${snackbar.type} card-3d`}>
+            {snackbar.type === 'success' ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
+            <span>{snackbar.message}</span>
           </div>
         )}
 
@@ -1208,6 +1195,39 @@ const CapstonesAdmin = () => {
           </div>
         )}
       </div>
+
+      <style dangerouslySetInnerHTML={{
+        __html: `
+        /* Premium Floating Snackbar (Right Bottom Corner) */
+        .snackbar-notification { 
+          position: fixed; 
+          bottom: 30px; 
+          right: 30px; 
+          background: #ffffff; 
+          color: #0f172a; 
+          padding: 16px 24px; 
+          border-radius: 16px; 
+          display: flex; 
+          align-items: center; 
+          gap: 12px; 
+          z-index: 100000; 
+          font-weight: 700; 
+          font-size: 0.925rem; 
+          box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); 
+          border: 1px solid #e2e8f0; 
+          animation: snackbarSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+        .snackbar-notification.success { border-left: 4px solid #16a34a; }
+        .snackbar-notification.success svg { color: #16a34a; }
+        .snackbar-notification.error { border-left: 4px solid #ef4444; }
+        .snackbar-notification.error svg { color: #ef4444; }
+
+        @keyframes snackbarSlideIn { 
+          0% { transform: translateY(100px) scale(0.9); opacity: 0; }
+          100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
+        `
+      }} />
     </MainLayout>
   );
 };
