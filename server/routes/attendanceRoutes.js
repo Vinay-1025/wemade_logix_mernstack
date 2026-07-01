@@ -29,8 +29,9 @@ router.get('/my', protect, getMyAttendance);
 router.post('/recording', protect, markRecordingAttendance);
 router.put('/update', protect, admin, updateStudentAttendance);
 
-// Extra Classes Admin routes
+// Extra Classes / Schedule Adjustments Admin routes
 router.get('/extra-sessions', protect, admin, getExtraSessions);
+router.get('/schedule-adjustments', protect, admin, getExtraSessions);
 router.put('/extra-sessions/:oldDayId', protect, admin, updateExtraSession);
 router.delete('/extra-sessions/:dayId', protect, admin, deleteExtraSession);
 

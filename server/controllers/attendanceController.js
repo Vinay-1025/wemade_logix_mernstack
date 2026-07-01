@@ -890,11 +890,16 @@ const updateStudentAttendance = async (req, res) => {
 // @access  Private/Admin
 const getExtraSessions = async (req, res) => {
   try {
-    const sessions = await AttendanceSession.find({ dayId: /^extra-/ }).sort({ createdAt: -1 });
+    const sessions = await AttendanceSession.find({
+      $or: [
+        { dayId: /^extra-/ },
+        { isCancelled: true }
+      ]
+    }).sort({ createdAt: -1 });
     res.status(200).json({ success: true, sessions });
   } catch (error) {
-    console.error('Error fetching extra sessions:', error);
-    res.status(500).json({ success: false, message: 'Server error fetching extra sessions' });
+    console.error('Error fetching schedule adjustments:', error);
+    res.status(500).json({ success: false, message: 'Server error fetching schedule adjustments' });
   }
 };
 

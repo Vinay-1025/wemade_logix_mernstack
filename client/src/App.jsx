@@ -9,7 +9,7 @@ import Recordings from './pages/Recordings';
 import AuditLogs from './pages/AuditLogs';
 import AttendanceAdmin from './pages/AttendanceAdmin';
 import VerifyCertificate from './pages/VerifyCertificate';
-import ExtraClassesAdmin from './pages/ExtraClassesAdmin';
+import ScheduleAdjustmentsAdmin from './pages/ScheduleAdjustmentsAdmin';
 import CapstonesAdmin from './pages/CapstonesAdmin';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -37,7 +37,7 @@ function App() {
           <Route path="/admin/users" element={<UsersList />} />
           <Route path="/admin/assignments" element={<AssignmentsList />} />
           <Route path="/admin/attendance" element={<AttendanceAdmin />} />
-          <Route path="/admin/extra-classes" element={<ExtraClassesAdmin />} />
+          <Route path="/admin/schedule-adjustments" element={<ScheduleAdjustmentsAdmin />} />
           <Route path="/admin/capstones" element={<CapstonesAdmin />} />
         </Route>
 
