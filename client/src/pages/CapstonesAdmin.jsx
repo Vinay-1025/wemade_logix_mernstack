@@ -878,6 +878,57 @@ const CapstonesAdmin = () => {
               >
                 Project Spec & Live Progress
               </button>
+              <button
+                onClick={() => setModalTab('planner')}
+                style={{
+                  padding: '14px 20px',
+                  fontSize: '0.9rem',
+                  fontWeight: 700,
+                  background: 'none',
+                  border: 'none',
+                  borderBottom: modalTab === 'planner' ? '3px solid #0047ab' : '3px solid transparent',
+                  color: modalTab === 'planner' ? '#0047ab' : '#64748b',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  marginLeft: '12px'
+                }}
+              >
+                Sprint Planner
+              </button>
+              <button
+                onClick={() => setModalTab('timesheet')}
+                style={{
+                  padding: '14px 20px',
+                  fontSize: '0.9rem',
+                  fontWeight: 700,
+                  background: 'none',
+                  border: 'none',
+                  borderBottom: modalTab === 'timesheet' ? '3px solid #0047ab' : '3px solid transparent',
+                  color: modalTab === 'timesheet' ? '#0047ab' : '#64748b',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  marginLeft: '12px'
+                }}
+              >
+                Work Timesheet
+              </button>
+              <button
+                onClick={() => setModalTab('custom')}
+                style={{
+                  padding: '14px 20px',
+                  fontSize: '0.9rem',
+                  fontWeight: 700,
+                  background: 'none',
+                  border: 'none',
+                  borderBottom: modalTab === 'custom' ? '3px solid #0047ab' : '3px solid transparent',
+                  color: modalTab === 'custom' ? '#0047ab' : '#64748b',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  marginLeft: '12px'
+                }}
+              >
+                Custom Tasks
+              </button>
             </div>
             )}
 
@@ -1159,6 +1210,27 @@ const CapstonesAdmin = () => {
                           </div>
                         )}
 
+                        {/* Submission View: Custom Checklist */}
+                        {(() => {
+                          const checklist = selectedProject.progress?.customChecklist || [];
+                          if (checklist.length === 0) return null;
+                          return (
+                            <div style={{ marginTop: '20px', borderTop: '1px solid #e2e8f0', paddingTop: '16px' }}>
+                              <h5 style={{ margin: '0 0 10px 0', color: '#d97706', fontWeight: 800, fontSize: '0.875rem' }}>
+                                Custom Sub-Tasks Progress ({checklist.filter(c => c.completed).length}/{checklist.length})
+                              </h5>
+                              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '8px' }}>
+                                {checklist.map(task => (
+                                  <div key={task._id} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'white', padding: '8px 12px', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
+                                    <span style={{ color: task.completed ? '#10b981' : '#94a3b8', fontWeight: 'bold' }}>{task.completed ? '✓' : '○'}</span>
+                                    <span style={{ textDecoration: task.completed ? 'line-through' : 'none', color: '#334155', fontSize: '0.825rem', fontWeight: 600 }}>{task.taskName}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        })()}
+
                         <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '20px' }}>
                           <label htmlFor="modalFeedback" style={{ display: 'block', fontSize: '0.9rem', fontWeight: 700, color: '#475569', marginBottom: '8px' }}>
                             <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -1196,7 +1268,7 @@ const CapstonesAdmin = () => {
                     </p>
                   </div>
                 )
-              ) : (
+              ) : modalTab === 'spec' ? (
                 /* SPECIFICATIONS VIEW */
                 (() => {
                   const regDetails = capstoneRegistry[selectedProject.projectCode] || {};
@@ -1338,6 +1410,27 @@ const CapstonesAdmin = () => {
                         </div>
                       )}
 
+                      {/* Student Custom Tasks Progress */}
+                      {(() => {
+                        const customChecklist = selectedProject.progress?.customChecklist || [];
+                        if (customChecklist.length === 0) return null;
+                        return (
+                          <div style={{ background: '#f8fafc', padding: '20px', borderRadius: '16px', border: '1px solid #cbd5e1' }}>
+                            <h4 style={{ margin: '0 0 10px 0', color: '#0f172a', fontWeight: 800, fontSize: '1rem' }}>Student Custom Tasks Progress</h4>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '8px' }}>
+                              {customChecklist.map(task => (
+                                <div key={task._id} style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'white', padding: '10px 14px', borderRadius: '8px', border: '1px solid #cbd5e1' }}>
+                                  <input type="checkbox" checked={task.completed} disabled style={{ width: '16px', height: '16px', accentColor: '#16a34a' }} />
+                                  <span style={{ fontSize: '0.85rem', color: task.completed ? '#94a3b8' : '#334155', textDecoration: task.completed ? 'line-through' : 'none', fontWeight: 600 }}>
+                                    {task.taskName}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })()}
+
                       {/* User Roles */}
                       {regDetails.roles && (
                         <div style={{ background: '#f8fafc', padding: '20px', borderRadius: '16px', border: '1px solid #cbd5e1' }}>
@@ -1395,8 +1488,128 @@ const CapstonesAdmin = () => {
                       </div>
                     );
                   })()
-                )}
-              </div>
+              ) : modalTab === 'planner' ? (
+                /* SPRINT PLANNER VIEW */
+                (() => {
+                  const planner = selectedProject.planner || [];
+                  return (
+                    <div style={{ background: '#f8fafc', padding: '20px', borderRadius: '16px', border: '1px solid #cbd5e1' }}>
+                      <h4 style={{ margin: '0 0 14px 0', color: '#0f172a', fontWeight: 800, fontSize: '1rem' }}>Sprint Kanban Board</h4>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+                        {['todo', 'in_progress', 'done'].map(status => {
+                          const cards = planner.filter(c => c.status === status);
+                          const labelMap = { todo: 'To Do', in_progress: 'In Progress', done: 'Done' };
+                          const colorMap = { todo: '#64748b', in_progress: '#0284c7', done: '#16a34a' };
+                          return (
+                            <div key={status} style={{ background: 'white', padding: '12px', borderRadius: '12px', border: '1.5px dashed #e2e8f0', minHeight: '120px' }}>
+                              <strong style={{ fontSize: '0.8rem', color: colorMap[status], textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>
+                                {labelMap[status]} ({cards.length})
+                              </strong>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                                {cards.length === 0 ? (
+                                  <span style={{ fontSize: '0.75rem', color: '#94a3b8', fontStyle: 'italic' }}>Empty</span>
+                                ) : (
+                                  cards.map(c => (
+                                    <div key={c._id} style={{ background: '#f8fafc', padding: '8px', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+                                      <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#334155' }}>{c.title}</div>
+                                      {c.description && <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '2px' }}>{c.description}</div>}
+                                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px', fontSize: '0.7rem' }}>
+                                        <span style={{
+                                          fontWeight: 800,
+                                          textTransform: 'uppercase',
+                                          color: c.priority === 'high' ? '#ef4444' : c.priority === 'medium' ? '#f59e0b' : '#3b82f6'
+                                        }}>{c.priority}</span>
+                                        {c.dueDate && <span style={{ color: '#94a3b8' }}>📅 {new Date(c.dueDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>}
+                                      </div>
+                                    </div>
+                                  ))
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })()
+              ) : modalTab === 'timesheet' ? (
+                /* WORK TIMESHEET VIEW */
+                (() => {
+                  const timesheet = selectedProject.timesheet || [];
+                  const totalHours = timesheet.reduce((sum, entry) => sum + (entry.hours || 0), 0);
+                  return (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                      <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #cbd5e1', textAlign: 'center', width: 'fit-content', minWidth: '150px' }}>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Total Hours Logged</span>
+                        <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#0047ab', marginTop: '6px' }}>{totalHours} hrs</div>
+                      </div>
+
+                      <div style={{ background: '#f8fafc', padding: '20px', borderRadius: '16px', border: '1px solid #cbd5e1' }}>
+                        <h4 style={{ margin: '0 0 12px 0', color: '#0f172a', fontWeight: 800, fontSize: '1rem' }}>Timesheet Work History</h4>
+                        <div style={{ overflowX: 'auto' }}>
+                          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.825rem' }}>
+                            <thead>
+                              <tr style={{ borderBottom: '2px solid #cbd5e1', textAlign: 'left', color: '#64748b' }}>
+                                <th style={{ padding: '8px' }}>Date</th>
+                                <th style={{ padding: '8px', textAlign: 'center' }}>Hours</th>
+                                <th style={{ padding: '8px' }}>Work Done Description</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {timesheet.length === 0 ? (
+                                <tr>
+                                  <td colSpan="3" style={{ textAlign: 'center', padding: '24px', color: '#94a3b8', fontStyle: 'italic' }}>
+                                    No timesheet hours logged yet.
+                                  </td>
+                                </tr>
+                              ) : (
+                                [...timesheet].sort((a,b) => new Date(b.date) - new Date(a.date)).map(log => (
+                                  <tr key={log._id} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                                    <td style={{ padding: '10px 8px', fontWeight: 600 }}>
+                                      {new Date(log.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                                    </td>
+                                    <td style={{ padding: '10px 8px', textAlign: 'center', fontWeight: 700, color: '#0047ab' }}>
+                                      {log.hours} hrs
+                                    </td>
+                                    <td style={{ padding: '10px 8px', color: '#475569' }}>
+                                      {log.description}
+                                    </td>
+                                  </tr>
+                                ))
+                              )}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()
+              ) : (
+                /* CUSTOM TASKS VIEW */
+                (() => {
+                  const checklist = selectedProject.progress?.customChecklist || [];
+                  return (
+                    <div style={{ background: '#f8fafc', padding: '20px', borderRadius: '16px', border: '1px solid #cbd5e1' }}>
+                      <h4 style={{ margin: '0 0 12px 0', color: '#0f172a', fontWeight: 800, fontSize: '1rem' }}>Custom Tasks Checklist</h4>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        {checklist.length === 0 ? (
+                          <span style={{ fontSize: '0.85rem', color: '#94a3b8', fontStyle: 'italic' }}>No custom tasks created by this student.</span>
+                        ) : (
+                          checklist.map(task => (
+                            <div key={task._id} style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'white', padding: '10px 14px', borderRadius: '8px', border: '1px solid #f1f5f9' }}>
+                              <input type="checkbox" checked={task.completed} readOnly style={{ width: '16px', height: '16px', accentColor: '#16a34a' }} />
+                              <span style={{ fontSize: '0.85rem', color: task.completed ? '#94a3b8' : '#334155', textDecoration: task.completed ? 'line-through' : 'none', fontWeight: 600 }}>
+                                {task.taskName}
+                              </span>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  );
+                })()
+              )}
+            </div>
 
             {/* Action Bar / Status Grading */}
             <div style={{

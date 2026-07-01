@@ -37,8 +37,24 @@ const capstonePoolSchema = new mongoose.Schema({
     uncheckReasons: {
       type: mongoose.Schema.Types.Mixed,
       default: {}
-    }
-  }
+    },
+    customChecklist: [{
+      taskName: { type: String, required: true },
+      completed: { type: Boolean, default: false }
+    }]
+  },
+  planner: [{
+    title: { type: String, required: true },
+    description: { type: String, default: '' },
+    status: { type: String, enum: ['todo', 'in_progress', 'done'], default: 'todo' },
+    priority: { type: String, enum: ['low', 'medium', 'high'], default: 'medium' },
+    dueDate: { type: Date, default: null }
+  }],
+  timesheet: [{
+    date: { type: Date, required: true },
+    hours: { type: Number, required: true },
+    description: { type: String, required: true }
+  }]
 }, {
   timestamps: true
 });

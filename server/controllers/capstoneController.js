@@ -59,11 +59,16 @@ const seedCapstonePool = async () => {
 
 // @desc    Get or assign a student's Capstone project
 // @route   GET /api/capstone/my
-// @access  Private (Student)
+// @access  Private (Student/Admin)
 const getMyAssignedProject = async (req, res) => {
   try {
-    // If admin or superadmin, return FP-00 sandbox project from DB
+    // If admin or superadmin, return specific student project or FP-00 sandbox project from DB
     if (req.user.role === 'admin' || req.user.role === 'superadmin') {
+      const studentId = req.query.studentId;
+      if (studentId) {
+        const project = await CapstonePool.findOne({ assignedTo: studentId });
+        return res.status(200).json({ success: true, project });
+      }
       const project = await CapstonePool.findOne({ projectCode: 'FP-00' });
       return res.status(200).json({ success: true, project });
     }
@@ -229,10 +234,266 @@ const updateCapstoneProgress = async (req, res) => {
   }
 };
 
+// Helper to find capstone project by student or admin query
+const findProjectByUserOrAdmin = async (req, studentId) => {
+  let project;
+  if (req.user.role === 'admin' || req.user.role === 'superadmin') {
+    if (studentId) {
+      project = await CapstonePool.findOne({ assignedTo: studentId });
+    } else {
+      project = await CapstonePool.findOne({ projectCode: 'FP-00' });
+    }
+  } else {
+    project = await CapstonePool.findOne({ assignedTo: req.user._id });
+  }
+  return project;
+};
+
+// @desc    Add a student custom task checklist item
+// @route   POST /api/capstone/custom-tasks
+// @access  Private
+const addCustomTask = async (req, res) => {
+  const { taskName, studentId } = req.body;
+  if (!taskName) {
+    return res.status(400).json({ success: false, message: 'Task description is required' });
+  }
+
+  try {
+    const project = await findProjectByUserOrAdmin(req, studentId);
+    if (!project) {
+      return res.status(404).json({ success: false, message: 'No assigned capstone project found.' });
+    }
+
+    if (!project.progress) project.progress = {};
+    if (!project.progress.customChecklist) project.progress.customChecklist = [];
+
+    project.progress.customChecklist.push({ taskName, completed: false });
+    project.markModified('progress');
+
+    const { addToPlanner } = req.body;
+    if (addToPlanner) {
+      if (!project.planner) project.planner = [];
+      project.planner.push({
+        title: taskName,
+        description: 'Auto-created from Custom Tasks checklist',
+        status: 'todo',
+        priority: 'medium',
+        dueDate: null
+      });
+      project.markModified('planner');
+    }
+
+    await project.save();
+
+    res.status(200).json({ success: true, project });
+  } catch (error) {
+    console.error('Add custom task error:', error);
+    res.status(500).json({ success: false, message: 'Server error adding custom task' });
+  }
+};
+
+// @desc    Toggle a student custom task completed status
+// @route   PUT /api/capstone/custom-tasks/:taskId/toggle
+// @access  Private
+const toggleCustomTask = async (req, res) => {
+  const { taskId } = req.params;
+  const { completed, studentId } = req.body;
+
+  try {
+    const project = await findProjectByUserOrAdmin(req, studentId);
+    if (!project) {
+      return res.status(404).json({ success: false, message: 'No assigned capstone project found.' });
+    }
+
+    const item = project.progress.customChecklist.id(taskId);
+    if (!item) {
+      return res.status(404).json({ success: false, message: 'Custom task not found.' });
+    }
+
+    item.completed = completed !== undefined ? completed : !item.completed;
+    project.markModified('progress');
+    await project.save();
+
+    res.status(200).json({ success: true, project });
+  } catch (error) {
+    console.error('Toggle custom task error:', error);
+    res.status(500).json({ success: false, message: 'Server error toggling custom task' });
+  }
+};
+
+// @desc    Delete a student custom task item
+// @route   DELETE /api/capstone/custom-tasks/:taskId
+// @access  Private
+const deleteCustomTask = async (req, res) => {
+  const { taskId } = req.params;
+  const studentId = req.body.studentId || req.query.studentId;
+
+  try {
+    const project = await findProjectByUserOrAdmin(req, studentId);
+    if (!project) {
+      return res.status(404).json({ success: false, message: 'No assigned capstone project found.' });
+    }
+
+    project.progress.customChecklist = project.progress.customChecklist.filter(
+      item => item._id.toString() !== taskId
+    );
+    project.markModified('progress');
+    await project.save();
+
+    res.status(200).json({ success: true, project });
+  } catch (error) {
+    console.error('Delete custom task error:', error);
+    res.status(500).json({ success: false, message: 'Server error deleting custom task' });
+  }
+};
+
+// @desc    Add an Agile sprint planner Kanban card
+// @route   POST /api/capstone/planner
+// @access  Private
+const addPlannerCard = async (req, res) => {
+  const { title, description, priority, dueDate, studentId } = req.body;
+  if (!title) {
+    return res.status(400).json({ success: false, message: 'Card title is required' });
+  }
+
+  try {
+    const project = await findProjectByUserOrAdmin(req, studentId);
+    if (!project) {
+      return res.status(404).json({ success: false, message: 'No assigned capstone project found.' });
+    }
+
+    project.planner.push({
+      title,
+      description: description || '',
+      priority: priority || 'medium',
+      dueDate: dueDate || null,
+      status: 'todo'
+    });
+    await project.save();
+
+    res.status(200).json({ success: true, project });
+  } catch (error) {
+    console.error('Add planner card error:', error);
+    res.status(500).json({ success: false, message: 'Server error adding planner card' });
+  }
+};
+
+// @desc    Update a Kanban card (status, details, priority)
+// @route   PUT /api/capstone/planner/:cardId
+// @access  Private
+const updatePlannerCard = async (req, res) => {
+  const { cardId } = req.params;
+  const { title, description, priority, dueDate, status, studentId } = req.body;
+
+  try {
+    const project = await findProjectByUserOrAdmin(req, studentId);
+    if (!project) {
+      return res.status(404).json({ success: false, message: 'No assigned capstone project found.' });
+    }
+
+    const card = project.planner.id(cardId);
+    if (!card) {
+      return res.status(404).json({ success: false, message: 'Planner card not found.' });
+    }
+
+    if (title !== undefined) card.title = title;
+    if (description !== undefined) card.description = description;
+    if (priority !== undefined) card.priority = priority;
+    if (dueDate !== undefined) card.dueDate = dueDate;
+    if (status !== undefined) card.status = status;
+
+    await project.save();
+
+    res.status(200).json({ success: true, project });
+  } catch (error) {
+    console.error('Update planner card error:', error);
+    res.status(500).json({ success: false, message: 'Server error updating planner card' });
+  }
+};
+
+// @desc    Delete a Kanban card
+// @route   DELETE /api/capstone/planner/:cardId
+// @access  Private
+const deletePlannerCard = async (req, res) => {
+  const { cardId } = req.params;
+  const studentId = req.body.studentId || req.query.studentId;
+
+  try {
+    const project = await findProjectByUserOrAdmin(req, studentId);
+    if (!project) {
+      return res.status(404).json({ success: false, message: 'No assigned capstone project found.' });
+    }
+
+    project.planner = project.planner.filter(card => card._id.toString() !== cardId);
+    await project.save();
+
+    res.status(200).json({ success: true, project });
+  } catch (error) {
+    console.error('Delete planner card error:', error);
+    res.status(500).json({ success: false, message: 'Server error deleting planner card' });
+  }
+};
+
+// @desc    Log timesheet hours
+// @route   POST /api/capstone/timesheet
+// @access  Private
+const addTimesheetLog = async (req, res) => {
+  const { date, hours, description, studentId } = req.body;
+  if (!date || !hours || !description) {
+    return res.status(400).json({ success: false, message: 'Date, hours, and description are required.' });
+  }
+
+  try {
+    const project = await findProjectByUserOrAdmin(req, studentId);
+    if (!project) {
+      return res.status(404).json({ success: false, message: 'No assigned capstone project found.' });
+    }
+
+    project.timesheet.push({ date, hours: Number(hours), description });
+    await project.save();
+
+    res.status(200).json({ success: true, project });
+  } catch (error) {
+    console.error('Add timesheet log error:', error);
+    res.status(500).json({ success: false, message: 'Server error adding timesheet log' });
+  }
+};
+
+// @desc    Delete a timesheet log entry
+// @route   DELETE /api/capstone/timesheet/:logId
+// @access  Private
+const deleteTimesheetLog = async (req, res) => {
+  const { logId } = req.params;
+  const studentId = req.body.studentId || req.query.studentId;
+
+  try {
+    const project = await findProjectByUserOrAdmin(req, studentId);
+    if (!project) {
+      return res.status(404).json({ success: false, message: 'No assigned capstone project found.' });
+    }
+
+    project.timesheet = project.timesheet.filter(log => log._id.toString() !== logId);
+    await project.save();
+
+    res.status(200).json({ success: true, project });
+  } catch (error) {
+    console.error('Delete timesheet error:', error);
+    res.status(500).json({ success: false, message: 'Server error deleting timesheet log' });
+  }
+};
+
 module.exports = {
   seedCapstonePool,
   getMyAssignedProject,
   getAdminCapstones,
   releaseCapstoneAllocation,
-  updateCapstoneProgress
+  updateCapstoneProgress,
+  addCustomTask,
+  toggleCustomTask,
+  deleteCustomTask,
+  addPlannerCard,
+  updatePlannerCard,
+  deletePlannerCard,
+  addTimesheetLog,
+  deleteTimesheetLog
 };

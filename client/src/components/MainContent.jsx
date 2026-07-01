@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useCourse } from '../context/CourseContext';
 import CodeEditor from './CodeEditor';
-import { FileEdit, Lightbulb, ClipboardCheck, ArrowUpRight, ArrowLeft, ArrowRight, CheckCircle2, XCircle, ShieldCheck, FileText, Clock, Lock, Unlock, BookOpen, Download, CheckSquare, Key, Laptop, Server, Layers, Globe, ChevronDown } from 'lucide-react';
+import { FileEdit, Lightbulb, ClipboardCheck, ArrowUpRight, ArrowLeft, ArrowRight, CheckCircle2, XCircle, ShieldCheck, FileText, Clock, Lock, Unlock, BookOpen, Download, CheckSquare, Key, Laptop, Server, Layers, Globe, ChevronDown, FileSpreadsheet, Workflow, Trash2, Plus } from 'lucide-react';
 import Day1MernPdf from '../assets/Material/Day1_MERN.pdf';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -130,6 +130,171 @@ const FinalProjectSubmissionView = () => {
     onConfirm: null
   });
 
+  // Workspace Addon states
+  const [activeCapstoneTab, setActiveCapstoneTab] = useState('spec');
+  const [customChecklist, setCustomChecklist] = useState([]);
+  const [plannerCards, setPlannerCards] = useState([]);
+  const [timesheetLogs, setTimesheetLogs] = useState([]);
+
+  // Form states
+  const [newLogDate, setNewLogDate] = useState(new Date().toISOString().split('T')[0]);
+  const [newLogHours, setNewLogHours] = useState('');
+  const [newLogDescription, setNewLogDescription] = useState('');
+  const [newCardTitle, setNewCardTitle] = useState('');
+  const [newCardDescription, setNewCardDescription] = useState('');
+  const [newCardPriority, setNewCardPriority] = useState('medium');
+  const [newCardDueDate, setNewCardDueDate] = useState('');
+  const [newCustomTaskName, setNewCustomTaskName] = useState('');
+  const [alsoAddToTodo, setAlsoAddToTodo] = useState(false);
+
+  // Workspace Addon handlers
+  const handleAddCustomTask = async (e) => {
+    e.preventDefault();
+    if (!newCustomTaskName.trim()) return;
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      const token = user?.token;
+      const response = await axios.post('/api/capstone/custom-tasks', {
+        taskName: newCustomTaskName.trim(),
+        addToPlanner: alsoAddToTodo
+      }, { headers: { 'Authorization': `Bearer ${token}` } });
+      if (response.data?.success && response.data.project) {
+        setCustomChecklist(response.data.project.progress?.customChecklist || []);
+        setPlannerCards(response.data.project.planner || []);
+        setNewCustomTaskName('');
+        setAlsoAddToTodo(false);
+        showSnackbar('Custom task added!', 'success');
+      }
+    } catch (err) {
+      showSnackbar(err.response?.data?.message || 'Error adding custom task', 'error');
+    }
+  };
+
+  const handleToggleCustomTask = async (taskId, completed) => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      const token = user?.token;
+      const response = await axios.put(`/api/capstone/custom-tasks/${taskId}/toggle`, {
+        completed
+      }, { headers: { 'Authorization': `Bearer ${token}` } });
+      if (response.data?.success && response.data.project) {
+        setCustomChecklist(response.data.project.progress?.customChecklist || []);
+      }
+    } catch (err) {
+      showSnackbar(err.response?.data?.message || 'Error updating custom task', 'error');
+    }
+  };
+
+  const handleDeleteCustomTask = async (taskId) => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      const token = user?.token;
+      const response = await axios.delete(`/api/capstone/custom-tasks/${taskId}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (response.data?.success && response.data.project) {
+        setCustomChecklist(response.data.project.progress?.customChecklist || []);
+        showSnackbar('Custom task removed', 'success');
+      }
+    } catch (err) {
+      showSnackbar(err.response?.data?.message || 'Error deleting custom task', 'error');
+    }
+  };
+
+  const handleAddPlannerCard = async (e) => {
+    e.preventDefault();
+    if (!newCardTitle.trim()) return;
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      const token = user?.token;
+      const response = await axios.post('/api/capstone/planner', {
+        title: newCardTitle.trim(),
+        description: newCardDescription.trim(),
+        priority: newCardPriority,
+        dueDate: newCardDueDate || null
+      }, { headers: { 'Authorization': `Bearer ${token}` } });
+      if (response.data?.success && response.data.project) {
+        setPlannerCards(response.data.project.planner || []);
+        setNewCardTitle('');
+        setNewCardDescription('');
+        setNewCardPriority('medium');
+        setNewCardDueDate('');
+        showSnackbar('Planner card created!', 'success');
+      }
+    } catch (err) {
+      showSnackbar(err.response?.data?.message || 'Error adding planner card', 'error');
+    }
+  };
+
+  const handleUpdateCardStatus = async (cardId, newStatus) => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      const token = user?.token;
+      const response = await axios.put(`/api/capstone/planner/${cardId}`, {
+        status: newStatus
+      }, { headers: { 'Authorization': `Bearer ${token}` } });
+      if (response.data?.success && response.data.project) {
+        setPlannerCards(response.data.project.planner || []);
+      }
+    } catch (err) {
+      showSnackbar(err.response?.data?.message || 'Error updating planner card', 'error');
+    }
+  };
+
+  const handleDeletePlannerCard = async (cardId) => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      const token = user?.token;
+      const response = await axios.delete(`/api/capstone/planner/${cardId}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (response.data?.success && response.data.project) {
+        setPlannerCards(response.data.project.planner || []);
+        showSnackbar('Planner card deleted', 'success');
+      }
+    } catch (err) {
+      showSnackbar(err.response?.data?.message || 'Error deleting planner card', 'error');
+    }
+  };
+
+  const handleAddTimesheetLog = async (e) => {
+    e.preventDefault();
+    if (!newLogDate || !newLogHours || !newLogDescription.trim()) return;
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      const token = user?.token;
+      const response = await axios.post('/api/capstone/timesheet', {
+        date: newLogDate,
+        hours: Number(newLogHours),
+        description: newLogDescription.trim()
+      }, { headers: { 'Authorization': `Bearer ${token}` } });
+      if (response.data?.success && response.data.project) {
+        setTimesheetLogs(response.data.project.timesheet || []);
+        setNewLogHours('');
+        setNewLogDescription('');
+        showSnackbar('Work hours logged!', 'success');
+      }
+    } catch (err) {
+      showSnackbar(err.response?.data?.message || 'Error adding timesheet log', 'error');
+    }
+  };
+
+  const handleDeleteTimesheetLog = async (logId) => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      const token = user?.token;
+      const response = await axios.delete(`/api/capstone/timesheet/${logId}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (response.data?.success && response.data.project) {
+        setTimesheetLogs(response.data.project.timesheet || []);
+        showSnackbar('Timesheet log removed', 'success');
+      }
+    } catch (err) {
+      showSnackbar(err.response?.data?.message || 'Error deleting timesheet log', 'error');
+    }
+  };
+
   // Fetch assigned unique capstone topic from backend
   useEffect(() => {
     const fetchAssignedProject = async () => {
@@ -148,6 +313,9 @@ const FinalProjectSubmissionView = () => {
           setCompletedPages(prog.completedPages || []);
           setCompletedCollections(prog.completedCollections || []);
           setUncheckReasons(prog.uncheckReasons || {});
+          setCustomChecklist(prog.customChecklist || []);
+          setPlannerCards(response.data.project.planner || []);
+          setTimesheetLogs(response.data.project.timesheet || []);
         }
       } catch (err) {
         console.error('Error fetching assigned capstone project:', err);
@@ -677,9 +845,47 @@ const FinalProjectSubmissionView = () => {
               </div>
             </div>
 
-            {/* Submission Status Alert (At Top of Body Page) */}
-            {capstoneSubmission && (
-              <div style={{
+            {/* Tabs Navigation */}
+            <div className="capstone-tabs-nav" style={{ display: 'flex', borderBottom: '1px solid #cbd5e1', marginBottom: '24px', gap: '8px' }}>
+              {[
+                { id: 'spec', label: 'Project Spec', icon: <FileSpreadsheet size={16} /> },
+                { id: 'planner', label: 'Sprint Planner', icon: <Workflow size={16} /> },
+                { id: 'timesheet', label: 'Work Timesheet', icon: <Clock size={16} /> },
+                { id: 'custom', label: 'Custom Tasks', icon: <CheckCircle2 size={16} /> }
+              ].map(tab => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setActiveCapstoneTab(tab.id)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '12px 20px',
+                    border: 'none',
+                    background: 'none',
+                    borderBottom: activeCapstoneTab === tab.id ? '2px solid #0047ab' : '2px solid transparent',
+                    color: activeCapstoneTab === tab.id ? '#0047ab' : '#64748b',
+                    fontWeight: 700,
+                    fontSize: '0.85rem',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    outline: 'none',
+                    marginBottom: '-1px'
+                  }}
+                >
+                  {tab.icon}
+                  <span>{tab.label}</span>
+                </button>
+              ))}
+            </div>
+
+            {/* Project Spec Tab content */}
+            {activeCapstoneTab === 'spec' && (
+              <>
+                {/* Submission Status Alert (At Top of Body Page) */}
+                {capstoneSubmission && (
+                  <div style={{
                 borderRadius: '12px',
                 padding: '20px',
                 marginBottom: '30px',
@@ -921,6 +1127,45 @@ const FinalProjectSubmissionView = () => {
                   </div>
                 </div>
 
+                {/* Custom Checklist in Project Spec */}
+                {customChecklist.length > 0 && (
+                  <div className="capstone-info-card" style={{ marginTop: '24px', padding: '24px', borderRadius: '16px', background: 'var(--app-card-bg)', border: '1px solid var(--app-border)' }}>
+                    <h3 style={{ margin: '0 0 8px 0', color: 'var(--app-text)', fontWeight: 800, fontSize: '1.05rem' }}>Custom Sub-Tasks Checklist</h3>
+                    <p style={{ margin: '0 0 16px 0', fontSize: '0.8rem', color: 'var(--app-text-muted)' }}>Additional developer micro-tasks checklist (click to toggle completion):</p>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '10px' }}>
+                      {customChecklist.map((task) => (
+                        <div 
+                          key={task._id} 
+                          onClick={() => handleToggleCustomTask(task._id, !task.completed)}
+                          style={{
+                            background: 'white',
+                            padding: '10px 14px',
+                            borderRadius: '8px',
+                            fontSize: '0.825rem',
+                            color: task.completed ? 'var(--app-text-muted)' : 'var(--app-text)',
+                            border: `1.5px solid ${task.completed ? '#16a34a' : 'var(--app-border)'}`,
+                            fontWeight: 600,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s',
+                            opacity: task.completed ? 0.75 : 1
+                          }}
+                        >
+                          <input 
+                            type="checkbox" 
+                            checked={task.completed} 
+                            onChange={() => {}}
+                            style={{ pointerEvents: 'none', width: '14px', height: '14px', accentColor: '#16a34a' }} 
+                          />
+                          <span style={{ textDecoration: task.completed ? 'line-through' : 'none' }}>{task.taskName}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {/* Section 4: Mandatory & Bonus Features */}
                 <div className="capstone-grid-15-1">
                   <div className="capstone-info-card">
@@ -1055,6 +1300,437 @@ const FinalProjectSubmissionView = () => {
                         <li key={idx} style={{ marginBottom: '6px' }}>{bp}</li>
                       ))}
                     </ul>
+                  </div>
+                </div>
+              </div>
+            )}
+              </>
+            )}
+
+            {/* Agile Kanban Board View */}
+            {activeCapstoneTab === 'planner' && (
+              <div className="capstone-planner-view" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                {/* Add Card Form */}
+                <form onSubmit={handleAddPlannerCard} className="capstone-info-card" style={{ padding: '20px', borderRadius: '16px', background: 'var(--app-card-bg)', border: '1px solid var(--app-border)' }}>
+                  <h3 style={{ margin: '0 0 16px 0', fontSize: '1.05rem', fontWeight: 800, color: 'var(--app-text)' }}>Add Planner Task Card</h3>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '16px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--app-text-muted)' }}>Task Title</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Design DB models"
+                        value={newCardTitle}
+                        onChange={(e) => setNewCardTitle(e.target.value)}
+                        required
+                        style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--app-border)', background: 'transparent', color: 'var(--app-text)', fontSize: '0.85rem' }}
+                      />
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--app-text-muted)' }}>Description</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Design schemas for User, Capstone, Attendance"
+                        value={newCardDescription}
+                        onChange={(e) => setNewCardDescription(e.target.value)}
+                        style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--app-border)', background: 'transparent', color: 'var(--app-text)', fontSize: '0.85rem' }}
+                      />
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--app-text-muted)' }}>Priority</label>
+                      <select
+                        value={newCardPriority}
+                        onChange={(e) => setNewCardPriority(e.target.value)}
+                        style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--app-border)', background: 'var(--app-card-bg)', color: 'var(--app-text)', fontSize: '0.85rem', cursor: 'pointer' }}
+                      >
+                        <option value="low">Low Priority</option>
+                        <option value="medium">Medium Priority</option>
+                        <option value="high">High Priority</option>
+                      </select>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--app-text-muted)' }}>Due Date</label>
+                      <input
+                        type="date"
+                        value={newCardDueDate}
+                        onChange={(e) => setNewCardDueDate(e.target.value)}
+                        style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--app-border)', background: 'transparent', color: 'var(--app-text)', fontSize: '0.85rem' }}
+                      />
+                    </div>
+                  </div>
+                  <button
+                    type="submit"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      background: 'linear-gradient(135deg, #0047ab 0%, #002f80 100%)',
+                      color: 'white',
+                      border: 'none',
+                      padding: '10px 24px',
+                      borderRadius: '10px',
+                      fontWeight: 700,
+                      fontSize: '0.85rem',
+                      cursor: 'pointer',
+                      boxShadow: '0 4px 10px rgba(0, 71, 171, 0.15)'
+                    }}
+                  >
+                    <Plus size={16} />
+                    <span>Create Card</span>
+                  </button>
+                </form>
+
+                {/* Kanban Columns Grid */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', minHeight: '400px' }}>
+                  {[
+                    { id: 'todo', label: 'To Do', color: '#64748b', bg: '#f1f5f9' },
+                    { id: 'in_progress', label: 'In Progress', color: '#0284c7', bg: '#e0f2fe' },
+                    { id: 'done', label: 'Done', color: '#16a34a', bg: '#d1fae5' }
+                  ].map(column => {
+                    const cards = plannerCards.filter(c => c.status === column.id);
+                    return (
+                      <div key={column.id} style={{ display: 'flex', flexDirection: 'column', background: 'rgba(0,0,0,0.01)', border: '1.5px dashed var(--app-border)', borderRadius: '16px', padding: '16px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+                          <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 800, color: 'var(--app-text)' }}>
+                            <span style={{ background: column.bg, color: column.color, padding: '3px 8px', borderRadius: '6px', fontSize: '0.8rem', marginRight: '6px' }}>{cards.length}</span>
+                            {column.label}
+                          </h4>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', flex: 1, overflowY: 'auto' }}>
+                          {cards.length === 0 ? (
+                            <div style={{ padding: '30px 10px', textAlign: 'center', color: 'var(--app-text-muted)', fontSize: '0.8rem', fontStyle: 'italic' }}>
+                              No tasks in this lane.
+                            </div>
+                          ) : (
+                            cards.map(card => (
+                              <div
+                                key={card._id}
+                                style={{
+                                  background: 'var(--app-card-bg)',
+                                  border: '1px solid var(--app-border)',
+                                  borderRadius: '12px',
+                                  padding: '14px',
+                                  boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                  gap: '8px'
+                                }}
+                              >
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
+                                  <strong style={{ fontSize: '0.85rem', color: 'var(--app-text)', wordBreak: 'break-word' }}>{card.title}</strong>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleDeletePlannerCard(card._id)}
+                                    style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '2px', borderRadius: '4px' }}
+                                    title="Delete Card"
+                                  >
+                                    <Trash2 size={14} />
+                                  </button>
+                                </div>
+                                {card.description && (
+                                  <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--app-text-muted)', lineHeight: '1.4' }}>{card.description}</p>
+                                )}
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px', flexWrap: 'wrap', gap: '8px' }}>
+                                  <span style={{
+                                    fontSize: '0.7rem',
+                                    fontWeight: 800,
+                                    textTransform: 'uppercase',
+                                    padding: '2px 6px',
+                                    borderRadius: '4px',
+                                    background: card.priority === 'high' ? '#fee2e2' : card.priority === 'medium' ? '#fef3c7' : '#e0f2fe',
+                                    color: card.priority === 'high' ? '#b91c1c' : card.priority === 'medium' ? '#d97706' : '#0369a1'
+                                  }}>
+                                    {card.priority}
+                                  </span>
+                                  {card.dueDate && (
+                                    <span style={{ fontSize: '0.725rem', color: 'var(--app-text-muted)' }}>
+                                      📅 {new Date(card.dueDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                                    </span>
+                                  )}
+                                </div>
+                                {/* Column Switcher Dropdown */}
+                                <select
+                                  value={card.status}
+                                  onChange={(e) => handleUpdateCardStatus(card._id, e.target.value)}
+                                  style={{
+                                    marginTop: '8px',
+                                    padding: '6px 10px',
+                                    borderRadius: '6px',
+                                    border: '1px solid var(--app-border)',
+                                    background: 'var(--app-card-bg)',
+                                    color: 'var(--app-text)',
+                                    fontSize: '0.75rem',
+                                    cursor: 'pointer',
+                                    fontWeight: 700
+                                  }}
+                                >
+                                  <option value="todo">Move to To Do</option>
+                                  <option value="in_progress">Move to In Progress</option>
+                                  <option value="done">Move to Done</option>
+                                </select>
+                              </div>
+                            ))
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Work Timesheet Log View */}
+            {activeCapstoneTab === 'timesheet' && (
+              <div className="capstone-timesheet-view" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '24px' }}>
+                  {/* Left Column: Form & Summary Stats */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                    {/* Summary Stats */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
+                      <div className="capstone-info-card" style={{ padding: '16px', textAlign: 'center', background: 'rgba(0, 71, 171, 0.04)', border: '1.5px solid rgba(0, 71, 171, 0.1)', borderRadius: '16px' }}>
+                        <Clock size={24} color="#0047ab" style={{ marginBottom: '8px' }} />
+                        <h4 style={{ margin: 0, fontSize: '0.8rem', color: 'var(--app-text-muted)' }}>Hours Invested</h4>
+                        <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#0047ab', marginTop: '4px' }}>
+                          {timesheetLogs.reduce((sum, item) => sum + (item.hours || 0), 0)}h
+                        </div>
+                      </div>
+                      <div className="capstone-info-card" style={{ padding: '16px', textAlign: 'center', background: 'rgba(22, 163, 74, 0.04)', border: '1.5px solid rgba(22, 163, 74, 0.1)', borderRadius: '16px' }}>
+                        <CheckSquare size={24} color="#16a34a" style={{ marginBottom: '8px' }} />
+                        <h4 style={{ margin: 0, fontSize: '0.8rem', color: 'var(--app-text-muted)' }}>Tasks Done</h4>
+                        <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#16a34a', marginTop: '4px' }}>
+                          {plannerCards.filter(c => c.status === 'done').length}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Logging Form */}
+                    <form onSubmit={handleAddTimesheetLog} className="capstone-info-card" style={{ padding: '20px', borderRadius: '16px', border: '1px solid var(--app-border)', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                      <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, color: 'var(--app-text)' }}>Log Daily Hours</h3>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--app-text-muted)' }}>Date</label>
+                        <input
+                          type="date"
+                          value={newLogDate}
+                          onChange={(e) => setNewLogDate(e.target.value)}
+                          required
+                          style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--app-border)', background: 'transparent', color: 'var(--app-text)', fontSize: '0.85rem' }}
+                        />
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--app-text-muted)' }}>Hours Worked</label>
+                        <input
+                          type="number"
+                          step="0.5"
+                          min="0.5"
+                          max="24"
+                          placeholder="e.g. 3.5"
+                          value={newLogHours}
+                          onChange={(e) => setNewLogHours(e.target.value)}
+                          required
+                          style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--app-border)', background: 'transparent', color: 'var(--app-text)', fontSize: '0.85rem' }}
+                        />
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--app-text-muted)' }}>Task Log Description</label>
+                        <textarea
+                          placeholder="What did you work on today? e.g. Integrated Mongoose schemas and tested API endpoints"
+                          value={newLogDescription}
+                          onChange={(e) => setNewLogDescription(e.target.value)}
+                          required
+                          rows="3"
+                          style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--app-border)', background: 'transparent', color: 'var(--app-text)', fontSize: '0.85rem', resize: 'none', fontFamily: 'inherit' }}
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        style={{
+                          background: 'linear-gradient(135deg, #0047ab 0%, #002f80 100%)',
+                          color: 'white',
+                          border: 'none',
+                          padding: '12px 20px',
+                          borderRadius: '10px',
+                          fontWeight: 700,
+                          fontSize: '0.85rem',
+                          cursor: 'pointer',
+                          marginTop: '8px'
+                        }}
+                      >
+                        Log Hours
+                      </button>
+                    </form>
+                  </div>
+
+                  {/* Right Column: Log Entries Table */}
+                  <div className="capstone-info-card" style={{ padding: '20px', borderRadius: '16px', border: '1px solid var(--app-border)', display: 'flex', flexDirection: 'column' }}>
+                    <h3 style={{ margin: '0 0 16px 0', fontSize: '1.05rem', fontWeight: 800, color: 'var(--app-text)' }}>Timesheet Work History</h3>
+                    <div style={{ flex: 1, overflowY: 'auto', maxHeight: '420px' }}>
+                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.825rem' }}>
+                        <thead>
+                          <tr style={{ borderBottom: '2px solid var(--app-border)', textAlign: 'left', color: 'var(--app-text-muted)' }}>
+                            <th style={{ padding: '10px 8px' }}>Date</th>
+                            <th style={{ padding: '10px 8px', textAlign: 'center' }}>Hours</th>
+                            <th style={{ padding: '10px 8px' }}>Description</th>
+                            <th style={{ padding: '10px 8px', textAlign: 'right' }}>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {timesheetLogs.length === 0 ? (
+                            <tr>
+                              <td colSpan="4" style={{ textAlign: 'center', padding: '40px', color: 'var(--app-text-muted)', fontStyle: 'italic' }}>
+                                No work logs recorded yet. Log your daily hours on the left!
+                              </td>
+                            </tr>
+                          ) : (
+                            [...timesheetLogs].sort((a,b) => new Date(b.date) - new Date(a.date)).map(log => (
+                              <tr key={log._id} style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                <td style={{ padding: '12px 8px', fontWeight: 600 }}>
+                                  {new Date(log.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                                </td>
+                                <td style={{ padding: '12px 8px', textAlign: 'center', fontWeight: 700, color: '#0047ab' }}>
+                                  {log.hours}h
+                                </td>
+                                <td style={{ padding: '12px 8px', color: 'var(--app-text-muted)', maxWidth: '300px', wordBreak: 'break-word' }}>
+                                  {log.description}
+                                </td>
+                                <td style={{ padding: '12px 8px', textAlign: 'right' }}>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleDeleteTimesheetLog(log._id)}
+                                    style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '4px' }}
+                                    title="Delete Log"
+                                  >
+                                    <Trash2 size={14} />
+                                  </button>
+                                </td>
+                              </tr>
+                            ))
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Custom Tasks Checklist View */}
+            {activeCapstoneTab === 'custom' && (
+              <div className="capstone-custom-tasks-view" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                <div className="capstone-info-card" style={{ padding: '24px', borderRadius: '16px', border: '1px solid var(--app-border)' }}>
+                  <h3 style={{ margin: '0 0 8px 0', fontSize: '1.1rem', fontWeight: 800, color: 'var(--app-text)' }}>My Custom Sub-Tasks</h3>
+                  <p style={{ margin: '0 0 20px 0', fontSize: '0.825rem', color: 'var(--app-text-muted)' }}>Use this tab to schedule and check off your own custom micro-tasks during the capstone sprint.</p>
+
+                  {/* Add Custom Task Form */}
+                  <form onSubmit={handleAddCustomTask} style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
+                    <div style={{ display: 'flex', gap: '12px' }}>
+                      <input
+                        type="text"
+                        placeholder="Add a new custom task (e.g. Set up auth middleware, create user card)..."
+                        value={newCustomTaskName}
+                        onChange={(e) => setNewCustomTaskName(e.target.value)}
+                        required
+                        style={{ flex: 1, padding: '12px 16px', borderRadius: '10px', border: '1px solid var(--app-border)', background: 'transparent', color: 'var(--app-text)', fontSize: '0.85rem' }}
+                      />
+                      <button
+                        type="submit"
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          background: 'linear-gradient(135deg, #0047ab 0%, #002f80 100%)',
+                          color: 'white',
+                          border: 'none',
+                          padding: '12px 24px',
+                          borderRadius: '10px',
+                          fontWeight: 700,
+                          fontSize: '0.85rem',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <Plus size={16} />
+                        <span>Add Task</span>
+                      </button>
+                    </div>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.8rem', color: 'var(--app-text-muted)', fontWeight: 600, width: 'fit-content' }}>
+                      <input
+                        type="checkbox"
+                        checked={alsoAddToTodo}
+                        onChange={(e) => setAlsoAddToTodo(e.target.checked)}
+                        style={{ width: '15px', height: '15px', cursor: 'pointer' }}
+                      />
+                      <span>Also add this task as a card in the Agile "To Do" planner lane</span>
+                    </label>
+                  </form>
+
+                  {/* Progress Bar */}
+                  {customChecklist.length > 0 && (
+                    <div style={{ marginBottom: '24px', background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid var(--app-border)' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', fontWeight: 700, color: 'var(--app-text)', marginBottom: '8px' }}>
+                        <span>Progress Tracker</span>
+                        <span>{customChecklist.filter(t => t.completed).length} of {customChecklist.length} completed</span>
+                      </div>
+                      <div style={{ width: '100%', height: '8px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
+                        <div
+                          style={{
+                            height: '100%',
+                            background: '#16a34a',
+                            width: `${(customChecklist.filter(t => t.completed).length / customChecklist.length) * 100}%`,
+                            transition: 'width 0.3s ease'
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Tasks List */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    {customChecklist.length === 0 ? (
+                      <div style={{ padding: '60px 20px', textAlign: 'center', color: 'var(--app-text-muted)', fontSize: '0.9rem', fontStyle: 'italic', background: 'rgba(0,0,0,0.005)', borderRadius: '12px', border: '1px dashed var(--app-border)' }}>
+                        No custom tasks created yet. Create a task above to build your own checklist!
+                      </div>
+                    ) : (
+                      customChecklist.map(task => (
+                        <div
+                          key={task._id}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            padding: '14px 18px',
+                            background: 'white',
+                            border: '1.5px solid var(--app-border)',
+                            borderRadius: '12px',
+                            transition: 'all 0.2s',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.01)'
+                          }}
+                        >
+                          <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', flex: 1, marginRight: '16px' }}>
+                            <input
+                              type="checkbox"
+                              checked={task.completed}
+                              onChange={(e) => handleToggleCustomTask(task._id, e.target.checked)}
+                              style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#16a34a' }}
+                            />
+                            <span style={{
+                              fontSize: '0.9rem',
+                              color: task.completed ? 'var(--app-text-muted)' : 'var(--app-text)',
+                              textDecoration: task.completed ? 'line-through' : 'none',
+                              fontWeight: task.completed ? 500 : 600,
+                              transition: 'all 0.2s'
+                            }}>
+                              {task.taskName}
+                            </span>
+                          </label>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteCustomTask(task._id)}
+                            style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '6px', borderRadius: '6px' }}
+                            title="Delete Task"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      ))
+                    )}
                   </div>
                 </div>
               </div>

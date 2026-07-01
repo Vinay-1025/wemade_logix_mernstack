@@ -22,6 +22,9 @@ const UsersList = () => {
   const [selectedDetailUser, setSelectedDetailUser] = useState(null);
   const [detailUserAssignments, setDetailUserAssignments] = useState([]);
   const [detailLoading, setDetailLoading] = useState(false);
+  const [detailUserCapstone, setDetailUserCapstone] = useState(null);
+  const [detailUserCapstoneLoading, setDetailUserCapstoneLoading] = useState(false);
+  const [activeDetailTab, setActiveDetailTab] = useState('progress');
 
   // Detailed view page & filter states
   const [syllabusPage, setSyllabusPage] = useState(1);
@@ -508,6 +511,23 @@ const UsersList = () => {
     }
   };
 
+  const fetchDetailUserCapstone = async (selectedUser) => {
+    if (!selectedUser) return;
+    setDetailUserCapstoneLoading(true);
+    setDetailUserCapstone(null);
+    try {
+      const config = { headers: { Authorization: `Bearer ${currentUser.token}` } };
+      const { data } = await axios.get(`/api/capstone/my?studentId=${selectedUser._id}`, config);
+      if (data?.success) {
+        setDetailUserCapstone(data.project);
+      }
+    } catch (err) {
+      console.error('Error loading capstone progress:', err);
+    } finally {
+      setDetailUserCapstoneLoading(false);
+    }
+  };
+
   const getDayAssignmentTopic = (day) => {
     if (!day || !day.topics || day.topics.length === 0) return null;
     return day.topics.find(t => t.title.toLowerCase().includes('assignment'))
@@ -973,10 +993,52 @@ const UsersList = () => {
               </div>
             </div>
 
+            {/* Tab switcher: Core Progress vs Capstone Tracker */}
+            {selectedDetailUser.role === 'student' && (
+              <div className="detail-tab-container" style={{ display: 'flex', gap: '12px', borderBottom: '1px solid var(--app-border)', marginBottom: '24px', paddingBottom: '4px' }}>
+                <button
+                  onClick={() => setActiveDetailTab('progress')}
+                  style={{
+                    padding: '10px 20px',
+                    fontSize: '0.85rem',
+                    fontWeight: 700,
+                    border: 'none',
+                    background: 'none',
+                    borderBottom: activeDetailTab === 'progress' ? '2.5px solid var(--primary-cyan)' : '2.5px solid transparent',
+                    color: activeDetailTab === 'progress' ? 'var(--primary-cyan)' : 'var(--app-text-muted)',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    outline: 'none'
+                  }}
+                >
+                  Core Progress & Attendance
+                </button>
+                <button
+                  onClick={() => setActiveDetailTab('capstone')}
+                  style={{
+                    padding: '10px 20px',
+                    fontSize: '0.85rem',
+                    fontWeight: 700,
+                    border: 'none',
+                    background: 'none',
+                    borderBottom: activeDetailTab === 'capstone' ? '2.5px solid var(--primary-cyan)' : '2.5px solid transparent',
+                    color: activeDetailTab === 'capstone' ? 'var(--primary-cyan)' : 'var(--app-text-muted)',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    outline: 'none'
+                  }}
+                >
+                  Capstone Project Tracker
+                </button>
+              </div>
+            )}
+
             {detailLoading ? (
               <div className="loading-state-details">Loading syllabus and submission analytics...</div>
             ) : (
               <>
+                {activeDetailTab === 'progress' && (
+                  <>
                 <div className="detail-tables-grid">
                   {/* Table 1: Syllabus Progress */}
                   <div className="detail-section-card card-3d">
@@ -1631,6 +1693,163 @@ const UsersList = () => {
                 )}
               </>
             )}
+
+            {activeDetailTab === 'capstone' && (
+              <div className="capstone-tracker-tab" style={{ marginTop: '24px' }}>
+                {detailUserCapstoneLoading ? (
+                  <div className="loading-state-details">Accessing capstone developer logs...</div>
+                ) : !detailUserCapstone ? (
+                  <div className="empty-records-card" style={{ padding: '40px', background: 'var(--app-card-bg)', border: '1px solid var(--app-border)', borderRadius: '16px', textAlign: 'center', color: 'var(--app-text-muted)', fontStyle: 'italic' }}>
+                    No capstone project has been assigned or claimed by this student yet.
+                  </div>
+                ) : (() => {
+                  const project = detailUserCapstone;
+                  const checklist = project.progress?.customChecklist || [];
+                  const planner = project.planner || [];
+                  const timesheet = project.timesheet || [];
+                  const totalHours = timesheet.reduce((sum, entry) => sum + (entry.hours || 0), 0);
+                  const doneTasks = planner.filter(c => c.status === 'done').length;
+
+                  return (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                      {/* Allocated Project Title Block */}
+                      <div className="detail-section-card" style={{ background: 'rgba(0, 71, 171, 0.02)', border: '1.5px solid rgba(0, 71, 171, 0.1)', padding: '20px', borderRadius: '16px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          <span style={{ background: 'rgba(0, 71, 171, 0.08)', color: '#0047ab', fontWeight: 800, fontSize: '0.8rem', padding: '3px 8px', borderRadius: '6px' }}>
+                            {project.projectCode}
+                          </span>
+                          <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800, color: 'var(--app-text)' }}>
+                            {project.title}
+                          </h3>
+                        </div>
+                        {project.assignedAt && (
+                          <div style={{ fontSize: '0.8rem', color: 'var(--app-text-muted)', marginTop: '8px' }}>
+                            Claimed on {new Date(project.assignedAt).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Summary statistics row */}
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px' }}>
+                        <div style={{ background: 'var(--app-card-bg)', padding: '16px', borderRadius: '12px', border: '1px solid var(--app-border)', textAlign: 'center' }}>
+                          <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--app-text-muted)', textTransform: 'uppercase' }}>Logged Hours</span>
+                          <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#0047ab', marginTop: '6px' }}>{totalHours} hrs</div>
+                        </div>
+                        <div style={{ background: 'var(--app-card-bg)', padding: '16px', borderRadius: '12px', border: '1px solid var(--app-border)', textAlign: 'center' }}>
+                          <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--app-text-muted)', textTransform: 'uppercase' }}>Kanban Done</span>
+                          <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#16a34a', marginTop: '6px' }}>{doneTasks} of {planner.length} tasks</div>
+                        </div>
+                        <div style={{ background: 'var(--app-card-bg)', padding: '16px', borderRadius: '12px', border: '1px solid var(--app-border)', textAlign: 'center' }}>
+                          <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--app-text-muted)', textTransform: 'uppercase' }}>Custom Checklist</span>
+                          <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#d97706', marginTop: '6px' }}>
+                            {checklist.filter(c => c.completed).length} of {checklist.length} done
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Agile Kanban Tasks */}
+                      <div className="detail-section-card">
+                        <h3 style={{ margin: '0 0 14px 0', color: 'var(--app-text)', fontWeight: 800, fontSize: '1rem' }}>Sprint Kanban Board</h3>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+                          {['todo', 'in_progress', 'done'].map(status => {
+                            const cards = planner.filter(c => c.status === status);
+                            const labelMap = { todo: 'To Do', in_progress: 'In Progress', done: 'Done' };
+                            const colorMap = { todo: '#64748b', in_progress: '#0284c7', done: '#16a34a' };
+                            return (
+                              <div key={status} style={{ background: 'rgba(0,0,0,0.01)', padding: '12px', borderRadius: '12px', border: '1.5px dashed var(--app-border)', minHeight: '120px' }}>
+                                <strong style={{ fontSize: '0.8rem', color: colorMap[status], textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>
+                                  {labelMap[status]} ({cards.length})
+                                </strong>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                                  {cards.length === 0 ? (
+                                    <span style={{ fontSize: '0.75rem', color: 'var(--app-text-muted)', fontStyle: 'italic' }}>Empty</span>
+                                  ) : (
+                                    cards.map(c => (
+                                      <div key={c._id} style={{ background: 'var(--app-card-bg)', padding: '8px', borderRadius: '6px', border: '1px solid var(--app-border)' }}>
+                                        <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--app-text)' }}>{c.title}</div>
+                                        {c.description && <div style={{ fontSize: '0.75rem', color: 'var(--app-text-muted)', marginTop: '2px' }}>{c.description}</div>}
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px', fontSize: '0.7rem' }}>
+                                          <span style={{
+                                            fontWeight: 800,
+                                            textTransform: 'uppercase',
+                                            color: c.priority === 'high' ? '#ef4444' : c.priority === 'medium' ? '#f59e0b' : '#3b82f6'
+                                          }}>{c.priority}</span>
+                                          {c.dueDate && <span style={{ color: 'var(--app-text-muted)' }}>📅 {new Date(c.dueDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>}
+                                        </div>
+                                      </div>
+                                    ))
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* Timesheet Logs Table */}
+                      <div className="detail-section-card">
+                        <h3 style={{ margin: '0 0 12px 0', color: 'var(--app-text)', fontWeight: 800, fontSize: '1rem' }}>Timesheet Work History</h3>
+                        <div style={{ overflowX: 'auto' }}>
+                          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.825rem' }}>
+                            <thead>
+                              <tr style={{ borderBottom: '2px solid var(--app-border)', textAlign: 'left', color: 'var(--app-text-muted)' }}>
+                                <th style={{ padding: '8px' }}>Date</th>
+                                <th style={{ padding: '8px', textAlign: 'center' }}>Hours</th>
+                                <th style={{ padding: '8px' }}>Work Done Description</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {timesheet.length === 0 ? (
+                                <tr>
+                                  <td colSpan="3" style={{ textAlign: 'center', padding: '24px', color: 'var(--app-text-muted)', fontStyle: 'italic' }}>
+                                    No timesheet hours logged yet.
+                                  </td>
+                                </tr>
+                              ) : (
+                                [...timesheet].sort((a,b) => new Date(b.date) - new Date(a.date)).map(log => (
+                                  <tr key={log._id} style={{ borderBottom: '1px solid var(--app-border)' }}>
+                                    <td style={{ padding: '10px 8px', fontWeight: 600 }}>
+                                      {new Date(log.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                                    </td>
+                                    <td style={{ padding: '10px 8px', textAlign: 'center', fontWeight: 700, color: '#0047ab' }}>
+                                      {log.hours} hrs
+                                    </td>
+                                    <td style={{ padding: '10px 8px', color: 'var(--app-text)' }}>
+                                      {log.description}
+                                    </td>
+                                  </tr>
+                                ))
+                              )}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+
+                      {/* Custom Tasks Checklist */}
+                      <div className="detail-section-card">
+                        <h3 style={{ margin: '0 0 12px 0', color: 'var(--app-text)', fontWeight: 800, fontSize: '1rem' }}>Custom Tasks Checklist</h3>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                          {checklist.length === 0 ? (
+                            <span style={{ fontSize: '0.85rem', color: 'var(--app-text-muted)', fontStyle: 'italic' }}>No custom tasks created by this student.</span>
+                          ) : (
+                            checklist.map(task => (
+                              <div key={task._id} style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'var(--app-card-bg)', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--app-border)' }}>
+                                <input type="checkbox" checked={task.completed} readOnly style={{ width: '16px', height: '16px', accentColor: '#16a34a' }} />
+                                <span style={{ fontSize: '0.85rem', color: task.completed ? 'var(--app-text-muted)' : 'var(--app-text)', textDecoration: task.completed ? 'line-through' : 'none', fontWeight: 600 }}>
+                                  {task.taskName}
+                                </span>
+                              </div>
+                            ))
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+            )}
+              </>
+            )}
           </div>
         ) : (
           <>
@@ -2087,8 +2306,10 @@ const UsersList = () => {
                       className={`${!u.isActive ? 'inactive-row' : ''} clickable-user-row`}
                       onClick={() => {
                         setSelectedDetailUser(u);
+                        setActiveDetailTab('progress');
                         fetchDetailUserAssignments(u);
                         fetchDetailUserAttendance(u);
+                        fetchDetailUserCapstone(u);
                       }}
                       style={{ cursor: 'pointer' }}
                     >
