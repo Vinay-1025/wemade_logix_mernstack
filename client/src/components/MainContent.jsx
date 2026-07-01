@@ -828,7 +828,7 @@ const FinalProjectSubmissionView = () => {
                               type="checkbox" 
                               checked={isCompleted} 
                               onChange={() => {}}
-                              style={{ cursor: 'pointer', width: '14px', height: '14px' }} 
+                              style={{ pointerEvents: 'none', width: '14px', height: '14px' }} 
                             />
                             <span style={{ textDecoration: isCompleted ? 'line-through' : 'none' }}>{m}</span>
                           </div>
@@ -871,7 +871,7 @@ const FinalProjectSubmissionView = () => {
                                     type="checkbox" 
                                     checked={isCompleted}
                                     onChange={() => {}}
-                                    style={{ cursor: 'pointer', width: '11px', height: '11px', margin: 0 }} 
+                                    style={{ pointerEvents: 'none', width: '11px', height: '11px', margin: 0 }} 
                                   />
                                   <span>{page}</span>
                                 </span>
@@ -911,7 +911,7 @@ const FinalProjectSubmissionView = () => {
                               type="checkbox" 
                               checked={isCompleted}
                               onChange={() => {}}
-                              style={{ cursor: 'pointer', width: '14px', height: '14px' }} 
+                              style={{ pointerEvents: 'none', width: '14px', height: '14px' }} 
                             />
                             <span style={{ textDecoration: isCompleted ? 'line-through' : 'none' }}>{col}</span>
                           </div>
