@@ -340,7 +340,17 @@ const deleteCustomTask = async (req, res) => {
     if (!project.progress) project.progress = {};
     if (!project.progress.customChecklist) project.progress.customChecklist = [];
 
-    project.progress.customChecklist.pull(taskId);
+    const checklist = project.progress.customChecklist;
+    if (typeof checklist.pull === 'function') {
+      try {
+        checklist.pull(taskId);
+      } catch (err) {
+        project.progress.customChecklist = checklist.filter(item => item && item._id && item._id.toString() !== taskId);
+      }
+    } else {
+      project.progress.customChecklist = checklist.filter(item => item && item._id && item._id.toString() !== taskId);
+    }
+
     project.markModified('progress');
     await project.save();
 
@@ -434,7 +444,16 @@ const deletePlannerCard = async (req, res) => {
 
     if (!project.planner) project.planner = [];
 
-    project.planner.pull(cardId);
+    if (typeof project.planner.pull === 'function') {
+      try {
+        project.planner.pull(cardId);
+      } catch (err) {
+        project.planner = project.planner.filter(card => card && card._id && card._id.toString() !== cardId);
+      }
+    } else {
+      project.planner = project.planner.filter(card => card && card._id && card._id.toString() !== cardId);
+    }
+
     await project.save();
 
     res.status(200).json({ success: true, project });
@@ -486,7 +505,16 @@ const deleteTimesheetLog = async (req, res) => {
 
     if (!project.timesheet) project.timesheet = [];
 
-    project.timesheet.pull(logId);
+    if (typeof project.timesheet.pull === 'function') {
+      try {
+        project.timesheet.pull(logId);
+      } catch (err) {
+        project.timesheet = project.timesheet.filter(log => log && log._id && log._id.toString() !== logId);
+      }
+    } else {
+      project.timesheet = project.timesheet.filter(log => log && log._id && log._id.toString() !== logId);
+    }
+
     await project.save();
 
     res.status(200).json({ success: true, project });

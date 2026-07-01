@@ -150,6 +150,9 @@ const FinalProjectSubmissionView = () => {
   const [timesheetSubmitting, setTimesheetSubmitting] = useState(false);
   const [customSubmitting, setCustomSubmitting] = useState(false);
   const [updatingCardId, setUpdatingCardId] = useState(null);
+  const [confirmDeleteCardId, setConfirmDeleteCardId] = useState(null);
+  const [confirmDeleteTaskId, setConfirmDeleteTaskId] = useState(null);
+  const [confirmDeleteLogId, setConfirmDeleteLogId] = useState(null);
 
   // Workspace Addon handlers
   const handleAddCustomTask = async (e) => {
@@ -193,7 +196,6 @@ const FinalProjectSubmissionView = () => {
   };
 
   const handleDeleteCustomTask = async (taskId) => {
-    if (!window.confirm("Are you sure you want to remove this custom task?")) return;
     try {
       const user = JSON.parse(localStorage.getItem('user'));
       const token = user?.token;
@@ -203,6 +205,7 @@ const FinalProjectSubmissionView = () => {
       if (response.data?.success && response.data.project) {
         setCustomChecklist(response.data.project.progress?.customChecklist || []);
         showSnackbar('Custom task removed', 'success');
+        setConfirmDeleteTaskId(null);
       }
     } catch (err) {
       showSnackbar(err.response?.data?.message || 'Error deleting custom task', 'error');
@@ -256,7 +259,6 @@ const FinalProjectSubmissionView = () => {
   };
 
   const handleDeletePlannerCard = async (cardId) => {
-    if (!window.confirm("Are you sure you want to delete this planner card?")) return;
     try {
       const user = JSON.parse(localStorage.getItem('user'));
       const token = user?.token;
@@ -266,6 +268,7 @@ const FinalProjectSubmissionView = () => {
       if (response.data?.success && response.data.project) {
         setPlannerCards(response.data.project.planner || []);
         showSnackbar('Planner card deleted', 'success');
+        setConfirmDeleteCardId(null);
       }
     } catch (err) {
       showSnackbar(err.response?.data?.message || 'Error deleting planner card', 'error');
@@ -298,7 +301,6 @@ const FinalProjectSubmissionView = () => {
   };
 
   const handleDeleteTimesheetLog = async (logId) => {
-    if (!window.confirm("Are you sure you want to delete this timesheet log entry?")) return;
     try {
       const user = JSON.parse(localStorage.getItem('user'));
       const token = user?.token;
@@ -308,6 +310,7 @@ const FinalProjectSubmissionView = () => {
       if (response.data?.success && response.data.project) {
         setTimesheetLogs(response.data.project.timesheet || []);
         showSnackbar('Timesheet log removed', 'success');
+        setConfirmDeleteLogId(null);
       }
     } catch (err) {
       showSnackbar(err.response?.data?.message || 'Error deleting timesheet log', 'error');
@@ -1442,14 +1445,35 @@ const FinalProjectSubmissionView = () => {
                               >
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
                                   <strong style={{ fontSize: '0.85rem', color: 'var(--app-text)', wordBreak: 'break-word' }}>{card.title}</strong>
-                                  <button
-                                    type="button"
-                                    onClick={() => handleDeletePlannerCard(card._id)}
-                                    style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '2px', borderRadius: '4px' }}
-                                    title="Delete Card"
-                                  >
-                                    <Trash2 size={14} />
-                                  </button>
+                                  {confirmDeleteCardId === card._id ? (
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', fontWeight: 700 }}>
+                                      <span style={{ color: 'var(--app-text-muted)' }}>Confirm?</span>
+                                      <a
+                                        href="#"
+                                        onClick={(e) => { e.preventDefault(); handleDeletePlannerCard(card._id); }}
+                                        style={{ color: '#ef4444', textDecoration: 'underline' }}
+                                      >
+                                        Yes
+                                      </a>
+                                      <span style={{ color: 'var(--app-text-muted)' }}>/</span>
+                                      <a
+                                        href="#"
+                                        onClick={(e) => { e.preventDefault(); setConfirmDeleteCardId(null); }}
+                                        style={{ color: '#64748b', textDecoration: 'underline' }}
+                                      >
+                                        No
+                                      </a>
+                                    </div>
+                                  ) : (
+                                    <button
+                                      type="button"
+                                      onClick={() => setConfirmDeleteCardId(card._id)}
+                                      style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '2px', borderRadius: '4px' }}
+                                      title="Delete Card"
+                                    >
+                                      <Trash2 size={14} />
+                                    </button>
+                                  )}
                                 </div>
                                 {card.description && (
                                   <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--app-text-muted)', lineHeight: '1.4' }}>{card.description}</p>
@@ -1633,14 +1657,35 @@ const FinalProjectSubmissionView = () => {
                                   {log.description}
                                 </td>
                                 <td style={{ padding: '12px 8px', textAlign: 'right' }}>
-                                  <button
-                                    type="button"
-                                    onClick={() => handleDeleteTimesheetLog(log._id)}
-                                    style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '4px' }}
-                                    title="Delete Log"
-                                  >
-                                    <Trash2 size={14} />
-                                  </button>
+                                  {confirmDeleteLogId === log._id ? (
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px', fontSize: '0.75rem', fontWeight: 700 }}>
+                                      <span style={{ color: 'var(--app-text-muted)' }}>Confirm?</span>
+                                      <a
+                                        href="#"
+                                        onClick={(e) => { e.preventDefault(); handleDeleteTimesheetLog(log._id); }}
+                                        style={{ color: '#ef4444', textDecoration: 'underline' }}
+                                      >
+                                        Yes
+                                      </a>
+                                      <span style={{ color: 'var(--app-text-muted)' }}>/</span>
+                                      <a
+                                        href="#"
+                                        onClick={(e) => { e.preventDefault(); setConfirmDeleteLogId(null); }}
+                                        style={{ color: '#64748b', textDecoration: 'underline' }}
+                                      >
+                                        No
+                                      </a>
+                                    </div>
+                                  ) : (
+                                    <button
+                                      type="button"
+                                      onClick={() => setConfirmDeleteLogId(log._id)}
+                                      style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '4px' }}
+                                      title="Delete Log"
+                                    >
+                                      <Trash2 size={14} />
+                                    </button>
+                                  )}
                                 </td>
                               </tr>
                             ))
@@ -1767,14 +1812,35 @@ const FinalProjectSubmissionView = () => {
                               {task.taskName}
                             </span>
                           </label>
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteCustomTask(task._id)}
-                            style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '6px', borderRadius: '6px' }}
-                            title="Delete Task"
-                          >
-                            <Trash2 size={16} />
-                          </button>
+                          {confirmDeleteTaskId === task._id ? (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', fontWeight: 700 }}>
+                              <span style={{ color: 'var(--app-text-muted)' }}>Confirm?</span>
+                              <a
+                                href="#"
+                                onClick={(e) => { e.preventDefault(); handleDeleteCustomTask(task._id); }}
+                                style={{ color: '#ef4444', textDecoration: 'underline' }}
+                              >
+                                Yes
+                              </a>
+                              <span style={{ color: 'var(--app-text-muted)' }}>/</span>
+                              <a
+                                href="#"
+                                onClick={(e) => { e.preventDefault(); setConfirmDeleteTaskId(null); }}
+                                style={{ color: '#64748b', textDecoration: 'underline' }}
+                              >
+                                No
+                              </a>
+                            </div>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => setConfirmDeleteTaskId(task._id)}
+                              style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '6px', borderRadius: '6px' }}
+                              title="Delete Task"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          )}
                         </div>
                       ))
                     )}
