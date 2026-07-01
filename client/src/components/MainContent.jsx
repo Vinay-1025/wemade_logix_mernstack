@@ -256,6 +256,7 @@ const FinalProjectSubmissionView = () => {
           const newModules = completedModules.filter(m => m !== moduleName);
           setCompletedModules(newModules);
           setUncheckReasons(newReasons);
+          showSnackbar(`Module "${moduleName}" reopened successfully.`, 'info');
           await autoSaveProgress(newModules, completedPages, completedCollections, newReasons);
         }
       });
@@ -264,6 +265,7 @@ const FinalProjectSubmissionView = () => {
       updatedModules = [...completedModules, moduleName];
       setCompletedModules(updatedModules);
       setUncheckReasons(updatedReasons);
+      showSnackbar(`Module "${moduleName}" marked as completed!`, 'success');
       await autoSaveProgress(updatedModules, completedPages, completedCollections, updatedReasons);
     }
   };
@@ -288,6 +290,7 @@ const FinalProjectSubmissionView = () => {
           const newPages = completedPages.filter(p => p !== pageName);
           setCompletedPages(newPages);
           setUncheckReasons(newReasons);
+          showSnackbar(`Page "${label}" reopened successfully.`, 'info');
           await autoSaveProgress(completedModules, newPages, completedCollections, newReasons);
         }
       });
@@ -296,6 +299,7 @@ const FinalProjectSubmissionView = () => {
       updatedPages = [...completedPages, pageName];
       setCompletedPages(updatedPages);
       setUncheckReasons(updatedReasons);
+      showSnackbar(`Page "${label}" marked as completed!`, 'success');
       await autoSaveProgress(completedModules, updatedPages, completedCollections, updatedReasons);
     }
   };
@@ -319,6 +323,7 @@ const FinalProjectSubmissionView = () => {
           const newCollections = completedCollections.filter(c => c !== colName);
           setCompletedCollections(newCollections);
           setUncheckReasons(newReasons);
+          showSnackbar(`DB Collection "${colName}" reopened successfully.`, 'info');
           await autoSaveProgress(completedModules, completedPages, newCollections, newReasons);
         }
       });
@@ -327,6 +332,7 @@ const FinalProjectSubmissionView = () => {
       updatedCollections = [...completedCollections, colName];
       setCompletedCollections(updatedCollections);
       setUncheckReasons(updatedReasons);
+      showSnackbar(`DB Collection "${colName}" marked as completed!`, 'success');
       await autoSaveProgress(completedModules, completedPages, updatedCollections, updatedReasons);
     }
   };
