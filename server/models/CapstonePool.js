@@ -40,7 +40,9 @@ const capstonePoolSchema = new mongoose.Schema({
     },
     customChecklist: [{
       taskName: { type: String, required: true },
-      completed: { type: Boolean, default: false }
+      completed: { type: Boolean, default: false },
+      isDeleted: { type: Boolean, default: false },
+      deletedAt: { type: Date, default: null }
     }]
   },
   planner: [{
@@ -48,12 +50,16 @@ const capstonePoolSchema = new mongoose.Schema({
     description: { type: String, default: '' },
     status: { type: String, enum: ['todo', 'in_progress', 'done'], default: 'todo' },
     priority: { type: String, enum: ['low', 'medium', 'high'], default: 'medium' },
-    dueDate: { type: Date, default: null }
+    dueDate: { type: Date, default: null },
+    isDeleted: { type: Boolean, default: false },
+    deletedAt: { type: Date, default: null }
   }],
   timesheet: [{
     date: { type: Date, required: true },
     hours: { type: Number, required: true },
-    description: { type: String, required: true }
+    description: { type: String, required: true },
+    isDeleted: { type: Boolean, default: false },
+    deletedAt: { type: Date, default: null }
   }]
 }, {
   timestamps: true

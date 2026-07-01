@@ -1425,7 +1425,7 @@ const FinalProjectSubmissionView = () => {
                     { id: 'in_progress', label: 'In Progress', color: '#0284c7', bg: '#e0f2fe' },
                     { id: 'done', label: 'Done', color: '#16a34a', bg: '#d1fae5' }
                   ].map(column => {
-                    const cards = plannerCards.filter(c => c.status === column.id);
+                    const cards = plannerCards.filter(c => !c.isDeleted && c.status === column.id);
                     return (
                       <div key={column.id} style={{ display: 'flex', flexDirection: 'column', background: 'rgba(0,0,0,0.01)', border: '1.5px dashed var(--app-border)', borderRadius: '16px', padding: '16px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
@@ -1557,7 +1557,7 @@ const FinalProjectSubmissionView = () => {
                         <Clock size={24} color="#0047ab" style={{ marginBottom: '8px' }} />
                         <h4 style={{ margin: 0, fontSize: '0.8rem', color: 'var(--app-text-muted)' }}>Hours Invested</h4>
                         <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#0047ab', marginTop: '4px' }}>
-                          {timesheetLogs.reduce((sum, item) => sum + (item.hours || 0), 0)}h
+                          {timesheetLogs.filter(item => !item.isDeleted).reduce((sum, item) => sum + (item.hours || 0), 0)}h
                         </div>
                       </div>
                       <div className="capstone-info-card" style={{ padding: '16px', textAlign: 'center', background: 'rgba(22, 163, 74, 0.04)', border: '1.5px solid rgba(22, 163, 74, 0.1)', borderRadius: '16px' }}>
@@ -1649,14 +1649,14 @@ const FinalProjectSubmissionView = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {timesheetLogs.length === 0 ? (
+                          {timesheetLogs.filter(log => !log.isDeleted).length === 0 ? (
                             <tr>
                               <td colSpan="4" style={{ textAlign: 'center', padding: '40px', color: 'var(--app-text-muted)', fontStyle: 'italic' }}>
                                 No work logs recorded yet. Log your daily hours on the left!
                               </td>
                             </tr>
                           ) : (
-                            [...timesheetLogs].sort((a,b) => new Date(b.date) - new Date(a.date)).map(log => (
+                            timesheetLogs.filter(log => !log.isDeleted).sort((a,b) => new Date(b.date) - new Date(a.date)).map(log => (
                               <tr key={log._id} style={{ borderBottom: '1px solid var(--app-border)' }}>
                                 <td style={{ padding: '12px 8px', fontWeight: 600 }}>
                                   {new Date(log.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
@@ -1786,12 +1786,12 @@ const FinalProjectSubmissionView = () => {
 
                   {/* Tasks List */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    {customChecklist.length === 0 ? (
+                    {customChecklist.filter(task => !task.isDeleted).length === 0 ? (
                       <div style={{ padding: '60px 20px', textAlign: 'center', color: 'var(--app-text-muted)', fontSize: '0.9rem', fontStyle: 'italic', background: 'rgba(0,0,0,0.005)', borderRadius: '12px', border: '1px dashed var(--app-border)' }}>
                         No custom tasks created yet. Create a task above to build your own checklist!
                       </div>
                     ) : (
-                      customChecklist.map(task => (
+                      customChecklist.filter(task => !task.isDeleted).map(task => (
                         <div
                           key={task._id}
                           style={{

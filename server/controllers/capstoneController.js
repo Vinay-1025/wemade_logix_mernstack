@@ -329,29 +329,34 @@ const toggleCustomTask = async (req, res) => {
 // @route   DELETE /api/capstone/custom-tasks/:taskId
 // @access  Private
 const deleteCustomTask = async (req, res) => {
-  const { taskId } = req.params;
-  const studentId = req.body.studentId || req.query.studentId;
-
-  if (!mongoose.Types.ObjectId.isValid(taskId)) {
-    return res.status(400).json({ success: false, message: 'Invalid custom task ID format.' });
-  }
-
   try {
+    const { taskId } = req.params;
+    const studentId = req.body.studentId || req.query.studentId;
+
+    if (!mongoose.isValidObjectId(taskId)) {
+      return res.status(400).json({ success: false, message: 'Invalid custom task ID format.' });
+    }
+
     const project = await findProjectByUserOrAdmin(req, studentId);
     if (!project) {
       return res.status(404).json({ success: false, message: 'No assigned capstone project found.' });
     }
 
-    const updatedProject = await CapstonePool.findByIdAndUpdate(
-      project._id,
-      { $pull: { 'progress.customChecklist': { _id: new mongoose.Types.ObjectId(taskId) } } },
-      { new: true }
-    );
+    if (!project.progress) project.progress = {};
+    if (!project.progress.customChecklist) project.progress.customChecklist = [];
 
-    res.status(200).json({ success: true, project: updatedProject });
+    const task = project.progress.customChecklist.id(taskId);
+    if (task) {
+      task.isDeleted = true;
+      task.deletedAt = new Date();
+      project.markModified('progress');
+      await project.save();
+    }
+
+    res.status(200).json({ success: true, project });
   } catch (error) {
     console.error('Delete custom task error:', error);
-    res.status(500).json({ success: false, message: 'Server error deleting custom task' });
+    res.status(500).json({ success: false, message: `Server error: ${error.message || error.toString()}` });
   }
 };
 
@@ -427,29 +432,32 @@ const updatePlannerCard = async (req, res) => {
 // @route   DELETE /api/capstone/planner/:cardId
 // @access  Private
 const deletePlannerCard = async (req, res) => {
-  const { cardId } = req.params;
-  const studentId = req.body.studentId || req.query.studentId;
-
-  if (!mongoose.Types.ObjectId.isValid(cardId)) {
-    return res.status(400).json({ success: false, message: 'Invalid planner card ID format.' });
-  }
-
   try {
+    const { cardId } = req.params;
+    const studentId = req.body.studentId || req.query.studentId;
+
+    if (!mongoose.isValidObjectId(cardId)) {
+      return res.status(400).json({ success: false, message: 'Invalid planner card ID format.' });
+    }
+
     const project = await findProjectByUserOrAdmin(req, studentId);
     if (!project) {
       return res.status(404).json({ success: false, message: 'No assigned capstone project found.' });
     }
 
-    const updatedProject = await CapstonePool.findByIdAndUpdate(
-      project._id,
-      { $pull: { planner: { _id: new mongoose.Types.ObjectId(cardId) } } },
-      { new: true }
-    );
+    if (!project.planner) project.planner = [];
 
-    res.status(200).json({ success: true, project: updatedProject });
+    const card = project.planner.id(cardId);
+    if (card) {
+      card.isDeleted = true;
+      card.deletedAt = new Date();
+      await project.save();
+    }
+
+    res.status(200).json({ success: true, project });
   } catch (error) {
     console.error('Delete planner card error:', error);
-    res.status(500).json({ success: false, message: 'Server error deleting planner card' });
+    res.status(500).json({ success: false, message: `Server error: ${error.message || error.toString()}` });
   }
 };
 
@@ -484,29 +492,32 @@ const addTimesheetLog = async (req, res) => {
 // @route   DELETE /api/capstone/timesheet/:logId
 // @access  Private
 const deleteTimesheetLog = async (req, res) => {
-  const { logId } = req.params;
-  const studentId = req.body.studentId || req.query.studentId;
-
-  if (!mongoose.Types.ObjectId.isValid(logId)) {
-    return res.status(400).json({ success: false, message: 'Invalid timesheet log ID format.' });
-  }
-
   try {
+    const { logId } = req.params;
+    const studentId = req.body.studentId || req.query.studentId;
+
+    if (!mongoose.isValidObjectId(logId)) {
+      return res.status(400).json({ success: false, message: 'Invalid timesheet log ID format.' });
+    }
+
     const project = await findProjectByUserOrAdmin(req, studentId);
     if (!project) {
       return res.status(404).json({ success: false, message: 'No assigned capstone project found.' });
     }
 
-    const updatedProject = await CapstonePool.findByIdAndUpdate(
-      project._id,
-      { $pull: { timesheet: { _id: new mongoose.Types.ObjectId(logId) } } },
-      { new: true }
-    );
+    if (!project.timesheet) project.timesheet = [];
 
-    res.status(200).json({ success: true, project: updatedProject });
+    const log = project.timesheet.id(logId);
+    if (log) {
+      log.isDeleted = true;
+      log.deletedAt = new Date();
+      await project.save();
+    }
+
+    res.status(200).json({ success: true, project });
   } catch (error) {
     console.error('Delete timesheet error:', error);
-    res.status(500).json({ success: false, message: 'Server error deleting timesheet log' });
+    res.status(500).json({ success: false, message: `Server error: ${error.message || error.toString()}` });
   }
 };
 

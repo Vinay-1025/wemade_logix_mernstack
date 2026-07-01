@@ -1543,7 +1543,7 @@ const CapstonesAdmin = () => {
                       <h4 style={{ margin: '0 0 14px 0', color: '#0f172a', fontWeight: 800, fontSize: '1rem' }}>Sprint Kanban Board</h4>
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px' }}>
                         {['todo', 'in_progress', 'done'].map(status => {
-                          const cards = planner.filter(c => c.status === status);
+                          const cards = planner.filter(c => !c.isDeleted && c.status === status);
                           const labelMap = { todo: 'To Do', in_progress: 'In Progress', done: 'Done' };
                           const colorMap = { todo: '#64748b', in_progress: '#0284c7', done: '#16a34a' };
                           return (
@@ -1575,6 +1575,27 @@ const CapstonesAdmin = () => {
                           );
                         })}
                       </div>
+
+                      {/* Archived / Deleted Cards */}
+                      {planner.some(c => c.isDeleted) && (
+                        <div style={{ marginTop: '24px', borderTop: '1px solid #cbd5e1', paddingTop: '16px' }}>
+                          <h5 style={{ margin: '0 0 10px 0', color: '#64748b', fontWeight: 800, fontSize: '0.85rem', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            🗑️ Deleted / Archived Cards ({planner.filter(c => c.isDeleted).length})
+                          </h5>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px' }}>
+                            {planner.filter(c => c.isDeleted).map(c => (
+                              <div key={c._id} style={{ background: '#f1f5f9', padding: '10px', borderRadius: '10px', border: '1px solid #cbd5e1', opacity: 0.6 }}>
+                                <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#64748b', textDecoration: 'line-through' }}>{c.title}</div>
+                                {c.description && <div style={{ fontSize: '0.725rem', color: '#94a3b8', marginTop: '2px', textDecoration: 'line-through' }}>{c.description}</div>}
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px', fontSize: '0.675rem', color: '#94a3b8' }}>
+                                  <span>Deleted: {c.deletedAt ? new Date(c.deletedAt).toLocaleDateString() : 'N/A'}</span>
+                                  <span style={{ background: '#e2e8f0', padding: '2px 6px', borderRadius: '4px', textTransform: 'uppercase', fontWeight: 800 }}>{c.status.replace('_', ' ')}</span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   );
                 })()
@@ -1582,7 +1603,7 @@ const CapstonesAdmin = () => {
                 /* WORK TIMESHEET VIEW */
                 (() => {
                   const timesheet = selectedProject.timesheet || [];
-                  const totalHours = timesheet.reduce((sum, entry) => sum + (entry.hours || 0), 0);
+                  const totalHours = timesheet.filter(entry => !entry.isDeleted).reduce((sum, entry) => sum + (entry.hours || 0), 0);
                   return (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                       <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #cbd5e1', textAlign: 'center', width: 'fit-content', minWidth: '150px' }}>
@@ -1602,14 +1623,14 @@ const CapstonesAdmin = () => {
                               </tr>
                             </thead>
                             <tbody>
-                              {timesheet.length === 0 ? (
+                              {timesheet.filter(entry => !entry.isDeleted).length === 0 ? (
                                 <tr>
                                   <td colSpan="3" style={{ textAlign: 'center', padding: '24px', color: '#94a3b8', fontStyle: 'italic' }}>
                                     No timesheet hours logged yet.
                                   </td>
                                 </tr>
                               ) : (
-                                [...timesheet].sort((a,b) => new Date(b.date) - new Date(a.date)).map(log => (
+                                [...timesheet].filter(log => !log.isDeleted).sort((a,b) => new Date(b.date) - new Date(a.date)).map(log => (
                                   <tr key={log._id} style={{ borderBottom: '1px solid #e2e8f0' }}>
                                     <td style={{ padding: '10px 8px', fontWeight: 600 }}>
                                       {new Date(log.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
@@ -1627,6 +1648,45 @@ const CapstonesAdmin = () => {
                           </table>
                         </div>
                       </div>
+
+                      {/* Deleted Timesheet Logs */}
+                      {timesheet.some(log => log.isDeleted) && (
+                        <div style={{ background: '#f8fafc', padding: '20px', borderRadius: '16px', border: '1px solid #cbd5e1' }}>
+                          <h5 style={{ margin: '0 0 12px 0', color: '#ef4444', fontWeight: 800, fontSize: '0.9rem', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            🗑️ Deleted Timesheet Logs ({timesheet.filter(log => log.isDeleted).length})
+                          </h5>
+                          <div style={{ overflowX: 'auto' }}>
+                            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem', opacity: 0.7 }}>
+                              <thead>
+                                <tr style={{ borderBottom: '1px solid #cbd5e1', textAlign: 'left', color: '#64748b' }}>
+                                  <th style={{ padding: '6px' }}>Date</th>
+                                  <th style={{ padding: '6px', textAlign: 'center' }}>Hours</th>
+                                  <th style={{ padding: '6px' }}>Description</th>
+                                  <th style={{ padding: '6px', textAlign: 'right' }}>Deleted At</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {timesheet.filter(log => log.isDeleted).sort((a,b) => new Date(b.deletedAt || b.date) - new Date(a.deletedAt || a.date)).map(log => (
+                                  <tr key={log._id} style={{ borderBottom: '1px solid #e2e8f0', color: '#64748b', background: 'rgba(0,0,0,0.01)' }}>
+                                    <td style={{ padding: '8px 6px', textDecoration: 'line-through' }}>
+                                      {new Date(log.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                                    </td>
+                                    <td style={{ padding: '8px 6px', textAlign: 'center', textDecoration: 'line-through', fontWeight: 600 }}>
+                                      {log.hours}h
+                                    </td>
+                                    <td style={{ padding: '8px 6px', textDecoration: 'line-through' }}>
+                                      {log.description}
+                                    </td>
+                                    <td style={{ padding: '8px 6px', textAlign: 'right', fontSize: '0.725rem', color: '#94a3b8' }}>
+                                      {log.deletedAt ? new Date(log.deletedAt).toLocaleDateString() : 'N/A'}
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   );
                 })()
@@ -1638,10 +1698,10 @@ const CapstonesAdmin = () => {
                     <div style={{ background: '#f8fafc', padding: '20px', borderRadius: '16px', border: '1px solid #cbd5e1' }}>
                       <h4 style={{ margin: '0 0 12px 0', color: '#0f172a', fontWeight: 800, fontSize: '1rem' }}>Custom Tasks Checklist</h4>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        {checklist.length === 0 ? (
+                        {checklist.filter(task => !task.isDeleted).length === 0 ? (
                           <span style={{ fontSize: '0.85rem', color: '#94a3b8', fontStyle: 'italic' }}>No custom tasks created by this student.</span>
                         ) : (
-                          checklist.map(task => (
+                          checklist.filter(task => !task.isDeleted).map(task => (
                             <div key={task._id} style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'white', padding: '10px 14px', borderRadius: '8px', border: '1px solid #f1f5f9' }}>
                               <input type="checkbox" checked={task.completed} readOnly style={{ width: '16px', height: '16px', accentColor: '#16a34a' }} />
                               <span style={{ fontSize: '0.85rem', color: task.completed ? '#94a3b8' : '#334155', textDecoration: task.completed ? 'line-through' : 'none', fontWeight: 600 }}>
@@ -1651,6 +1711,27 @@ const CapstonesAdmin = () => {
                           ))
                         )}
                       </div>
+
+                      {/* Archived / Deleted Custom Tasks */}
+                      {checklist.some(task => task.isDeleted) && (
+                        <div style={{ marginTop: '24px', borderTop: '1px solid #cbd5e1', paddingTop: '16px' }}>
+                          <h5 style={{ margin: '0 0 10px 0', color: '#64748b', fontWeight: 800, fontSize: '0.85rem', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            🗑️ Deleted Custom Tasks ({checklist.filter(task => task.isDeleted).length})
+                          </h5>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', opacity: 0.65 }}>
+                            {checklist.filter(task => task.isDeleted).map(task => (
+                              <div key={task._id} style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#f1f5f9', padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', color: '#64748b' }}>
+                                <span style={{ fontSize: '0.8rem', textDecoration: 'line-through', fontWeight: 500, flex: 1 }}>
+                                  {task.taskName}
+                                </span>
+                                <span style={{ fontSize: '0.7rem', color: '#94a3b8' }}>
+                                  Deleted: {task.deletedAt ? new Date(task.deletedAt).toLocaleDateString() : 'N/A'}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   );
                 })()
