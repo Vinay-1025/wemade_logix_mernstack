@@ -297,13 +297,8 @@ const ScheduleAdjustmentsAdmin = () => {
                           </span>
                         </td>
                         <td>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                            <div className="session-id-badge" style={{ width: 'fit-content' }}>
-                              <span className="code-font">{session.dayId}</span>
-                            </div>
-                            <span style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600 }}>
-                              {formattedDate}
-                            </span>
+                          <div className="session-id-badge">
+                            <span className="code-font">{session.dayId}</span>
                           </div>
                         </td>
                         <td>
@@ -415,10 +410,7 @@ const ScheduleAdjustmentsAdmin = () => {
                     <div className="card-body">
                       <div className="card-row">
                         <span className="label">Identifier:</span>
-                        <span className="value code-font" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '2px' }}>
-                          <span>{session.dayId}</span>
-                          <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 600 }}>({formattedDate})</span>
-                        </span>
+                        <span className="value code-font">{session.dayId}</span>
                       </div>
                       <div className="card-row">
                         <span className="label">Target Date:</span>
