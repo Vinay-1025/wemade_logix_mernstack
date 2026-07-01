@@ -208,19 +208,19 @@ const Profile = () => {
           
           // Draw Duration
           ctx.font = `bold ${detailsFontSize}px "Inter", -apple-system, sans-serif`;
-          ctx.fillText("45 Days", canvas.width * 0.312, canvas.height * 0.690);
+          ctx.fillText("45 Days", canvas.width * 0.295, canvas.height * 0.690);
           
           // Draw Certificate ID (Smaller font size to fit long hash ID)
           const idFontSize = Math.round(canvas.width * 0.0095);
           ctx.font = `bold ${idFontSize}px "Inter", -apple-system, sans-serif`;
-          ctx.fillText(certificateId, canvas.width * 0.570, canvas.height * 0.690);
+          ctx.fillText(certificateId, canvas.width * 0.580, canvas.height * 0.690);
           
           // Draw Date of Issue
           ctx.font = `bold ${detailsFontSize}px "Inter", -apple-system, sans-serif`;
           const issueDateStr = latestProfile?.certificateIssueDate 
             ? new Date(latestProfile.certificateIssueDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) 
             : new Date(user?.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-          ctx.fillText(issueDateStr, canvas.width * 0.570, canvas.height * 0.752);
+          ctx.fillText(issueDateStr, canvas.width * 0.580, canvas.height * 0.752);
 
           const formattedName = (user?.name || 'student').trim().replace(/\s+/g, '_').toLowerCase();
           const dataUrl = canvas.toDataURL('image/png');
@@ -953,7 +953,7 @@ const Profile = () => {
                           <div style={{
                             position: 'absolute',
                             top: '69.0%',
-                            left: '31.2%',
+                            left: '29.5%',
                             fontSize: '0.85rem',
                             fontWeight: 'bold',
                             color: '#1a1a1a',
@@ -966,7 +966,7 @@ const Profile = () => {
                           <div style={{
                             position: 'absolute',
                             top: '69.0%',
-                            left: '57.0%',
+                            left: '58.0%',
                             fontSize: '0.65rem',
                             fontWeight: 'bold',
                             color: '#1a1a1a',
@@ -981,7 +981,7 @@ const Profile = () => {
                           <div style={{
                             position: 'absolute',
                             top: '75.2%',
-                            left: '57.0%',
+                            left: '58.0%',
                             fontSize: '0.85rem',
                             fontWeight: 'bold',
                             color: '#1a1a1a',
