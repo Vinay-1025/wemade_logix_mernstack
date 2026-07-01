@@ -529,10 +529,10 @@ const UsersList = () => {
   };
 
   useEffect(() => {
-    if (activeDetailTab === 'capstone' && selectedUser) {
-      fetchDetailUserCapstone(selectedUser);
+    if (activeDetailTab === 'capstone' && selectedDetailUser) {
+      fetchDetailUserCapstone(selectedDetailUser);
     }
-  }, [activeDetailTab, selectedUser]);
+  }, [activeDetailTab, selectedDetailUser]);
 
   const getDayAssignmentTopic = (day) => {
     if (!day || !day.topics || day.topics.length === 0) return null;
