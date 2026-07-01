@@ -208,19 +208,19 @@ const Profile = () => {
           
           // Draw Duration
           ctx.font = `bold ${detailsFontSize}px "Inter", -apple-system, sans-serif`;
-          ctx.fillText("45 Days", canvas.width * 0.342, canvas.height * 0.752);
+          ctx.fillText("45 Days", canvas.width * 0.342, canvas.height * 0.690);
           
           // Draw Certificate ID (Smaller font size to fit long hash ID)
           const idFontSize = Math.round(canvas.width * 0.0095);
           ctx.font = `bold ${idFontSize}px "Inter", -apple-system, sans-serif`;
-          ctx.fillText(certificateId, canvas.width * 0.633, canvas.height * 0.752);
+          ctx.fillText(certificateId, canvas.width * 0.633, canvas.height * 0.690);
           
           // Draw Date of Issue
           ctx.font = `bold ${detailsFontSize}px "Inter", -apple-system, sans-serif`;
           const issueDateStr = latestProfile?.certificateIssueDate 
             ? new Date(latestProfile.certificateIssueDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) 
             : new Date(user?.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-          ctx.fillText(issueDateStr, canvas.width * 0.633, canvas.height * 0.816);
+          ctx.fillText(issueDateStr, canvas.width * 0.633, canvas.height * 0.752);
 
           const formattedName = (user?.name || 'student').trim().replace(/\s+/g, '_').toLowerCase();
           const dataUrl = canvas.toDataURL('image/png');
@@ -952,7 +952,7 @@ const Profile = () => {
                           {/* Dynamically Overlayed Duration */}
                           <div style={{
                             position: 'absolute',
-                            top: '75.2%',
+                            top: '69.0%',
                             left: '34.2%',
                             fontSize: '0.85rem',
                             fontWeight: 'bold',
@@ -965,7 +965,7 @@ const Profile = () => {
                           {/* Dynamically Overlayed Certificate ID */}
                           <div style={{
                             position: 'absolute',
-                            top: '75.2%',
+                            top: '69.0%',
                             left: '63.3%',
                             fontSize: '0.65rem',
                             fontWeight: 'bold',
@@ -980,7 +980,7 @@ const Profile = () => {
                           {/* Dynamically Overlayed Date of Issue */}
                           <div style={{
                             position: 'absolute',
-                            top: '81.6%',
+                            top: '75.2%',
                             left: '63.3%',
                             fontSize: '0.85rem',
                             fontWeight: 'bold',
