@@ -21,6 +21,7 @@ const Profile = () => {
   const [previewMode, setPreviewMode] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationStep, setGenerationStep] = useState(0);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   const generationSteps = [
     { text: "Analyzing course progress & module submissions...", percent: 15 },
@@ -129,10 +130,27 @@ const Profile = () => {
     fetchData();
   }, [user]);
 
+  useEffect(() => {
+    if (isGenerating && generationStep === generationSteps.length - 1 && imageLoaded) {
+      const timeout = setTimeout(() => {
+        setIsGenerating(false);
+      }, 500);
+      return () => clearTimeout(timeout);
+    }
+  }, [isGenerating, generationStep, imageLoaded, generationSteps.length]);
+
   const startGeneration = () => {
     setIsGenerating(true);
     setIsCertificateOpen(true);
     setGenerationStep(0);
+    setImageLoaded(false);
+
+    // Preload background template image
+    const img = new Image();
+    img.src = '/Certificate_template_enhanced.png';
+    img.onload = () => {
+      setImageLoaded(true);
+    };
 
     let currentStep = 0;
     const interval = setInterval(() => {
@@ -141,9 +159,6 @@ const Profile = () => {
         setGenerationStep(currentStep);
       } else {
         clearInterval(interval);
-        setTimeout(() => {
-          setIsGenerating(false);
-        }, 500);
       }
     }, 600);
   };
@@ -188,21 +203,24 @@ const Profile = () => {
 
           // Draw certificate details (Duration, ID, Issue Date) on the high-res download canvas
           const detailsFontSize = Math.round(canvas.width * 0.013);
-          ctx.font = `bold ${detailsFontSize}px "Inter", -apple-system, sans-serif`;
           ctx.fillStyle = '#1a1a1a';
           ctx.textAlign = 'left';
           
           // Draw Duration
-          ctx.fillText("45 Days", canvas.width * 0.342, canvas.height * 0.770);
+          ctx.font = `bold ${detailsFontSize}px "Inter", -apple-system, sans-serif`;
+          ctx.fillText("45 Days", canvas.width * 0.342, canvas.height * 0.752);
           
-          // Draw Certificate ID
-          ctx.fillText(certificateId, canvas.width * 0.633, canvas.height * 0.770);
+          // Draw Certificate ID (Smaller font size to fit long hash ID)
+          const idFontSize = Math.round(canvas.width * 0.0095);
+          ctx.font = `bold ${idFontSize}px "Inter", -apple-system, sans-serif`;
+          ctx.fillText(certificateId, canvas.width * 0.633, canvas.height * 0.752);
           
           // Draw Date of Issue
+          ctx.font = `bold ${detailsFontSize}px "Inter", -apple-system, sans-serif`;
           const issueDateStr = latestProfile?.certificateIssueDate 
             ? new Date(latestProfile.certificateIssueDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) 
             : new Date(user?.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-          ctx.fillText(issueDateStr, canvas.width * 0.633, canvas.height * 0.838);
+          ctx.fillText(issueDateStr, canvas.width * 0.633, canvas.height * 0.816);
 
           const formattedName = (user?.name || 'student').trim().replace(/\s+/g, '_').toLowerCase();
           const dataUrl = canvas.toDataURL('image/png');
@@ -934,7 +952,7 @@ const Profile = () => {
                           {/* Dynamically Overlayed Duration */}
                           <div style={{
                             position: 'absolute',
-                            top: '77.0%',
+                            top: '75.2%',
                             left: '34.2%',
                             fontSize: '0.85rem',
                             fontWeight: 'bold',
@@ -947,12 +965,14 @@ const Profile = () => {
                           {/* Dynamically Overlayed Certificate ID */}
                           <div style={{
                             position: 'absolute',
-                            top: '77.0%',
+                            top: '75.2%',
                             left: '63.3%',
-                            fontSize: '0.85rem',
+                            fontSize: '0.65rem',
                             fontWeight: 'bold',
                             color: '#1a1a1a',
                             fontFamily: '"Inter", sans-serif',
+                            maxWidth: '180px',
+                            wordBreak: 'break-all'
                           }}>
                             {certificateId}
                           </div>
@@ -960,7 +980,7 @@ const Profile = () => {
                           {/* Dynamically Overlayed Date of Issue */}
                           <div style={{
                             position: 'absolute',
-                            top: '83.8%',
+                            top: '81.6%',
                             left: '63.3%',
                             fontSize: '0.85rem',
                             fontWeight: 'bold',
