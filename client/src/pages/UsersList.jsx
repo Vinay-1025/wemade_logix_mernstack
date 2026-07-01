@@ -1001,7 +1001,18 @@ const UsersList = () => {
 
             {/* Tab switcher: Core Progress vs Capstone Tracker */}
             {selectedDetailUser.role === 'student' && (
-              <div className="detail-tab-container" style={{ display: 'flex', gap: '12px', borderBottom: '1px solid var(--app-border)', marginBottom: '24px', paddingBottom: '4px' }}>
+              <div className="detail-tab-container" style={{
+                display: 'flex',
+                gap: '12px',
+                borderBottom: '1px solid var(--app-border)',
+                marginBottom: '24px',
+                paddingBottom: '4px',
+                overflowX: 'auto',
+                flexWrap: 'nowrap',
+                WebkitOverflowScrolling: 'touch',
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none'
+              }}>
                 <button
                   onClick={() => setActiveDetailTab('progress')}
                   style={{
@@ -1014,7 +1025,8 @@ const UsersList = () => {
                     color: activeDetailTab === 'progress' ? 'var(--primary-cyan)' : 'var(--app-text-muted)',
                     cursor: 'pointer',
                     transition: 'all 0.2s',
-                    outline: 'none'
+                    outline: 'none',
+                    flexShrink: 0
                   }}
                 >
                   Core Progress & Attendance
@@ -1031,7 +1043,8 @@ const UsersList = () => {
                     color: activeDetailTab === 'capstone' ? 'var(--primary-cyan)' : 'var(--app-text-muted)',
                     cursor: 'pointer',
                     transition: 'all 0.2s',
-                    outline: 'none'
+                    outline: 'none',
+                    flexShrink: 0
                   }}
                 >
                   Capstone Project Tracker

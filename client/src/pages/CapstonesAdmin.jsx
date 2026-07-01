@@ -870,97 +870,112 @@ const CapstonesAdmin = () => {
             </div>
 
             {selectedProject.assignedTo && (
-              <div style={{ display: 'flex', borderBottom: '1px solid #e2e8f0', background: '#f8fafc', padding: '0 12px', borderRadius: '12px' }}>
-              <button
-                onClick={() => {
-                  if (selectedProject.submission) {
-                    setModalTab('submission');
-                  }
-                }}
-                style={{
-                  padding: '14px 20px',
-                  fontSize: '0.9rem',
-                  fontWeight: 700,
-                  background: 'none',
-                  border: 'none',
-                  borderBottom: modalTab === 'submission' ? '3px solid #0047ab' : '3px solid transparent',
-                  color: modalTab === 'submission' ? '#0047ab' : '#64748b',
-                  cursor: selectedProject.submission ? 'pointer' : 'not-allowed',
-                  opacity: selectedProject.submission ? 1 : 0.5,
-                  transition: 'all 0.2s'
-                }}
-              >
-                Submission & Review {selectedProject.submission ? '' : '(No Submission)'}
-              </button>
-              <button
-                onClick={() => setModalTab('spec')}
-                style={{
-                  padding: '14px 20px',
-                  fontSize: '0.9rem',
-                  fontWeight: 700,
-                  background: 'none',
-                  border: 'none',
-                  borderBottom: modalTab === 'spec' ? '3px solid #0047ab' : '3px solid transparent',
-                  color: modalTab === 'spec' ? '#0047ab' : '#64748b',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  marginLeft: '12px'
-                }}
-              >
-                Project Spec & Live Progress
-              </button>
-              <button
-                onClick={() => setModalTab('planner')}
-                style={{
-                  padding: '14px 20px',
-                  fontSize: '0.9rem',
-                  fontWeight: 700,
-                  background: 'none',
-                  border: 'none',
-                  borderBottom: modalTab === 'planner' ? '3px solid #0047ab' : '3px solid transparent',
-                  color: modalTab === 'planner' ? '#0047ab' : '#64748b',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  marginLeft: '12px'
-                }}
-              >
-                Sprint Planner
-              </button>
-              <button
-                onClick={() => setModalTab('timesheet')}
-                style={{
-                  padding: '14px 20px',
-                  fontSize: '0.9rem',
-                  fontWeight: 700,
-                  background: 'none',
-                  border: 'none',
-                  borderBottom: modalTab === 'timesheet' ? '3px solid #0047ab' : '3px solid transparent',
-                  color: modalTab === 'timesheet' ? '#0047ab' : '#64748b',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  marginLeft: '12px'
-                }}
-              >
-                Work Timesheet
-              </button>
-              <button
-                onClick={() => setModalTab('custom')}
-                style={{
-                  padding: '14px 20px',
-                  fontSize: '0.9rem',
-                  fontWeight: 700,
-                  background: 'none',
-                  border: 'none',
-                  borderBottom: modalTab === 'custom' ? '3px solid #0047ab' : '3px solid transparent',
-                  color: modalTab === 'custom' ? '#0047ab' : '#64748b',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  marginLeft: '12px'
-                }}
-              >
-                Custom Tasks
-              </button>
-            </div>
+               <div style={{
+                 display: 'flex',
+                 borderBottom: '1px solid #e2e8f0',
+                 background: '#f8fafc',
+                 padding: '0 12px',
+                 borderRadius: '12px',
+                 overflowX: 'auto',
+                 flexWrap: 'nowrap',
+                 WebkitOverflowScrolling: 'touch',
+                 scrollbarWidth: 'none',
+                 msOverflowStyle: 'none'
+               }}>
+               <button
+                 onClick={() => {
+                   if (selectedProject.submission) {
+                     setModalTab('submission');
+                   }
+                 }}
+                 style={{
+                   padding: '14px 20px',
+                   fontSize: '0.9rem',
+                   fontWeight: 700,
+                   background: 'none',
+                   border: 'none',
+                   borderBottom: modalTab === 'submission' ? '3px solid #0047ab' : '3px solid transparent',
+                   color: modalTab === 'submission' ? '#0047ab' : '#64748b',
+                   cursor: 'pointer',
+                   transition: 'all 0.2s',
+                   flexShrink: 0
+                 }}
+               >
+                 Submission & Review {selectedProject.submission ? '' : '(No Submission)'}
+               </button>
+               <button
+                 onClick={() => setModalTab('spec')}
+                 style={{
+                   padding: '14px 20px',
+                   fontSize: '0.9rem',
+                   fontWeight: 700,
+                   background: 'none',
+                   border: 'none',
+                   borderBottom: modalTab === 'spec' ? '3px solid #0047ab' : '3px solid transparent',
+                   color: modalTab === 'spec' ? '#0047ab' : '#64748b',
+                   cursor: 'pointer',
+                   transition: 'all 0.2s',
+                   marginLeft: '12px',
+                   flexShrink: 0
+                 }}
+               >
+                 Project Spec & Live Progress
+               </button>
+               <button
+                 onClick={() => setModalTab('planner')}
+                 style={{
+                   padding: '14px 20px',
+                   fontSize: '0.9rem',
+                   fontWeight: 700,
+                   background: 'none',
+                   border: 'none',
+                   borderBottom: modalTab === 'planner' ? '3px solid #0047ab' : '3px solid transparent',
+                   color: modalTab === 'planner' ? '#0047ab' : '#64748b',
+                   cursor: 'pointer',
+                   transition: 'all 0.2s',
+                   marginLeft: '12px',
+                   flexShrink: 0
+                 }}
+               >
+                 Sprint Planner
+               </button>
+               <button
+                 onClick={() => setModalTab('timesheet')}
+                 style={{
+                   padding: '14px 20px',
+                   fontSize: '0.9rem',
+                   fontWeight: 700,
+                   background: 'none',
+                   border: 'none',
+                   borderBottom: modalTab === 'timesheet' ? '3px solid #0047ab' : '3px solid transparent',
+                   color: modalTab === 'timesheet' ? '#0047ab' : '#64748b',
+                   cursor: 'pointer',
+                   transition: 'all 0.2s',
+                   marginLeft: '12px',
+                   flexShrink: 0
+                 }}
+               >
+                 Work Timesheet
+               </button>
+               <button
+                 onClick={() => setModalTab('custom')}
+                 style={{
+                   padding: '14px 20px',
+                   fontSize: '0.9rem',
+                   fontWeight: 700,
+                   background: 'none',
+                   border: 'none',
+                   borderBottom: modalTab === 'custom' ? '3px solid #0047ab' : '3px solid transparent',
+                   color: modalTab === 'custom' ? '#0047ab' : '#64748b',
+                   cursor: 'pointer',
+                   transition: 'all 0.2s',
+                   marginLeft: '12px',
+                   flexShrink: 0
+                 }}
+               >
+                 Custom Tasks
+               </button>
+             </div>
             )}
 
             {/* Page content body */}

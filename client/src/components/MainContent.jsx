@@ -868,7 +868,17 @@ const FinalProjectSubmissionView = () => {
             </div>
 
             {/* Tabs Navigation */}
-            <div className="capstone-tabs-nav" style={{ display: 'flex', borderBottom: '1px solid #cbd5e1', marginBottom: '24px', gap: '8px' }}>
+            <div className="capstone-tabs-nav" style={{
+              display: 'flex',
+              borderBottom: '1px solid #cbd5e1',
+              marginBottom: '24px',
+              gap: '8px',
+              overflowX: 'auto',
+              flexWrap: 'nowrap',
+              WebkitOverflowScrolling: 'touch',
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none'
+            }}>
               {[
                 { id: 'spec', label: 'Project Spec', icon: <FileSpreadsheet size={16} /> },
                 { id: 'planner', label: 'Sprint Planner', icon: <Workflow size={16} /> },
@@ -893,7 +903,8 @@ const FinalProjectSubmissionView = () => {
                     cursor: 'pointer',
                     transition: 'all 0.2s',
                     outline: 'none',
-                    marginBottom: '-1px'
+                    marginBottom: '-1px',
+                    flexShrink: 0
                   }}
                 >
                   {tab.icon}

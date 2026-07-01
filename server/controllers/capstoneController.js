@@ -337,24 +337,13 @@ const deleteCustomTask = async (req, res) => {
       return res.status(404).json({ success: false, message: 'No assigned capstone project found.' });
     }
 
-    if (!project.progress) project.progress = {};
-    if (!project.progress.customChecklist) project.progress.customChecklist = [];
+    const updatedProject = await CapstonePool.findByIdAndUpdate(
+      project._id,
+      { $pull: { 'progress.customChecklist': { _id: taskId } } },
+      { new: true }
+    );
 
-    const checklist = project.progress.customChecklist;
-    if (typeof checklist.pull === 'function') {
-      try {
-        checklist.pull(taskId);
-      } catch (err) {
-        project.progress.customChecklist = checklist.filter(item => item && item._id && item._id.toString() !== taskId);
-      }
-    } else {
-      project.progress.customChecklist = checklist.filter(item => item && item._id && item._id.toString() !== taskId);
-    }
-
-    project.markModified('progress');
-    await project.save();
-
-    res.status(200).json({ success: true, project });
+    res.status(200).json({ success: true, project: updatedProject });
   } catch (error) {
     console.error('Delete custom task error:', error);
     res.status(500).json({ success: false, message: 'Server error deleting custom task' });
@@ -442,21 +431,13 @@ const deletePlannerCard = async (req, res) => {
       return res.status(404).json({ success: false, message: 'No assigned capstone project found.' });
     }
 
-    if (!project.planner) project.planner = [];
+    const updatedProject = await CapstonePool.findByIdAndUpdate(
+      project._id,
+      { $pull: { planner: { _id: cardId } } },
+      { new: true }
+    );
 
-    if (typeof project.planner.pull === 'function') {
-      try {
-        project.planner.pull(cardId);
-      } catch (err) {
-        project.planner = project.planner.filter(card => card && card._id && card._id.toString() !== cardId);
-      }
-    } else {
-      project.planner = project.planner.filter(card => card && card._id && card._id.toString() !== cardId);
-    }
-
-    await project.save();
-
-    res.status(200).json({ success: true, project });
+    res.status(200).json({ success: true, project: updatedProject });
   } catch (error) {
     console.error('Delete planner card error:', error);
     res.status(500).json({ success: false, message: 'Server error deleting planner card' });
@@ -503,21 +484,13 @@ const deleteTimesheetLog = async (req, res) => {
       return res.status(404).json({ success: false, message: 'No assigned capstone project found.' });
     }
 
-    if (!project.timesheet) project.timesheet = [];
+    const updatedProject = await CapstonePool.findByIdAndUpdate(
+      project._id,
+      { $pull: { timesheet: { _id: logId } } },
+      { new: true }
+    );
 
-    if (typeof project.timesheet.pull === 'function') {
-      try {
-        project.timesheet.pull(logId);
-      } catch (err) {
-        project.timesheet = project.timesheet.filter(log => log && log._id && log._id.toString() !== logId);
-      }
-    } else {
-      project.timesheet = project.timesheet.filter(log => log && log._id && log._id.toString() !== logId);
-    }
-
-    await project.save();
-
-    res.status(200).json({ success: true, project });
+    res.status(200).json({ success: true, project: updatedProject });
   } catch (error) {
     console.error('Delete timesheet error:', error);
     res.status(500).json({ success: false, message: 'Server error deleting timesheet log' });
