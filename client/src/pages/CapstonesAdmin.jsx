@@ -607,9 +607,13 @@ const CapstonesAdmin = () => {
                       No unallocated capstone slots available in the pool.
                     </div>
                   ) : (
-                    paginatedUnallocated.map((project) => (
+                     paginatedUnallocated.map((project) => (
                       <div 
                         key={project._id} 
+                        onClick={() => {
+                          setSelectedProject(project);
+                          setModalTab('spec');
+                        }}
                         style={{
                           border: '1px solid #cbd5e1',
                           borderRadius: '16px',
@@ -617,7 +621,19 @@ const CapstonesAdmin = () => {
                           background: '#fafafa',
                           display: 'flex',
                           flexDirection: 'column',
-                          gap: '12px'
+                          gap: '12px',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.borderColor = '#0047ab';
+                          e.currentTarget.style.transform = 'translateY(-2px)';
+                          e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0,71,171,0.05)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.borderColor = '#cbd5e1';
+                          e.currentTarget.style.transform = 'translateY(0)';
+                          e.currentTarget.style.boxShadow = 'none';
                         }}
                       >
                         <div>
@@ -769,14 +785,34 @@ const CapstonesAdmin = () => {
                   {selectedProject.projectCode}
                 </span>
                 <span style={{
-                  background: selectedProject.submission?.status === 'accepted' ? '#d1fae5' : selectedProject.submission?.status === 'rejected' ? '#fee2e2' : selectedProject.submission ? '#e0f2fe' : '#f1f5f9',
-                  color: selectedProject.submission?.status === 'accepted' ? '#065f46' : selectedProject.submission?.status === 'rejected' ? '#991b1b' : selectedProject.submission ? '#0369a1' : '#64748b',
+                  background: !selectedProject.assignedTo 
+                    ? '#eff6ff'
+                    : selectedProject.submission?.status === 'accepted' 
+                      ? '#d1fae5' 
+                      : selectedProject.submission?.status === 'rejected' 
+                        ? '#fee2e2' 
+                        : selectedProject.submission 
+                          ? '#e0f2fe' 
+                          : '#f1f5f9',
+                  color: !selectedProject.assignedTo
+                    ? '#0047ab'
+                    : selectedProject.submission?.status === 'accepted' 
+                      ? '#065f46' 
+                      : selectedProject.submission?.status === 'rejected' 
+                        ? '#991b1b' 
+                        : selectedProject.submission 
+                          ? '#0369a1' 
+                          : '#64748b',
                   fontWeight: 800,
                   fontSize: '0.85rem',
                   padding: '6px 12px',
                   borderRadius: '8px'
                 }}>
-                  {selectedProject.submission?.status ? selectedProject.submission.status.toUpperCase() : 'NOT STARTED'}
+                  {!selectedProject.assignedTo
+                    ? 'AVAILABLE POOL'
+                    : selectedProject.submission?.status 
+                      ? selectedProject.submission.status.toUpperCase() 
+                      : 'NOT STARTED'}
                 </span>
               </div>
             </div>
@@ -787,14 +823,23 @@ const CapstonesAdmin = () => {
                 {selectedProject.title}
               </h2>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.9rem' }}>
-                <User size={16} />
-                <span style={{ fontWeight: 700, color: '#334155' }}>{selectedProject.assignedTo?.name}</span>
-                <span>({selectedProject.assignedTo?.email})</span>
+                {selectedProject.assignedTo ? (
+                  <>
+                    <User size={16} />
+                    <span style={{ fontWeight: 700, color: '#334155' }}>{selectedProject.assignedTo?.name}</span>
+                    <span>({selectedProject.assignedTo?.email})</span>
+                  </>
+                ) : (
+                  <>
+                    <Database size={16} color="#0047ab" />
+                    <span style={{ fontWeight: 700, color: '#475569' }}>Unassigned (Available Template Pool)</span>
+                  </>
+                )}
               </div>
             </div>
 
-            {/* Tab Swapping Header */}
-            <div style={{ display: 'flex', borderBottom: '1px solid #e2e8f0', background: '#f8fafc', padding: '0 12px', borderRadius: '12px' }}>
+            {selectedProject.assignedTo && (
+              <div style={{ display: 'flex', borderBottom: '1px solid #e2e8f0', background: '#f8fafc', padding: '0 12px', borderRadius: '12px' }}>
               <button
                 onClick={() => {
                   if (selectedProject.submission) {
@@ -834,6 +879,7 @@ const CapstonesAdmin = () => {
                 Project Spec & Live Progress
               </button>
             </div>
+            )}
 
             {/* Page content body */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
