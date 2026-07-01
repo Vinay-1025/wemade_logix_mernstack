@@ -23,6 +23,7 @@ const ScheduleAdjustmentsAdmin = () => {
   // Delete Modal State (Extra Classes deletion / Cancelled sessions restoration)
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [sessionToDelete, setSessionToDelete] = useState(null);
+  const [restoreConfirmId, setRestoreConfirmId] = useState(null);
 
   const fetchAdjustments = async () => {
     setLoading(true);
@@ -75,6 +76,28 @@ const ScheduleAdjustmentsAdmin = () => {
     } catch (err) {
       console.error(err);
       setError(err.response?.data?.message || 'Failed to reschedule session.');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleRestoreSession = async (sessionToRestore) => {
+    setActionLoading(true);
+    setError(null);
+    setSuccessMsg(null);
+    setRestoreConfirmId(null);
+    try {
+      const dayId = sessionToRestore.dayId;
+      const res = await axios.delete(`/api/attendance/extra-sessions/${dayId}`, {
+        headers: { 'Authorization': `Bearer ${user.token}` }
+      });
+      if (res.data?.success) {
+        setSuccessMsg('Successfully restored class and removed cancellation status.');
+        fetchAdjustments();
+      }
+    } catch (err) {
+      console.error(err);
+      setError(err.response?.data?.message || 'Failed to restore class session.');
     } finally {
       setActionLoading(false);
     }
@@ -252,13 +275,16 @@ const ScheduleAdjustmentsAdmin = () => {
                             </div>
                           )}
                         </td>
-                        <td>
+                        <td style={{ position: 'relative' }}>
                           <div className="action-buttons-group">
                             {isExtra && (
                               <button 
                                 className="row-action-btn edit" 
                                 title="Reschedule Class Date"
-                                onClick={() => handleOpenEdit(session)}
+                                onClick={() => {
+                                  setRestoreConfirmId(null);
+                                  handleOpenEdit(session);
+                                }}
                               >
                                 <Edit2 size={13} />
                               </button>
@@ -266,10 +292,26 @@ const ScheduleAdjustmentsAdmin = () => {
                             <button 
                               className={`row-action-btn ${session.isCancelled ? 'restore' : 'delete'}`} 
                               title={session.isCancelled ? "Restore Class (Remove Override)" : "Delete Session & Records"}
-                              onClick={() => handleOpenDelete(session)}
+                              onClick={() => {
+                                if (session.isCancelled) {
+                                  setRestoreConfirmId(restoreConfirmId === session._id ? null : session._id);
+                                } else {
+                                  handleOpenDelete(session);
+                                }
+                              }}
                             >
                               {session.isCancelled ? <Undo2 size={13} /> : <Trash2 size={13} />}
                             </button>
+
+                            {session.isCancelled && restoreConfirmId === session._id && (
+                              <div className="anchored-confirm-popover">
+                                <span className="confirm-text">Restore class?</span>
+                                <div className="confirm-actions">
+                                  <button className="confirm-btn yes" onClick={() => handleRestoreSession(session)}>Yes</button>
+                                  <button className="confirm-btn no" onClick={() => setRestoreConfirmId(null)}>No</button>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </td>
                       </tr>
@@ -330,11 +372,14 @@ const ScheduleAdjustmentsAdmin = () => {
                       </div>
                     </div>
 
-                    <div className="card-actions">
+                    <div className="card-actions" style={{ position: 'relative' }}>
                       {isExtra && (
                         <button 
                           className="card-action-btn edit" 
-                          onClick={() => handleOpenEdit(session)}
+                          onClick={() => {
+                            setRestoreConfirmId(null);
+                            handleOpenEdit(session);
+                          }}
                         >
                           <Edit2 size={13} />
                           <span>Reschedule</span>
@@ -342,7 +387,13 @@ const ScheduleAdjustmentsAdmin = () => {
                       )}
                       <button 
                         className={`card-action-btn ${session.isCancelled ? 'restore' : 'delete'}`} 
-                        onClick={() => handleOpenDelete(session)}
+                        onClick={() => {
+                          if (session.isCancelled) {
+                            setRestoreConfirmId(restoreConfirmId === session._id ? null : session._id);
+                          } else {
+                            handleOpenDelete(session);
+                          }
+                        }}
                       >
                         {session.isCancelled ? (
                           <>
@@ -356,6 +407,16 @@ const ScheduleAdjustmentsAdmin = () => {
                           </>
                         )}
                       </button>
+
+                      {session.isCancelled && restoreConfirmId === session._id && (
+                        <div className="anchored-confirm-popover">
+                          <span className="confirm-text">Restore class?</span>
+                          <div className="confirm-actions">
+                            <button className="confirm-btn yes" onClick={() => handleRestoreSession(session)}>Yes</button>
+                            <button className="confirm-btn no" onClick={() => setRestoreConfirmId(null)}>No</button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 );
@@ -1004,6 +1065,60 @@ const ScheduleAdjustmentsAdmin = () => {
           100% { transform: rotate(360deg); }
         }
 
+        /* Anchored Confirmation Popover Styling */
+        .anchored-confirm-popover {
+          position: absolute;
+          right: 42px;
+          top: 50%;
+          transform: translateY(-50%);
+          background: #ffffff;
+          border: 1px solid #cbd5e1;
+          border-radius: 8px;
+          padding: 6px 12px;
+          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          z-index: 100;
+          white-space: nowrap;
+        }
+
+        .anchored-confirm-popover .confirm-text {
+          font-size: 0.775rem;
+          font-weight: 700;
+          color: #334155;
+        }
+
+        .anchored-confirm-popover .confirm-actions {
+          display: flex;
+          gap: 6px;
+        }
+
+        .anchored-confirm-popover .confirm-btn {
+          border: none;
+          padding: 3px 8px;
+          border-radius: 4px;
+          font-size: 0.725rem;
+          font-weight: 800;
+          cursor: pointer;
+          transition: opacity 0.2s;
+        }
+
+        .anchored-confirm-popover .confirm-btn.yes {
+          background: #10b981;
+          color: white;
+        }
+
+        .anchored-confirm-popover .confirm-btn.no {
+          background: #f1f5f9;
+          color: #475569;
+          border: 1px solid #cbd5e1;
+        }
+
+        .anchored-confirm-popover .confirm-btn:hover {
+          opacity: 0.9;
+        }
+
         /* Responsive Breakpoints */
         @media (max-width: 768px) {
           .adjustments-admin-container {
@@ -1060,6 +1175,21 @@ const ScheduleAdjustmentsAdmin = () => {
 
           .mobile-cards-grid {
             display: flex; /* Show card view on mobile */
+          }
+
+          .card-actions .anchored-confirm-popover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            transform: none;
+            width: 100%;
+            box-sizing: border-box;
+            justify-content: space-between;
+            border-radius: 8px;
+            padding: 4px 12px;
+            box-shadow: none;
           }
 
           .admin-alert {
