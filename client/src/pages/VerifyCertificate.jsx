@@ -8,7 +8,7 @@ import CodeEditor from '../components/CodeEditor';
 const VerifyCertificate = () => {
   const { certId } = useParams();
   const navigate = useNavigate();
-  
+
   const [loading, setLoading] = useState(!!certId);
   const [verification, setVerification] = useState(null);
   const [error, setError] = useState(null);
@@ -49,7 +49,7 @@ const VerifyCertificate = () => {
         setLoading(false);
       }
     };
-    
+
     checkVerification();
   }, [certId]);
 
@@ -72,7 +72,7 @@ const VerifyCertificate = () => {
           const parts = scannedId.split('/verify-certificate/');
           scannedId = parts[parts.length - 1].trim();
         }
-        
+
         scannedId = scannedId.replace(/^[/#?]+|[/#?]+$/g, "");
 
         scanner.clear().catch(err => console.error("Error clearing scanner", err));
@@ -118,14 +118,14 @@ const VerifyCertificate = () => {
 
   const liveAttendanceCount = attendanceRecords.filter(r => r.attendanceType === 'live').length;
   const recordingAttendanceCount = attendanceRecords.filter(r => r.attendanceType === 'recording').length;
-  
+
   const acceptedAssignmentsCount = assignmentSubmissions.filter(a => a.status === 'accepted').length;
   const pendingAssignmentsCount = assignmentSubmissions.filter(a => a.status === 'pending').length;
 
   return (
     <div className="verify-container">
       <div className="verify-background-grid"></div>
-      
+
       <header className="verify-header">
         <div className="verify-logo">
           <img src="/fav_icon.png" alt="WeMade Logix logo" className="header-logo-img" />
@@ -149,7 +149,7 @@ const VerifyCertificate = () => {
             <div className="portal-header-icon">
               <img src="/fav_icon.png" alt="WeMade Logix logo" className="portal-logo-img" />
             </div>
-            
+
             <h1 className="portal-title">Credential Verification</h1>
             <p className="portal-desc">
               Scan a WeMade Logix student certificate QR code or enter the unique Certificate ID to verify its authenticity.
@@ -158,8 +158,8 @@ const VerifyCertificate = () => {
             {scanning ? (
               <div className="scanner-container">
                 <div id="qr-reader" className="qr-reader-box"></div>
-                <button 
-                  onClick={() => setScanning(false)} 
+                <button
+                  onClick={() => setScanning(false)}
                   className="action-button-btn secondary-btn cancel-scan-btn"
                 >
                   Cancel Scan
@@ -167,8 +167,8 @@ const VerifyCertificate = () => {
               </div>
             ) : (
               <div className="portal-actions-wrapper">
-                <button 
-                  onClick={() => setScanning(true)} 
+                <button
+                  onClick={() => setScanning(true)}
                   className="action-button-btn primary-btn scanner-trigger"
                 >
                   <QrCode size={18} />
@@ -182,8 +182,8 @@ const VerifyCertificate = () => {
                 <form onSubmit={handleManualSearch} className="search-form-group">
                   <div className="search-input-wrapper">
                     <Search size={18} className="search-icon" />
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       placeholder="Enter Certificate ID (e.g. WM-studentId-signature)"
                       value={inputId}
                       onChange={(e) => setInputId(e.target.value)}
@@ -206,7 +206,7 @@ const VerifyCertificate = () => {
             <div className="status-icon-badge error">
               <ShieldAlert size={48} color="#ef4444" />
             </div>
-            
+
             <h1 className="error-title">Verification Refused</h1>
             <div className="error-banner">
               <AlertCircle size={18} />
@@ -254,7 +254,7 @@ const VerifyCertificate = () => {
 
             <span className="trust-stamp">OFFICIAL VERIFIED CREDENTIAL</span>
             <h1 className="success-title">Certificate Validated</h1>
-            
+
             <div className="success-banner">
               <span>This certificate is trusted and officially issued by WeMade Logix.</span>
             </div>
@@ -313,7 +313,7 @@ const VerifyCertificate = () => {
                 </h3>
                 {showAttendanceDetails ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
               </div>
-              
+
               <div className="collapsible-content">
                 <div className="engagement-summary-grid">
                   <div className="summary-stat-card">
@@ -339,11 +339,16 @@ const VerifyCertificate = () => {
                         <div className="detail-list-item" key={index}>
                           <div>
                             <span className="detail-day-title">{r.dayId.toUpperCase().replace('-', ' ')}</span>
-                            <div className="detail-day-date">Marked via {r.attendanceType}</div>
+                            <div className="detail-day-date">Marked via {r.attendanceType}  </div>
                           </div>
-                          <span className={`status-pill accepted`}>
-                            {r.attendanceType.toUpperCase()}
-                          </span>
+                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '2px' }}>
+                            <div className="detail-day-date">
+                              {r.date ? new Date(r.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'}
+                            </div>
+                            <span className={`status-pill accepted`}>
+                              {r.attendanceType.toUpperCase()}
+                            </span>
+                          </div>
                         </div>
                       ))
                     )}
@@ -361,9 +366,9 @@ const VerifyCertificate = () => {
                 </h3>
                 {showAssignmentDetails ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
               </div>
-              
+
               <div className="collapsible-content">
-                <div style={{ 
+                <div style={{
                   background: 'rgba(0, 71, 171, 0.04)',
                   border: '1px solid rgba(0, 71, 171, 0.08)',
                   borderRadius: '8px',
@@ -399,8 +404,8 @@ const VerifyCertificate = () => {
                       <p className="no-engagement-msg">No assignments submitted yet.</p>
                     ) : (
                       assignmentSubmissions.map((a, index) => (
-                        <div 
-                          className="detail-list-item clickable-row" 
+                        <div
+                          className="detail-list-item clickable-row"
                           key={index}
                           onClick={() => setSelectedAssignment(a)}
                           style={{ cursor: 'pointer', transition: 'background 0.2s' }}
@@ -441,7 +446,7 @@ const VerifyCertificate = () => {
 
       {/* Selected Assignment Code Preview Modal */}
       {selectedAssignment && (
-        <div className="admin-modal-overlay no-print" style={{ 
+        <div className="admin-modal-overlay no-print" style={{
           position: 'fixed',
           top: 0,
           left: 0,
@@ -452,7 +457,7 @@ const VerifyCertificate = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          zIndex: 3000 
+          zIndex: 3000
         }}>
           <div className="admin-modal" style={{
             background: '#ffffff',
@@ -490,8 +495,8 @@ const VerifyCertificate = () => {
             </div>
 
             <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'flex-end' }}>
-              <button 
-                onClick={() => setSelectedAssignment(null)} 
+              <button
+                onClick={() => setSelectedAssignment(null)}
                 className="action-button-btn secondary-btn"
                 style={{ width: 'auto', padding: '8px 24px' }}
               >
@@ -506,7 +511,8 @@ const VerifyCertificate = () => {
         <p>© {new Date().getFullYear()} WeMade Logix Inc. All rights reserved. Secure cryptographic signatures protect this credential.</p>
       </footer>
 
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         .verify-container {
           min-height: 100vh;
           background-color: #f8fafc;
@@ -519,6 +525,23 @@ const VerifyCertificate = () => {
           justify-content: space-between;
           padding: 88px 20px 24px 20px;
           overflow-x: hidden;
+        }
+
+        .admin-modal .editor-container {
+          height: 480px !important;
+          margin: 12px 0 !important;
+          border: 1px solid #e2e8f0 !important;
+          border-radius: 12px !important;
+        }
+
+        .admin-modal .preview-panel {
+          padding: 8px !important;
+          background: #ffffff !important;
+        }
+
+        .admin-modal .iframe-container iframe {
+          border-radius: 6px !important;
+          border: 1px solid #e2e8f0 !important;
         }
 
         .verify-background-grid {
