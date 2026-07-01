@@ -726,7 +726,9 @@ const UsersList = () => {
     return {
       ...day,
       dateStr,
-      formattedDate: targetDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }),
+      formattedDate: day.dayId === 'final-project-day' 
+        ? 'Jul 6, 2026 - Jul 18, 2026' 
+        : targetDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }),
       status,
       statusLabel,
       statusClass,
