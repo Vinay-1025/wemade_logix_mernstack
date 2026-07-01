@@ -102,7 +102,6 @@ const FinalProjectSubmissionView = () => {
   const [erDiagramUrl, setErDiagramUrl] = useState('');
   const [postmanCollectionUrl, setPostmanCollectionUrl] = useState('');
   const [presentationUrl, setPresentationUrl] = useState('');
-  const [demoVideoUrl, setDemoVideoUrl] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [snackbar, setSnackbar] = useState({ visible: false, message: '', type: 'success' });
   const [assignedProject, setAssignedProject] = useState(null);
@@ -172,7 +171,6 @@ const FinalProjectSubmissionView = () => {
         setErDiagramUrl(parsed.erDiagramUrl || '');
         setPostmanCollectionUrl(parsed.postmanCollectionUrl || '');
         setPresentationUrl(parsed.presentationUrl || '');
-        setDemoVideoUrl(parsed.demoVideoUrl || '');
       } catch (e) {
         // Fallback for raw text
         setDescription(capstoneSubmission.code);
@@ -200,7 +198,6 @@ const FinalProjectSubmissionView = () => {
         erDiagramUrl: erDiagramUrl.trim(),
         postmanCollectionUrl: postmanCollectionUrl.trim(),
         presentationUrl: presentationUrl.trim(),
-        demoVideoUrl: demoVideoUrl.trim(),
         html: `<!-- Capstone Submission -->\n<!-- Github Link: ${githubUrl.trim()} -->\n<!-- Live Link: ${liveUrl.trim()} -->`,
         css: `/* Project Description */\n${description.trim()}`,
         js: `// Capstone URLs\nconst GithubUrl = "${githubUrl.trim()}";\nconst DeployedUrl = "${liveUrl.trim()}";`
@@ -1259,30 +1256,6 @@ const FinalProjectSubmissionView = () => {
                           placeholder="https://docs.google.com/presentation/d/..."
                           value={presentationUrl}
                           onChange={(e) => setPresentationUrl(e.target.value)}
-                          disabled={capstoneSubmission?.status === 'accepted' || submitting}
-                          style={{
-                            width: '100%',
-                            padding: '12px 16px',
-                            borderRadius: '8px',
-                            border: '1px solid #cbd5e1',
-                            fontSize: '0.9rem',
-                            outline: 'none',
-                            transition: 'border-color 0.2s',
-                            boxSizing: 'border-box'
-                          }}
-                        />
-                      </div>
-
-                      <div>
-                        <label htmlFor="demoVideoUrl" style={{ display: 'block', fontSize: '0.875rem', fontWeight: 700, color: '#334155', marginBottom: '8px' }}>
-                          Project Demo Video URL (Loom, YouTube, or Drive Link)
-                        </label>
-                        <input
-                          type="url"
-                          id="demoVideoUrl"
-                          placeholder="https://www.loom.com/share/..."
-                          value={demoVideoUrl}
-                          onChange={(e) => setDemoVideoUrl(e.target.value)}
                           disabled={capstoneSubmission?.status === 'accepted' || submitting}
                           style={{
                             width: '100%',

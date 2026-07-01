@@ -835,32 +835,6 @@ const CapstonesAdmin = () => {
                                 <span style={{ color: '#94a3b8', fontStyle: 'italic', fontSize: '0.9rem' }}>N/A</span>
                               )}
                             </div>
-
-                            <div style={{ gridColumn: 'span 2' }}>
-                              <strong style={{ color: '#475569', fontSize: '0.825rem', display: 'block', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.025em' }}>Project Demo Video Link:</strong>
-                              {details.demoVideoUrl ? (
-                                <a 
-                                  href={details.demoVideoUrl} 
-                                  target="_blank" 
-                                  rel="noopener noreferrer"
-                                  style={{
-                                    display: 'inline-flex',
-                                    alignItems: 'center',
-                                    gap: '6px',
-                                    color: '#06b6d4',
-                                    textDecoration: 'underline',
-                                    fontWeight: 700,
-                                    fontSize: '0.9rem',
-                                    wordBreak: 'break-all'
-                                  }}
-                                >
-                                  {details.demoVideoUrl}
-                                  <ExternalLink size={13} />
-                                </a>
-                              ) : (
-                                <span style={{ color: '#94a3b8', fontStyle: 'italic', fontSize: '0.9rem' }}>N/A</span>
-                              )}
-                            </div>
                           </div>
 
                           <div>

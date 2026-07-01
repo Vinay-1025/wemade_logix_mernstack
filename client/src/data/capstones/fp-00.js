@@ -170,8 +170,7 @@ export const fp00Data = {
     "README",
     "ER Diagram",
     "Postman Collection",
-    "Presentation",
-    "Project Demo"
+    "Presentation"
   ]
 };
 export default fp00Data;
