@@ -47,6 +47,7 @@ app.use('/api/audit', require('./routes/auditRoutes'));
 app.use('/api/recordings', require('./routes/recordingRoutes'));
 app.use('/api/attendance', require('./routes/attendanceRoutes'));
 app.use('/api/course', require('./routes/courseRoutes'));
+app.use('/api/capstone', require('./routes/capstoneRoutes'));
 
 // Basic Route
 app.get('/', (req, res) => {
@@ -214,6 +215,8 @@ const migrateAttendanceData = async () => {
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log('MongoDB connected');
+    const { seedCapstonePool } = require('./controllers/capstoneController');
+    seedCapstonePool();
     migrateAttendanceData();
   })
   .catch(err => console.error('MongoDB connection error:', err));

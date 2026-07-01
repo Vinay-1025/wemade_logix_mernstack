@@ -6,6 +6,7 @@ import Day1MernPdf from '../assets/Material/Day1_MERN.pdf';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { courseData } from '../data/mockData';
+import { capstoneRegistry } from '../data/capstones';
 
 import NetworkAnimation from './NetworkAnimation';
 import FlexboxPlayground from './FlexboxPlayground';
@@ -99,6 +100,8 @@ const FinalProjectSubmissionView = () => {
   const [description, setDescription] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [snackbar, setSnackbar] = useState({ visible: false, message: '', type: 'success' });
+  const [assignedProject, setAssignedProject] = useState(null);
+  const [assignedLoading, setAssignedLoading] = useState(true);
 
   const showSnackbar = (message, type = 'success') => {
     setSnackbar({ visible: true, message, type });
@@ -106,6 +109,30 @@ const FinalProjectSubmissionView = () => {
   };
 
   const capstoneSubmission = [...userAssignments].reverse().find(a => a.topicId === 'final-project-topic');
+
+  // Fetch assigned unique capstone topic from backend
+  useEffect(() => {
+    const fetchAssignedProject = async () => {
+      try {
+        const user = JSON.parse(localStorage.getItem('user'));
+        const token = user?.token;
+        if (!token) return;
+        
+        const response = await axios.get('/api/capstone/my', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (response.data?.success) {
+          setAssignedProject(response.data.project);
+        }
+      } catch (err) {
+        console.error('Error fetching assigned capstone project:', err);
+        showSnackbar('Error loading your unique capstone assignment topic.', 'error');
+      } finally {
+        setAssignedLoading(false);
+      }
+    };
+    fetchAssignedProject();
+  }, []);
 
   // Pre-fill inputs if already submitted
   useEffect(() => {
@@ -208,6 +235,84 @@ const FinalProjectSubmissionView = () => {
           </p>
         </div>
       </div>
+
+      {assignedLoading ? (
+        <div style={{ padding: '30px', textAlign: 'center', color: '#64748b', fontStyle: 'italic' }}>
+          Allocating your unique Capstone Project topic...
+        </div>
+      ) : !assignedProject ? (
+        <div style={{
+          background: '#fef2f2',
+          border: '1px solid #fecaca',
+          color: '#991b1b',
+          borderRadius: '12px',
+          padding: '20px',
+          marginBottom: '24px'
+        }}>
+          <strong>Allocation Status:</strong> All unique Capstone Project topics are currently claimed. Please contact your course instructor to manually assign yours.
+        </div>
+      ) : (() => {
+        const details = capstoneRegistry[assignedProject.projectCode];
+        if (!details) return null;
+        return (
+          <div style={{
+            background: '#f8fafc',
+            border: '1px solid #e2e8f0',
+            borderRadius: '16px',
+            padding: '24px',
+            marginBottom: '30px'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
+              <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800, color: '#0f172a' }}>
+                Your Unique Project Topic: {assignedProject.projectCode} — {details.title}
+              </h3>
+              <span style={{
+                background: '#dcfce7',
+                color: '#15803d',
+                fontWeight: 700,
+                fontSize: '0.75rem',
+                padding: '4px 10px',
+                borderRadius: '20px',
+                textTransform: 'uppercase'
+              }}>
+                Topic Allocated
+              </span>
+            </div>
+            
+            <p style={{ margin: '0 0 20px 0', fontSize: '0.925rem', color: '#475569', lineHeight: '1.6' }}>
+              {details.explanation}
+            </p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '20px', marginTop: '16px' }}>
+              <div>
+                <strong style={{ display: 'block', fontSize: '0.85rem', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>
+                  Project Phases
+                </strong>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {details.progression.map((phase, idx) => (
+                    <div key={idx} style={{ background: 'white', border: '1px solid #f1f5f9', padding: '12px 16px', borderRadius: '10px' }}>
+                      <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#0047ab', textTransform: 'uppercase' }}>{phase.level}</span>
+                      <h4 style={{ margin: '4px 0 2px 0', fontSize: '0.9rem', fontWeight: 700, color: '#1e293b' }}>{phase.title}</h4>
+                      <p style={{ margin: 0, fontSize: '0.8rem', color: '#64748b', lineHeight: '1.4' }}>{phase.content}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ background: 'white', border: '1px solid #e2e8f0', padding: '20px', borderRadius: '12px' }}>
+                <strong style={{ display: 'block', fontSize: '0.85rem', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '12px' }}>
+                  Implementation Standards & Best Practices
+                </strong>
+                <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '0.85rem', color: '#475569', lineHeight: '1.6' }}>
+                  {details.detailedReference.bestPractices.map((bp, idx) => (
+                    <li key={idx} style={{ marginBottom: '6px' }}>{bp}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Submission Status Alert */}
       {capstoneSubmission && (

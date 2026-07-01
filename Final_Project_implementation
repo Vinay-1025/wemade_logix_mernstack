@@ -1,0 +1,92 @@
+# Implementation Plan - Unique MERN Capstone Projects Pool & Admin Dashboard
+
+This plan details the architecture and step-by-step implementation for adding a pool of 30–32 unique Final Capstone Projects. The system will automatically allocate a unique project to each student upon request, restrict certificate generation until Capstone approval, and provide administrators with a dedicated control dashboard to audit allocations and submissions.
+
+## User Review Required
+
+> [!IMPORTANT]
+> **Allocation Limit**: Since there are exactly 32 unique projects in the pool, if the active student count exceeds 32, the automatic assignment logic will recycle projects using a least-congested allocation strategy (i.e. assigning the project that has the fewest active students).
+
+## Proposed Changes
+
+---
+
+### [Component 1] Client Capstone Project Pool Data
+
+We will create a structured directory in the client code holding the extensive details of the 32 unique capstone projects.
+
+#### [NEW] [capstones directory](file:///c:/Users/vinay/Desktop/V2-Recalio/wemade_logix/mern/wemade_logix_mernstack/client/src/data/capstones)
+Create a new directory containing:
+* 32 Javascript files (`fp-01.js` to `fp-32.js`), each exporting a structured object containing detailed project introductions, requirements checklists, phase-by-phase guidelines, and default code templates.
+* An `index.js` file importing all 32 project files and exporting a single lookup map `capstoneRegistry`.
+
+---
+
+### [Component 2] Backend Database Allocation Schema & Controllers
+
+We will define the database model and REST APIs to manage project allocations and student claiming.
+
+#### [NEW] [CapstonePool.js](file:///c:/Users/vinay/Desktop/V2-Recalio/wemade_logix/mern/wemade_logix_mernstack/server/models/CapstonePool.js)
+Define a MongoDB model storing:
+* `projectCode` (String, e.g., `"FP-01"`, unique index)
+* `title` (String, required)
+* `assignedTo` (ObjectId, ref: `'User'`, default `null`)
+* `assignedAt` (Date)
+
+#### [NEW] [capstoneController.js](file:///c:/Users/vinay/Desktop/V2-Recalio/wemade_logix/mern/wemade_logix_mernstack/server/controllers/capstoneController.js)
+Implement backend controllers:
+* `getMyAssignedProject`: Resolves the logged-in student's project code. If not assigned, triggers atomic findOneAndUpdate to claim an unassigned code.
+* `getAdminCapstones`: Populates and retrieves all 32 projects, joining student details and assignment submission status for allocated entries.
+* `releaseCapstoneAllocation`: Releases a project code back into the pool (clears `assignedTo` field).
+* `seedCapstonePool`: Seeds the 32 project documents on start if database is empty.
+
+#### [NEW] [capstoneRoutes.js](file:///c:/Users/vinay/Desktop/V2-Recalio/wemade_logix/mern/wemade_logix_mernstack/server/routes/capstoneRoutes.js)
+Map Express routes to the capstone controllers:
+* `GET /api/capstone/my` (Student/Private)
+* `GET /api/capstone/admin` (Admin/Private)
+* `POST /api/capstone/admin/release` (Admin/Private)
+
+#### [MODIFY] [index.js](file:///c:/Users/vinay/Desktop/V2-Recalio/wemade_logix/mern/wemade_logix_mernstack/server/index.js)
+* Register `/api/capstone` route middleware linking to `capstoneRoutes.js`.
+* Run `seedCapstonePool()` inside MongoDB connection then block.
+
+---
+
+### [Component 3] Frontend Navigation & UI Dashboards
+
+We will implement the admin/superadmin project tracker dashboard and link the student capstone viewer to the dynamically assigned project topic.
+
+#### [NEW] [CapstonesAdmin.jsx](file:///c:/Users/vinay/Desktop/V2-Recalio/wemade_logix/mern/wemade_logix_mernstack/client/src/pages/CapstonesAdmin.jsx)
+Build a premium, card-based tabbed control panel for instructors to:
+* View aggregate metrics (Allocated, Remaining, Awaiting review).
+* **Allocated Projects Tab**: Displays table of project code, title, student name, and clickable buttons to check live submission URLs or **Release Project**.
+* **Unallocated Projects Tab**: Displays card grid of available project topics.
+
+#### [MODIFY] [MainContent.jsx](file:///c:/Users/vinay/Desktop/V2-Recalio/wemade_logix/mern/wemade_logix_mernstack/client/src/components/MainContent.jsx)
+* Fetch student's allocated project code on mount.
+* Update `FinalProjectSubmissionView` to read specifications dynamically from the local registry using the student's assigned project code instead of raw dummy text.
+
+#### [MODIFY] [App.jsx](file:///c:/Users/vinay/Desktop/V2-Recalio/wemade_logix/mern/wemade_logix_mernstack/client/src/App.jsx)
+* Import and register route `<Route path="/admin/capstones" element={<CapstonesAdmin />} />` within the Admin Protected Router block.
+
+#### [MODIFY] [Sidebar.jsx](file:///c:/Users/vinay/Desktop/V2-Recalio/wemade_logix/mern/wemade_logix_mernstack/client/src/components/Sidebar.jsx)
+* Add a navigation item `🎓 Capstone Projects` pointing to `/admin/capstones` visible strictly to administrators and superadministrators.
+
+---
+
+## Verification Plan
+
+### Automated Tests
+* Run client production compilation:
+  ```bash
+  npm run build
+  ```
+
+### Manual Verification
+1. **Student Auto-Allocation**:
+   * Login as a student, navigate to Final Capstone Project milestone. Verify that a project code (e.g. `FP-07`) is dynamically assigned, recorded in MongoDB, and its specific guidelines/requirements are loaded on the page.
+2. **Admin Audit Dashboard**:
+   * Login as Admin, open Capstone Projects tab in sidebar.
+   * Verify that Allocated Tab shows the assigned student, their specific project code, and submission status.
+   * Verify that Unallocated Tab correctly lists remaining free topics.
+   * Click **Release** on the allocated student, and verify that their project code is freed up in MongoDB and is returned to the available pool list.

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useCourse } from '../context/CourseContext';
 import { courseData } from '../data/mockData';
-import { ChevronDown, ChevronRight, BookOpen, Clock, Calendar, CheckCircle2, PanelLeftClose, PanelLeftOpen, ShieldCheck, ClipboardCheck, Lock, Unlock, Loader2, History, CheckSquare } from 'lucide-react';
+import { ChevronDown, ChevronRight, BookOpen, Clock, Calendar, CheckCircle2, PanelLeftClose, PanelLeftOpen, ShieldCheck, ClipboardCheck, Lock, Unlock, Loader2, History, CheckSquare, Laptop } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -215,7 +215,14 @@ const Sidebar = () => {
                 </div>
               </button>
             </Link>
-            
+            <Link to="/admin/capstones" style={{ textDecoration: 'none', color: 'inherit', marginTop: '8px', display: 'block' }}>
+              <button className={`sidebar-toggle-btn week-btn admin-btn ${location.pathname === '/admin/capstones' ? 'active' : ''}`}>
+                <div className="btn-content">
+                  <Laptop size={20} color="#0047ab" />
+                  {!isSidebarCollapsed && <span>Capstone Projects</span>}
+                </div>
+              </button>
+            </Link>
             
             {user?.role === 'superadmin' && (
               <Link to="/admin/audit" style={{ textDecoration: 'none', color: 'inherit', marginTop: '8px', display: 'block' }}>

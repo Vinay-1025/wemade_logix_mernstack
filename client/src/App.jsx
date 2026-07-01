@@ -10,6 +10,7 @@ import AuditLogs from './pages/AuditLogs';
 import AttendanceAdmin from './pages/AttendanceAdmin';
 import VerifyCertificate from './pages/VerifyCertificate';
 import ExtraClassesAdmin from './pages/ExtraClassesAdmin';
+import CapstonesAdmin from './pages/CapstonesAdmin';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
           <Route path="/admin/assignments" element={<AssignmentsList />} />
           <Route path="/admin/attendance" element={<AttendanceAdmin />} />
           <Route path="/admin/extra-classes" element={<ExtraClassesAdmin />} />
+          <Route path="/admin/capstones" element={<CapstonesAdmin />} />
         </Route>
 
         {/* SuperAdmin Routes */}
