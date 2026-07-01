@@ -203,16 +203,7 @@ const FinalProjectSubmissionView = () => {
   };
 
   return (
-    <div className="capstone-submission-view" style={{
-      background: 'white',
-      borderRadius: '16px',
-      border: '1px solid #cbd5e1',
-      padding: '30px',
-      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
-      fontFamily: '"Inter", sans-serif',
-      color: '#1e293b',
-      position: 'relative'
-    }}>
+    <div className="capstone-submission-view">
       {assignedLoading ? (
         <div style={{ padding: '60px', textAlign: 'center', color: '#64748b', fontStyle: 'italic' }}>
           Allocating your unique Capstone Project topic...
@@ -239,6 +230,16 @@ const FinalProjectSubmissionView = () => {
             {/* Responsive Styles Injection */}
             <style dangerouslySetInnerHTML={{
               __html: `
+              .capstone-submission-view {
+                background: white;
+                border-radius: 16px;
+                border: 1px solid #cbd5e1;
+                padding: 30px;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+                font-family: "Inter", sans-serif;
+                color: #1e293b;
+                position: relative;
+              }
               .capstone-sticky-header {
                 position: sticky;
                 top: 0;
@@ -253,6 +254,16 @@ const FinalProjectSubmissionView = () => {
                 align-items: center;
                 border-radius: 16px 16px 0 0;
                 box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.03);
+              }
+              .capstone-info-card {
+                background: #f8fafc;
+                border: 1px solid #e2e8f0;
+                border-radius: 16px;
+                padding: 24px;
+                box-sizing: border-box;
+              }
+              .capstone-info-card.compact {
+                padding: 20px;
               }
               .capstone-grid-2-1 {
                 display: grid;
@@ -284,12 +295,17 @@ const FinalProjectSubmissionView = () => {
                 gap: 16px;
               }
               @media (max-width: 768px) {
+                .capstone-submission-view {
+                  padding: 12px !important;
+                  border-radius: 12px !important;
+                }
                 .capstone-sticky-header {
                   flex-direction: column !important;
                   align-items: flex-start !important;
-                  gap: 16px !important;
-                  padding: 16px 20px !important;
-                  margin: -30px -30px 20px -30px !important;
+                  gap: 12px !important;
+                  padding: 12px 14px !important;
+                  margin: -12px -12px 16px -12px !important;
+                  border-radius: 12px 12px 0 0 !important;
                 }
                 .capstone-header-actions {
                   width: 100% !important;
@@ -297,18 +313,26 @@ const FinalProjectSubmissionView = () => {
                   justify-content: space-between !important;
                   align-items: center !important;
                   margin-top: 4px !important;
+                  gap: 8px !important;
+                }
+                .capstone-info-card {
+                  padding: 12px !important;
+                  border-radius: 10px !important;
+                }
+                .capstone-info-card.compact {
+                  padding: 10px !important;
                 }
                 .capstone-grid-2-1,
                 .capstone-grid-1-1,
                 .capstone-grid-1-1-1,
                 .capstone-grid-15-1 {
                   grid-template-columns: 1fr !important;
-                  gap: 16px !important;
-                  margin-bottom: 16px !important;
+                  gap: 12px !important;
+                  margin-bottom: 12px !important;
                 }
                 .capstone-grid-eval {
-                  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)) !important;
-                  gap: 10px !important;
+                  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)) !important;
+                  gap: 8px !important;
                 }
               }
               `
@@ -435,11 +459,11 @@ const FinalProjectSubmissionView = () => {
 
             {isRichProject ? (
               /* Rich Project Specifications Render Block */
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                 
                 {/* Section 1: Overview, Problem Statement & Tech Stack */}
                 <div className="capstone-grid-2-1">
-                  <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px' }}>
+                  <div className="capstone-info-card">
                     <h3 style={{ margin: '0 0 12px 0', color: '#0f172a', fontWeight: 800, fontSize: '1.1rem' }}>Project Overview</h3>
                     <p style={{ margin: 0, color: '#475569', fontSize: '0.925rem', lineHeight: '1.6' }}>{details.overview}</p>
                     
@@ -449,7 +473,7 @@ const FinalProjectSubmissionView = () => {
                     </ul>
                   </div>
                   
-                  <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px' }}>
+                  <div className="capstone-info-card">
                     <h3 style={{ margin: '0 0 12px 0', color: '#0f172a', fontWeight: 800, fontSize: '1.1rem' }}>Tech Stack</h3>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                       {details.techStack.map((tech, idx) => (
@@ -471,14 +495,14 @@ const FinalProjectSubmissionView = () => {
 
                 {/* Section 2: Objectives & Roles */}
                 <div className="capstone-grid-1-1">
-                  <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px' }}>
+                  <div className="capstone-info-card">
                     <h3 style={{ margin: '0 0 12px 0', color: '#0f172a', fontWeight: 800, fontSize: '1.1rem' }}>Project Objectives</h3>
                     <ul style={{ margin: 0, paddingLeft: '20px', color: '#475569', fontSize: '0.9rem', lineHeight: '1.6' }}>
                       {details.objectives.map((obj, idx) => <li key={idx} style={{ marginBottom: '6px' }}>{obj}</li>)}
                     </ul>
                   </div>
 
-                  <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px' }}>
+                  <div className="capstone-info-card">
                     <h3 style={{ margin: '0 0 12px 0', color: '#0f172a', fontWeight: 800, fontSize: '1.1rem' }}>User Roles & Features</h3>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                       {Object.keys(details.roles).map((role, idx) => (
@@ -499,7 +523,7 @@ const FinalProjectSubmissionView = () => {
 
                 {/* Section 3: Modules, Pages & Database Collections */}
                 <div className="capstone-grid-1-1-1">
-                  <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '20px' }}>
+                  <div className="capstone-info-card compact">
                     <h3 style={{ margin: '0 0 12px 0', color: '#0f172a', fontWeight: 800, fontSize: '1rem' }}>Modules</h3>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                       {details.modules.map((m, idx) => (
@@ -510,7 +534,7 @@ const FinalProjectSubmissionView = () => {
                     </div>
                   </div>
                   
-                  <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '20px' }}>
+                  <div className="capstone-info-card compact">
                     <h3 style={{ margin: '0 0 12px 0', color: '#0f172a', fontWeight: 800, fontSize: '1rem' }}>Pages Map</h3>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                       {Object.keys(details.pages).map((pGroup, idx) => (
@@ -528,7 +552,7 @@ const FinalProjectSubmissionView = () => {
                     </div>
                   </div>
 
-                  <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '20px' }}>
+                  <div className="capstone-info-card compact">
                     <h3 style={{ margin: '0 0 12px 0', color: '#0f172a', fontWeight: 800, fontSize: '1rem' }}>DB Collections</h3>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                       {details.databaseCollections.map((col, idx) => (
@@ -543,7 +567,7 @@ const FinalProjectSubmissionView = () => {
 
                 {/* Section 4: Mandatory & Bonus Features */}
                 <div className="capstone-grid-15-1">
-                  <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px' }}>
+                  <div className="capstone-info-card">
                     <h3 style={{ margin: '0 0 16px 0', color: '#0f172a', fontWeight: 800, fontSize: '1.1rem' }}>Mandatory Features</h3>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                       {Object.keys(details.mandatoryFeatures).map((key, idx) => (
@@ -557,7 +581,7 @@ const FinalProjectSubmissionView = () => {
                     </div>
                   </div>
 
-                  <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px' }}>
+                  <div className="capstone-info-card">
                     <h3 style={{ margin: '0 0 12px 0', color: '#0f172a', fontWeight: 800, fontSize: '1.1rem' }}>Bonus/Premium Features</h3>
                     <ul style={{ margin: 0, paddingLeft: '20px', color: '#475569', fontSize: '0.9rem', lineHeight: '1.6' }}>
                       {details.bonusFeatures.map((feat, idx) => <li key={idx} style={{ marginBottom: '6px' }}>{feat}</li>)}
@@ -567,7 +591,7 @@ const FinalProjectSubmissionView = () => {
 
                 {/* Section 5: Timeline & Checklist */}
                 <div className="capstone-grid-2-1">
-                  <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px' }}>
+                  <div className="capstone-info-card">
                     <h3 style={{ margin: '0 0 16px 0', color: '#0f172a', fontWeight: 800, fontSize: '1.1rem' }}>Project Roadmap Timeline</h3>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                       {Object.keys(details.timeline).map((day, idx) => (
@@ -592,7 +616,7 @@ const FinalProjectSubmissionView = () => {
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                    <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '20px' }}>
+                    <div className="capstone-info-card compact">
                       <h3 style={{ margin: '0 0 12px 0', color: '#0f172a', fontWeight: 800, fontSize: '1rem' }}>Key Milestones</h3>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                         {details.milestones.map((m, idx) => (
@@ -604,7 +628,7 @@ const FinalProjectSubmissionView = () => {
                       </div>
                     </div>
                     
-                    <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '20px' }}>
+                    <div className="capstone-info-card compact">
                       <h3 style={{ margin: '0 0 12px 0', color: '#0f172a', fontWeight: 800, fontSize: '1rem' }}>Submission Checklist</h3>
                       <ul style={{ margin: 0, paddingLeft: '20px', color: '#475569', fontSize: '0.85rem', lineHeight: '1.6' }}>
                         {details.submissionChecklist.map((item, idx) => <li key={idx} style={{ marginBottom: '4px' }}>{item}</li>)}
@@ -614,7 +638,7 @@ const FinalProjectSubmissionView = () => {
                 </div>
 
                 {/* Section 6: Evaluation Rubrics */}
-                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px' }}>
+                <div className="capstone-info-card">
                   <h3 style={{ margin: '0 0 16px 0', color: '#0f172a', fontWeight: 800, fontSize: '1.1rem' }}>Evaluation Rubrics (100 Marks)</h3>
                   <div className="capstone-grid-eval">
                     {Object.keys(details.evaluation).map((key, idx) => (
@@ -628,12 +652,7 @@ const FinalProjectSubmissionView = () => {
               </div>
             ) : (
               /* Backward Compatibility Specs Render Block (For normal simple project arrays) */
-              <div style={{
-                background: '#f8fafc',
-                border: '1px solid #e2e8f0',
-                borderRadius: '16px',
-                padding: '24px'
-              }}>
+              <div className="capstone-info-card">
                 <p style={{ margin: '0 0 20px 0', fontSize: '0.925rem', color: '#475569', lineHeight: '1.6' }}>
                   {details.explanation}
                 </p>
