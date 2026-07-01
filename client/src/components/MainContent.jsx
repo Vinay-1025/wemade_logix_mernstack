@@ -146,11 +146,15 @@ const FinalProjectSubmissionView = () => {
   const [newCardDueDate, setNewCardDueDate] = useState('');
   const [newCustomTaskName, setNewCustomTaskName] = useState('');
   const [alsoAddToTodo, setAlsoAddToTodo] = useState(false);
+  const [plannerSubmitting, setPlannerSubmitting] = useState(false);
+  const [timesheetSubmitting, setTimesheetSubmitting] = useState(false);
+  const [customSubmitting, setCustomSubmitting] = useState(false);
 
   // Workspace Addon handlers
   const handleAddCustomTask = async (e) => {
     e.preventDefault();
-    if (!newCustomTaskName.trim()) return;
+    if (!newCustomTaskName.trim() || customSubmitting) return;
+    setCustomSubmitting(true);
     try {
       const user = JSON.parse(localStorage.getItem('user'));
       const token = user?.token;
@@ -167,6 +171,8 @@ const FinalProjectSubmissionView = () => {
       }
     } catch (err) {
       showSnackbar(err.response?.data?.message || 'Error adding custom task', 'error');
+    } finally {
+      setCustomSubmitting(false);
     }
   };
 
@@ -203,7 +209,8 @@ const FinalProjectSubmissionView = () => {
 
   const handleAddPlannerCard = async (e) => {
     e.preventDefault();
-    if (!newCardTitle.trim()) return;
+    if (!newCardTitle.trim() || plannerSubmitting) return;
+    setPlannerSubmitting(true);
     try {
       const user = JSON.parse(localStorage.getItem('user'));
       const token = user?.token;
@@ -223,6 +230,8 @@ const FinalProjectSubmissionView = () => {
       }
     } catch (err) {
       showSnackbar(err.response?.data?.message || 'Error adding planner card', 'error');
+    } finally {
+      setPlannerSubmitting(false);
     }
   };
 
@@ -259,7 +268,8 @@ const FinalProjectSubmissionView = () => {
 
   const handleAddTimesheetLog = async (e) => {
     e.preventDefault();
-    if (!newLogDate || !newLogHours || !newLogDescription.trim()) return;
+    if (!newLogDate || !newLogHours || !newLogDescription.trim() || timesheetSubmitting) return;
+    setTimesheetSubmitting(true);
     try {
       const user = JSON.parse(localStorage.getItem('user'));
       const token = user?.token;
@@ -276,6 +286,8 @@ const FinalProjectSubmissionView = () => {
       }
     } catch (err) {
       showSnackbar(err.response?.data?.message || 'Error adding timesheet log', 'error');
+    } finally {
+      setTimesheetSubmitting(false);
     }
   };
 
@@ -1359,6 +1371,7 @@ const FinalProjectSubmissionView = () => {
                   </div>
                   <button
                     type="submit"
+                    disabled={plannerSubmitting}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -1370,12 +1383,17 @@ const FinalProjectSubmissionView = () => {
                       borderRadius: '10px',
                       fontWeight: 700,
                       fontSize: '0.85rem',
-                      cursor: 'pointer',
+                      cursor: plannerSubmitting ? 'not-allowed' : 'pointer',
+                      opacity: plannerSubmitting ? 0.75 : 1,
                       boxShadow: '0 4px 10px rgba(0, 71, 171, 0.15)'
                     }}
                   >
-                    <Plus size={16} />
-                    <span>Create Card</span>
+                    {plannerSubmitting ? (
+                      <span className="spinner-mini" style={{ width: '14px', height: '14px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', display: 'inline-block' }} />
+                    ) : (
+                      <Plus size={16} />
+                    )}
+                    <span>{plannerSubmitting ? 'Creating...' : 'Create Card'}</span>
                   </button>
                 </form>
 
@@ -1542,6 +1560,7 @@ const FinalProjectSubmissionView = () => {
                       </div>
                       <button
                         type="submit"
+                        disabled={timesheetSubmitting}
                         style={{
                           background: 'linear-gradient(135deg, #0047ab 0%, #002f80 100%)',
                           color: 'white',
@@ -1550,11 +1569,19 @@ const FinalProjectSubmissionView = () => {
                           borderRadius: '10px',
                           fontWeight: 700,
                           fontSize: '0.85rem',
-                          cursor: 'pointer',
-                          marginTop: '8px'
+                          cursor: timesheetSubmitting ? 'not-allowed' : 'pointer',
+                          opacity: timesheetSubmitting ? 0.75 : 1,
+                          marginTop: '8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '8px'
                         }}
                       >
-                        Log Hours
+                        {timesheetSubmitting && (
+                          <span className="spinner-mini" style={{ width: '14px', height: '14px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', display: 'inline-block' }} />
+                        )}
+                        <span>{timesheetSubmitting ? 'Logging...' : 'Log Hours'}</span>
                       </button>
                     </form>
                   </div>
@@ -1632,6 +1659,7 @@ const FinalProjectSubmissionView = () => {
                       />
                       <button
                         type="submit"
+                        disabled={customSubmitting}
                         style={{
                           display: 'flex',
                           alignItems: 'center',
@@ -1643,11 +1671,16 @@ const FinalProjectSubmissionView = () => {
                           borderRadius: '10px',
                           fontWeight: 700,
                           fontSize: '0.85rem',
-                          cursor: 'pointer'
+                          cursor: customSubmitting ? 'not-allowed' : 'pointer',
+                          opacity: customSubmitting ? 0.75 : 1
                         }}
                       >
-                        <Plus size={16} />
-                        <span>Add Task</span>
+                        {customSubmitting ? (
+                          <span className="spinner-mini" style={{ width: '14px', height: '14px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', display: 'inline-block' }} />
+                        ) : (
+                          <Plus size={16} />
+                        )}
+                        <span>{customSubmitting ? 'Adding...' : 'Add Task'}</span>
                       </button>
                     </div>
                     <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.8rem', color: 'var(--app-text-muted)', fontWeight: 600, width: 'fit-content' }}>

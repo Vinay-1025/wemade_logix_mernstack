@@ -305,6 +305,9 @@ const toggleCustomTask = async (req, res) => {
       return res.status(404).json({ success: false, message: 'No assigned capstone project found.' });
     }
 
+    if (!project.progress) project.progress = {};
+    if (!project.progress.customChecklist) project.progress.customChecklist = [];
+
     const item = project.progress.customChecklist.id(taskId);
     if (!item) {
       return res.status(404).json({ success: false, message: 'Custom task not found.' });
@@ -334,6 +337,9 @@ const deleteCustomTask = async (req, res) => {
       return res.status(404).json({ success: false, message: 'No assigned capstone project found.' });
     }
 
+    if (!project.progress) project.progress = {};
+    if (!project.progress.customChecklist) project.progress.customChecklist = [];
+
     project.progress.customChecklist = project.progress.customChecklist.filter(
       item => item._id.toString() !== taskId
     );
@@ -361,6 +367,8 @@ const addPlannerCard = async (req, res) => {
     if (!project) {
       return res.status(404).json({ success: false, message: 'No assigned capstone project found.' });
     }
+
+    if (!project.planner) project.planner = [];
 
     project.planner.push({
       title,
@@ -390,6 +398,8 @@ const updatePlannerCard = async (req, res) => {
     if (!project) {
       return res.status(404).json({ success: false, message: 'No assigned capstone project found.' });
     }
+
+    if (!project.planner) project.planner = [];
 
     const card = project.planner.id(cardId);
     if (!card) {
@@ -424,7 +434,9 @@ const deletePlannerCard = async (req, res) => {
       return res.status(404).json({ success: false, message: 'No assigned capstone project found.' });
     }
 
-    project.planner = project.planner.filter(card => card._id.toString() !== cardId);
+    if (!project.planner) project.planner = [];
+
+    project.planner = project.planner.filter(card => card._id && card._id.toString() !== cardId);
     await project.save();
 
     res.status(200).json({ success: true, project });
@@ -449,6 +461,8 @@ const addTimesheetLog = async (req, res) => {
       return res.status(404).json({ success: false, message: 'No assigned capstone project found.' });
     }
 
+    if (!project.timesheet) project.timesheet = [];
+
     project.timesheet.push({ date, hours: Number(hours), description });
     await project.save();
 
@@ -472,7 +486,9 @@ const deleteTimesheetLog = async (req, res) => {
       return res.status(404).json({ success: false, message: 'No assigned capstone project found.' });
     }
 
-    project.timesheet = project.timesheet.filter(log => log._id.toString() !== logId);
+    if (!project.timesheet) project.timesheet = [];
+
+    project.timesheet = project.timesheet.filter(log => log._id && log._id.toString() !== logId);
     await project.save();
 
     res.status(200).json({ success: true, project });
