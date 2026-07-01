@@ -18,6 +18,7 @@ const VerifyCertificate = () => {
   // Collapsible sections state
   const [showAttendanceDetails, setShowAttendanceDetails] = useState(false);
   const [showAssignmentDetails, setShowAssignmentDetails] = useState(false);
+  const [showProjectDetails, setShowProjectDetails] = useState(true);
   const [selectedAssignment, setSelectedAssignment] = useState(null);
 
   const getParsedCode = (codeStr) => {
@@ -121,6 +122,9 @@ const VerifyCertificate = () => {
 
   const acceptedAssignmentsCount = assignmentSubmissions.filter(a => a.status === 'accepted').length;
   const pendingAssignmentsCount = assignmentSubmissions.filter(a => a.status === 'pending').length;
+
+  const finalProjectAssignment = assignmentSubmissions.find(a => a.topicId === 'final-project-topic');
+  const projectData = finalProjectAssignment ? getParsedCode(finalProjectAssignment.code) : null;
 
   return (
     <div className="verify-container">
@@ -424,6 +428,116 @@ const VerifyCertificate = () => {
                 )}
               </div>
             </div>
+
+            {/* Final Capstone Project Collapsible Section */}
+            {finalProjectAssignment && (
+              <div className="collapsible-section">
+                <div className="collapsible-header" onClick={() => setShowProjectDetails(!showProjectDetails)}>
+                  <h3>
+                    <Award size={16} color="#0047AB" />
+                    <span>Final Capstone Project Showcase</span>
+                  </h3>
+                  {showProjectDetails ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                </div>
+
+                <div className="collapsible-content">
+                  {showProjectDetails && (
+                    <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                      {/* Project Overview */}
+                      {projectData && projectData.description && (
+                        <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '16px', textAlign: 'left' }}>
+                          <strong style={{ display: 'block', fontSize: '0.85rem', color: '#475569', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                            Architecture Overview & Summary
+                          </strong>
+                          <p style={{ margin: 0, fontSize: '0.875rem', color: '#334155', lineHeight: '1.6', whiteSpace: 'pre-wrap' }}>
+                            {projectData.description}
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Deliverables Grid Links */}
+                      <div style={{ textAlign: 'left' }}>
+                        <strong style={{ display: 'block', fontSize: '0.825rem', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>
+                          Project Deliverable Artifacts
+                        </strong>
+
+                        <div style={{
+                          display: 'grid',
+                          gridTemplateColumns: '1fr 1fr',
+                          gap: '12px',
+                        }} className="project-links-grid">
+                          {/* GitHub Repository */}
+                          {projectData && projectData.githubUrl && (
+                            <div className="project-link-card" style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '12px', display: 'flex', flexDirection: 'column', gap: '4px', background: '#ffffff' }}>
+                              <span style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>GitHub Code Repository</span>
+                              <a href={projectData.githubUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#2563eb', fontWeight: 600, fontSize: '0.825rem', textDecoration: 'underline', wordBreak: 'break-all' }}>
+                                <span>Code Repo</span>
+                                <ExternalLink size={12} />
+                              </a>
+                            </div>
+                          )}
+
+                          {/* Live Deployment */}
+                          {projectData && projectData.liveUrl && (
+                            <div className="project-link-card" style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '12px', display: 'flex', flexDirection: 'column', gap: '4px', background: '#ffffff' }}>
+                              <span style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>Live App URL</span>
+                              <a href={projectData.liveUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#16a34a', fontWeight: 600, fontSize: '0.825rem', textDecoration: 'underline', wordBreak: 'break-all' }}>
+                                <span>Live Application</span>
+                                <ExternalLink size={12} />
+                              </a>
+                            </div>
+                          )}
+
+                          {/* Backend API URL */}
+                          {projectData && projectData.backendUrl && (
+                            <div className="project-link-card" style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '12px', display: 'flex', flexDirection: 'column', gap: '4px', background: '#ffffff' }}>
+                              <span style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>Backend API Service</span>
+                              <a href={projectData.backendUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#4f46e5', fontWeight: 600, fontSize: '0.825rem', textDecoration: 'underline', wordBreak: 'break-all' }}>
+                                <span>API Root</span>
+                                <ExternalLink size={12} />
+                              </a>
+                            </div>
+                          )}
+
+                          {/* ER Diagram Link */}
+                          {projectData && projectData.erDiagramUrl && (
+                            <div className="project-link-card" style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '12px', display: 'flex', flexDirection: 'column', gap: '4px', background: '#ffffff' }}>
+                              <span style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>Database ER Schema</span>
+                              <a href={projectData.erDiagramUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#d97706', fontWeight: 600, fontSize: '0.825rem', textDecoration: 'underline', wordBreak: 'break-all' }}>
+                                <span>ER Schema Link</span>
+                                <ExternalLink size={12} />
+                              </a>
+                            </div>
+                          )}
+
+                          {/* Postman Collection Link */}
+                          {projectData && projectData.postmanCollectionUrl && (
+                            <div className="project-link-card" style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '12px', display: 'flex', flexDirection: 'column', gap: '4px', background: '#ffffff' }}>
+                              <span style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>Postman API Collection</span>
+                              <a href={projectData.postmanCollectionUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#0891b2', fontWeight: 600, fontSize: '0.825rem', textDecoration: 'underline', wordBreak: 'break-all' }}>
+                                <span>Postman Specs</span>
+                                <ExternalLink size={12} />
+                              </a>
+                            </div>
+                          )}
+
+                          {/* Presentation Link */}
+                          {projectData && projectData.presentationUrl && (
+                            <div className="project-link-card" style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '12px', display: 'flex', flexDirection: 'column', gap: '4px', background: '#ffffff' }}>
+                              <span style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>Presentation Deck</span>
+                              <a href={projectData.presentationUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#db2777', fontWeight: 600, fontSize: '0.825rem', textDecoration: 'underline', wordBreak: 'break-all' }}>
+                                <span>Slides Deck</span>
+                                <ExternalLink size={12} />
+                              </a>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
 
             <div className="integrity-badge" style={{ marginTop: '24px' }}>
               <ShieldCheck size={14} color="#10b981" />
@@ -1259,6 +1373,9 @@ const VerifyCertificate = () => {
           }
           .success-title, .error-title {
             font-size: 1.3rem;
+          }
+          .project-links-grid {
+            grid-template-columns: 1fr !important;
           }
         }
       `}} />
