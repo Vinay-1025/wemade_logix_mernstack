@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const CapstonePool = require('../models/CapstonePool');
 const Assignment = require('../models/Assignment');
 const logAction = require('../utils/auditLogger');
@@ -331,6 +332,10 @@ const deleteCustomTask = async (req, res) => {
   const { taskId } = req.params;
   const studentId = req.body.studentId || req.query.studentId;
 
+  if (!mongoose.Types.ObjectId.isValid(taskId)) {
+    return res.status(400).json({ success: false, message: 'Invalid custom task ID format.' });
+  }
+
   try {
     const project = await findProjectByUserOrAdmin(req, studentId);
     if (!project) {
@@ -339,7 +344,7 @@ const deleteCustomTask = async (req, res) => {
 
     const updatedProject = await CapstonePool.findByIdAndUpdate(
       project._id,
-      { $pull: { 'progress.customChecklist': { _id: taskId } } },
+      { $pull: { 'progress.customChecklist': { _id: new mongoose.Types.ObjectId(taskId) } } },
       { new: true }
     );
 
@@ -425,6 +430,10 @@ const deletePlannerCard = async (req, res) => {
   const { cardId } = req.params;
   const studentId = req.body.studentId || req.query.studentId;
 
+  if (!mongoose.Types.ObjectId.isValid(cardId)) {
+    return res.status(400).json({ success: false, message: 'Invalid planner card ID format.' });
+  }
+
   try {
     const project = await findProjectByUserOrAdmin(req, studentId);
     if (!project) {
@@ -433,7 +442,7 @@ const deletePlannerCard = async (req, res) => {
 
     const updatedProject = await CapstonePool.findByIdAndUpdate(
       project._id,
-      { $pull: { planner: { _id: cardId } } },
+      { $pull: { planner: { _id: new mongoose.Types.ObjectId(cardId) } } },
       { new: true }
     );
 
@@ -478,6 +487,10 @@ const deleteTimesheetLog = async (req, res) => {
   const { logId } = req.params;
   const studentId = req.body.studentId || req.query.studentId;
 
+  if (!mongoose.Types.ObjectId.isValid(logId)) {
+    return res.status(400).json({ success: false, message: 'Invalid timesheet log ID format.' });
+  }
+
   try {
     const project = await findProjectByUserOrAdmin(req, studentId);
     if (!project) {
@@ -486,7 +499,7 @@ const deleteTimesheetLog = async (req, res) => {
 
     const updatedProject = await CapstonePool.findByIdAndUpdate(
       project._id,
-      { $pull: { timesheet: { _id: logId } } },
+      { $pull: { timesheet: { _id: new mongoose.Types.ObjectId(logId) } } },
       { new: true }
     );
 
