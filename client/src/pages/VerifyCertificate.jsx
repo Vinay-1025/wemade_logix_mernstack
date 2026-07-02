@@ -430,7 +430,7 @@ const VerifyCertificate = () => {
             </div>
 
             {/* Final Capstone Project Collapsible Section */}
-            {finalProjectAssignment && (
+            {(finalProjectAssignment || verification.capstoneProject) && (
               <div className="collapsible-section">
                 <div className="collapsible-header" onClick={() => setShowProjectDetails(!showProjectDetails)}>
                   <h3>
@@ -443,17 +443,26 @@ const VerifyCertificate = () => {
                 <div className="collapsible-content">
                   {showProjectDetails && (
                     <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                      {/* Project Overview */}
-                      {projectData && projectData.description && (
-                        <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '16px', textAlign: 'left' }}>
-                          <strong style={{ display: 'block', fontSize: '0.85rem', color: '#475569', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                            {projectData.title || projectData.projectName || projectData.name || "Architecture Overview & Summary"}
-                          </strong>
-                          <p style={{ margin: 0, fontSize: '0.875rem', color: '#334155', lineHeight: '1.6', whiteSpace: 'pre-wrap' }}>
-                            {projectData.description}
-                          </p>
-                        </div>
-                      )}
+                      {/* Project Title & Overview */}
+                      <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '16px', textAlign: 'left' }}>
+                        <strong style={{ display: 'block', fontSize: '0.72rem', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px' }}>
+                          Project Title
+                        </strong>
+                        <h4 style={{ margin: '0 0 12px 0', fontSize: '1.05rem', color: '#0f172a', fontWeight: 800 }}>
+                          {verification.capstoneProject?.title || projectData?.title || projectData?.projectName || "MERN Stack Application"}
+                        </h4>
+
+                        {(projectData?.description || projectData?.plain) && (
+                          <>
+                            <strong style={{ display: 'block', fontSize: '0.72rem', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px', borderTop: '1px solid #e2e8f0', paddingTop: '10px' }}>
+                              Architecture Overview & Summary
+                            </strong>
+                            <p style={{ margin: 0, fontSize: '0.85rem', color: '#334155', lineHeight: '1.6', whiteSpace: 'pre-wrap' }}>
+                              {projectData.description || projectData.plain}
+                            </p>
+                          </>
+                        )}
+                      </div>
 
                       {/* Deliverables Grid Links */}
                       <div style={{ textAlign: 'left' }}>

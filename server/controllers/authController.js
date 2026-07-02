@@ -386,8 +386,10 @@ const verifyCertificate = async (req, res) => {
       }
     }
     const AttendanceRecord = require('../models/AttendanceRecord');
+    const CapstonePool = require('../models/CapstonePool');
     const attendanceRecords = await AttendanceRecord.find({ student: studentId }).sort({ dayId: 1 });
     const studentAssignments = await Assignment.find({ student: studentId }).sort({ topicId: 1 });
+    const capstoneProject = await CapstonePool.findOne({ assignedTo: studentId });
 
     res.json({
       isValid: true,
@@ -398,6 +400,7 @@ const verifyCertificate = async (req, res) => {
       course: 'Full-Stack MERN Stack Development',
       issueDate: issueDate,
       completionDate: issueDate,
+      capstoneProject: capstoneProject || null,
       engagement: {
         attendance: attendanceRecords,
         assignments: studentAssignments,
