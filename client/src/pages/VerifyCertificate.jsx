@@ -447,7 +447,7 @@ const VerifyCertificate = () => {
                       {projectData && projectData.description && (
                         <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '16px', textAlign: 'left' }}>
                           <strong style={{ display: 'block', fontSize: '0.85rem', color: '#475569', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                            Architecture Overview & Summary
+                            {projectData.title || projectData.projectName || projectData.name || "Architecture Overview & Summary"}
                           </strong>
                           <p style={{ margin: 0, fontSize: '0.875rem', color: '#334155', lineHeight: '1.6', whiteSpace: 'pre-wrap' }}>
                             {projectData.description}
