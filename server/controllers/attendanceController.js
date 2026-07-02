@@ -269,17 +269,47 @@ const getAttendanceStats = async (req, res) => {
 
     const sortedSessionDates = Object.keys(sessionsByDate).sort();
 
+    // Group records by calculated calendar date string
+    const recordsByDate = {};
+    records.forEach(r => {
+      if (!r || !r.dayId) return;
+      const dateStr = getCalendarDateForDay(r.dayId);
+      recordsByDate[dateStr] = r.attendanceType || 'live';
+    });
+
+    const baseDate = new Date(Date.UTC(2026, 4, 18)); // May 18, 2026
+    const today = new Date();
+    const todayUTC = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
+    const todayStr = todayUTC.toISOString().split('T')[0];
+
+    const courseDates = [];
+    let tempDate = new Date(baseDate.getTime());
+    while (tempDate <= todayUTC) {
+      if (tempDate.getUTCDay() !== 0) { // Skip Sundays
+        const yyyy = tempDate.getUTCFullYear();
+        const mm = String(tempDate.getUTCMonth() + 1).padStart(2, '0');
+        const dd = String(tempDate.getUTCDate()).padStart(2, '0');
+        courseDates.push(`${yyyy}-${mm}-${dd}`);
+      }
+      tempDate.setUTCDate(tempDate.getUTCDate() + 1);
+    }
+
     // Force default presence for May 18, 19, and 20
     const defaultPresentDates = ['2026-05-18', '2026-05-19', '2026-05-20'];
     defaultPresentDates.forEach(dateStr => {
       if (!sessionsByDate[dateStr]) {
         sessionsByDate[dateStr] = [{ isCancelled: false, isActive: false }];
       }
-      if (!sortedSessionDates.includes(dateStr)) {
-        sortedSessionDates.push(dateStr);
-      }
     });
-    sortedSessionDates.sort();
+
+    const allEvalDatesSet = new Set([
+      ...courseDates,
+      ...sortedSessionDates,
+      ...Object.keys(recordsByDate),
+      ...defaultPresentDates
+    ]);
+
+    const sortedEvalDates = Array.from(allEvalDatesSet).sort();
     
     let attendedCount = 0;
     let activeSessionsCount = 0;
@@ -294,16 +324,18 @@ const getAttendanceStats = async (req, res) => {
       }
     });
 
-    const todayStr = new Date().toISOString().split('T')[0];
-
-    sortedSessionDates.forEach(dateStr => {
-      const daySessions = sessionsByDate[dateStr];
-      const isAnySessionCancelled = daySessions.every(s => s.isCancelled);
+    sortedEvalDates.forEach(dateStr => {
+      const daySessions = sessionsByDate[dateStr] || [];
+      const hasSessions = daySessions.length > 0;
+      const isAnySessionCancelled = hasSessions && daySessions.every(s => s.isCancelled);
       const isFuture = dateStr > todayStr;
       
       let attendanceType = null;
       if (defaultPresentDates.includes(dateStr)) {
         attendanceType = 'live';
+      }
+      if (recordsByDate[dateStr]) {
+        attendanceType = recordsByDate[dateStr];
       }
       daySessions.forEach(s => {
         if (s && s.dayId) {
@@ -327,16 +359,6 @@ const getAttendanceStats = async (req, res) => {
         activeSessionsCount++;
       } else {
         heatmapData[dateStr] = 'none';
-      }
-    });
-
-    // Overlay records directly on their calculated calendar dates so they are guaranteed to show up in the heatmap
-    records.forEach(r => {
-      if (r && r.dayId) {
-        const calculatedDateStr = getCalendarDateForDay(r.dayId);
-        if (!heatmapData[calculatedDateStr] || heatmapData[calculatedDateStr] === 'missed' || heatmapData[calculatedDateStr] === 'none') {
-          heatmapData[calculatedDateStr] = r.attendanceType || 'live';
-        }
       }
     });
 
