@@ -294,9 +294,12 @@ const getAttendanceStats = async (req, res) => {
       }
     });
 
+    const todayStr = new Date().toISOString().split('T')[0];
+
     sortedSessionDates.forEach(dateStr => {
       const daySessions = sessionsByDate[dateStr];
       const isAnySessionCancelled = daySessions.every(s => s.isCancelled);
+      const isFuture = dateStr > todayStr;
       
       let attendanceType = null;
       if (defaultPresentDates.includes(dateStr)) {
@@ -319,9 +322,11 @@ const getAttendanceStats = async (req, res) => {
         }
       } else if (isAnySessionCancelled) {
         heatmapData[dateStr] = 'cancelled';
-      } else {
+      } else if (!isFuture) {
         heatmapData[dateStr] = 'missed';
         activeSessionsCount++;
+      } else {
+        heatmapData[dateStr] = 'none';
       }
     });
 
@@ -674,6 +679,8 @@ const getAttendanceReport = async (req, res) => {
       let heldDaysCount = 0;
       let daysHtml = '';
 
+      const todayStr = new Date().toISOString().split('T')[0];
+
       uniqueDates.forEach(dateStr => {
         const dayIds = dateToDayIds[dateStr];
         let matchedRecord = null;
@@ -687,6 +694,7 @@ const getAttendanceReport = async (req, res) => {
 
         const isCancelled = dateCancelledMap[dateStr];
         const isDefaultPresent = defaultPresentDates.includes(dateStr);
+        const isFuture = dateStr > todayStr;
 
         if (matchedRecord || isDefaultPresent) {
           const type = (matchedRecord && matchedRecord.attendanceType) || 'live';
@@ -707,6 +715,8 @@ const getAttendanceReport = async (req, res) => {
             }
           }
           daysHtml += `<td style="background-color: #fef3c7; color: #d97706; font-weight: bold; border: 1px solid #cbd5e1; text-align: center; font-family: Calibri, sans-serif; padding: 8px;" title="${reason}">Cancelled</td>`;
+        } else if (isFuture) {
+          daysHtml += `<td style="background-color: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; text-align: center; font-family: Calibri, sans-serif; padding: 8px;">Scheduled</td>`;
         } else {
           daysHtml += `<td style="background-color: #fee2e2; color: #dc2626; font-weight: bold; border: 1px solid #cbd5e1; text-align: center; font-family: Calibri, sans-serif; padding: 8px;">Absent</td>`;
           heldDaysCount++;
