@@ -6,12 +6,14 @@ const crypto = require('crypto');
 const Assignment = require('../models/Assignment');
 
 const getCertificateId = (studentId) => {
+  const hexId = studentId.toString();
+  const shortId = Buffer.from(hexId, 'hex').toString('base64url');
   const hash = crypto
     .createHmac('sha256', process.env.JWT_SECRET || 'secret')
-    .update(studentId.toString())
+    .update(shortId)
     .digest('hex')
-    .substring(0, 8);
-  return `WM-${studentId}-${hash}`;
+    .substring(0, 6);
+  return `WM-${shortId}-${hash}`;
 };
 
 const generateToken = (id) => {
@@ -330,14 +332,34 @@ const verifyCertificate = async (req, res) => {
       return res.status(400).json({ message: 'Invalid Certificate Format', isValid: false });
     }
 
-    const [prefix, studentId, signature] = parts;
+    const [prefix, encodedId, signature] = parts;
 
-    // Validate signature
-    const expectedSignature = crypto
-      .createHmac('sha256', process.env.JWT_SECRET || 'secret')
-      .update(studentId)
-      .digest('hex')
-      .substring(0, 8);
+    let studentId;
+    let expectedSignature;
+
+    if (encodedId.length === 24) {
+      // Old format: encodedId is the raw 24-char hex studentId
+      studentId = encodedId;
+      expectedSignature = crypto
+        .createHmac('sha256', process.env.JWT_SECRET || 'secret')
+        .update(studentId)
+        .digest('hex')
+        .substring(0, 8);
+    } else if (encodedId.length === 16) {
+      // New format: encodedId is base64url of studentId
+      try {
+        studentId = Buffer.from(encodedId, 'base64url').toString('hex');
+      } catch (e) {
+        return res.status(400).json({ message: 'Invalid Certificate Format', isValid: false });
+      }
+      expectedSignature = crypto
+        .createHmac('sha256', process.env.JWT_SECRET || 'secret')
+        .update(encodedId)
+        .digest('hex')
+        .substring(0, 6);
+    } else {
+      return res.status(400).json({ message: 'Invalid Certificate Format', isValid: false });
+    }
 
     if (signature !== expectedSignature) {
       return res.status(400).json({ message: 'Certificate Signature Invalid', isValid: false });
@@ -353,7 +375,7 @@ const verifyCertificate = async (req, res) => {
       student: studentId,
       status: 'accepted',
     });
-    const totalCourseDays = 44; 
+    const totalCourseDays = 44;
     const progressPercent = Math.min(Math.round((acceptedCount / totalCourseDays) * 100), 100);
 
     const finalProjectAccepted = await Assignment.findOne({
@@ -362,8 +384,8 @@ const verifyCertificate = async (req, res) => {
       status: 'accepted'
     });
 
-    const isUnlocked = student.certificateOverride === 'unlocked' || 
-                       (student.certificateOverride !== 'locked' && progressPercent >= 100 && finalProjectAccepted);
+    const isUnlocked = student.certificateOverride === 'unlocked' ||
+      (student.certificateOverride !== 'locked' && progressPercent >= 100 && finalProjectAccepted);
 
     if (!isUnlocked) {
       return res.json({
@@ -468,7 +490,7 @@ const updateAllCertificateOverrides = async (req, res) => {
     } else {
       updateFields.certificateUnlockedAt = null;
     }
-    
+
     const result = await User.updateMany(
       { role: 'student' },
       updateFields

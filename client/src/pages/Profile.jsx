@@ -181,6 +181,7 @@ const Profile = () => {
       ctx.font = `bold ${fontSize}px "Georgia", "Times New Roman", serif`;
       ctx.fillStyle = '#1a1a1a';
       ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
       ctx.fillText(user?.name || '', nameX, nameY);
 
       const svgEl = document.getElementById('certificate-qr-svg');
@@ -192,35 +193,40 @@ const Profile = () => {
         const qrImg = new Image();
         qrImg.src = blobURL;
         qrImg.onload = () => {
-          const qrWidthPercent = 0.080;
-          const qrHeightPercent = 80 / 707;
+          const qrWidthPercent = 0.0737;
+          const qrHeightPercent = 0.1044;
           const qrWidth = canvas.width * qrWidthPercent;
           const qrHeight = canvas.height * qrHeightPercent;
-          const qrX = canvas.width * (1 - 0.176 - qrWidthPercent);
-          const qrY = canvas.height * (1 - 0.140 - qrHeightPercent);
+          const qrX = canvas.width * 0.8536 - qrWidth / 2;
+          const qrY = canvas.height * 0.7434 - qrHeight / 2;
 
           ctx.drawImage(qrImg, qrX, qrY, qrWidth, qrHeight);
 
-          // Draw certificate details (Duration, ID, Issue Date) on the high-res download canvas
+          // Draw certificate details (Duration, Mode, Date, ID) on the high-res download canvas
           const detailsFontSize = Math.round(canvas.width * 0.013);
           ctx.fillStyle = '#1a1a1a';
-          ctx.textAlign = 'left';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
           
           // Draw Duration
           ctx.font = `bold ${detailsFontSize}px "Inter", -apple-system, sans-serif`;
-          ctx.fillText("45 Days", canvas.width * 0.295, canvas.height * 0.690);
-          
-          // Draw Certificate ID (Smaller font size to fit long hash ID)
-          const idFontSize = Math.round(canvas.width * 0.0095);
-          ctx.font = `bold ${idFontSize}px "Inter", -apple-system, sans-serif`;
-          ctx.fillText(certificateId, canvas.width * 0.580, canvas.height * 0.690);
+          ctx.fillText("45 Days", canvas.width * 0.1230, canvas.height * 0.785);
+
+          // Draw Mode
+          ctx.font = `bold ${detailsFontSize}px "Inter", -apple-system, sans-serif`;
+          ctx.fillText("Online", canvas.width * 0.3040, canvas.height * 0.785);
           
           // Draw Date of Issue
           ctx.font = `bold ${detailsFontSize}px "Inter", -apple-system, sans-serif`;
           const issueDateStr = latestProfile?.certificateIssueDate 
             ? new Date(latestProfile.certificateIssueDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) 
             : new Date(user?.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-          ctx.fillText(issueDateStr, canvas.width * 0.580, canvas.height * 0.752);
+          ctx.fillText(issueDateStr, canvas.width * 0.4836, canvas.height * 0.785);
+
+          // Draw Certificate ID (Slightly smaller than other details, shifted to the right)
+          const idFontSize = Math.round(canvas.width * 0.0115);
+          ctx.font = `bold ${idFontSize}px "Inter", -apple-system, sans-serif`;
+          ctx.fillText(certificateId, canvas.width * 0.6850, canvas.height * 0.785);
 
           const formattedName = (user?.name || 'student').trim().replace(/\s+/g, '_').toLowerCase();
           const dataUrl = canvas.toDataURL('image/png');
@@ -955,63 +961,85 @@ const Profile = () => {
                           {/* Dynamically Overlayed Duration */}
                           <div style={{
                             position: 'absolute',
-                            top: '69.0%',
-                            left: '29.5%',
+                            top: '78.5%',
+                            left: '12.30%',
+                            transform: 'translateX(-50%)',
                             fontSize: '0.85rem',
                             fontWeight: 'bold',
                             color: '#1a1a1a',
                             fontFamily: '"Inter", sans-serif',
+                            textAlign: 'center',
+                            whiteSpace: 'nowrap',
                           }}>
                             45 Days
                           </div>
 
-                          {/* Dynamically Overlayed Certificate ID */}
+                          {/* Dynamically Overlayed Mode */}
                           <div style={{
                             position: 'absolute',
-                            top: '69.0%',
-                            left: '58.0%',
-                            fontSize: '0.65rem',
+                            top: '78.5%',
+                            left: '30.40%',
+                            transform: 'translateX(-50%)',
+                            fontSize: '0.85rem',
                             fontWeight: 'bold',
                             color: '#1a1a1a',
                             fontFamily: '"Inter", sans-serif',
-                            maxWidth: '220px',
-                            wordBreak: 'break-all'
+                            textAlign: 'center',
+                            whiteSpace: 'nowrap',
                           }}>
-                            {certificateId}
+                            Online
                           </div>
 
                           {/* Dynamically Overlayed Date of Issue */}
                           <div style={{
                             position: 'absolute',
-                            top: '75.2%',
-                            left: '58.0%',
+                            top: '78.5%',
+                            left: '48.36%',
+                            transform: 'translateX(-50%)',
                             fontSize: '0.85rem',
                             fontWeight: 'bold',
                             color: '#1a1a1a',
                             fontFamily: '"Inter", sans-serif',
+                            textAlign: 'center',
+                            whiteSpace: 'nowrap',
                           }}>
                             {latestProfile?.certificateIssueDate 
                               ? new Date(latestProfile.certificateIssueDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) 
                               : new Date(user?.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                           </div>
 
+                          {/* Dynamically Overlayed Certificate ID */}
+                          <div style={{
+                            position: 'absolute',
+                            top: '78.5%',
+                            left: '68.50%',
+                            transform: 'translateX(-50%)',
+                            fontSize: '0.78rem',
+                            fontWeight: 'bold',
+                            color: '#1a1a1a',
+                            fontFamily: '"Inter", sans-serif',
+                            textAlign: 'center',
+                            maxWidth: '180px',
+                            wordBreak: 'break-all'
+                          }}>
+                            {certificateId}
+                          </div>
+
                           {/* Dynamically Overlayed Verification QR Code (Exact positioning over bottom-right placeholder) */}
                           <div style={{
                             position: 'absolute',
-                            bottom: '14.0%',
-                            right: '17.6%',
+                            top: '69.12%',
+                            left: '81.67%',
+                            width: '7.37%',
+                            height: '10.44%',
                             display: 'flex',
-                            flexDirection: 'column',
                             alignItems: 'center',
-                            background: '#ffffff',
-                            padding: '3px',
-                            borderRadius: '4px',
-                            border: '1px solid #e2e8f0',
+                            justifyContent: 'center',
                           }}>
                             <QRCodeSVG
                               id="certificate-qr-svg"
                               value={`${window.location.origin}/verify-certificate/${certificateId}`}
-                              size={80}
+                              size={74}
                               bgColor={"#ffffff"}
                               fgColor={"#000000"}
                               level={"H"}

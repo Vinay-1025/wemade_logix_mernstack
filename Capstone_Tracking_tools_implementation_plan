@@ -1,0 +1,76 @@
+# Implementation Plan - Capstone Center Add-ons (Real-World Workspace Simulator)
+
+This plan outlines the changes needed to integrate **Student Custom Checklists**, an **Agile Kanban Planner**, and a **Daily Timesheet Log** into the Capstone Project management flow.
+
+## User Review Required
+
+> [!NOTE]
+> All student data logs (Kanban cards, logged hours, custom checklists) will be nested directly within their unique assigned project slot in the `CapstonePool` model. This keeps all user state unified under a single reference, preventing database fragmentation.
+
+---
+
+## Proposed Changes
+
+### Database & Backend
+
+#### [MODIFY] [CapstonePool.js](file:///c:/Users/vinay/Desktop/V2-Recalio/wemade_logix/mern/wemade_logix_mernstack/server/models/CapstonePool.js)
+Extend the mongoose schema to support:
+- `progress.customChecklist`: Array of `{ _id, taskName, completed }`
+- `planner`: Array of `{ _id, title, description, status, priority, dueDate }`
+- `timesheet`: Array of `{ _id, date, hours, description }`
+
+#### [MODIFY] [capstoneController.js](file:///c:/Users/vinay/Desktop/V2-Recalio/wemade_logix/mern/wemade_logix_mernstack/server/controllers/capstoneController.js)
+Implement new controllers:
+- `addCustomTask` / `toggleCustomTask` / `deleteCustomTask`
+- `addPlannerCard` / `updatePlannerCard` / `deletePlannerCard`
+- `addTimesheetLog` / `deleteTimesheetLog`
+
+#### [MODIFY] [capstoneRoutes.js](file:///c:/Users/vinay/Desktop/V2-Recalio/wemade_logix/mern/wemade_logix_mernstack/server/routes/capstoneRoutes.js)
+Bind new router endpoints:
+- `POST /api/capstone/custom-tasks` (Add custom task)
+- `PUT /api/capstone/custom-tasks/:taskId/toggle` (Toggle complete status)
+- `DELETE /api/capstone/custom-tasks/:taskId` (Remove custom task)
+- `POST /api/capstone/planner` (Create Kanban task card)
+- `PUT /api/capstone/planner/:cardId` (Update card columns or details)
+- `DELETE /api/capstone/planner/:cardId` (Remove card)
+- `POST /api/capstone/timesheet` (Add work hours log)
+- `DELETE /api/capstone/timesheet/:logId` (Delete work hours log)
+
+---
+
+### Student Frontend
+
+#### [MODIFY] [MainContent.jsx](file:///c:/Users/vinay/Desktop/V2-Recalio/wemade_logix/mern/wemade_logix_mernstack/client/src/components/MainContent.jsx)
+Redesign the Capstone view to include workspace tabs:
+1. **📋 Project Spec**: Default requirements checklist (Modules, Pages, Databases) and submission form.
+2. **📅 Sprint Planner**: Interactive Kanban board layout with To Do, In Progress, and Done lanes.
+3. **⏱️ Work Timesheet**: Daily hour logging form, hours log table, and "Total Hours Invested" progress counters.
+4. **✔️ Custom Tasks**: Add-on checklist editor to schedule micro-tasks.
+
+---
+
+### Instructor / Admin Frontend
+
+#### [MODIFY] [CapstonesAdmin.jsx](file:///c:/Users/vinay/Desktop/V2-Recalio/wemade_logix/mern/wemade_logix_mernstack/client/src/pages/CapstonesAdmin.jsx)
+Render student developer logs inside the admin Detailed review stack page:
+- Show a summary of their logged hours and timesheet logs.
+- Render their Kanban sprint board status overview.
+- Display their custom tasks checklist.
+
+#### [MODIFY] [UsersList.jsx](file:///c:/Users/vinay/Desktop/V2-Recalio/wemade_logix/mern/wemade_logix_mernstack/client/src/pages/UsersList.jsx)
+Inside the user's detailed view in the User Directory:
+- Add a new **Capstone Project Tracker** tab next to Syllabus, Submissions, and Attendance.
+- Display the student's assigned capstone details, completed spec percentage, custom tasks checklist progress, active Kanban board cards, and total logged hours/daily timesheet logs.
+
+---
+
+## Verification Plan
+
+### Automated Tests
+- Run `npm run build` on both client and server to verify clean TypeScript/JS compilation.
+
+### Manual Verification
+- Deploy to staging and verify:
+  1. Student can log hours, add tasks, and move Kanban cards on their workspace tabs.
+  2. Total logged hours automatically aggregate.
+  3. Admins can view these timesheets, Kanban cards, and custom tasks when grading assignments.
