@@ -212,10 +212,10 @@ const Profile = () => {
           qrImg.src = blobURL;
           qrImg.onload = () => {
             // Draw signature
-            const signWidth = canvas.width * 0.100;
-            const signHeight = canvas.height * 0.093;
-            const signX = canvas.width * 0.055;
-            const signY = isML ? canvas.height * 0.826 : canvas.height * 0.835;
+            const signWidth = isML ? canvas.width * 0.130 : canvas.width * 0.100;
+            const signHeight = isML ? canvas.height * 0.100 : canvas.height * 0.093;
+            const signX = isML ? canvas.width * 0.045 : canvas.width * 0.055;
+            const signY = isML ? canvas.height * 0.795 : canvas.height * 0.835;
             ctx.drawImage(signImg, signX, signY, signWidth, signHeight);
 
             // Draw Trainer Signature Title
@@ -1093,10 +1093,10 @@ const Profile = () => {
                             alt="Trainer Signature"
                             style={{
                               position: 'absolute',
-                              top: isML ? '82.6%' : '83.5%',
-                              left: '5.5%',
-                              width: '10.0%',
-                              height: '9.3%',
+                              top: isML ? '79.5%' : '83.5%',
+                              left: isML ? '4.5%' : '5.5%',
+                              width: isML ? '13.0%' : '10.0%',
+                              height: isML ? '10.0%' : '9.3%',
                               objectFit: 'contain',
                               pointerEvents: 'none'
                             }}
