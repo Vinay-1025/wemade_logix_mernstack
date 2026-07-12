@@ -4,6 +4,7 @@ const logAction = require('../utils/auditLogger');
 const { sendWelcomeEmail } = require('../utils/emailService');
 const crypto = require('crypto');
 const Assignment = require('../models/Assignment');
+const mongoose = require('mongoose');
 
 const getCertificateId = (studentId) => {
   const hexId = studentId.toString();
@@ -340,7 +341,9 @@ const verifyCertificate = async (req, res) => {
 
       try {
         const hexPrefix = Buffer.from(encodedId, 'base64url').toString('hex').substring(0, 12);
-        const student = await User.findOne({ _id: { $regex: "^" + hexPrefix } });
+        const minId = new mongoose.Types.ObjectId(hexPrefix + '000000000000');
+        const maxId = new mongoose.Types.ObjectId(hexPrefix + 'ffffffffffff');
+        const student = await User.findOne({ _id: { $gte: minId, $lte: maxId } });
         if (!student) {
           return res.status(404).json({ message: 'Student not found', isValid: false });
         }

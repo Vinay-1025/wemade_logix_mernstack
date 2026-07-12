@@ -186,7 +186,8 @@ const Profile = () => {
       const nameX = canvas.width * 0.5;
       const nameY = isML ? canvas.height * 0.425 : canvas.height * 0.455;
       const baseFontSize = Math.round(canvas.width * 0.038);
-      const studentName = user?.name || '';
+      const rawName = user?.name || '';
+      const studentName = rawName ? rawName.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ') : '';
       const nameFontSize = studentName.length > 20
         ? Math.max(Math.round(baseFontSize * (20 / studentName.length)), Math.round(canvas.width * 0.022))
         : baseFontSize;
@@ -198,7 +199,7 @@ const Profile = () => {
 
       // Preload Trainer Signature
       const signImg = new Image();
-      signImg.src = '/sign.png';
+      signImg.src = isML ? '/sign_ml.png' : '/sign.png';
       signImg.crossOrigin = 'anonymous';
       signImg.onload = () => {
         const svgEl = document.getElementById('certificate-qr-svg');
@@ -230,8 +231,8 @@ const Profile = () => {
             const qrHeightPercent = 0.1044;
             const qrWidth = canvas.width * qrWidthPercent;
             const qrHeight = canvas.height * qrHeightPercent;
-            const qrX = canvas.width * 0.8565 - qrWidth / 2;
-            const qrY = canvas.height * 0.7500 - qrHeight / 2;
+            const qrX = canvas.width * 0.8620 - qrWidth / 2;
+            const qrY = canvas.height * 0.8180 - qrHeight / 2;
 
             ctx.drawImage(qrImg, qrX, qrY, qrWidth, qrHeight);
 
@@ -240,7 +241,7 @@ const Profile = () => {
             ctx.fillStyle = '#1a1a1a';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            const detailsY = isML ? canvas.height * 0.800 : canvas.height * 0.785;
+            const detailsY = isML ? canvas.height * 0.792 : canvas.height * 0.785;
 
             // Draw Duration
             ctx.font = `bold ${detailsFontSize}px "Inter", -apple-system, sans-serif`;
@@ -1001,7 +1002,7 @@ const Profile = () => {
                           {/* Dynamically Overlayed Duration */}
                           <div style={{
                             position: 'absolute',
-                            top: isML ? '80.0%' : '78.5%',
+                            top: isML ? '79.2%' : '78.5%',
                             left: '14.30%',
                             transform: 'translateX(-50%)',
                             fontSize: '0.74rem',
@@ -1017,7 +1018,7 @@ const Profile = () => {
                           {/* Dynamically Overlayed Mode */}
                           <div style={{
                             position: 'absolute',
-                            top: isML ? '80.0%' : '78.5%',
+                            top: isML ? '79.2%' : '78.5%',
                             left: '34.40%',
                             transform: 'translateX(-50%)',
                             fontSize: '0.74rem',
@@ -1033,7 +1034,7 @@ const Profile = () => {
                           {/* Dynamically Overlayed Date of Issue */}
                           <div style={{
                             position: 'absolute',
-                            top: isML ? '80.0%' : '78.5%',
+                            top: isML ? '79.2%' : '78.5%',
                             left: '50.36%',
                             transform: 'translateX(-50%)',
                             fontSize: '0.74rem',
@@ -1051,7 +1052,7 @@ const Profile = () => {
                           {/* Dynamically Overlayed Certificate ID */}
                           <div style={{
                             position: 'absolute',
-                            top: isML ? '80.0%' : '78.5%',
+                            top: isML ? '79.2%' : '78.5%',
                             left: '70.0%',
                             transform: 'translateX(-50%)',
                             fontSize: '0.74rem',
@@ -1068,8 +1069,8 @@ const Profile = () => {
                           {/* Dynamically Overlayed Verification QR Code (Exact positioning over bottom-right placeholder) */}
                           <div style={{
                             position: 'absolute',
-                            top: '69.8%',
-                            left: '81.9%',
+                            top: '76.58%',
+                            left: '82.5%',
                             width: '7.37%',
                             height: '10.44%',
                             display: 'flex',
@@ -1088,7 +1089,7 @@ const Profile = () => {
 
                           {/* Trainer Signature */}
                           <img
-                            src="/sign.png"
+                            src={isML ? '/sign_ml.png' : '/sign.png'}
                             alt="Trainer Signature"
                             style={{
                               position: 'absolute',
