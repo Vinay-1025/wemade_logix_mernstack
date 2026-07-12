@@ -232,7 +232,7 @@ const Profile = () => {
             const qrWidth = canvas.width * qrWidthPercent;
             const qrHeight = canvas.height * qrHeightPercent;
             const qrX = canvas.width * 0.8620 - qrWidth / 2;
-            const qrY = canvas.height * 0.8180 - qrHeight / 2;
+            const qrY = canvas.height * 0.7780 - qrHeight / 2;
 
             ctx.drawImage(qrImg, qrX, qrY, qrWidth, qrHeight);
 
@@ -1069,7 +1069,7 @@ const Profile = () => {
                           {/* Dynamically Overlayed Verification QR Code (Exact positioning over bottom-right placeholder) */}
                           <div style={{
                             position: 'absolute',
-                            top: '76.58%',
+                            top: '72.58%',
                             left: '82.5%',
                             width: '7.37%',
                             height: '10.44%',
