@@ -7,7 +7,7 @@ const Assignment = require('../models/Assignment');
 
 const getCertificateId = (studentId) => {
   const hexId = studentId.toString();
-  const shortId = Buffer.from(hexId, 'hex').toString('base64url').substring(0, 13);
+  const shortId = Buffer.from(hexId, 'hex').toString('base64url').substring(0, 9);
   return `WM-${shortId}`;
 };
 
@@ -332,14 +332,14 @@ const verifyCertificate = async (req, res) => {
     let studentId;
 
     if (parts.length === 2) {
-      // 16-character format: WM-shortId (e.g. WM-aIOF8WiVjD9U)
+      // 12-character format: WM-shortId (e.g. WM-aIOF8WiVj)
       const encodedId = parts[1];
-      if (encodedId.length !== 13) {
+      if (encodedId.length !== 9) {
         return res.status(400).json({ message: 'Invalid Certificate Format', isValid: false });
       }
 
       try {
-        const hexPrefix = Buffer.from(encodedId, 'base64url').toString('hex').substring(0, 18);
+        const hexPrefix = Buffer.from(encodedId, 'base64url').toString('hex').substring(0, 12);
         const student = await User.findOne({ _id: { $regex: "^" + hexPrefix } });
         if (!student) {
           return res.status(404).json({ message: 'Student not found', isValid: false });
