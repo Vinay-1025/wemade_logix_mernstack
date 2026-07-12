@@ -74,8 +74,8 @@ const UsersList = () => {
 
 
   const downloadTemplate = () => {
-    const headers = "Name,Email,Password,Role\n";
-    const sampleData = "Jane Doe,jane.doe@example.com,securePass123,student\nJohn Admin,john.admin@example.com,adminPass456,admin\n";
+    const headers = "Name,Email,Password,Role,Course\n";
+    const sampleData = "Jane Doe,jane.doe@example.com,securePass123,student,mern\nAlex Machine,alex.ml@example.com,mlPass789,student,ml\nJohn Admin,john.admin@example.com,adminPass456,admin,mern\n";
     const blob = new Blob([headers + sampleData], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");

@@ -7,13 +7,8 @@ const Assignment = require('../models/Assignment');
 
 const getCertificateId = (studentId) => {
   const hexId = studentId.toString();
-  const shortId = Buffer.from(hexId, 'hex').toString('base64url');
-  const hash = crypto
-    .createHmac('sha256', process.env.JWT_SECRET || 'secret')
-    .update(shortId)
-    .digest('hex')
-    .substring(0, 6);
-  return `WM-${shortId}-${hash}`;
+  const shortId = Buffer.from(hexId, 'hex').toString('base64url').substring(0, 13);
+  return `WM-${shortId}`;
 };
 
 const generateToken = (id) => {
@@ -334,41 +329,58 @@ const verifyCertificate = async (req, res) => {
     }
 
     const parts = certId.split('-');
-    if (parts.length !== 3) {
-      return res.status(400).json({ message: 'Invalid Certificate Format', isValid: false });
-    }
-
-    const [prefix, encodedId, signature] = parts;
-
     let studentId;
-    let expectedSignature;
 
-    if (encodedId.length === 24) {
-      // Old format: encodedId is the raw 24-char hex studentId
-      studentId = encodedId;
-      expectedSignature = crypto
-        .createHmac('sha256', process.env.JWT_SECRET || 'secret')
-        .update(studentId)
-        .digest('hex')
-        .substring(0, 8);
-    } else if (encodedId.length === 16) {
-      // New format: encodedId is base64url of studentId
+    if (parts.length === 2) {
+      // 16-character format: WM-shortId (e.g. WM-aIOF8WiVjD9U)
+      const encodedId = parts[1];
+      if (encodedId.length !== 13) {
+        return res.status(400).json({ message: 'Invalid Certificate Format', isValid: false });
+      }
+
       try {
-        studentId = Buffer.from(encodedId, 'base64url').toString('hex');
+        const hexPrefix = Buffer.from(encodedId, 'base64url').toString('hex').substring(0, 18);
+        const student = await User.findOne({ _id: { $regex: "^" + hexPrefix } });
+        if (!student) {
+          return res.status(404).json({ message: 'Student not found', isValid: false });
+        }
+        studentId = student._id.toString();
       } catch (e) {
         return res.status(400).json({ message: 'Invalid Certificate Format', isValid: false });
       }
-      expectedSignature = crypto
-        .createHmac('sha256', process.env.JWT_SECRET || 'secret')
-        .update(encodedId)
-        .digest('hex')
-        .substring(0, 6);
+    } else if (parts.length === 3) {
+      const [prefix, encodedId, signature] = parts;
+      let expectedSignature;
+
+      if (encodedId.length === 24) {
+        // Old format: encodedId is the raw 24-char hex studentId
+        studentId = encodedId;
+        expectedSignature = crypto
+          .createHmac('sha256', process.env.JWT_SECRET || 'secret')
+          .update(studentId)
+          .digest('hex')
+          .substring(0, 8);
+      } else if (encodedId.length === 16) {
+        // New format: encodedId is base64url of studentId
+        try {
+          studentId = Buffer.from(encodedId, 'base64url').toString('hex');
+        } catch (e) {
+          return res.status(400).json({ message: 'Invalid Certificate Format', isValid: false });
+        }
+        expectedSignature = crypto
+          .createHmac('sha256', process.env.JWT_SECRET || 'secret')
+          .update(encodedId)
+          .digest('hex')
+          .substring(0, 6);
+      } else {
+        return res.status(400).json({ message: 'Invalid Certificate Format', isValid: false });
+      }
+
+      if (signature !== expectedSignature) {
+        return res.status(400).json({ message: 'Certificate Signature Invalid', isValid: false });
+      }
     } else {
       return res.status(400).json({ message: 'Invalid Certificate Format', isValid: false });
-    }
-
-    if (signature !== expectedSignature) {
-      return res.status(400).json({ message: 'Certificate Signature Invalid', isValid: false });
     }
 
     const student = await User.findById(studentId);

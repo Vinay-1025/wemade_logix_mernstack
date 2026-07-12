@@ -184,7 +184,7 @@ const Profile = () => {
       ctx.drawImage(img, 0, 0);
 
       const nameX = canvas.width * 0.5;
-      const nameY = canvas.height * 0.455;
+      const nameY = isML ? canvas.height * 0.425 : canvas.height * 0.455;
       const baseFontSize = Math.round(canvas.width * 0.038);
       const studentName = user?.name || '';
       const nameFontSize = studentName.length > 20
@@ -214,7 +214,7 @@ const Profile = () => {
             const signWidth = canvas.width * 0.100;
             const signHeight = canvas.height * 0.093;
             const signX = canvas.width * 0.055;
-            const signY = canvas.height * 0.785;
+            const signY = isML ? canvas.height * 0.826 : canvas.height * 0.835;
             ctx.drawImage(signImg, signX, signY, signWidth, signHeight);
 
             // Draw Trainer Signature Title
@@ -223,7 +223,7 @@ const Profile = () => {
             ctx.fillStyle = '#235cbe';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText("Trainer Signature", canvas.width * 0.105, canvas.height * 0.925);
+            ctx.fillText("Trainer Signature", canvas.width * 0.105, canvas.height * 0.910);
 
             // Draw QR code
             const qrWidthPercent = 0.0737;
@@ -240,30 +240,31 @@ const Profile = () => {
             ctx.fillStyle = '#1a1a1a';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
+            const detailsY = isML ? canvas.height * 0.776 : canvas.height * 0.785;
 
             // Draw Duration
             ctx.font = `bold ${detailsFontSize}px "Inter", -apple-system, sans-serif`;
-            ctx.fillText("45 Days", canvas.width * 0.1230, canvas.height * 0.785);
+            ctx.fillText("45 Days", canvas.width * 0.1430, detailsY);
 
             // Draw Mode
             ctx.font = `bold ${detailsFontSize}px "Inter", -apple-system, sans-serif`;
-            ctx.fillText("Online", canvas.width * 0.3040, canvas.height * 0.785);
+            ctx.fillText("Online", canvas.width * 0.3440, detailsY);
 
             // Draw Date of Issue
             ctx.font = `bold ${detailsFontSize}px "Inter", -apple-system, sans-serif`;
             const issueDateStr = latestProfile?.certificateIssueDate
               ? new Date(latestProfile.certificateIssueDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
               : new Date(user?.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-            ctx.fillText(issueDateStr, canvas.width * 0.4836, canvas.height * 0.785);
+            ctx.fillText(issueDateStr, canvas.width * 0.5036, detailsY);
 
             // Draw Certificate ID
             ctx.font = `bold ${detailsFontSize}px "Inter", -apple-system, sans-serif`;
-            ctx.fillText(certificateId, canvas.width * 0.6800, canvas.height * 0.785);
+            ctx.fillText(certificateId, canvas.width * 0.7000, detailsY);
 
             const formattedName = (user?.name || 'student').trim().replace(/\s+/g, '_').toLowerCase();
             const dataUrl = canvas.toDataURL('image/png');
             const link = document.createElement('a');
-            link.download = `${formattedName}_wemade_mernstack_certificate.png`;
+            link.download = `${formattedName}_wemade_${isML ? 'ml' : 'mernstack'}_certificate.png`;
             link.href = dataUrl;
             link.click();
 
@@ -978,7 +979,7 @@ const Profile = () => {
                           {/* Dynamically Overlayed Student Name */}
                           <div style={{
                             position: 'absolute',
-                            top: '45.5%',
+                            top: isML ? '42.5%' : '45.5%',
                             left: '50%',
                             transform: 'translate(-50%, -50%)',
                             fontSize: user?.name && user.name.length > 20
@@ -994,13 +995,13 @@ const Profile = () => {
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
                           }}>
-                            {user?.name}
+                            {user?.name ? user.name.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ') : ''}
                           </div>
 
                           {/* Dynamically Overlayed Duration */}
                           <div style={{
                             position: 'absolute',
-                            top: '78.5%',
+                            top: isML ? '77.6%' : '78.5%',
                             left: '14.30%',
                             transform: 'translateX(-50%)',
                             fontSize: '0.74rem',
@@ -1016,7 +1017,7 @@ const Profile = () => {
                           {/* Dynamically Overlayed Mode */}
                           <div style={{
                             position: 'absolute',
-                            top: '78.5%',
+                            top: isML ? '77.6%' : '78.5%',
                             left: '34.40%',
                             transform: 'translateX(-50%)',
                             fontSize: '0.74rem',
@@ -1032,7 +1033,7 @@ const Profile = () => {
                           {/* Dynamically Overlayed Date of Issue */}
                           <div style={{
                             position: 'absolute',
-                            top: '78.5%',
+                            top: isML ? '77.6%' : '78.5%',
                             left: '50.36%',
                             transform: 'translateX(-50%)',
                             fontSize: '0.74rem',
@@ -1050,7 +1051,7 @@ const Profile = () => {
                           {/* Dynamically Overlayed Certificate ID */}
                           <div style={{
                             position: 'absolute',
-                            top: '78.5%',
+                            top: isML ? '77.6%' : '78.5%',
                             left: '70.0%',
                             transform: 'translateX(-50%)',
                             fontSize: '0.74rem',
@@ -1091,7 +1092,7 @@ const Profile = () => {
                             alt="Trainer Signature"
                             style={{
                               position: 'absolute',
-                              top: '83.5%',
+                              top: isML ? '82.6%' : '83.5%',
                               left: '5.5%',
                               width: '10.0%',
                               height: '9.3%',
