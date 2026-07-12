@@ -213,9 +213,9 @@ const Profile = () => {
           qrImg.onload = () => {
             // Draw signature
             const signWidth = isML ? canvas.width * 0.130 : canvas.width * 0.100;
-            const signHeight = isML ? canvas.height * 0.100 : canvas.height * 0.093;
+            const signHeight = isML ? canvas.height * 0.065 : canvas.height * 0.093;
             const signX = isML ? canvas.width * 0.045 : canvas.width * 0.055;
-            const signY = isML ? canvas.height * 0.795 : canvas.height * 0.835;
+            const signY = canvas.height * 0.835;
             ctx.drawImage(signImg, signX, signY, signWidth, signHeight);
 
             // Draw Trainer Signature Title
@@ -1093,10 +1093,10 @@ const Profile = () => {
                             alt="Trainer Signature"
                             style={{
                               position: 'absolute',
-                              top: isML ? '79.5%' : '83.5%',
+                              top: '83.5%',
                               left: isML ? '4.5%' : '5.5%',
                               width: isML ? '13.0%' : '10.0%',
-                              height: isML ? '10.0%' : '9.3%',
+                              height: isML ? '6.5%' : '9.3%',
                               objectFit: 'contain',
                               pointerEvents: 'none'
                             }}
