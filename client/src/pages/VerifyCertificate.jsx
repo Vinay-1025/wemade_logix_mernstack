@@ -308,8 +308,10 @@ const VerifyCertificate = () => {
               </div>
             </div>
 
-            {/* Attendance Summary & Log Collapsible Section */}
-            <div className="collapsible-section">
+            {verification?.student?.course !== 'ml' && (
+              <>
+                {/* Attendance Summary & Log Collapsible Section */}
+                <div className="collapsible-section">
               <div className="collapsible-header" onClick={() => setShowAttendanceDetails(!showAttendanceDetails)}>
                 <h3>
                   <Clock size={16} color="#0047AB" />
@@ -546,6 +548,8 @@ const VerifyCertificate = () => {
                   )}
                 </div>
               </div>
+            )}
+              </>
             )}
 
             <div className="integrity-badge" style={{ marginTop: '24px' }}>

@@ -81,6 +81,7 @@ const loginUser = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        course: user.course || 'mern',
         token: generateToken(user._id),
       });
     } else {
@@ -117,6 +118,7 @@ const getUserProfile = async (req, res) => {
       name: user.name,
       email: user.email,
       role: user.role,
+      course: user.course || 'mern',
       certificateOverride: user.certificateOverride || null,
       certificateId: getCertificateId(user._id),
       certificateIssueDate: issueDate,
@@ -147,7 +149,7 @@ const getUsers = async (req, res) => {
 // @route   POST /api/auth/users
 // @access  Private/Admin
 const createUser = async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password, role, course } = req.body;
 
   try {
     const userExists = await User.findOne({ email });
@@ -161,11 +163,12 @@ const createUser = async (req, res) => {
       email,
       password,
       role: role || 'student',
+      course: course || 'mern',
     });
 
     if (user) {
       // Audit Log
-      await logAction(req.user, 'Personnel Enrollment', `Enrolled new ${role}: ${user.email}`, user._id, 'User');
+      await logAction(req.user, 'Personnel Enrollment', `Enrolled new ${role}: ${user.email} (Course: ${user.course})`, user._id, 'User');
 
       // Auto email credentials securely
       await sendWelcomeEmail(user.email, user.name, password, user.role);
@@ -175,6 +178,7 @@ const createUser = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        course: user.course,
       });
     } else {
       res.status(400).json({ message: 'Invalid user data' });
@@ -264,6 +268,7 @@ const updateUser = async (req, res) => {
     if (req.body.name && req.body.name !== user.name) changes.push(`Name: ${user.name} -> ${req.body.name}`);
     if (req.body.email && req.body.email !== user.email) changes.push(`Email: ${user.email} -> ${req.body.email}`);
     if (req.body.role && req.body.role !== user.role) changes.push(`Role: ${user.role} -> ${req.body.role}`);
+    if (req.body.course && req.body.course !== user.course) changes.push(`Course: ${user.course} -> ${req.body.course}`);
 
     const updatedUser = await User.findByIdAndUpdate(
       req.params.id,
@@ -271,6 +276,7 @@ const updateUser = async (req, res) => {
         name: req.body.name || user.name,
         email: req.body.email || user.email,
         role: req.body.role || user.role,
+        course: req.body.course || user.course,
       },
       { new: true }
     ).select('-password');
@@ -385,7 +391,7 @@ const verifyCertificate = async (req, res) => {
     });
 
     const isUnlocked = student.certificateOverride === 'unlocked' ||
-      (student.certificateOverride !== 'locked' && progressPercent >= 100 && finalProjectAccepted);
+      (student.certificateOverride !== 'locked' && (student.course === 'ml' || (progressPercent >= 100 && finalProjectAccepted)));
 
     if (!isUnlocked) {
       return res.json({
@@ -418,8 +424,9 @@ const verifyCertificate = async (req, res) => {
       student: {
         name: student.name,
         email: student.email,
+        course: student.course || 'mern',
       },
-      course: 'Full-Stack MERN Stack Development',
+      course: student.course === 'ml' ? 'Machine Learning Training Program' : 'Full-Stack MERN Stack Development',
       issueDate: issueDate,
       completionDate: issueDate,
       capstoneProject: capstoneProject || null,
@@ -514,6 +521,72 @@ const updateAllCertificateOverrides = async (req, res) => {
   }
 };
 
+// @desc    Bulk create users (Admin only)
+// @route   POST /api/auth/users/bulk
+// @access  Private/Admin
+const bulkCreateUsers = async (req, res) => {
+  const { students } = req.body;
+
+  if (!students || !Array.isArray(students)) {
+    return res.status(400).json({ message: 'Invalid payload: students list required' });
+  }
+
+  const results = {
+    successCount: 0,
+    failCount: 0,
+    created: [],
+    failed: []
+  };
+
+  try {
+    for (const student of students) {
+      const { name, email, password, role, course } = student;
+      const userExists = await User.findOne({ email });
+
+      if (userExists) {
+        results.failCount++;
+        results.failed.push({ email, reason: 'User already exists' });
+        continue;
+      }
+
+      try {
+        const user = await User.create({
+          name,
+          email,
+          password: password || 'wemade123',
+          role: role || 'student',
+          course: course || 'mern'
+        });
+
+        if (user) {
+          results.successCount++;
+          results.created.push({ name: user.name, email: user.email, role: user.role, course: user.course });
+
+          // Audit Log
+          await logAction(req.user, 'Personnel Enrollment', `Bulk enrolled ${user.role}: ${user.email} for course: ${user.course}`, user._id, 'User');
+
+          // Welcome Email
+          try {
+            await sendWelcomeEmail(user.email, user.name, password || 'wemade123', user.role);
+          } catch (emailErr) {
+            console.error('Failed to send bulk welcome email to:', user.email, emailErr);
+          }
+        } else {
+          results.failCount++;
+          results.failed.push({ email, reason: 'Failed to create database record' });
+        }
+      } catch (err) {
+        results.failCount++;
+        results.failed.push({ email, reason: err.message });
+      }
+    }
+
+    res.status(201).json(results);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
@@ -527,4 +600,5 @@ module.exports = {
   verifyCertificate,
   updateCertificateOverride,
   updateAllCertificateOverrides,
+  bulkCreateUsers,
 };

@@ -13,6 +13,7 @@ const {
   verifyCertificate,
   updateCertificateOverride,
   updateAllCertificateOverrides,
+  bulkCreateUsers,
 } = require('../controllers/authController');
 const { protect, admin } = require('../middleware/authMiddleware');
 
@@ -22,6 +23,7 @@ router.get('/profile', protect, getUserProfile);
 router.put('/password', protect, updatePassword);
 router.get('/users', protect, admin, getUsers);
 router.post('/users', protect, admin, createUser);
+router.post('/users/bulk', protect, admin, bulkCreateUsers);
 router.delete('/users/:id', protect, admin, deleteUser);
 router.put('/users/:id/status', protect, admin, updateUserStatus);
 router.put('/users/:id', protect, admin, updateUser);

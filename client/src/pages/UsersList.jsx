@@ -14,7 +14,7 @@ const UsersList = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [newUser, setNewUser] = useState({ name: '', email: '', password: '', role: 'student' });
+  const [newUser, setNewUser] = useState({ name: '', email: '', password: '', role: 'student', course: 'mern' });
   const [editingUser, setEditingUser] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -107,6 +107,7 @@ const UsersList = () => {
     const emailIdx = headers.indexOf('email');
     const passIdx = headers.indexOf('password');
     const roleIdx = headers.indexOf('role');
+    const courseIdx = headers.indexOf('course');
 
     if (nameIdx === -1 || emailIdx === -1) {
       throw new Error("Invalid CSV template. Column headers must contain 'Name' and 'Email'.");
@@ -123,12 +124,14 @@ const UsersList = () => {
       const email = cols[emailIdx] || '';
       const password = passIdx !== -1 ? (cols[passIdx] || 'wemade123') : 'wemade123';
       let role = roleIdx !== -1 ? (cols[roleIdx] || 'student') : 'student';
+      let course = courseIdx !== -1 ? (cols[courseIdx] || 'mern') : 'mern';
 
-      // Normalize role
+      // Normalize role and course
       role = role.toLowerCase().includes('admin') ? 'admin' : 'student';
+      course = course.toLowerCase().includes('ml') ? 'ml' : 'mern';
 
       if (name && email) {
-        result.push({ name, email, password, role });
+        result.push({ name, email, password, role, course });
       }
     }
     return result;
@@ -184,8 +187,6 @@ const UsersList = () => {
     if (excelUsers.length === 0) return;
     setIsImporting(true);
     setImportProgress(0);
-    let successCount = 0;
-    let failCount = 0;
 
     const config = {
       headers: {
@@ -193,31 +194,28 @@ const UsersList = () => {
       },
     };
 
-    for (let i = 0; i < excelUsers.length; i++) {
-      const userToCreate = excelUsers[i];
-      try {
-        await axios.post('/api/auth/users', userToCreate, config);
-        successCount++;
+    try {
+      setImportProgress(25);
+      const response = await axios.post('/api/auth/users/bulk', { students: excelUsers }, config);
+      setImportProgress(100);
 
-        // Dispatch email directly from client-side via EmailJS
-        sendWelcomeEmailJS(userToCreate.email, userToCreate.name, userToCreate.password, userToCreate.role);
-      } catch (err) {
-        console.error('Import failure:', userToCreate.email, err);
-        failCount++;
+      const { successCount, failCount } = response.data;
+
+      setIsImporting(false);
+      setIsExcelModalOpen(false);
+      setExcelUsers([]);
+      setExcelFile(null);
+      fetchUsers();
+
+      if (failCount === 0) {
+        showSnackbar(`Successfully imported ${successCount} personnel records!`, 'success');
+      } else {
+        showSnackbar(`Import complete. ${successCount} imported, ${failCount} skipped due to duplicates or errors.`, 'warning');
       }
-      setImportProgress(Math.round(((i + 1) / excelUsers.length) * 100));
-    }
-
-    setIsImporting(false);
-    setIsExcelModalOpen(false);
-    setExcelUsers([]);
-    setExcelFile(null);
-    fetchUsers();
-
-    if (failCount === 0) {
-      showSnackbar(`Successfully imported ${successCount} personnel records!`, 'success');
-    } else {
-      showSnackbar(`Import complete. ${successCount} imported, ${failCount} skipped due to email duplication.`, 'error');
+    } catch (err) {
+      console.error('Import failure:', err);
+      setIsImporting(false);
+      showSnackbar(err.response?.data?.message || 'Failed to import batch records', 'error');
     }
   };
 
@@ -641,7 +639,7 @@ const UsersList = () => {
       sendWelcomeEmailJS(newUser.email, newUser.name, newUser.password, newUser.role);
 
       setIsAddModalOpen(false);
-      setNewUser({ name: '', email: '', password: '', role: 'student' });
+      setNewUser({ name: '', email: '', password: '', role: 'student', course: 'mern' });
       fetchUsers();
     } catch (err) {
       alert(err.response?.data?.message || 'Failed to create user');
@@ -654,7 +652,8 @@ const UsersList = () => {
     const matchesSearch =
       u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       u.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      u.role.toLowerCase().includes(searchTerm.toLowerCase());
+      u.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (u.course && u.course.toLowerCase().includes(searchTerm.toLowerCase()));
 
     // Hide superadmin from regular admins
     if (currentUser.role === 'admin' && u.role === 'superadmin') return false;
@@ -2175,6 +2174,7 @@ const UsersList = () => {
                                 <th style={{ padding: '8px 12px', color: '#64748b' }}>Name</th>
                                 <th style={{ padding: '8px 12px', color: '#64748b' }}>Email</th>
                                 <th style={{ padding: '8px 12px', color: '#64748b' }}>Role</th>
+                                <th style={{ padding: '8px 12px', color: '#64748b' }}>Course</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -2187,11 +2187,16 @@ const UsersList = () => {
                                       {user.role}
                                     </span>
                                   </td>
+                                  <td style={{ padding: '8px 12px' }}>
+                                    <span style={{ padding: '2px 8px', borderRadius: '6px', fontSize: '0.7rem', fontWeight: 700, background: user.course === 'ml' ? 'rgba(124, 58, 237, 0.08)' : 'rgba(59, 130, 246, 0.08)', color: user.course === 'ml' ? '#7c3aed' : '#3b82f6' }}>
+                                      {user.course === 'ml' ? 'ML' : 'MERN'}
+                                    </span>
+                                  </td>
                                 </tr>
                               ))}
                               {excelUsers.length > 5 && (
                                 <tr>
-                                  <td colSpan="3" style={{ padding: '8px 12px', textAlign: 'center', color: '#94a3b8', background: '#f8fafc' }}>
+                                  <td colSpan="4" style={{ padding: '8px 12px', textAlign: 'center', color: '#94a3b8', background: '#f8fafc' }}>
                                     + {excelUsers.length - 5} more records parsed
                                   </td>
                                 </tr>
@@ -2296,6 +2301,16 @@ const UsersList = () => {
                         <option value="admin">Administrator (Command Level)</option>
                       </select>
                     </div>
+                    <div className="form-group">
+                      <label>Course Track</label>
+                      <select
+                        value={newUser.course || 'mern'}
+                        onChange={(e) => setNewUser({ ...newUser, course: e.target.value })}
+                      >
+                        <option value="mern">MERN Stack Development</option>
+                        <option value="ml">Machine Learning</option>
+                      </select>
+                    </div>
                     <div className="modal-footer">
                       <button type="button" className="btn btn-ghost" onClick={() => setIsAddModalOpen(false)}>Cancel</button>
                       <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
@@ -2345,7 +2360,7 @@ const UsersList = () => {
                               <span className="name">{u.name}</span>
                               {!u.isActive && <span className="status-label">Inactive</span>}
                             </div>
-                            <span className="id">ID: {u._id.slice(-6)}</span>
+                            <span className="id">ID: {u._id.slice(-6)} • {u.course === 'ml' ? 'Machine Learning' : 'MERN Stack'}</span>
                           </div>
                         </div>
                       </td>
@@ -2494,6 +2509,16 @@ const UsersList = () => {
                   >
                     <option value="student">Student</option>
                     <option value="admin">Administrator</option>
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>Course Track</label>
+                  <select
+                    value={editingUser.course || 'mern'}
+                    onChange={(e) => setEditingUser({ ...editingUser, course: e.target.value })}
+                  >
+                    <option value="mern">MERN Stack Development</option>
+                    <option value="ml">Machine Learning</option>
                   </select>
                 </div>
                 <div className="modal-footer">

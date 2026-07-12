@@ -54,24 +54,24 @@ const Profile = () => {
     // Create UTC midnight for today
     const todayUTC = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
     const currentDayOfWeek = todayUTC.getUTCDay();
-    
+
     const startDate = new Date(todayUTC.getTime());
     startDate.setUTCDate(todayUTC.getUTCDate() - 14 * 7 - currentDayOfWeek);
-    
+
     const tempDate = new Date(startDate.getTime());
     // Generate up to today
     while (tempDate <= todayUTC) {
       days.push(new Date(tempDate.getTime()));
       tempDate.setUTCDate(tempDate.getUTCDate() + 1);
     }
-    
+
     // Pad to complete the final week's row
     while (days.length % 7 !== 0) {
       const nextDay = new Date(days[days.length - 1].getTime());
       nextDay.setUTCDate(nextDay.getUTCDate() + 1);
       days.push(nextDay);
     }
-    
+
     return days;
   };
 
@@ -80,12 +80,16 @@ const Profile = () => {
 
     const fetchData = async () => {
       try {
+        let isMLStudent = user.course === 'ml';
         // Fetch latest profile status (override, certificateId)
         try {
           const profileRes = await axios.get('/api/auth/profile', {
             headers: { 'Authorization': `Bearer ${user.token}` }
           });
           setLatestProfile(profileRes.data);
+          if (profileRes.data && profileRes.data.course) {
+            isMLStudent = profileRes.data.course === 'ml';
+          }
         } catch (err) {
           console.error('Failed to fetch latest profile info:', err);
         }
@@ -97,7 +101,7 @@ const Profile = () => {
           if (Array.isArray(response.data)) {
             setAllAssignments(response.data);
           }
-        } else {
+        } else if (!isMLStudent) {
           const response = await axios.get('/api/assignments/my', {
             headers: { 'Authorization': `Bearer ${user.token}` }
           });
@@ -118,6 +122,8 @@ const Profile = () => {
           } finally {
             setAttendanceLoading(false);
           }
+        } else {
+          setAttendanceLoading(false);
         }
         setLoading(false);
       } catch (e) {
@@ -147,7 +153,8 @@ const Profile = () => {
 
     // Preload background template image
     const img = new Image();
-    img.src = '/Certificate_template_enhanced.png';
+    const isML = user?.course === 'ml' || latestProfile?.course === 'ml';
+    img.src = isML ? '/Wemade-ML-Certificate1.png' : '/Certificate_template_enhanced.png';
     img.onload = () => {
       setImageLoaded(true);
     };
@@ -165,7 +172,8 @@ const Profile = () => {
 
   const handleDownloadImage = () => {
     const img = new Image();
-    img.src = '/Certificate_template_enhanced.png';
+    const isML = user?.course === 'ml' || latestProfile?.course === 'ml';
+    img.src = isML ? '/Wemade-ML-Certificate1.png' : '/Certificate_template_enhanced.png';
     img.crossOrigin = 'anonymous';
     img.onload = () => {
       const canvas = document.createElement('canvas');
@@ -177,67 +185,92 @@ const Profile = () => {
 
       const nameX = canvas.width * 0.5;
       const nameY = canvas.height * 0.455;
-      const fontSize = Math.round(canvas.width * 0.038);
-      ctx.font = `bold ${fontSize}px "Georgia", "Times New Roman", serif`;
+      const baseFontSize = Math.round(canvas.width * 0.038);
+      const studentName = user?.name || '';
+      const nameFontSize = studentName.length > 20
+        ? Math.max(Math.round(baseFontSize * (20 / studentName.length)), Math.round(canvas.width * 0.022))
+        : baseFontSize;
+      ctx.font = `bold ${nameFontSize}px "Georgia", "Times New Roman", serif`;
       ctx.fillStyle = '#1a1a1a';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(user?.name || '', nameX, nameY);
+      ctx.fillText(studentName, nameX, nameY);
 
-      const svgEl = document.getElementById('certificate-qr-svg');
-      if (svgEl) {
-        const svgString = new XMLSerializer().serializeToString(svgEl);
-        const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
-        const URL = window.URL || window.webkitURL || window;
-        const blobURL = URL.createObjectURL(svgBlob);
-        const qrImg = new Image();
-        qrImg.src = blobURL;
-        qrImg.onload = () => {
-          const qrWidthPercent = 0.0737;
-          const qrHeightPercent = 0.1044;
-          const qrWidth = canvas.width * qrWidthPercent;
-          const qrHeight = canvas.height * qrHeightPercent;
-          const qrX = canvas.width * 0.8536 - qrWidth / 2;
-          const qrY = canvas.height * 0.7434 - qrHeight / 2;
+      // Preload Trainer Signature
+      const signImg = new Image();
+      signImg.src = '/sign.png';
+      signImg.crossOrigin = 'anonymous';
+      signImg.onload = () => {
+        const svgEl = document.getElementById('certificate-qr-svg');
+        if (svgEl) {
+          const svgString = new XMLSerializer().serializeToString(svgEl);
+          const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+          const URL = window.URL || window.webkitURL || window;
+          const blobURL = URL.createObjectURL(svgBlob);
+          const qrImg = new Image();
+          qrImg.src = blobURL;
+          qrImg.onload = () => {
+            // Draw signature
+            const signWidth = canvas.width * 0.100;
+            const signHeight = canvas.height * 0.093;
+            const signX = canvas.width * 0.055;
+            const signY = canvas.height * 0.785;
+            ctx.drawImage(signImg, signX, signY, signWidth, signHeight);
 
-          ctx.drawImage(qrImg, qrX, qrY, qrWidth, qrHeight);
+            // Draw Trainer Signature Title
+            const signTitleFontSize = Math.round(canvas.width * 0.009);
+            ctx.font = `bold ${signTitleFontSize}px "Inter", -apple-system, sans-serif`;
+            ctx.fillStyle = '#235cbe';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText("Trainer Signature", canvas.width * 0.105, canvas.height * 0.925);
 
-          // Draw certificate details (Duration, Mode, Date, ID) on the high-res download canvas
-          const detailsFontSize = Math.round(canvas.width * 0.013);
-          ctx.fillStyle = '#1a1a1a';
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          
-          // Draw Duration
-          ctx.font = `bold ${detailsFontSize}px "Inter", -apple-system, sans-serif`;
-          ctx.fillText("45 Days", canvas.width * 0.1230, canvas.height * 0.785);
+            // Draw QR code
+            const qrWidthPercent = 0.0737;
+            const qrHeightPercent = 0.1044;
+            const qrWidth = canvas.width * qrWidthPercent;
+            const qrHeight = canvas.height * qrHeightPercent;
+            const qrX = canvas.width * 0.8536 - qrWidth / 2;
+            const qrY = canvas.height * 0.7434 - qrHeight / 2;
 
-          // Draw Mode
-          ctx.font = `bold ${detailsFontSize}px "Inter", -apple-system, sans-serif`;
-          ctx.fillText("Online", canvas.width * 0.3040, canvas.height * 0.785);
-          
-          // Draw Date of Issue
-          ctx.font = `bold ${detailsFontSize}px "Inter", -apple-system, sans-serif`;
-          const issueDateStr = latestProfile?.certificateIssueDate 
-            ? new Date(latestProfile.certificateIssueDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) 
-            : new Date(user?.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-          ctx.fillText(issueDateStr, canvas.width * 0.4836, canvas.height * 0.785);
+            ctx.drawImage(qrImg, qrX, qrY, qrWidth, qrHeight);
 
-          // Draw Certificate ID (Slightly smaller than other details, shifted to the right)
-          const idFontSize = Math.round(canvas.width * 0.0115);
-          ctx.font = `bold ${idFontSize}px "Inter", -apple-system, sans-serif`;
-          ctx.fillText(certificateId, canvas.width * 0.6850, canvas.height * 0.785);
+            // Draw certificate details (Duration, Mode, Date, ID) on the high-res download canvas
+            const detailsFontSize = Math.round(canvas.width * 0.011);
+            ctx.fillStyle = '#1a1a1a';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
 
-          const formattedName = (user?.name || 'student').trim().replace(/\s+/g, '_').toLowerCase();
-          const dataUrl = canvas.toDataURL('image/png');
-          const link = document.createElement('a');
-          link.download = `${formattedName}_wemade_mernstack_certificate.png`;
-          link.href = dataUrl;
-          link.click();
-          
-          URL.revokeObjectURL(blobURL);
-        };
-      }
+            // Draw Duration
+            ctx.font = `bold ${detailsFontSize}px "Inter", -apple-system, sans-serif`;
+            ctx.fillText("45 Days", canvas.width * 0.1230, canvas.height * 0.785);
+
+            // Draw Mode
+            ctx.font = `bold ${detailsFontSize}px "Inter", -apple-system, sans-serif`;
+            ctx.fillText("Online", canvas.width * 0.3040, canvas.height * 0.785);
+
+            // Draw Date of Issue
+            ctx.font = `bold ${detailsFontSize}px "Inter", -apple-system, sans-serif`;
+            const issueDateStr = latestProfile?.certificateIssueDate
+              ? new Date(latestProfile.certificateIssueDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+              : new Date(user?.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+            ctx.fillText(issueDateStr, canvas.width * 0.4836, canvas.height * 0.785);
+
+            // Draw Certificate ID
+            ctx.font = `bold ${detailsFontSize}px "Inter", -apple-system, sans-serif`;
+            ctx.fillText(certificateId, canvas.width * 0.6800, canvas.height * 0.785);
+
+            const formattedName = (user?.name || 'student').trim().replace(/\s+/g, '_').toLowerCase();
+            const dataUrl = canvas.toDataURL('image/png');
+            const link = document.createElement('a');
+            link.download = `${formattedName}_wemade_mernstack_certificate.png`;
+            link.href = dataUrl;
+            link.click();
+
+            URL.revokeObjectURL(blobURL);
+          };
+        }
+      };
     };
   };
 
@@ -245,7 +278,7 @@ const Profile = () => {
   const studentSubmissions = userAssignments || [];
   const submittedCount = studentSubmissions.length;
   const acceptedCount = studentSubmissions.filter(a => a.status === 'accepted').length;
-  
+
   // Total Days in Course
   const totalCourseDays = courseData.reduce((acc, w) => acc + w.days.length, 0);
   const progressPercent = Math.min(Math.round((acceptedCount / totalCourseDays) * 100), 100);
@@ -257,15 +290,15 @@ const Profile = () => {
       const wNum = parseInt(w.weekId.replace('w', ''), 10);
       return !isNaN(wNum) && weekNums.includes(wNum);
     }).flatMap(w => w.days);
-    
+
     if (targetDays.length === 0) return 0;
-    
+
     let completedDays = 0;
     targetDays.forEach(d => {
       const hasAccepted = studentSubmissions.some(a => a.status === 'accepted' && d.topics.some(t => t.id === a.topicId));
       if (hasAccepted) completedDays++;
     });
-    
+
     return Math.round((completedDays / targetDays.length) * 100);
   };
 
@@ -322,11 +355,11 @@ const Profile = () => {
   const gradedAssignments = allAssignments.filter(a => a.status !== 'pending');
   const pendingReviewsCount = allAssignments.filter(a => a.status === 'pending').length;
   const activeStudentsCount = new Set(allAssignments.map(a => a.student?._id || a.student?.email)).size;
-  const approvalRate = gradedAssignments.length > 0 
-    ? Math.round((gradedAssignments.filter(a => a.status === 'accepted').length / gradedAssignments.length) * 100) 
+  const approvalRate = gradedAssignments.length > 0
+    ? Math.round((gradedAssignments.filter(a => a.status === 'accepted').length / gradedAssignments.length) * 100)
     : 0;
-  const gradingProgress = allAssignments.length > 0 
-    ? Math.round((gradedAssignments.length / allAssignments.length) * 100) 
+  const gradingProgress = allAssignments.length > 0
+    ? Math.round((gradedAssignments.length / allAssignments.length) * 100)
     : 100;
 
   const recentSubmissions = [...allAssignments]
@@ -337,7 +370,8 @@ const Profile = () => {
   const override = latestProfile?.certificateOverride;
   const finalProjectSubmitted = studentSubmissions?.find(a => a.topicId === 'final-project-topic');
   const finalProjectAccepted = finalProjectSubmitted?.status === 'accepted';
-  const isUnlocked = override === 'unlocked' || (override !== 'locked' && progressPercent >= 100 && finalProjectAccepted) || previewMode;
+  const isML = user?.course === 'ml' || latestProfile?.course === 'ml';
+  const isUnlocked = override === 'unlocked' || (override !== 'locked' && (isML || (progressPercent >= 100 && finalProjectAccepted))) || previewMode;
   const certificateId = latestProfile?.certificateId || `WM-${user?._id}-invalid`;
 
   return (
@@ -395,7 +429,7 @@ const Profile = () => {
                   <div className="detail-label">Member Since</div>
                   <div className="detail-value">May 2026</div>
                 </div>
-                
+
                 {isAdmin ? (
                   <div style={{ marginTop: '24px', borderTop: '1px solid var(--light-tertiary)', paddingTop: '20px' }}>
                     <h3 style={{ fontSize: '0.95rem', fontWeight: '750', marginBottom: '12px', color: 'var(--text-primary)' }}>Grading Workload</h3>
@@ -413,7 +447,7 @@ const Profile = () => {
                       <span>Total Queue: <strong>{allAssignments.length}</strong></span>
                     </div>
                   </div>
-                ) : (
+                ) : isML ? null : (
                   <div style={{ marginTop: '24px', borderTop: '1px solid var(--light-tertiary)', paddingTop: '20px' }}>
                     <h3 style={{ fontSize: '0.95rem', fontWeight: '750', marginBottom: '12px', color: 'var(--text-primary)' }}>Syllabus Completion</h3>
                     <div className="progress-item" style={{ marginBottom: '8px' }}>
@@ -471,24 +505,24 @@ const Profile = () => {
             </div>
 
             {/* Attendance Analytics & Heatmap Section */}
-            {!isAdmin && !attendanceLoading && attendanceStats && (
+            {!isAdmin && !isML && !attendanceLoading && attendanceStats && (
               <div className="profile-section-card attendance-analytics-card" style={{ gridColumn: 'span 2', marginTop: '24px' }}>
                 <div className="attendance-header">
                   <h2 style={{ margin: 0 }}>Attendance Analytics & Streaks</h2>
                   <div className="hover-tooltip-display">
                     {hoveredCell ? (
                       <span className="tooltip-text fade-in">
-                        {hoveredCell.dateLabel} • <strong style={{ 
-                          color: hoveredCell.status === 'live' || hoveredCell.status === 'attended' ? '#10b981' : 
-                                 hoveredCell.status === 'recording' ? '#0ea5e9' : 
-                                 hoveredCell.status === 'missed' ? '#ef4444' : 
-                                 hoveredCell.status === 'cancelled' ? '#d97706' : 'var(--text-neutral)' 
+                        {hoveredCell.dateLabel} • <strong style={{
+                          color: hoveredCell.status === 'live' || hoveredCell.status === 'attended' ? '#10b981' :
+                            hoveredCell.status === 'recording' ? '#0ea5e9' :
+                              hoveredCell.status === 'missed' ? '#ef4444' :
+                                hoveredCell.status === 'cancelled' ? '#d97706' : 'var(--text-neutral)'
                         }}>
-                          {hoveredCell.status === 'live' ? 'Attended (Live)' : 
-                           hoveredCell.status === 'recording' ? 'Attended (Recording)' : 
-                           hoveredCell.status === 'attended' ? 'Attended' : 
-                           hoveredCell.status === 'missed' ? 'Missed' : 
-                           hoveredCell.status === 'cancelled' ? `Cancelled: ${hoveredCell.reason || 'Cancelled'}` : 'No Class'}
+                          {hoveredCell.status === 'live' ? 'Attended (Live)' :
+                            hoveredCell.status === 'recording' ? 'Attended (Recording)' :
+                              hoveredCell.status === 'attended' ? 'Attended' :
+                                hoveredCell.status === 'missed' ? 'Missed' :
+                                  hoveredCell.status === 'cancelled' ? `Cancelled: ${hoveredCell.reason || 'Cancelled'}` : 'No Class'}
                         </strong>
                       </span>
                     ) : (
@@ -498,15 +532,15 @@ const Profile = () => {
                 </div>
 
                 {/* Stat Grid */}
-                 <div className="attendance-stats-grid">
+                <div className="attendance-stats-grid">
                   {/* Attendance Rate (Circular SVG) */}
                   <div className="att-stat-item rate-stat-card">
                     <div className="radial-progress-container">
                       <svg width="56" height="56" viewBox="0 0 44 44" className="circular-progress">
                         <circle cx="22" cy="22" r="18" fill="none" stroke="var(--light-tertiary)" strokeWidth="3" />
-                        <circle cx="22" cy="22" r="18" fill="none" stroke="url(#progressGrad)" strokeWidth="3" 
-                                strokeDasharray="113" strokeDashoffset={113 - (113 * attendanceStats.attendancePercentage) / 100}
-                                strokeLinecap="round" transform="rotate(-90 22 22)" />
+                        <circle cx="22" cy="22" r="18" fill="none" stroke="url(#progressGrad)" strokeWidth="3"
+                          strokeDasharray="113" strokeDashoffset={113 - (113 * attendanceStats.attendancePercentage) / 100}
+                          strokeLinecap="round" transform="rotate(-90 22 22)" />
                         <defs>
                           <linearGradient id="progressGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                             <stop offset="0%" stopColor="#0ea5e9" />
@@ -519,12 +553,11 @@ const Profile = () => {
                     <div className="att-stat-details">
                       <h3>Rate</h3>
                       <p>{attendanceStats.attendedCount} / {attendanceStats.totalSessions} Present</p>
-                      <span className={`att-badge ${
-                        attendanceStats.attendancePercentage >= 90 ? 'badge-excellent' : 
+                      <span className={`att-badge ${attendanceStats.attendancePercentage >= 90 ? 'badge-excellent' :
                         attendanceStats.attendancePercentage >= 75 ? 'badge-warning' : 'badge-danger'
-                      }`}>
-                        {attendanceStats.attendancePercentage >= 90 ? 'Excellent' : 
-                         attendanceStats.attendancePercentage >= 75 ? 'On Track' : 'Low Attendance'}
+                        }`}>
+                        {attendanceStats.attendancePercentage >= 90 ? 'Excellent' :
+                          attendanceStats.attendancePercentage >= 75 ? 'On Track' : 'Low Attendance'}
                       </span>
                     </div>
                   </div>
@@ -587,7 +620,7 @@ const Profile = () => {
                     <h3 style={{ fontSize: '1rem', fontWeight: '750', margin: '0 0 4px 0', color: 'var(--text-primary)' }}>Attendance Heatmap</h3>
                     <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-neutral)' }}>Interactive calendar tracking your attendance over the past 15 weeks.</p>
                   </div>
-                  
+
                   {/* Heatmap Filters */}
                   <div className="heatmap-filters">
                     <div className="filter-group">
@@ -631,7 +664,7 @@ const Profile = () => {
                         const dd = String(day.getUTCDate()).padStart(2, '0');
                         const dateStr = `${yyyy}-${mm}-${dd}`;
                         const status = attendanceStats.heatmapData[dateStr] || 'none';
-                        
+
                         const today = new Date();
                         const todayUTC = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
                         const isFuture = day.getTime() > todayUTC.getTime();
@@ -640,7 +673,7 @@ const Profile = () => {
                         // Apply Filters
                         const diffTime = Math.abs(todayUTC.getTime() - day.getTime());
                         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                        
+
                         let isFilteredByTime = false;
                         if (timeRange === '30' && diffDays > 30) isFilteredByTime = true;
                         if (timeRange === '60' && diffDays > 60) isFilteredByTime = true;
@@ -662,13 +695,12 @@ const Profile = () => {
                             }}
                             onMouseEnter={() => setHoveredCell({ dateLabel, status, reason: attendanceStats.cancelledReasons?.[dateStr] || '' })}
                             onMouseLeave={() => setHoveredCell(null)}
-                            title={`${dateLabel}: ${
-                              status === 'live' ? 'Attended (Live)' : 
-                              status === 'recording' ? 'Attended (Recording)' : 
-                              status === 'attended' ? 'Attended' : 
-                              status === 'missed' ? 'Missed' : 
-                              status === 'cancelled' ? `Cancelled: ${attendanceStats.cancelledReasons?.[dateStr] || 'Cancelled'}` : 'No Class'
-                            }`}
+                            title={`${dateLabel}: ${status === 'live' ? 'Attended (Live)' :
+                              status === 'recording' ? 'Attended (Recording)' :
+                                status === 'attended' ? 'Attended' :
+                                  status === 'missed' ? 'Missed' :
+                                    status === 'cancelled' ? `Cancelled: ${attendanceStats.cancelledReasons?.[dateStr] || 'Cancelled'}` : 'No Class'
+                              }`}
                           />
                         );
                       })}
@@ -698,29 +730,29 @@ const Profile = () => {
 
             {/* Certificate Status Section */}
             {!isAdmin && (
-              <div 
-                className="profile-section-card" 
-                style={{ 
-                  marginTop: '24px', 
-                  gridColumn: 'span 2', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center', 
-                  minHeight: '180px', 
-                  border: isUnlocked ? '1px solid rgba(217, 119, 6, 0.25)' : '1px dashed var(--light-tertiary)', 
-                  background: isUnlocked ? 'rgba(217, 119, 6, 0.04)' : 'var(--light-secondary)', 
-                  textAlign: 'center', 
-                  flexDirection: 'column', 
+              <div
+                className="profile-section-card"
+                style={{
+                  marginTop: '24px',
+                  gridColumn: 'span 2',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  minHeight: '180px',
+                  border: isUnlocked ? '1px solid rgba(217, 119, 6, 0.25)' : '1px dashed var(--light-tertiary)',
+                  background: isUnlocked ? 'rgba(217, 119, 6, 0.04)' : 'var(--light-secondary)',
+                  textAlign: 'center',
+                  flexDirection: 'column',
                   gap: '12px',
                   borderRadius: '16px',
                   padding: '24px',
                   position: 'relative',
                 }}
               >
-                <div style={{ 
-                  padding: '16px', 
-                  background: 'white', 
-                  borderRadius: '50%', 
+                <div style={{
+                  padding: '16px',
+                  background: 'white',
+                  borderRadius: '50%',
                   boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
                   display: 'flex',
                   alignItems: 'center',
@@ -735,9 +767,9 @@ const Profile = () => {
                     {isUnlocked ? 'Official WeMade Certification Unlocked!' : 'Certificate of Completion'}
                   </h3>
                   <p style={{ margin: '0 0 12px 0', fontSize: '0.85rem', color: 'var(--text-neutral)' }}>
-                    {isUnlocked 
+                    {isUnlocked
                       ? 'Congratulations! You have completed all syllabus requirements. Your official WeMade Logix certificate is now active.'
-                      : 'Complete all course modules to unlock your official MERN Stack Certification.'
+                      : `Complete all course modules to unlock your official ${isML ? 'Machine Learning' : 'MERN Stack'} Certification.`
                     }
                   </p>
                   {isUnlocked ? (
@@ -761,24 +793,26 @@ const Profile = () => {
                     </button>
                   ) : (
                     <span style={{ fontSize: '0.75rem', color: 'var(--text-neutral)', fontStyle: 'italic' }}>
-                      Progress: {progressPercent}% (Requires 100%)
+                      {isML 
+                        ? 'Requires unlock authorization'
+                        : `Progress: ${progressPercent}% (Requires 100%)`}
                     </span>
                   )}
                 </div>
 
                 {/* Developer / Instructor Preview Toggle */}
-                <div className="no-print" style={{ 
-                  position: 'absolute', 
-                  bottom: '12px', 
-                  right: '16px', 
-                  display: 'flex', 
-                  alignItems: 'center', 
+                <div className="no-print" style={{
+                  position: 'absolute',
+                  bottom: '12px',
+                  right: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
                   gap: '6px',
-                  opacity: 0.7 
+                  opacity: 0.7
                 }}>
-                  <input 
-                    type="checkbox" 
-                    id="preview-cert-toggle" 
+                  <input
+                    type="checkbox"
+                    id="preview-cert-toggle"
                     checked={previewMode}
                     onChange={(e) => setPreviewMode(e.target.checked)}
                     style={{ cursor: 'pointer' }}
@@ -793,10 +827,10 @@ const Profile = () => {
 
             {/* Certificate Modal */}
             {isCertificateOpen && (
-              <div 
-                className="admin-modal-overlay no-print" 
+              <div
+                className="admin-modal-overlay no-print"
                 onClick={() => setIsCertificateOpen(false)}
-                style={{ 
+                style={{
                   position: 'fixed',
                   top: 0,
                   left: 0,
@@ -807,11 +841,11 @@ const Profile = () => {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  zIndex: 2000 
+                  zIndex: 2000
                 }}
               >
-                <div 
-                  className="certificate-modal-content" 
+                <div
+                  className="certificate-modal-content"
                   onClick={(e) => e.stopPropagation()}
                   style={{
                     background: '#111827',
@@ -891,11 +925,11 @@ const Profile = () => {
                           {generationSteps[generationStep].percent}%
                         </span>
                       </div>
-                      
+
                       <h3 style={{ fontSize: '1.25rem', fontWeight: '800', marginBottom: '8px', color: '#ffffff' }}>
                         Generating Verified Certificate
                       </h3>
-                      
+
                       <p style={{
                         fontSize: '0.9rem',
                         color: '#94a3b8',
@@ -931,7 +965,7 @@ const Profile = () => {
                           position: 'relative',
                           width: '1000px',
                           height: '707px',
-                          backgroundImage: 'url(/Certificate_template_enhanced.png)',
+                          backgroundImage: `url(${isML ? '/Wemade-ML-Certificate1.png' : '/Certificate_template_enhanced.png'})`,
                           backgroundSize: 'contain',
                           backgroundRepeat: 'no-repeat',
                           backgroundPosition: 'center',
@@ -947,13 +981,18 @@ const Profile = () => {
                             top: '45.5%',
                             left: '50%',
                             transform: 'translate(-50%, -50%)',
-                            fontSize: '2.5rem',
+                            fontSize: user?.name && user.name.length > 20
+                              ? `${Math.max(2.5 * (20 / user.name.length), 1.55)}rem`
+                              : '2.5rem',
                             fontFamily: '"Georgia", "Times New Roman", serif',
                             fontWeight: 'bold',
                             color: '#1a1a1a',
                             textAlign: 'center',
                             width: '80%',
                             letterSpacing: '1px',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
                           }}>
                             {user?.name}
                           </div>
@@ -962,9 +1001,9 @@ const Profile = () => {
                           <div style={{
                             position: 'absolute',
                             top: '78.5%',
-                            left: '12.30%',
+                            left: '14.30%',
                             transform: 'translateX(-50%)',
-                            fontSize: '0.85rem',
+                            fontSize: '0.74rem',
                             fontWeight: 'bold',
                             color: '#1a1a1a',
                             fontFamily: '"Inter", sans-serif',
@@ -978,9 +1017,9 @@ const Profile = () => {
                           <div style={{
                             position: 'absolute',
                             top: '78.5%',
-                            left: '30.40%',
+                            left: '34.40%',
                             transform: 'translateX(-50%)',
-                            fontSize: '0.85rem',
+                            fontSize: '0.74rem',
                             fontWeight: 'bold',
                             color: '#1a1a1a',
                             fontFamily: '"Inter", sans-serif',
@@ -994,17 +1033,17 @@ const Profile = () => {
                           <div style={{
                             position: 'absolute',
                             top: '78.5%',
-                            left: '48.36%',
+                            left: '50.36%',
                             transform: 'translateX(-50%)',
-                            fontSize: '0.85rem',
+                            fontSize: '0.74rem',
                             fontWeight: 'bold',
                             color: '#1a1a1a',
                             fontFamily: '"Inter", sans-serif',
                             textAlign: 'center',
                             whiteSpace: 'nowrap',
                           }}>
-                            {latestProfile?.certificateIssueDate 
-                              ? new Date(latestProfile.certificateIssueDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) 
+                            {latestProfile?.certificateIssueDate
+                              ? new Date(latestProfile.certificateIssueDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
                               : new Date(user?.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                           </div>
 
@@ -1012,14 +1051,14 @@ const Profile = () => {
                           <div style={{
                             position: 'absolute',
                             top: '78.5%',
-                            left: '68.50%',
+                            left: '70.0%',
                             transform: 'translateX(-50%)',
-                            fontSize: '0.78rem',
+                            fontSize: '0.74rem',
                             fontWeight: 'bold',
                             color: '#1a1a1a',
                             fontFamily: '"Inter", sans-serif',
                             textAlign: 'center',
-                            maxWidth: '180px',
+                            width: '180px',
                             wordBreak: 'break-all'
                           }}>
                             {certificateId}
@@ -1029,7 +1068,7 @@ const Profile = () => {
                           <div style={{
                             position: 'absolute',
                             top: '69.12%',
-                            left: '81.67%',
+                            left: '81.73%',
                             width: '7.37%',
                             height: '10.44%',
                             display: 'flex',
@@ -1039,11 +1078,43 @@ const Profile = () => {
                             <QRCodeSVG
                               id="certificate-qr-svg"
                               value={`${window.location.origin}/verify-certificate/${certificateId}`}
-                              size={74}
+                              size={80}
                               bgColor={"#ffffff"}
-                              fgColor={"#000000"}
+                              fgColor={"#2244a0ff"}
                               level={"H"}
                             />
+                          </div>
+
+                          {/* Trainer Signature */}
+                          <img
+                            src="/sign.png"
+                            alt="Trainer Signature"
+                            style={{
+                              position: 'absolute',
+                              top: '83.5%',
+                              left: '5.5%',
+                              width: '10.0%',
+                              height: '9.3%',
+                              objectFit: 'contain',
+                              pointerEvents: 'none'
+                            }}
+                          />
+
+                          {/* Trainer Signature Title */}
+                          <div style={{
+                            position: 'absolute',
+                            top: '91.0%',
+                            left: '10.5%',
+                            transform: 'translateX(-50%)',
+                            fontSize: '0.62rem',
+                            fontWeight: 700,
+                            color: '#235cbeff',
+                            fontFamily: '"Inter", sans-serif',
+                            textAlign: 'center',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.5px',
+                          }}>
+                            Trainer Signature
                           </div>
                         </div>
                       </div>
@@ -1093,7 +1164,8 @@ const Profile = () => {
           </div>
         )}
 
-        <style dangerouslySetInnerHTML={{ __html: `
+        <style dangerouslySetInnerHTML={{
+          __html: `
           @media print {
             @page {
               size: landscape;
@@ -1112,7 +1184,7 @@ const Profile = () => {
               transform: translate(-50%, -50%) !important;
               width: 1000px !important;
               height: 707px !important;
-              background-image: url(/Certificate_template_enhanced.png) !important;
+              background-image: url(${(user?.course === 'ml' || latestProfile?.course === 'ml') ? '/Wemade-ML-Certificate1.png' : '/Certificate_template_enhanced.png'}) !important;
               background-size: contain !important;
               background-repeat: no-repeat !important;
               background-position: center !important;

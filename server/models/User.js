@@ -20,6 +20,11 @@ const userSchema = new mongoose.Schema({
     enum: ['student', 'admin', 'superadmin'],
     default: 'student',
   },
+  course: {
+    type: String,
+    enum: ['mern', 'ml'],
+    default: 'mern',
+  },
   isActive: {
     type: Boolean,
     default: true,
