@@ -329,16 +329,12 @@ const verifyCertificate = async (req, res) => {
       return res.status(400).json({ message: 'Invalid Certificate Format', isValid: false });
     }
 
-    const parts = certId.split('-');
+    const payload = certId.substring(3); // Remove 'WM-' prefix
     let studentId;
 
-    if (parts.length === 2) {
+    if (payload.length === 9) {
       // 12-character format: WM-shortId (e.g. WM-aIOF8WiVj)
-      const encodedId = parts[1];
-      if (encodedId.length !== 9) {
-        return res.status(400).json({ message: 'Invalid Certificate Format', isValid: false });
-      }
-
+      const encodedId = payload;
       try {
         const hexPrefix = Buffer.from(encodedId, 'base64url').toString('hex').substring(0, 12);
         const minId = new mongoose.Types.ObjectId(hexPrefix + '000000000000');
@@ -351,8 +347,15 @@ const verifyCertificate = async (req, res) => {
       } catch (e) {
         return res.status(400).json({ message: 'Invalid Certificate Format', isValid: false });
       }
-    } else if (parts.length === 3) {
-      const [prefix, encodedId, signature] = parts;
+    } else {
+      // Signature format: WM-studentId-signature
+      const lastHyphenIndex = payload.lastIndexOf('-');
+      if (lastHyphenIndex === -1) {
+        return res.status(400).json({ message: 'Invalid Certificate Format', isValid: false });
+      }
+
+      const encodedId = payload.substring(0, lastHyphenIndex);
+      const signature = payload.substring(lastHyphenIndex + 1);
       let expectedSignature;
 
       if (encodedId.length === 24) {
@@ -382,8 +385,6 @@ const verifyCertificate = async (req, res) => {
       if (signature !== expectedSignature) {
         return res.status(400).json({ message: 'Certificate Signature Invalid', isValid: false });
       }
-    } else {
-      return res.status(400).json({ message: 'Invalid Certificate Format', isValid: false });
     }
 
     const student = await User.findById(studentId);
