@@ -68,7 +68,23 @@ const getMyAssignedProject = async (req, res) => {
       const studentId = req.query.studentId;
       if (studentId) {
         const project = await CapstonePool.findOne({ assignedTo: studentId }).populate('assignedTo', 'name email');
-        return res.status(200).json({ success: true, project });
+        
+        // Find final project submission for this student
+        const Assignment = require('../models/Assignment');
+        const sub = await Assignment.findOne({ student: studentId, topicId: 'final-project-topic' }).lean();
+        
+        const projectObj = project ? project.toObject() : null;
+        if (projectObj) {
+          projectObj.submission = sub ? {
+            _id: sub._id,
+            status: sub.status,
+            code: sub.code,
+            feedback: sub.feedback || '',
+            submittedAt: sub.submittedAt
+          } : null;
+        }
+
+        return res.status(200).json({ success: true, project: projectObj });
       }
       const project = await CapstonePool.findOne({ projectCode: 'FP-00' });
       return res.status(200).json({ success: true, project });

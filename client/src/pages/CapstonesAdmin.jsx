@@ -106,7 +106,10 @@ const CapstonesAdmin = () => {
           ...data.project,
           assignedTo: (data.project.assignedTo && typeof data.project.assignedTo === 'object') 
             ? data.project.assignedTo 
-            : project.assignedTo
+            : project.assignedTo,
+          submission: data.project.submission !== undefined
+            ? data.project.submission
+            : project.submission
         };
         setSelectedProject(updatedProject);
         setProjects(prevList => 
