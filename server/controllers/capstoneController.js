@@ -67,7 +67,7 @@ const getMyAssignedProject = async (req, res) => {
     if (req.user.role === 'admin' || req.user.role === 'superadmin') {
       const studentId = req.query.studentId;
       if (studentId) {
-        const project = await CapstonePool.findOne({ assignedTo: studentId });
+        const project = await CapstonePool.findOne({ assignedTo: studentId }).populate('assignedTo', 'name email');
         return res.status(200).json({ success: true, project });
       }
       const project = await CapstonePool.findOne({ projectCode: 'FP-00' });

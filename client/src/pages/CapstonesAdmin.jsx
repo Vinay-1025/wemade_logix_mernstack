@@ -102,9 +102,15 @@ const CapstonesAdmin = () => {
       const config = { headers: { Authorization: `Bearer ${currentUser.token}` } };
       const { data } = await axios.get(`/api/capstone/my?studentId=${project.assignedTo._id}`, config);
       if (data?.success && data.project) {
-        setSelectedProject(data.project);
-        setCapstoneList(prevList => 
-          prevList.map(item => item._id === data.project._id ? data.project : item)
+        const updatedProject = {
+          ...data.project,
+          assignedTo: (data.project.assignedTo && typeof data.project.assignedTo === 'object') 
+            ? data.project.assignedTo 
+            : project.assignedTo
+        };
+        setSelectedProject(updatedProject);
+        setProjects(prevList => 
+          prevList.map(item => item._id === updatedProject._id ? updatedProject : item)
         );
       }
     } catch (e) {
