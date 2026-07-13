@@ -212,9 +212,9 @@ const Profile = () => {
           qrImg.src = blobURL;
           qrImg.onload = () => {
             // Draw signature
-            const signWidth = isML ? canvas.width * 0.130 : canvas.width * 0.100;
-            const signHeight = isML ? canvas.height * 0.065 : canvas.height * 0.093;
-            const signX = isML ? canvas.width * 0.045 : canvas.width * 0.055;
+            const signWidth = canvas.width * 0.130;
+            const signHeight = canvas.height * 0.065;
+            const signX = canvas.width * 0.045;
             const signY = canvas.height * 0.835;
             ctx.drawImage(signImg, signX, signY, signWidth, signHeight);
 
@@ -231,8 +231,12 @@ const Profile = () => {
             const qrHeightPercent = 0.1044;
             const qrWidth = canvas.width * qrWidthPercent;
             const qrHeight = canvas.height * qrHeightPercent;
-            const qrX = canvas.width * 0.8620 - qrWidth / 2;
-            const qrY = canvas.height * 0.7780 - qrHeight / 2;
+            const qrX = isML
+              ? canvas.width * 0.8620 - qrWidth / 2
+              : canvas.width * 0.8544 - qrWidth / 2;
+            const qrY = isML
+              ? canvas.height * 0.7780 - qrHeight / 2
+              : canvas.height * 0.7430 - qrHeight / 2;
 
             ctx.drawImage(qrImg, qrX, qrY, qrWidth, qrHeight);
 
@@ -1069,8 +1073,8 @@ const Profile = () => {
                           {/* Dynamically Overlayed Verification QR Code (Exact positioning over bottom-right placeholder) */}
                           <div style={{
                             position: 'absolute',
-                            top: '72.58%',
-                            left: '82.5%',
+                            top: isML ? '72.58%' : '69.08%',
+                            left: isML ? '82.5%' : '81.74%',
                             width: '7.37%',
                             height: '10.44%',
                             display: 'flex',
@@ -1094,9 +1098,9 @@ const Profile = () => {
                             style={{
                               position: 'absolute',
                               top: '83.5%',
-                              left: isML ? '4.5%' : '5.5%',
-                              width: isML ? '13.0%' : '10.0%',
-                              height: isML ? '6.5%' : '9.3%',
+                              left: '4.5%',
+                              width: '13.0%',
+                              height: '6.5%',
                               objectFit: 'contain',
                               pointerEvents: 'none'
                             }}

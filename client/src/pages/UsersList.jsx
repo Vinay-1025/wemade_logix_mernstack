@@ -12,6 +12,7 @@ const UsersList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [courseFilter, setCourseFilter] = useState('all');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [newUser, setNewUser] = useState({ name: '', email: '', password: '', role: 'student', course: 'mern' });
@@ -617,12 +618,13 @@ const UsersList = () => {
 
   const resetFilters = () => {
     setSearchTerm('');
+    setCourseFilter('all');
     setCurrentPage(1);
   };
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, usersPerPage]);
+  }, [searchTerm, usersPerPage, courseFilter]);
 
   const handleAddUser = async (e) => {
     e.preventDefault();
@@ -658,7 +660,9 @@ const UsersList = () => {
     // Hide superadmin from regular admins
     if (currentUser.role === 'admin' && u.role === 'superadmin') return false;
 
-    return matchesSearch;
+    const matchesCourse = courseFilter === 'all' || u.course === courseFilter;
+
+    return matchesSearch && matchesCourse;
   });
 
   // Pagination Logic
@@ -2057,13 +2061,22 @@ const UsersList = () => {
                 <div className="filter-group-users">
                   <div className="density-select">
                     <Filter size={16} />
+                    <select value={courseFilter} onChange={(e) => setCourseFilter(e.target.value)}>
+                      <option value="all">All Tracks</option>
+                      <option value="mern">MERN Stack</option>
+                      <option value="ml">Machine Learning</option>
+                    </select>
+                  </div>
+
+                  <div className="density-select">
+                    <Filter size={16} />
                     <select value={usersPerPage} onChange={(e) => setUsersPerPage(Number(e.target.value))}>
                       <option value={10}>10 Rows</option>
                       <option value={20}>20 Rows</option>
                       <option value={50}>50 Rows</option>
                     </select>
                   </div>
-                  {searchTerm && (
+                  {(searchTerm || courseFilter !== 'all') && (
                     <button className="reset-btn-users" onClick={resetFilters}>
                       <RotateCcw size={14} />
                       Reset
@@ -2327,6 +2340,7 @@ const UsersList = () => {
                 <thead>
                   <tr>
                     <th>Personnel</th>
+                    <th>Course Track</th>
                     <th>Access Level</th>
                     <th>Contact Information</th>
                     <th>Joined Date</th>
@@ -2360,9 +2374,22 @@ const UsersList = () => {
                               <span className="name">{u.name}</span>
                               {!u.isActive && <span className="status-label">Inactive</span>}
                             </div>
-                            <span className="id">ID: {u._id.slice(-6)} • {u.course === 'ml' ? 'Machine Learning' : 'MERN Stack'}</span>
+                            <span className="id">ID: {u._id.slice(-6)}</span>
                           </div>
                         </div>
+                      </td>
+                      <td>
+                        <span style={{
+                          padding: '4px 10px',
+                          borderRadius: '6px',
+                          fontSize: '0.75rem',
+                          fontWeight: 700,
+                          backgroundColor: u.course === 'ml' ? 'rgba(124, 58, 237, 0.08)' : 'rgba(59, 130, 246, 0.08)',
+                          color: u.course === 'ml' ? '#7c3aed' : '#3b82f6',
+                          display: 'inline-block'
+                        }}>
+                          {u.course === 'ml' ? 'Machine Learning' : 'MERN Stack'}
+                        </span>
                       </td>
                       <td>
                         <div className="user-role-badge" data-role={u.role}>
