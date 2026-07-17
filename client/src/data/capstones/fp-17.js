@@ -9,88 +9,91 @@ export const fp17Data = {
     objective: "Design, develop, test and deploy a complete advanced MERN Stack application in 2 weeks."
   },
   techStack: [
-  "React.js",
-  "Node.js",
-  "Express.js",
-  "MongoDB",
-  "JWT Authentication",
-  "Stripe API",
-  "Google Maps API"
-],
+    "React.js",
+    "Node.js",
+    "Express.js",
+    "MongoDB",
+    "JWT Authentication",
+    "Stripe API",
+    "Google Maps API",
+    "Multer",
+    "PDF-Kit"
+  ],
   overview: "Build a student workspace supporting document uploads, calendar announcements, class boards, and grade sheets.",
   problemStatement: [
-    "Manual and error-prone tracking of Virtual Classroom & Document Sharing Space events.",
-    "Difficulty in coordinating user roles and data access controls.",
-    "Inefficient application workflow and status visibility.",
-    "Lack of real-time stats and visual dashboard insights."
+    "Manual and disconnected tracking of student assignments, shared notes, and class materials.",
+    "Difficulty in organizing online syllabus documentation and keeping study calendars synchronized.",
+    "Inefficient grading workflows and lack of real-time grade visibility for students.",
+    "Absence of interactive maps for locating study groups and secure payment processors for premium course fees."
   ],
   objectives: [
-    "Build a robust and secure MERN stack web application.",
-    "Implement isolated user experience pipelines for different roles.",
-    "Ensure strict database schema constraints and integrity rules.",
+    "Build a robust and secure MERN stack virtual classroom and document sharing workspace.",
+    "Implement isolated classroom dashboards for Admins, Teachers, and Students.",
+    "Ensure strict database schema constraints for study materials, grading records, and submission timetables.",
     "Deploy the complete working systems to production cloud hosts."
   ],
   roles: {
     "Admin": [
-        "Moderate event bookings",
-        "Approve tour operators",
-        "View sales summaries",
-        "Audit backend logs"
+        "Moderate platform classroom registration bookings",
+        "Approve credentialed Teachers and institution profiles",
+        "View platform subscription commission summaries and payment logs",
+        "Audit system activities and backend security logs"
     ],
-    "Agent": [
-        "Create travel package listings",
-        "Manage booking calendars",
-        "Manage traveler inquiry threads",
-        "View earnings reports"
+    "Teacher": [
+        "Create virtual classrooms and custom syllabus structures",
+        "Upload lecture resources, assignments, and documents (using Multer)",
+        "Manage calendar announcements, event schedules, and student discussion threads",
+        "Grade student submissions and analyze class performance metrics"
     ],
-    "Traveler": [
-        "Browse travel tour packages",
-        "Book travel packages via checkout",
-        "Build custom day schedules",
-        "View invoices"
+    "Student": [
+        "Browse and search active classroom subjects by category tags",
+        "Book premium classrooms or tutoring slots via Stripe checkout",
+        "Download course material PDFs, submit homework, and view private grade sheets",
+        "Locate physical study groups and tutor locations on map panels"
     ]
-},
+  },
   modules: [
-  "Authentication",
-  "Travel Gigs",
-  "Itinerary Builder",
-  "Booking pipelines",
-  "Inquiries Support"
-],
+    "Authentication & Member Hub",
+    "Classroom Directory & Syllabus Builder",
+    "Document Repository & Media Uploader (Multer)",
+    "Assignment Submission & Grading Engine",
+    "Interactive Map & Tutor Locator (Google Maps)",
+    "Course Checkout System (Stripe)"
+  ],
   pages: {
     "Public": [
         "Home",
-        "Tours Catalog",
-        "Travel Details",
+        "Classrooms Catalog",
+        "Classroom Features Info",
         "Login",
         "Register"
     ],
-    "Traveler": [
-        "Dashboard",
-        "My Bookings",
-        "My Itinerary",
-        "Order Invoices"
+    "Student": [
+        "Dashboard (My active classes & announcements)",
+        "Document Vault (Shared study guides & files)",
+        "My Assignments & Grade Sheet",
+        "Classroom Board & Q&A Threads"
     ],
-    "Agent": [
-        "Dashboard",
-        "Packages builder",
-        "Tours Reservations",
-        "Earnings Analytics"
+    "Teacher": [
+        "Dashboard (Student metrics, homework review queue)",
+        "Classroom Syllabus Builder",
+        "Gradebook Controller (Mark sheets & reports)",
+        "Calendar Schedule Planner"
     ],
     "Admin": [
-        "Dashboard",
-        "Tours approvals",
-        "General Configs"
+        "Dashboard (Total registrations, platform usage)",
+        "Teacher Registry & Class Approvals",
+        "Diagnostic logs and system controls"
     ]
-},
+  },
   databaseCollections: [
-  "Users",
-  "Packages",
-  "Bookings",
-  "Itineraries",
-  "Inquiries",
-  "Reviews"
-],
+    "Users",
+    "Classrooms",
+    "Documents",
+    "Announcements",
+    "Submissions",
+    "Grades"
+  ],
   mandatoryFeatures: {
     "authentication": [
       "Register",
@@ -101,37 +104,36 @@ export const fp17Data = {
     "frontend": [
       "React",
       "React Router",
-      "Responsive UI",
+      "Responsive Classroom Workspace UI",
       "Form Validation"
     ],
     "backend": [
       "Express",
-      "REST APIs",
+      "REST APIs (Classrooms, Submissions, Grades)",
       "MVC",
-      "Middleware",
+      "Middleware (Authentication, Role Check Control)",
       "Error Handling"
     ],
     "database": [
       "MongoDB",
       "Minimum 5 collections",
-      "Relationships"
+      "Relationships (Classroom -> Documents, Student -> Submissions)"
     ],
     "general": [
-      "CRUD Operations",
-      "Search",
-      "Filter",
-      "Dashboard Panels",
-      "Profile Management",
+      "CRUD Operations (Classrooms, Announcements, Submissions)",
+      "Search & Filter (classrooms by subject, department, level)",
+      "Dashboard Panels showing daily schedules and assignment counters",
+      "Profile & Notification settings Management",
       "Deployment"
     ]
   },
   bonusFeatures: [
-  "Stripe Checkout processing",
-  "PDF itinerary maps export",
-  "Google Maps routes visualizer",
-  "Email confirmation booking",
-  "Dark mode"
-],
+    "Stripe payment processing for booking premium classes",
+    "Report card and grade sheets PDF exporter (using PDF-Kit)",
+    "Google Maps integration to visualize local study group locations and routes",
+    "Email updates on homework deadlines and grade releases",
+    "Dark mode for late-night studying"
+  ],
   submissionChecklist: [
     "GitHub Repository",
     "Frontend URL",
@@ -142,4 +144,5 @@ export const fp17Data = {
     "Presentation"
   ]
 };
+
 export default fp17Data;

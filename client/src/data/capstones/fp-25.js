@@ -9,87 +9,90 @@ export const fp25Data = {
     objective: "Design, develop, test and deploy a complete advanced MERN Stack application in 2 weeks."
   },
   techStack: [
-  "React.js",
-  "Node.js",
-  "Express.js",
-  "MongoDB",
-  "JWT Authentication",
-  "Stripe API"
-],
+    "React.js",
+    "Node.js",
+    "Express.js",
+    "MongoDB",
+    "JWT Authentication",
+    "Stripe API",
+    "Socket.io",
+    "Multer",
+    "PDF-Kit"
+  ],
   overview: "Build a job board featuring client projects, developer bids, milestone budgets, and direct messaging portals.",
   problemStatement: [
-    "Manual and error-prone tracking of Freelance Developer Freelancer Bid Board events.",
-    "Difficulty in coordinating user roles and data access controls.",
-    "Inefficient application workflow and status visibility.",
-    "Lack of real-time stats and visual dashboard insights."
+    "Manual and inconsistent tracking of client project postings, developer bids, and contract milestones.",
+    "Difficulty in coordinating project agreements and managing escrow data safety.",
+    "Inefficient project progress visibility and lack of direct communication pipelines between clients and developers.",
+    "Lack of real-time stats and visual dashboard insights on developer earnings and client budgets."
   ],
   objectives: [
-    "Build a robust and secure MERN stack web application.",
-    "Implement isolated user experience pipelines for different roles.",
-    "Ensure strict database schema constraints and integrity rules.",
+    "Build a robust and secure MERN stack freelance bidding and project management application.",
+    "Implement isolated workflow dashboards for Clients, Developers, and platform Admins.",
+    "Ensure strict database schema constraints for bids, project milestone escrows, and messaging histories.",
     "Deploy the complete working systems to production cloud hosts."
   ],
   roles: {
     "Admin": [
-        "Approve hotel registries",
-        "Configure menu boards & listings",
-        "View platform analytics",
-        "Audit backend databases"
+        "Configure platform parameters, categories, and payment service models",
+        "Moderate flagged projects, developer bids, and user disputes",
+        "Audit system transaction flows, payment escrows, and activity logs",
+        "Manage global system integrations and system credentials"
     ],
-    "Manager": [
-        "Create room catalog items",
-        "Manage reservation schedules",
-        "View client checkout logs",
-        "Analyze room revenue charts"
+    "Client": [
+        "Post freelance project cards with descriptions and milestone budgets",
+        "Browse developer bidding profiles and accept project bids",
+        "Manage project development milestones and release escrow payments via Stripe",
+        "Review developer work deliveries and write feedback ratings"
     ],
-    "Customer": [
-        "Browse hotel room directories",
-        "Book room reservations securely",
-        "Submit post-stay reviews",
-        "Download reservation PDFs"
+    "Developer": [
+        "Search and filter active project catalogs by budget range and skill tags",
+        "Submit custom bidding proposals on active client projects",
+        "Submit milestone deliverables and track work approval progress",
+        "Initiate real-time direct chats with clients and track personal project earnings"
     ]
-},
+  },
   modules: [
-  "Authentication",
-  "Rooms Directory",
-  "Reservations System",
-  "Billing Desk",
-  "Reviews Hub"
-],
+    "Authentication & Professional Profiles",
+    "Project Directory & Bid Board",
+    "Milestone Tracker & Escrow Pipeline",
+    "Real-Time Messaging Hub (Socket.io)",
+    "Payment Gateway (Stripe Checkout)"
+  ],
   pages: {
     "Public": [
         "Home",
-        "Rooms Catalog",
-        "Room Details",
+        "Projects Board",
+        "Developers Directory",
         "Login",
         "Register"
     ],
-    "Customer": [
-        "Dashboard",
-        "My Reservations",
-        "Saved Hotels",
-        "Receipts"
+    "Developer": [
+        "Dashboard (My active projects, bids submitted, earnings history)",
+        "Bids Proposals Manager",
+        "Milestone Submission Panel",
+        "Chat Desk (Client messaging)"
     ],
-    "Manager": [
-        "Dashboard",
-        "Catalog editor",
-        "Bookings Calendar",
-        "Earnings Reports"
+    "Client": [
+        "Dashboard (My posted projects, incoming bids queue)",
+        "New Project Publisher (Upload specs using Multer)",
+        "Escrow Milestone Manager",
+        "Chat Desk (Developer messaging)"
     ],
     "Admin": [
-        "Dashboard",
-        "Hotels Directory",
-        "Finances Audit"
+        "Dashboard (Active jobs, platform commission reports)",
+        "Disputes & Escrow Arbitrator",
+        "Diagnostics & Audit Logs"
     ]
-},
+  },
   databaseCollections: [
-  "Users",
-  "Hotels",
-  "Rooms",
-  "Reservations",
-  "Reviews",
-  "BillingStats"
-],
+    "Users",
+    "Projects",
+    "Bids",
+    "Milestones",
+    "Messages",
+    "Transactions"
+  ],
   mandatoryFeatures: {
     "authentication": [
       "Register",
@@ -100,37 +103,36 @@ export const fp25Data = {
     "frontend": [
       "React",
       "React Router",
-      "Responsive UI",
+      "Responsive Freelancer UI",
       "Form Validation"
     ],
     "backend": [
       "Express",
-      "REST APIs",
+      "REST APIs (Projects, Bids, Milestones)",
       "MVC",
-      "Middleware",
+      "Middleware (Authentication, Role Check controls)",
       "Error Handling"
     ],
     "database": [
       "MongoDB",
       "Minimum 5 collections",
-      "Relationships"
+      "Relationships (Project -> Bids, Client -> Projects)"
     ],
     "general": [
-      "CRUD Operations",
-      "Search",
-      "Filter",
-      "Dashboard Panels",
-      "Profile Management",
+      "CRUD Operations (Projects, Bids)",
+      "Search & Filter (projects by budget, skills, bidding status)",
+      "Dashboard Panels showing payment summaries and active project charts",
+      "Profile & Payout settings Management",
       "Deployment"
     ]
   },
   bonusFeatures: [
-  "Stripe booking payment",
-  "Invoice receipt PDF generator",
-  "Overbooking validation engine",
-  "Email booking confirmation",
-  "Dark mode"
-],
+    "Stripe payment processing for milestone escrow holdings",
+    "Live developer-client messaging desk via WebSockets (Socket.io)",
+    "PDF contract and invoice generator (using PDF-Kit)",
+    "Project files attachment uploader (using Multer)",
+    "Dark mode developer workspace"
+  ],
   submissionChecklist: [
     "GitHub Repository",
     "Frontend URL",
@@ -141,4 +143,5 @@ export const fp25Data = {
     "Presentation"
   ]
 };
+
 export default fp25Data;

@@ -9,74 +9,89 @@ export const fp28Data = {
     objective: "Design, develop, test and deploy a complete intermediate MERN Stack application in 2 weeks."
   },
   techStack: [
-  "React.js",
-  "Node.js",
-  "Express.js",
-  "MongoDB",
-  "JWT Authentication",
-  "Chart.js"
-],
+    "React.js",
+    "Node.js",
+    "Express.js",
+    "MongoDB",
+    "JWT Authentication",
+    "Chart.js",
+    "Stripe API",
+    "Multer",
+    "PDF-Kit"
+  ],
   overview: "Build a fundraising portal tracking donation goals, backer comments, campaign categories, and transparency logs.",
   problemStatement: [
-    "Manual and error-prone tracking of Charity Donation & Crowdfunding Platform events.",
-    "Difficulty in coordinating user roles and data access controls.",
-    "Inefficient application workflow and status visibility.",
-    "Lack of real-time stats and visual dashboard insights."
+    "Manual and error-prone tracking of charitable campaigns, fundraising targets, and contributions.",
+    "Difficulty in ensuring financial transparency and tracking how collected donations are utilized.",
+    "Inefficient verification pipelines for validating and onboarding campaign organizers.",
+    "Lack of real-time statistics and interactive dashboards for campaign progression and backer counts."
   ],
   objectives: [
-    "Build a robust and secure MERN stack web application.",
-    "Implement isolated user experience pipelines for different roles.",
-    "Ensure strict database schema constraints and integrity rules.",
+    "Build a robust and secure MERN stack charity donation and crowdfunding platform.",
+    "Implement isolated workflow dashboards for Donors, Campaign Creators, and Admins.",
+    "Ensure strict database schema constraints for contribution transactions, target parameters, and updates.",
     "Deploy the complete working systems to production cloud hosts."
   ],
   roles: {
     "Admin": [
-        "Manage system dictionaries",
-        "Monitor server activity logs",
-        "Oversee account registrations",
-        "Access parameters"
+        "Configure platform commission models, tags, and category taxonomies",
+        "Verify and approve credentialed Campaign Creator registrations",
+        "Audit platform transaction flows, payment escrows, and access security logs",
+        "Monitor server performance metrics and diagnostics reports"
     ],
-    "User": [
-        "Write daily journal inputs",
-        "Configure personal habit trackers",
-        "Analyze habit consistency charts",
-        "Set routine alerts"
+    "Creator": [
+        "Launch public campaigns with target funding goals and descriptions",
+        "Upload campaign video/photo resources using Multer",
+        "Post transparency updates detailing how collected funds are being utilized",
+        "View donor registry details and campaign contribution graphs"
+    ],
+    "Donor": [
+        "Browse and search active campaigns by categories (Medical, Education, Disaster)",
+        "Contribute funds securely via Stripe payment checkout pipelines",
+        "Track campaign progression targets and read transparency updates",
+        "Download tax-deductible contribution receipts as PDF"
     ]
-},
+  },
   modules: [
-  "Authentication",
-  "Journal Entries",
-  "Habits Tracker",
-  "Analytical Charts",
-  "Alerts Scheduler"
-],
+    "Authentication & Profile Registry",
+    "Campaign Catalog & Details",
+    "Donations & Checkout Engine (Stripe)",
+    "Campaign Updates & Transparency Log",
+    "Fundraising Performance Analytics (Charts)"
+  ],
   pages: {
     "Public": [
         "Home",
-        "Features Overview",
-        "Self Care Guide",
+        "Campaigns Catalog Search",
+        "Campaign Details (Interactive donation drawer)",
         "Login",
         "Register"
     ],
-    "User": [
-        "Dashboard",
-        "Journal Board",
-        "Habits Ledger",
-        "Analytical Progress"
+    "Donor": [
+        "Dashboard (My total contributions, active campaigns watchlist)",
+        "Donations Ledger",
+        "Receipts & Invoices Center",
+        "Account Settings"
+    ],
+    "Creator": [
+        "Dashboard (Active campaigns overview, goal progression indicators)",
+        "Campaign Creator Form (Upload media assets)",
+        "Transparency Updates Logger",
+        "Donor list & Analytics Charts"
     ],
     "Admin": [
-        "Dashboard",
-        "System Diagnostic",
-        "Configuration logs"
+        "Dashboard (Total platform volume, verified creators headcount)",
+        "Campaign Approvals Panel",
+        "System Settings & Audit Log"
     ]
-},
+  },
   databaseCollections: [
-  "Users",
-  "Entries",
-  "Habits",
-  "ProgressLogs",
-  "Alerts"
-],
+    "Users",
+    "Campaigns",
+    "Donations",
+    "Updates",
+    "PaymentLogs"
+  ],
   mandatoryFeatures: {
     "authentication": [
       "Register",
@@ -87,37 +102,36 @@ export const fp28Data = {
     "frontend": [
       "React",
       "React Router",
-      "Responsive UI",
+      "Responsive Crowdfunding Portal UI",
       "Form Validation"
     ],
     "backend": [
       "Express",
-      "REST APIs",
+      "REST APIs (Campaigns, Donations, Updates)",
       "MVC",
-      "Middleware",
+      "Middleware (Authentication, Role Check controls)",
       "Error Handling"
     ],
     "database": [
       "MongoDB",
       "Minimum 5 collections",
-      "Relationships"
+      "Relationships (Campaign -> Donations, Creator -> Campaigns)"
     ],
     "general": [
-      "CRUD Operations",
-      "Search",
-      "Filter",
-      "Dashboard Panels",
-      "Profile Management",
+      "CRUD Operations (Campaigns, Donations)",
+      "Search & Filter (campaigns by category, goal range, urgency)",
+      "Dashboard Panels showing progress bars and contribution timelines",
+      "Profile & Payout details Management",
       "Deployment"
     ]
   },
   bonusFeatures: [
-  "Interactive consistency charts",
-  "Daily reminder email triggers",
-  "Journal PDF backup export",
-  "Dark mode",
-  "Activity logs"
-],
+    "Stripe checkout integration for secure donation contributions",
+    "Interactive campaign funding and backer statistics graphs (using Chart.js)",
+    "Auto-generated tax-deductible donation receipts as PDF (using PDF-Kit)",
+    "Campaign media banners and photo uploader (using Multer)",
+    "Dark mode dashboard themes"
+  ],
   submissionChecklist: [
     "GitHub Repository",
     "Frontend URL",
@@ -128,4 +142,5 @@ export const fp28Data = {
     "Presentation"
   ]
 };
+
 export default fp28Data;

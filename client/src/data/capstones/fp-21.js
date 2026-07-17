@@ -9,88 +9,84 @@ export const fp21Data = {
     objective: "Design, develop, test and deploy a complete advanced MERN Stack application in 2 weeks."
   },
   techStack: [
-  "React.js",
-  "Node.js",
-  "Express.js",
-  "MongoDB",
-  "JWT Authentication",
-  "Stripe API",
-  "Google Maps API"
-],
+    "React.js",
+    "Node.js",
+    "Express.js",
+    "MongoDB",
+    "JWT Authentication",
+    "Stripe API",
+    "Google Maps API",
+    "Multer",
+    "CryptoJS"
+  ],
   overview: "Build a files directory supporting folder hierarchies, document previewers, access controls, and sharing link tokens.",
   problemStatement: [
-    "Manual and error-prone tracking of Cloud File Storage & Encrypted Sharing Portal events.",
-    "Difficulty in coordinating user roles and data access controls.",
-    "Inefficient application workflow and status visibility.",
-    "Lack of real-time stats and visual dashboard insights."
+    "Manual and insecure transfer of files and folders over unencrypted channels.",
+    "Difficulty in managing hierarchical folder directories and complex file access permissions.",
+    "Poor visibility into user storage quotas and real-time account access locations.",
+    "Lack of secure payment pipelines for upgrading storage tiers and automated sharing link expiration."
   ],
   objectives: [
-    "Build a robust and secure MERN stack web application.",
-    "Implement isolated user experience pipelines for different roles.",
-    "Ensure strict database schema constraints and integrity rules.",
+    "Build a robust and secure MERN stack cloud storage and encrypted sharing portal.",
+    "Implement isolated dashboards and folder access scopes for Admins, Members, and temporary Guests.",
+    "Ensure strict database schema constraints for file metadata, access logs, and encrypted key tokens.",
     "Deploy the complete working systems to production cloud hosts."
   ],
   roles: {
     "Admin": [
-        "Manage branch centers",
-        "Track company inventory lists",
-        "Audit platform financial models",
-        "View audits"
+        "Configure global storage limits, user quotas, and billing rates",
+        "Monitor server performance, disk usage, and network traffic metrics",
+        "Audit system access logs and geographic login distribution",
+        "Manage user subscription directories and license records"
     ],
-    "Staff": [
-        "Process car rental check-outs",
-        "Update car diagnostic status",
-        "Inspect returned vehicles",
-        "Update logs"
+    "Member": [
+        "Upload files, manage folder directories, and organize structures (using Multer)",
+        "Generate secure time-limited sharing links with passcode protection (using CryptoJS)",
+        "Configure granular access scopes (Private, Shared, Public) for documents",
+        "Upgrade storage plans securely via Stripe and monitor drive space charts"
     ],
-    "Customer": [
-        "Browse automobile catalog",
-        "Book rentals and pick schedules",
-        "Pay rental invoices securely",
-        "Track booking status"
+    "Guest": [
+        "Browse public or shared directories via shared link tokens",
+        "Decrypt and download files by entering security passcode keys",
+        "View allowed online document previews inside the browser",
+        "Submit feedback and file access requests"
     ]
-},
+  },
   modules: [
-  "Authentication",
-  "Fleet Catalog",
-  "Rentals Pipeline",
-  "Vehicle Diagnostics",
-  "Billing System"
-],
+    "Authentication & Driver profiles",
+    "Hierarchical Directory & File Registry",
+    "Encryption & Secure Sharing Engine (CryptoJS)",
+    "Storage Quota & Billing checkout (Stripe)",
+    "Access Map & Activity Security Hub (Google Maps)"
+  ],
   pages: {
     "Public": [
         "Home",
-        "Car Fleet Catalog",
-        "Rental Details",
+        "Pricing Tiers & Security Overview",
+        "Shared Link Decryption portal",
         "Login",
         "Register"
     ],
-    "Customer": [
-        "Dashboard",
-        "My Bookings",
-        "Saved Cars",
-        "Receipts"
-    ],
-    "Staff": [
-        "Dashboard",
-        "Fleet Queue",
-        "Vehicles Status",
-        "Maintenance Panel"
+    "Member": [
+        "Dashboard (My Drive directory with breadcrumb navigation)",
+        "Shared Links Manager (Manage token timers and passwords)",
+        "Storage Analytics & Billing Panel",
+        "Account Activity Map (Geo-login inspector)"
     ],
     "Admin": [
-        "Dashboard",
-        "Sales Summaries",
-        "Branch Configurator"
+        "Dashboard (Global space utilization, platform active nodes)",
+        "User Registry & Quota Editor",
+        "Security Intrusion Audit Logs"
     ]
-},
+  },
   databaseCollections: [
-  "Users",
-  "Vehicles",
-  "Rentals",
-  "Inspections",
-  "Branches",
-  "BillingSummary"
-],
+    "Users",
+    "Folders",
+    "Files",
+    "ShareTokens",
+    "AccessLogs",
+    "Subscriptions"
+  ],
   mandatoryFeatures: {
     "authentication": [
       "Register",
@@ -101,37 +97,36 @@ export const fp21Data = {
     "frontend": [
       "React",
       "React Router",
-      "Responsive UI",
+      "Responsive Directory Explorer UI",
       "Form Validation"
     ],
     "backend": [
       "Express",
-      "REST APIs",
+      "REST APIs (Folders, Files, ShareTokens)",
       "MVC",
-      "Middleware",
+      "Middleware (Authentication, Storage Quota Verification)",
       "Error Handling"
     ],
     "database": [
       "MongoDB",
       "Minimum 5 collections",
-      "Relationships"
+      "Relationships (User -> Folders, Folder -> Files)"
     ],
     "general": [
-      "CRUD Operations",
-      "Search",
-      "Filter",
-      "Dashboard Panels",
-      "Profile Management",
+      "CRUD Operations (Folders, Files, ShareTokens)",
+      "Search & Filter (files by name, file extension type, size)",
+      "Dashboard Panels showing storage percentage gauges and analytics charts",
+      "Profile & Security key settings Management",
       "Deployment"
     ]
   },
   bonusFeatures: [
-  "Stripe payment checkout",
-  "Rental invoice PDF generator",
-  "Vehicle GPS map tracking",
-  "Email invoice templates",
-  "Dark mode"
-],
+    "Stripe payment integration for custom storage space upgrades",
+    "Geographic map displaying download/access locations (using Google Maps API)",
+    "Crypto-encrypted share links with password decryption validator",
+    "Auto-generated invoice receipt PDF for storage plan purchases",
+    "Dark mode workspace themes"
+  ],
   submissionChecklist: [
     "GitHub Repository",
     "Frontend URL",
@@ -142,4 +137,5 @@ export const fp21Data = {
     "Presentation"
   ]
 };
+
 export default fp21Data;

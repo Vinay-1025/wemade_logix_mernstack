@@ -9,87 +9,90 @@ export const fp29Data = {
     objective: "Design, develop, test and deploy a complete intermediate MERN Stack application in 2 weeks."
   },
   techStack: [
-  "React.js",
-  "Node.js",
-  "Express.js",
-  "MongoDB",
-  "JWT Authentication",
-  "Multer"
-],
+    "React.js",
+    "Node.js",
+    "Express.js",
+    "MongoDB",
+    "JWT Authentication",
+    "Multer",
+    "Chart.js",
+    "Google Maps API",
+    "PDF-Kit"
+  ],
   overview: "Build an analytics app parsing weather station metrics, history trends, interactive charts, and local alerts.",
   problemStatement: [
-    "Manual and error-prone tracking of Weather Station & Geospatial Sensor Portal events.",
-    "Difficulty in coordinating user roles and data access controls.",
-    "Inefficient application workflow and status visibility.",
-    "Lack of real-time stats and visual dashboard insights."
+    "Manual and error-prone tracking of weather station coordinates and sensor metrics.",
+    "Difficulty in organizing data access controls and coordinating researcher/operator roles.",
+    "Inefficient weather alert configurations and lack of status visibility for active sensors.",
+    "Lack of real-time geospatial statistics and visual dashboards for meteorological trend analysis."
   ],
   objectives: [
-    "Build a robust and secure MERN stack web application.",
-    "Implement isolated user experience pipelines for different roles.",
-    "Ensure strict database schema constraints and integrity rules.",
+    "Build a robust and secure MERN stack weather station and geospatial sensor portal.",
+    "Implement isolated workflow experience pipelines for Researchers, Station Operators, and Admins.",
+    "Ensure strict database schema constraints for sensor readings, geospatial coordinates, and reading timelines.",
     "Deploy the complete working systems to production cloud hosts."
   ],
   roles: {
     "Admin": [
-        "Approve alumni registries",
-        "Approve association job boards",
-        "Monitor platform violations",
-        "Audit systems logs"
+        "Verify and approve new Weather Station registrations",
+        "Configure global warning thresholds and sensor definitions",
+        "Monitor server performance metrics, connection logs, and database diagnostics",
+        "Audit system access security logs"
     ],
-    "Alumni": [
-        "Create alumni profile details",
-        "Post job vacancy referrals",
-        "Organize reunion events",
-        "Search peer directories"
+    "Operator": [
+        "Create station profile details (coordinates, elevation, station model)",
+        "Register active sensor modules (temperature, barometric, anemometer)",
+        "Upload raw diagnostic logs and calibration files (using Multer)",
+        "Monitor real-time connection status and local power metrics"
     ],
-    "Student": [
-        "Search alumni rosters",
-        "Apply for job referrals",
-        "Inquire alumni guidance",
-        "Register for reunions"
+    "Researcher": [
+        "Search and filter weather stations using geospatial interactive maps (using Google Maps API)",
+        "Access historical sensor metrics datasets and analyze weather trends",
+        "Configure custom local warning alerts for specific stations",
+        "Generate and download printable weather reports as PDF"
     ]
-},
+  },
   modules: [
-  "Authentication",
-  "Alumni Directory",
-  "Referral Board",
-  "Reunion Planner",
-  "Messaging Hub"
-],
+    "Authentication & Member Hub",
+    "Station Directory & Sensor Registry",
+    "Reading Logs Collector (Sensor Data)",
+    "Geospatial Alerts Engine (Google Maps API)",
+    "Weather Analytics Dashboard (Charts)"
+  ],
   pages: {
     "Public": [
         "Home",
-        "Alumni Explorer",
-        "Association Info",
+        "Global Weather Map",
+        "About Platform",
         "Login",
         "Register"
     ],
-    "Student": [
-        "Dashboard",
-        "Alumni Finder",
-        "Referrals Desk",
-        "Reunion Schedule"
+    "Researcher": [
+        "Dashboard (My bookmarked stations, recent alerts)",
+        "Geospatial Explorer (Interactive maps selector)",
+        "Data Analyzer (Graph plotter and metrics comparison)",
+        "Alerts Manager"
     ],
-    "Alumni": [
-        "Dashboard",
-        "Profile Editor",
-        "Post Referral",
-        "Alumni Chats"
+    "Operator": [
+        "Dashboard (My active stations, sensor health levels)",
+        "Station Configurator (Add sensors)",
+        "Calibration Logs Desk",
+        "Operator Chats"
     ],
     "Admin": [
-        "Dashboard",
-        "Verify Alumni",
-        "System configurations"
+        "Dashboard (Platform active nodes, storage size)",
+        "Verify Stations Registry",
+        "System Audit Logs & Settings"
     ]
-},
+  },
   databaseCollections: [
-  "Users",
-  "AlumniProfiles",
-  "Referrals",
-  "Events",
-  "Messages",
-  "Associations"
-],
+    "Users",
+    "Stations",
+    "Sensors",
+    "ReadingLogs",
+    "Alerts",
+    "Logs"
+  ],
   mandatoryFeatures: {
     "authentication": [
       "Register",
@@ -100,37 +103,36 @@ export const fp29Data = {
     "frontend": [
       "React",
       "React Router",
-      "Responsive UI",
+      "Responsive Interactive Analytics UI",
       "Form Validation"
     ],
     "backend": [
       "Express",
-      "REST APIs",
+      "REST APIs (Stations, ReadingLogs, Alerts)",
       "MVC",
-      "Middleware",
+      "Middleware (Authentication, Operator/Researcher role checks)",
       "Error Handling"
     ],
     "database": [
       "MongoDB",
       "Minimum 5 collections",
-      "Relationships"
+      "Relationships (Station -> Sensors, Sensor -> ReadingLogs)"
     ],
     "general": [
-      "CRUD Operations",
-      "Search",
-      "Filter",
-      "Dashboard Panels",
-      "Profile Management",
+      "CRUD Operations (Stations, Sensors, ReadingLogs)",
+      "Search & Filter (stations by country, variables measured, connection status)",
+      "Dashboard Panels showing dial indicators, gauges, and historical plots",
+      "Profile & Measurement unit preferences Management",
       "Deployment"
     ]
   },
   bonusFeatures: [
-  "Interactive peer map search",
-  "Alumni stats dashboard charts",
-  "Newsletter PDF creator",
-  "Email invite templates",
-  "Dark mode"
-],
+    "Interactive Google Maps interface to search and route nearest sensors",
+    "Visual trend analysis and comparison graphs (using Chart.js)",
+    "Auto-generated weather report summary sheet PDF exporter (using PDF-Kit)",
+    "Raw data uploader with Multer validations",
+    "Dark mode dashboard themes"
+  ],
   submissionChecklist: [
     "GitHub Repository",
     "Frontend URL",
@@ -141,4 +143,5 @@ export const fp29Data = {
     "Presentation"
   ]
 };
+
 export default fp29Data;

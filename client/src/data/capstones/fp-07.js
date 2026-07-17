@@ -9,20 +9,20 @@ export const fp07Data = {
     objective: "Design, develop, test and deploy a complete advanced MERN Stack application in 2 weeks."
   },
   techStack: [
-  "React.js",
-  "Node.js",
-  "Express.js",
-  "MongoDB",
-  "JWT Authentication",
-  "Stripe API",
-  "Socket.io"
-],
+    "React.js",
+    "Node.js",
+    "Express.js",
+    "MongoDB",
+    "JWT Authentication",
+    "Socket.io",
+    "Multer"
+  ],
   overview: "Build a Slack clone featuring persistent chat channels, private direct messaging, presence indicators, and message history searches.",
   problemStatement: [
-    "Manual and error-prone tracking of Real-Time Chat & Instant Messenger Hub events.",
-    "Difficulty in coordinating user roles and data access controls.",
-    "Inefficient application workflow and status visibility.",
-    "Lack of real-time stats and visual dashboard insights."
+    "Manual and inefficient real-time communication tracking across fragmented systems.",
+    "Difficulty in coordinating user roles, chat channel moderations, and data access controls.",
+    "Inefficient message delivery, lack of status visibility, and weak chat history logging.",
+    "Lack of real-time server/channel metrics and admin compliance audit tools."
   ],
   objectives: [
     "Build a robust and secure MERN stack web application.",
@@ -32,66 +32,60 @@ export const fp07Data = {
   ],
   roles: {
     "Admin": [
-        "Manage disputation files",
-        "Approve categories & services",
-        "View platform commission summaries",
-        "Audit user databases"
+        "Manage chat rooms & channels",
+        "Monitor compliance & abuse reports",
+        "Manage system integrations",
+        "Audit access logs"
     ],
-    "Seller": [
-        "Build seller profile & service gigs",
-        "Manage work timelines & deliveries",
-        "Manage gig inquiries",
-        "View earnings reports"
+    "Moderator": [
+        "Audit room conversations",
+        "Ban abusive users",
+        "Delete offensive postings",
+        "Approve public channels"
     ],
-    "Buyer": [
-        "Search & filter services directory",
-        "Order services via Stripe checkout",
-        "Track project milestones",
-        "Submit reviews & feedback"
+    "User": [
+        "Create private/public chat channels",
+        "Send real-time messages & files",
+        "Initiate direct message threads",
+        "Manage notifications"
     ]
-},
+  },
   modules: [
-  "Authentication",
-  "Gigs Directory",
-  "Ordering Pipeline",
-  "Milestone Tracking",
-  "Messaging System",
-  "Ratings Hub"
-],
+    "Authentication",
+    "Channel Registry",
+    "Real-Time Messaging Engine",
+    "Direct Message Hub",
+    "User Directory",
+    "Compliance Logger"
+  ],
   pages: {
     "Public": [
         "Home",
-        "Gigs Marketplace",
-        "Seller Directory",
+        "Product Pricing",
         "Login",
         "Register"
     ],
-    "Buyer": [
+    "User": [
         "Dashboard",
-        "My Orders",
-        "Milestone Manager",
-        "Invoice Center"
-    ],
-    "Seller": [
-        "Dashboard",
-        "My Gigs Builder",
-        "Active Orders",
-        "Revenue Charts"
+        "Chat Workspace",
+        "Channel Hub",
+        "Account Settings"
     ],
     "Admin": [
         "Dashboard",
-        "Gig Approvals",
-        "Escrows Registry"
+        "Channels Controller",
+        "User Permissions",
+        "Abuse Registry"
     ]
-},
+  },
   databaseCollections: [
-  "Users",
-  "Gigs",
-  "Orders",
-  "Milestones",
-  "Messages",
-  "Reviews"
-],
+    "Users",
+    "Channels",
+    "Messages",
+    "PrivateRooms",
+    "Reports",
+    "Logs"
+  ],
   mandatoryFeatures: {
     "authentication": [
       "Register",
@@ -127,12 +121,12 @@ export const fp07Data = {
     ]
   },
   bonusFeatures: [
-  "Stripe payment processing",
-  "Project milestone tracker",
-  "Live buyer-seller messaging",
-  "Invoice PDF export",
-  "Dark mode"
-],
+    "Real-time file sharing (using Multer)",
+    "Active typing indicators",
+    "Message history search",
+    "Slack-like channel emoji reactions",
+    "Dark mode workspace toggle"
+  ],
   submissionChecklist: [
     "GitHub Repository",
     "Frontend URL",
@@ -143,4 +137,5 @@ export const fp07Data = {
     "Presentation"
   ]
 };
+
 export default fp07Data;

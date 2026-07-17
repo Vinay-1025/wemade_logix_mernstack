@@ -9,73 +9,90 @@ export const fp11Data = {
     objective: "Design, develop, test and deploy a complete intermediate MERN Stack application in 2 weeks."
   },
   techStack: [
-  "React.js",
-  "Node.js",
-  "Express.js",
-  "MongoDB",
-  "JWT Authentication",
-  "Chart.js"
-],
+    "React.js",
+    "Node.js",
+    "Express.js",
+    "MongoDB",
+    "JWT Authentication",
+    "Chart.js",
+    "Multer",
+    "PDF-Kit"
+  ],
   overview: "Build a reservations system checking room category availabilities, promotional discounts, dining options, and guest checks.",
   problemStatement: [
-    "Manual and error-prone tracking of Hotel & Resort Booking Engine events.",
-    "Difficulty in coordinating user roles and data access controls.",
-    "Inefficient application workflow and status visibility.",
-    "Lack of real-time stats and visual dashboard insights."
+    "Manual and error-prone tracking of hotel room bookings and availability status.",
+    "Difficulty in managing guest preferences, room dining selections, and promotional add-on services.",
+    "Inefficient check-in and check-out workflows causing long front-desk wait times.",
+    "Lack of real-time occupancy statistics and revenue analytics dashboards."
   ],
   objectives: [
-    "Build a robust and secure MERN stack web application.",
-    "Implement isolated user experience pipelines for different roles.",
-    "Ensure strict database schema constraints and integrity rules.",
+    "Build a robust and secure MERN stack hotel and resort booking application.",
+    "Implement isolated user experience pipelines for Guests, Staff Managers, and Admins.",
+    "Ensure strict database schema constraints for booking dates, occupancy limits, and billing.",
     "Deploy the complete working systems to production cloud hosts."
   ],
   roles: {
     "Admin": [
-        "Manage exercises dictionary",
-        "Monitor user data sizes",
-        "Audit server metrics",
-        "Manage configuration"
+        "Configure global hotel configurations, branch settings, and tax policies",
+        "Monitor server performance metrics and database status",
+        "Audit platform-wide activity and security logs",
+        "Manage corporate account records and system integrations"
     ],
-    "User": [
-        "Log daily workouts & goals",
-        "Set nutritional targets",
-        "Track calorie intake and weights",
-        "Analyze progress charts"
+    "Manager": [
+        "Manage room inventories, room categories, and daily pricing rules",
+        "Approve promotional discount campaigns and dining options lists",
+        "Handle guest check-in / check-out overrides and assign rooms",
+        "Analyze occupancy dashboards, monthly revenue, and performance charts"
+    ],
+    "Guest": [
+        "Search and filter room availability by date range and guest count",
+        "Book hotel suites, select dining plans, and apply promotional codes",
+        "Manage reservation schedules, request room changes, or cancel bookings",
+        "Download booking receipts and detailed guest check invoices as PDF"
     ]
-},
+  },
   modules: [
-  "Authentication",
-  "Workouts Ledger",
-  "Dietary Planner",
-  "Progress Charts",
-  "Exercise Database"
-],
+    "Authentication & Guest Profile Hub",
+    "Room Inventory & Availability Controller",
+    "Reservation Engine (Booking Pipeline)",
+    "Dining & Add-on Services Manager",
+    "Guest Billing & Invoice Exporter",
+    "Occupancy Analytics (Dashboard Charts)"
+  ],
   pages: {
     "Public": [
         "Home",
-        "Exercise Database",
+        "Rooms & Suites Catalog",
+        "About & Resort Location Map",
         "Login",
         "Register"
     ],
-    "User": [
-        "Dashboard",
-        "Workout Log",
-        "Diet tracker",
-        "Weight Progress"
+    "Guest": [
+        "Dashboard (My current, upcoming, and past reservations)",
+        "Room Booker (Interactive dates & details selector)",
+        "Dining & Extras Panel",
+        "Receipts & Invoice Center"
+    ],
+    "Manager": [
+        "Dashboard (Occupancy rate gauge, pending check-ins, active stays)",
+        "Inventory Manager (Rooms & Rates Editor)",
+        "Reception Hub (Check-in/Check-out console)",
+        "Revenue & Occupancy Statistics"
     ],
     "Admin": [
-        "Dashboard",
-        "Manage Exercises",
-        "Diagnostics Log"
+        "Dashboard (Platform-wide resort earnings)",
+        "Resort Branches & Accounts Controller",
+        "Database Diagnostics & Logs Viewer"
     ]
-},
+  },
   databaseCollections: [
-  "Users",
-  "Workouts",
-  "Meals",
-  "ProgressLogs",
-  "Exercises"
-],
+    "Users",
+    "Rooms",
+    "Bookings",
+    "Services",
+    "Invoices",
+    "Logs"
+  ],
   mandatoryFeatures: {
     "authentication": [
       "Register",
@@ -86,37 +103,36 @@ export const fp11Data = {
     "frontend": [
       "React",
       "React Router",
-      "Responsive UI",
+      "Responsive Room Finder UI",
       "Form Validation"
     ],
     "backend": [
       "Express",
-      "REST APIs",
+      "REST APIs (Rooms, Bookings, Services)",
       "MVC",
-      "Middleware",
+      "Middleware (Auth, Manager Role Access)",
       "Error Handling"
     ],
     "database": [
       "MongoDB",
       "Minimum 5 collections",
-      "Relationships"
+      "Relationships (User -> Bookings, Room -> Bookings)"
     ],
     "general": [
-      "CRUD Operations",
-      "Search",
-      "Filter",
-      "Dashboard Panels",
-      "Profile Management",
+      "CRUD Operations (Rooms, Bookings)",
+      "Search & Filter (rooms by price, capacity, features)",
+      "Dashboard Panels showing booking summaries and calendar views",
+      "Profile & Dining Preferences Management",
       "Deployment"
     ]
   },
   bonusFeatures: [
-  "Interactive progress charts",
-  "Daily calorie target check",
-  "Meal prep PDF Export",
-  "Dark mode",
-  "Activity logs"
-],
+    "Interactive occupancy rate and revenue forecast charts (using Chart.js)",
+    "Real-time daily room availability checklist updates",
+    "PDF Invoice/Receipt generation for guest checks (using PDF-Kit)",
+    "Room picture carousel upload module (using Multer)",
+    "Dark mode UI toggle for evening front desk staff"
+  ],
   submissionChecklist: [
     "GitHub Repository",
     "Frontend URL",
@@ -127,4 +143,5 @@ export const fp11Data = {
     "Presentation"
   ]
 };
+
 export default fp11Data;

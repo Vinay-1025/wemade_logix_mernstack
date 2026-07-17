@@ -9,81 +9,84 @@ export const fp08Data = {
     objective: "Design, develop, test and deploy a complete intermediate MERN Stack application in 2 weeks."
   },
   techStack: [
-  "React.js",
-  "Node.js",
-  "Express.js",
-  "MongoDB",
-  "JWT Authentication",
-  "Multer"
-],
+    "React.js",
+    "Node.js",
+    "Express.js",
+    "MongoDB",
+    "JWT Authentication",
+    "Multer",
+    "Chart.js"
+  ],
   overview: "Build a business dashboard managing lead sales pipelines, customer communication timelines, sales reporting, and meeting logs.",
   problemStatement: [
-    "Manual and error-prone tracking of Customer Relationship Management (CRM) Suite events.",
-    "Difficulty in coordinating user roles and data access controls.",
-    "Inefficient application workflow and status visibility.",
-    "Lack of real-time stats and visual dashboard insights."
+    "Manual and disconnected tracking of customer leads, sales stages, and communications.",
+    "Difficulty in delegating customer accounts across sales representatives and tracking their status.",
+    "Poor visibility into the sales pipeline stages and customer conversion rates.",
+    "Lack of centralized scheduling and logging for client meetings and interactions."
   ],
   objectives: [
-    "Build a robust and secure MERN stack web application.",
-    "Implement isolated user experience pipelines for different roles.",
-    "Ensure strict database schema constraints and integrity rules.",
+    "Build a robust and secure MERN stack CRM dashboard.",
+    "Implement isolated access layers for Admins, Sales Managers, and Sales Representatives.",
+    "Ensure strict database schema constraints for lead tracking, deal stages, and communication histories.",
     "Deploy the complete working systems to production cloud hosts."
   ],
   roles: {
     "Admin": [
-        "Manage server parameters",
-        "Manage channels and themes",
-        "Moderate flagged postings",
-        "View activity logs"
+        "Configure CRM parameters and custom lead stages",
+        "Manage user access, security permissions, and sales team assignments",
+        "Audit CRM activity logs and data security compliance",
+        "Manage system-wide integrations and settings"
     ],
-    "Moderator": [
-        "Audit post reports",
-        "Ban abusive profiles",
-        "Pin informational posts",
-        "Review comment queues"
+    "SalesManager": [
+        "Monitor the overall deal pipeline and team performance metrics",
+        "Assign leads and accounts to Sales Representatives",
+        "Review sales targets, revenue reports, and forecast charts",
+        "Approve large contract deals and adjustments"
     ],
-    "User": [
-        "Manage user profile",
-        "Publish posts with image uploads",
-        "Comment & reply in forums",
-        "Upvote/Downvote content"
+    "SalesRep": [
+        "Manage assigned leads, customer profiles, and contact details",
+        "Track client interactions, email logs, and meeting summaries",
+        "Update deal stages in the sales pipeline (Kanban view)",
+        "Upload client contracts and business documents"
     ]
-},
+  },
   modules: [
-  "Authentication",
-  "Feed Generator",
-  "Post Builder",
-  "Comment Threading",
-  "Moderation Registry"
-],
+    "Authentication & Role Management",
+    "Lead & Contact Directory",
+    "Deal Pipeline (Kanban Board)",
+    "Interaction & Meeting Log",
+    "Sales Performance Analytics (Charts)",
+    "Document & Contract Manager"
+  ],
   pages: {
     "Public": [
         "Home",
-        "Explore Feed",
-        "Forum Categories",
+        "CRM Solution Tour",
+        "Request Demo / Pricing",
         "Login",
         "Register"
     ],
-    "User": [
-        "Dashboard",
-        "My Profile",
-        "Publish Post",
-        "Bookmarked Posts"
+    "SalesRep": [
+        "Dashboard (My tasks, open leads, and active deals)",
+        "Lead Directory (Profiles, notes, and activity history)",
+        "Pipeline Board (Drag-and-drop deals)",
+        "Meeting & Interaction Scheduler"
     ],
-    "Admin": [
-        "Dashboard",
-        "Reported Content",
-        "User Permissions"
+    "SalesManager": [
+        "Dashboard (Team metrics, sales velocity, conversion rates)",
+        "Lead Assigner & Team Roster",
+        "Revenue Reports & Goal Tracker",
+        "Audits & System Configuration"
     ]
-},
+  },
   databaseCollections: [
-  "Users",
-  "Posts",
-  "Comments",
-  "Subforums",
-  "Reports",
-  "Upvotes"
-],
+    "Users",
+    "Leads",
+    "Deals",
+    "Interactions",
+    "Documents",
+    "Logs"
+  ],
   mandatoryFeatures: {
     "authentication": [
       "Register",
@@ -94,37 +97,36 @@ export const fp08Data = {
     "frontend": [
       "React",
       "React Router",
-      "Responsive UI",
+      "Responsive CRM Dashboard UI",
       "Form Validation"
     ],
     "backend": [
       "Express",
-      "REST APIs",
+      "REST APIs (Leads, Deals, Activities)",
       "MVC",
-      "Middleware",
+      "Middleware (Authentication, Role Verification)",
       "Error Handling"
     ],
     "database": [
       "MongoDB",
       "Minimum 5 collections",
-      "Relationships"
+      "Relationships (User -> Leads, Leads -> Deals, Deals -> Interactions)"
     ],
     "general": [
-      "CRUD Operations",
-      "Search",
-      "Filter",
-      "Dashboard Panels",
-      "Profile Management",
+      "CRUD Operations (Leads, Deals, Interactions)",
+      "Search & Filter (leads by status, industry, value)",
+      "Dashboard Panels showing sales performance charts",
+      "Profile & Activity Preferences Management",
       "Deployment"
     ]
   },
   bonusFeatures: [
-  "Image upload support",
-  "Real-time feed updates",
-  "CSV Post Export",
-  "Activity logs",
-  "Dark mode"
-],
+    "Document & Contract file upload (using Multer)",
+    "Interactive drag-and-drop Kanban deal pipeline",
+    "Sales revenue forecasting charts (using Chart.js)",
+    "Email summaries and automated activity reminder logs",
+    "Dark mode dashboard toggle"
+  ],
   submissionChecklist: [
     "GitHub Repository",
     "Frontend URL",
@@ -135,4 +137,5 @@ export const fp08Data = {
     "Presentation"
   ]
 };
+
 export default fp08Data;

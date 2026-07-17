@@ -9,87 +9,89 @@ export const fp16Data = {
     objective: "Design, develop, test and deploy a complete intermediate MERN Stack application in 2 weeks."
   },
   techStack: [
-  "React.js",
-  "Node.js",
-  "Express.js",
-  "MongoDB",
-  "JWT Authentication",
-  "Multer"
-],
+    "React.js",
+    "Node.js",
+    "Express.js",
+    "MongoDB",
+    "JWT Authentication",
+    "Multer",
+    "QRCode-Generator",
+    "PDF-Kit",
+    "Stripe API"
+  ],
   overview: "Build an event catalog supporting ticket reservations, check-in QR scan logs, and organizer dashboards.",
   problemStatement: [
-    "Manual and error-prone tracking of Event Management & Ticketing Organizer events.",
-    "Difficulty in coordinating user roles and data access controls.",
-    "Inefficient application workflow and status visibility.",
-    "Lack of real-time stats and visual dashboard insights."
+    "Manual and error-prone tracking of event lists, ticket allocations, and user check-ins.",
+    "Difficulty in coordinating organizer registrations and attendee ticket verification procedures.",
+    "Inefficient entry check-in workflows at events leading to security bottlenecks.",
+    "Lack of real-time ticket sales metrics and visual attendance statistics for organizers."
   ],
   objectives: [
-    "Build a robust and secure MERN stack web application.",
-    "Implement isolated user experience pipelines for different roles.",
-    "Ensure strict database schema constraints and integrity rules.",
+    "Build a robust and secure MERN stack event ticketing and organization platform.",
+    "Implement isolated user experience pipelines for Attendees, Organizers, and Admins.",
+    "Ensure strict database schema constraints for booking dates, ticket limits, and entry scan logs.",
     "Deploy the complete working systems to production cloud hosts."
   ],
   roles: {
     "Admin": [
-        "Moderate recipe feedback",
-        "Monitor catalog tags",
-        "Audit system databases",
-        "Manage configurations"
+        "Manage event organization verification statuses",
+        "Oversee platform-wide ticket transaction financial models",
+        "Audit access logs and security configurations",
+        "Configure global commission rates and categories"
     ],
-    "Creator": [
-        "Create recipes instructions",
-        "Upload recipe images",
-        "Tag recipe attributes",
-        "View user upvotes"
+    "Organizer": [
+        "Build public event listings and descriptions",
+        "Manage ticket price tiers, deadlines, and coupon codes",
+        "Track real-time ticket sales metrics and attendee roster charts",
+        "Verify tickets at venue entry using QR code scans"
     ],
-    "User": [
-        "Browse recipes with filters",
-        "Build daily meal planners",
-        "Generate shopping grocery lists",
-        "Submit ratings"
+    "Attendee": [
+        "Browse upcoming local and online events by categories",
+        "Book event ticket slots via Stripe checkout",
+        "Download ticket PDF with unique verification QR codes",
+        "Manage personal reservation history and notifications"
     ]
-},
+  },
   modules: [
-  "Authentication",
-  "Recipes Catalog",
-  "Meal Planner",
-  "Grocery Lists",
-  "Upvotes Hub"
-],
+    "Authentication & Profile manager",
+    "Events Directory Catalog",
+    "Ticketing & Reservation Engine",
+    "QR Check-in & Entry Verification System",
+    "Organizer Sales Analytics Dashboard"
+  ],
   pages: {
     "Public": [
-        "Home",
-        "Recipes Search",
-        "Trending Feed",
+        "Home (Featured events and trending categories)",
+        "Events Catalog Search",
+        "Event Details Page",
         "Login",
         "Register"
     ],
-    "User": [
-        "Dashboard",
-        "Meal Planner",
-        "My Lists",
-        "My Cookbooks"
+    "Attendee": [
+        "Dashboard (My upcoming & past events)",
+        "My Tickets (QR ticket list)",
+        "Order Invoices & Receipts",
+        "Account Settings"
     ],
-    "Creator": [
-        "Dashboard",
-        "Recipe Publisher",
-        "My Analytics",
-        "Feedback Panel"
+    "Organizer": [
+        "Dashboard (Ticket counts, gross sales, attendance rate)",
+        "Create & Edit Event Form (Upload banner using Multer)",
+        "Sales Reports & Roster Ledger",
+        "Ticket Check-in Scanner Console"
     ],
     "Admin": [
-        "Dashboard",
-        "Categories Directory",
-        "Content Review"
+        "Dashboard (Platform-wide revenue, popular categories)",
+        "Organizer Registries Approval",
+        "System Settings & Audits"
     ]
-},
+  },
   databaseCollections: [
-  "Users",
-  "Recipes",
-  "MealPlans",
-  "GroceryLists",
-  "Ratings",
-  "Categories"
-],
+    "Users",
+    "Events",
+    "Tickets",
+    "Organizations",
+    "SalesLogs"
+  ],
   mandatoryFeatures: {
     "authentication": [
       "Register",
@@ -105,32 +107,31 @@ export const fp16Data = {
     ],
     "backend": [
       "Express",
-      "REST APIs",
+      "REST APIs (Events, Tickets, Checkins)",
       "MVC",
-      "Middleware",
+      "Middleware (Authentication, Role Check controls)",
       "Error Handling"
     ],
     "database": [
       "MongoDB",
       "Minimum 5 collections",
-      "Relationships"
+      "Relationships (Organizer -> Events, Attendee -> Tickets)"
     ],
     "general": [
-      "CRUD Operations",
-      "Search",
-      "Filter",
-      "Dashboard Panels",
-      "Profile Management",
+      "CRUD Operations (Events, Tickets)",
+      "Search & Filter (events by date, price range, categories)",
+      "Dashboard Panels showing sales summaries and registration lists",
+      "Profile & Attendance Preferences Management",
       "Deployment"
     ]
   },
   bonusFeatures: [
-  "Grocery List PDF export",
-  "Calorie counter calculators",
-  "Recipe rating & reviews",
-  "Dark mode",
-  "Activity logs"
-],
+    "Stripe checkout integration for secure payment processing",
+    "QR Code-based ticket generation and check-in scanner validation",
+    "Auto-generated PDF tickets with check-in instructions (using PDF-Kit)",
+    "Interactive ticket sales charts",
+    "Automated email confirmations with check-in receipts"
+  ],
   submissionChecklist: [
     "GitHub Repository",
     "Frontend URL",
@@ -141,4 +142,5 @@ export const fp16Data = {
     "Presentation"
   ]
 };
+
 export default fp16Data;

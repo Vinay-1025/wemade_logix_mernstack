@@ -9,55 +9,56 @@ export const fp04Data = {
     objective: "Design, develop, test and deploy a complete advanced MERN Stack application in 2 weeks."
   },
   techStack: [
-  "React.js",
-  "Node.js",
-  "Express.js",
-  "MongoDB",
-  "JWT Authentication",
-  "Socket.io",
-  "Multer"
-],
+    "React.js",
+    "Node.js",
+    "Express.js",
+    "MongoDB",
+    "JWT Authentication",
+    "Socket.io",
+    "Multer",
+    "Recharts / Chart.js"
+  ],
   overview: "Build an asset portfolio analyzer featuring budget thresholds, custom transaction categories, and SVG chart visualizers.",
   problemStatement: [
-    "Manual and error-prone tracking of Personal Finance & Expense Tracker Dashboard events.",
-    "Difficulty in coordinating user roles and data access controls.",
-    "Inefficient application workflow and status visibility.",
-    "Lack of real-time stats and visual dashboard insights."
+    "Manual and error-prone tracking of personal daily expenses and income streams.",
+    "Difficulty in visualizing spending habits, budget breaches, and investment growth over time.",
+    "Lack of centralized management for multi-currency transactions and asset portfolios.",
+    "Absence of automated notifications or alerts when approaching budget limits."
   ],
   objectives: [
-    "Build a robust and secure MERN stack web application.",
-    "Implement isolated user experience pipelines for different roles.",
-    "Ensure strict database schema constraints and integrity rules.",
+    "Build a robust and secure MERN stack personal finance dashboard.",
+    "Implement secure role-based access for Users (manage portfolios) and Admins (system parameters & audit).",
+    "Ensure strict database schema constraints for monetary precision and transaction history.",
     "Deploy the complete working systems to production cloud hosts."
   ],
   roles: {
     "Admin": [
-        "Manage chat rooms & channels",
-        "Monitor compliance & abuse reports",
-        "Manage system integrations",
-        "Audit access logs"
+        "Manage global transaction categories & standard conversion rates",
+        "Monitor overall system usage & database performance metrics",
+        "Audit system access logs & security reports",
+        "Manage system integrations and API configurations"
     ],
     "Moderator": [
-        "Audit room conversations",
-        "Ban abusive users",
-        "Delete offensive postings",
-        "Approve public channels"
+        "Audit user support tickets and feedback logs",
+        "Flag suspicious fraudulent transaction activities or anomalous logs",
+        "Moderate community savings forums or public financial tips boards",
+        "Approve custom user categories for global registry integration"
     ],
     "User": [
-        "Create private/public chat channels",
-        "Send real-time messages & files",
-        "Initiate direct message threads",
-        "Manage notifications"
+        "Log income, expenses, and transfer transactions",
+        "Set monthly budget thresholds per category with alert limits",
+        "Manage asset portfolios (savings accounts, cash, investments)",
+        "Generate and export visual financial reports and charts"
     ]
-},
+  },
   modules: [
-  "Authentication",
-  "Channel Registry",
-  "Real-Time Messaging Engine",
-  "Direct Message Hub",
-  "User Directory",
-  "Compliance Logger"
-],
+    "Authentication & Profile Manager",
+    "Transaction Ledger (Income/Expense Tracking)",
+    "Budgeting Engine (Thresholds & Notifications)",
+    "Portfolio Analyzer (Assets & Investments)",
+    "Visualization Dashboard (SVG Charts & Reports)",
+    "Audit & Activity Logger"
+  ],
   pages: {
     "Public": [
         "Home",
@@ -66,26 +67,26 @@ export const fp04Data = {
         "Register"
     ],
     "User": [
-        "Dashboard",
-        "Chat Workspace",
-        "Channel Hub",
-        "Account Settings"
+        "Dashboard (Charts & Metrics Overview)",
+        "Transactions Ledger (CRUD & Filters)",
+        "Budgets & Category Manager",
+        "Portfolio Tracker (Assets & Investments)"
     ],
     "Admin": [
-        "Dashboard",
-        "Channels Controller",
-        "User Permissions",
-        "Abuse Registry"
+        "System Dashboard (Usage Stats)",
+        "Global Settings & Categories",
+        "Audit Log Viewer",
+        "Support Ticket Resolver"
     ]
-},
+  },
   databaseCollections: [
-  "Users",
-  "Channels",
-  "Messages",
-  "PrivateRooms",
-  "Reports",
-  "Logs"
-],
+    "Users",
+    "Transactions",
+    "Budgets",
+    "Portfolios",
+    "Categories",
+    "Logs"
+  ],
   mandatoryFeatures: {
     "authentication": [
       "Register",
@@ -96,37 +97,36 @@ export const fp04Data = {
     "frontend": [
       "React",
       "React Router",
-      "Responsive UI",
-      "Form Validation"
+      "Responsive Dashboard UI",
+      "Form Validation & Error Alerts"
     ],
     "backend": [
       "Express",
-      "REST APIs",
+      "REST APIs (Transactions, Budgets, Assets)",
       "MVC",
-      "Middleware",
+      "Middleware (Auth, Role Verification)",
       "Error Handling"
     ],
     "database": [
       "MongoDB",
       "Minimum 5 collections",
-      "Relationships"
+      "Relationships (User -> Transactions, User -> Budgets)"
     ],
     "general": [
-      "CRUD Operations",
-      "Search",
-      "Filter",
-      "Dashboard Panels",
-      "Profile Management",
+      "CRUD Operations (Transactions, Budgets)",
+      "Search & Filter (by category, date range, amount)",
+      "Dashboard Panels with Key Metrics",
+      "Profile & Currency Preferences Management",
       "Deployment"
     ]
   },
   bonusFeatures: [
-  "Real-time file sharing",
-  "Active typing indicators",
-  "Message search",
-  "Slack-like channel reactions",
-  "Dark mode"
-],
+    "Receipt upload and storage (using Multer & Cloudinary)",
+    "Real-time notifications for budget threshold breaches (Socket.io)",
+    "Export data to CSV/PDF reports",
+    "Recurring transaction automation scheduler",
+    "Dark mode dashboard toggle"
+  ],
   submissionChecklist: [
     "GitHub Repository",
     "Frontend URL",
@@ -137,4 +137,5 @@ export const fp04Data = {
     "Presentation"
   ]
 };
+
 export default fp04Data;

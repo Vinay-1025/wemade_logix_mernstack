@@ -9,86 +9,88 @@ export const fp14Data = {
     objective: "Design, develop, test and deploy a complete advanced MERN Stack application in 2 weeks."
   },
   techStack: [
-  "React.js",
-  "Node.js",
-  "Express.js",
-  "MongoDB",
-  "JWT Authentication",
-  "Chart.js"
-],
+    "React.js",
+    "Node.js",
+    "Express.js",
+    "MongoDB",
+    "JWT Authentication",
+    "Chart.js",
+    "Multer"
+  ],
   overview: "Build a custom publication engine supporting rich-text editors, tag taxonomies, draft status, and public commenting sections.",
   problemStatement: [
-    "Manual and error-prone tracking of Blogging & Content Management CMS System events.",
-    "Difficulty in coordinating user roles and data access controls.",
-    "Inefficient application workflow and status visibility.",
-    "Lack of real-time stats and visual dashboard insights."
+    "Manual and unorganized tracking of blog drafts, publication schedules, and content tags.",
+    "Difficulty in segregating user roles (Authors, Editors, Admins) and protecting unpublished drafts.",
+    "Inefficient management of public comments and lack of automated moderation filters.",
+    "Lack of visual content performance dashboards and reader engagement metrics."
   ],
   objectives: [
-    "Build a robust and secure MERN stack web application.",
-    "Implement isolated user experience pipelines for different roles.",
-    "Ensure strict database schema constraints and integrity rules.",
+    "Build a robust and secure MERN stack blogging and content management system (CMS).",
+    "Implement isolated editorial pipelines for Authors, Editors, and platform Admins.",
+    "Ensure strict database schema constraints for post versions, comments, and category taxonomies.",
     "Deploy the complete working systems to production cloud hosts."
   ],
   roles: {
     "Admin": [
-        "Manage company structures",
-        "Access database backups",
-        "Audit admin protocols",
-        "Manage general configs"
+        "Configure global site settings and platform themes",
+        "Audit system activities, database backups, and access logs",
+        "Manage user role elevations and permission configurations",
+        "Monitor platform usage metrics and analytics logs"
     ],
-    "Manager": [
-        "Track stock inventory levels",
-        "Create purchase and sales logs",
-        "Manage suppliers directory",
-        "Analyze inventory charts"
+    "Editor": [
+        "Manage blog categories, taxonomies, and tag registries",
+        "Review, edit, and approve/publish pending articles submitted by Authors",
+        "Audit and moderate public comments and flag inappropriate remarks",
+        "Analyze overall site-wide post-performance charts"
     ],
-    "Staff": [
-        "Log stock item counts",
-        "Process barcode scans",
-        "Create warehouse transfers",
-        "View notifications"
+    "Author": [
+        "Create blog drafts and edit rich-text contents",
+        "Upload article cover images and coordinate media resources (using Multer)",
+        "Submit articles to Editors for review and publication approval",
+        "Track personal article view counts and user engagement analytics"
     ]
-},
+  },
   modules: [
-  "Authentication",
-  "Inventory Records",
-  "Suppliers Directory",
-  "Movement Ledger",
-  "Notifications Hub"
-],
+    "Authentication & Profile preferences",
+    "Article & Draft Registry (Rich-Text Editor)",
+    "Taxonomy & Tag Manager",
+    "Comment Engine & Moderation Console",
+    "Reader Engagement Analytics (Charts)"
+  ],
   pages: {
     "Public": [
-        "Home",
-        "Stock Catalog",
+        "Home (Articles feed)",
+        "Article Viewer (Reading interface)",
+        "Category & Tag Explorer",
         "Login",
         "Register"
     ],
-    "Staff": [
-        "Dashboard",
-        "Stock Ledger",
-        "Warehouse transfers",
-        "Logs Panel"
+    "Author": [
+        "Dashboard (My articles, view metrics, draft folder)",
+        "Rich-Text Article Editor",
+        "Comments Feedback Board",
+        "Activity Log"
     ],
-    "Manager": [
-        "Dashboard",
-        "Inventory Analytics",
-        "Supplier Manager",
-        "Stock alerts"
+    "Editor": [
+        "Dashboard (Publication calendar, queue sizes)",
+        "Review & Approval Deck (Drafts inspector)",
+        "Comment Moderation Center",
+        "Tag & Category Administrator"
     ],
     "Admin": [
-        "Dashboard",
-        "Company Directory",
-        "Settings Panel"
+        "Dashboard (User registrations, popular categories)",
+        "Roster Manager & Permissions Settings",
+        "System Audit Logs"
     ]
-},
+  },
   databaseCollections: [
-  "Users",
-  "Items",
-  "Suppliers",
-  "Movements",
-  "Warehouses",
-  "Alerts"
-],
+    "Users",
+    "Posts",
+    "Comments",
+    "Categories",
+    "Tags",
+    "Analytics"
+  ],
   mandatoryFeatures: {
     "authentication": [
       "Register",
@@ -99,37 +101,36 @@ export const fp14Data = {
     "frontend": [
       "React",
       "React Router",
-      "Responsive UI",
+      "Responsive CMS Dashboard UI",
       "Form Validation"
     ],
     "backend": [
       "Express",
-      "REST APIs",
+      "REST APIs (Posts, Comments, Categories)",
       "MVC",
-      "Middleware",
+      "Middleware (Authentication, Editor/Author controls)",
       "Error Handling"
     ],
     "database": [
       "MongoDB",
       "Minimum 5 collections",
-      "Relationships"
+      "Relationships (User -> Posts, Post -> Comments, Post -> Categories)"
     ],
     "general": [
-      "CRUD Operations",
-      "Search",
-      "Filter",
-      "Dashboard Panels",
-      "Profile Management",
+      "CRUD Operations (Posts, Comments, Categories)",
+      "Search & Filter (posts by tags, categories, publication date)",
+      "Dashboard Panels showing post read-times and viewer graphs",
+      "Profile & Publication settings Management",
       "Deployment"
     ]
   },
   bonusFeatures: [
-  "Interactive stock alerts charts",
-  "Low stock email alerts",
-  "Stock valuation PDF export",
-  "Dark mode",
-  "Activity logs"
-],
+    "Interactive reader view graphs and performance charts (using Chart.js)",
+    "Automated email alerts when comments are flagged or draft status changes",
+    "Blog article data summary PDF export",
+    "Article cover picture upload capabilities (using Multer)",
+    "Dark mode reading option for visitors"
+  ],
   submissionChecklist: [
     "GitHub Repository",
     "Frontend URL",
@@ -140,4 +141,5 @@ export const fp14Data = {
     "Presentation"
   ]
 };
+
 export default fp14Data;

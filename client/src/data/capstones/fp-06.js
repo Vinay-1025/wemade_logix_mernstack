@@ -9,19 +9,21 @@ export const fp06Data = {
     objective: "Design, develop, test and deploy a complete intermediate MERN Stack application in 2 weeks."
   },
   techStack: [
-  "React.js",
-  "Node.js",
-  "Express.js",
-  "MongoDB",
-  "JWT Authentication",
-  "Chart.js"
-],
+    "React.js",
+    "Node.js",
+    "Express.js",
+    "MongoDB",
+    "JWT Authentication",
+    "Chart.js",
+    "Multer",
+    "PDF-Kit"
+  ],
   overview: "Build a course hub supporting student enrollment pipelines, video lectures, submission reviews, and certificate auto-generation.",
   problemStatement: [
-    "Manual and error-prone tracking of Online Learning Management System (LMS) events.",
-    "Difficulty in coordinating user roles and data access controls.",
-    "Inefficient application workflow and status visibility.",
-    "Lack of real-time stats and visual dashboard insights."
+    "Manual and error-prone tracking of student course enrollments, progress, and grades.",
+    "Difficulty in organizing and distributing video lectures, study materials, and assignments.",
+    "Inefficient review workflows for instructors evaluating assignment submissions.",
+    "Lack of automated progress statistics and digital completion certificates."
   ],
   objectives: [
     "Build a robust and secure MERN stack web application.",
@@ -31,51 +33,66 @@ export const fp06Data = {
   ],
   roles: {
     "Admin": [
-        "View system diagnostics",
-        "Manage account access levels",
-        "Update currency metrics",
-        "Audit database logs"
+        "Manage global school settings and department categories",
+        "Create courses, assign instructors, and manage enrollment limits",
+        "Monitor platform-wide analytics, system performance, and access logs",
+        "Manage and audit student certifications and platform compliance"
     ],
-    "User": [
-        "Manage personal profile",
-        "Log incomes and expenses",
-        "Set monthly budget categories",
-        "Generate financial charts"
+    "Instructor": [
+        "Create courses, design syllabus structures, and upload content",
+        "Upload resources, study guides, and video lecture assets",
+        "Create assignments, set deadlines, and grade student submissions",
+        "View detailed analytics on student enrollment, engagement, and performance"
+    ],
+    "Student": [
+        "Search, browse, and enroll in available courses",
+        "Access course materials, read documentation, and watch video lectures",
+        "Submit assignments, track progress, and review grades",
+        "Download automatically generated completion certificates as PDF"
     ]
-},
+  },
   modules: [
-  "Authentication",
-  "Transaction Manager",
-  "Category Budgets",
-  "Analytical Charts",
-  "Recurring Schedules"
-],
+    "Authentication & Profile Management",
+    "Course Catalog & Syllabus Builder",
+    "Material Repository (Video & Document Host)",
+    "Assignment & Submission Engine",
+    "Grading & Performance Analytics",
+    "Certification & PDF Generator"
+  ],
   pages: {
     "Public": [
         "Home",
-        "Interactive Calculator",
+        "Course Finder & Details",
+        "Pricing & About",
         "Login",
         "Register"
     ],
-    "User": [
-        "Dashboard",
-        "Transactions ledger",
-        "Budget Settings",
-        "Financial Analysis"
+    "Student": [
+        "Dashboard (Active courses, deadlines, and recent grades)",
+        "My Courses (Enrolled curriculum view)",
+        "Syllabus Path & Lesson Viewer (Video/Doc player)",
+        "Assignment & Submission Panel"
+    ],
+    "Instructor": [
+        "Dashboard (Student metrics, course feedback, pending reviews)",
+        "Course & Syllabus Builder",
+        "Submissions Grading Console",
+        "Performance & Gradebook Audit"
     ],
     "Admin": [
-        "Dashboard",
-        "System Settings",
-        "Database Diagnostics"
+        "Dashboard (Platform-wide active users, popular courses)",
+        "Enrollment & User Access Center",
+        "Report Manager & Audit Logs"
     ]
-},
+  },
   databaseCollections: [
-  "Users",
-  "Transactions",
-  "Budgets",
-  "Categories",
-  "RecurringTransactions"
-],
+    "Users",
+    "Courses",
+    "Materials",
+    "Assignments",
+    "Submissions",
+    "Certificates"
+  ],
   mandatoryFeatures: {
     "authentication": [
       "Register",
@@ -86,37 +103,36 @@ export const fp06Data = {
     "frontend": [
       "React",
       "React Router",
-      "Responsive UI",
+      "Responsive Course Portal UI",
       "Form Validation"
     ],
     "backend": [
       "Express",
-      "REST APIs",
+      "REST APIs (Courses, Assignments, Submissions)",
       "MVC",
-      "Middleware",
+      "Middleware (Auth, Student/Instructor Role Control)",
       "Error Handling"
     ],
     "database": [
       "MongoDB",
       "Minimum 5 collections",
-      "Relationships"
+      "Relationships (User -> Enrolled Courses, Course -> Assignments)"
     ],
     "general": [
-      "CRUD Operations",
-      "Search",
-      "Filter",
-      "Dashboard Panels",
-      "Profile Management",
+      "CRUD Operations (Courses, Assignments, User Profiles)",
+      "Search & Filter (by category, instructor, level)",
+      "Dashboard Panels showing learning stats & progress metrics",
+      "Profile & Avatar Management",
       "Deployment"
     ]
   },
   bonusFeatures: [
-  "Interactive budget charts",
-  "CSV ledger export",
-  "Email notifications on budget breach",
-  "Dark mode",
-  "Activity logs"
-],
+    "Auto-generated PDF certificates on course completion (using PDF-Kit)",
+    "Integrated video lecture player (HTML5 / Cloudinary)",
+    "Student progress tracking charts (using Chart.js)",
+    "Email notifications for new assignments or graded submissions",
+    "Dark mode for course viewer"
+  ],
   submissionChecklist: [
     "GitHub Repository",
     "Frontend URL",
@@ -127,4 +143,5 @@ export const fp06Data = {
     "Presentation"
   ]
 };
+
 export default fp06Data;

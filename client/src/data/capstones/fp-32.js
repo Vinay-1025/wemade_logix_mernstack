@@ -9,25 +9,27 @@ export const fp32Data = {
     objective: "Design, develop, test and deploy a complete advanced MERN Stack application in 2 weeks."
   },
   techStack: [
-  "React.js",
-  "Node.js",
-  "Express.js",
-  "MongoDB",
-  "JWT Authentication",
-  "Stripe API",
-  "Multer"
-],
+    "React.js",
+    "Node.js",
+    "Express.js",
+    "MongoDB",
+    "JWT Authentication",
+    "Stripe API",
+    "Multer",
+    "PDF-Kit",
+    "Chart.js"
+  ],
   overview: "Build a design catalog hosting art uploads, virtual showroom filters, custom prints options, and artist contact inquiries.",
   problemStatement: [
-    "Manual and error-prone tracking of Online Art Gallery & Artist Portfolio Studio events.",
-    "Difficulty in coordinating user roles and data access controls.",
-    "Inefficient application workflow and status visibility.",
-    "Lack of real-time stats and visual dashboard insights."
+    "Manual and error-prone tracking of art uploads, commissions, and buyer connection inquiries.",
+    "Difficulty in managing artist portfolio access controls and print price tiers.",
+    "Inefficient purchase tracking and lack of artwork delivery/commission status visibility.",
+    "Lack of real-time stats and visual dashboard insights on artwork views and print sales revenue."
   ],
   objectives: [
-    "Build a robust and secure MERN stack web application.",
-    "Implement isolated user experience pipelines for different roles.",
-    "Ensure strict database schema constraints and integrity rules.",
+    "Build a robust and secure MERN stack online art gallery and portfolio studio.",
+    "Implement isolated user experience pipelines for Viewers, Artists, and platform Admins.",
+    "Ensure strict database schema constraints for artwork properties, transactions, and custom inquiries.",
     "Deploy the complete working systems to production cloud hosts."
   ],
   roles: {
@@ -49,14 +51,14 @@ export const fp32Data = {
         "Inquire art custom requests",
         "Bookmark favorites"
     ]
-},
+  },
   modules: [
-  "Authentication",
-  "Gallery Showcase",
-  "Prints Checkout",
-  "Artist Portfolios",
-  "Sales Analytics"
-],
+    "Authentication",
+    "Gallery Showcase",
+    "Prints Checkout",
+    "Artist Portfolios",
+    "Sales Analytics"
+  ],
   pages: {
     "Public": [
         "Home",
@@ -82,15 +84,15 @@ export const fp32Data = {
         "Artwork Approvals",
         "Platform margins"
     ]
-},
+  },
   databaseCollections: [
-  "Users",
-  "Artworks",
-  "Artists",
-  "Purchases",
-  "Inquiries",
-  "Bookmarks"
-],
+    "Users",
+    "Artworks",
+    "Artists",
+    "Purchases",
+    "Inquiries",
+    "Bookmarks"
+  ],
   mandatoryFeatures: {
     "authentication": [
       "Register",
@@ -126,12 +128,12 @@ export const fp32Data = {
     ]
   },
   bonusFeatures: [
-  "Stripe custom prints payment",
-  "Interactive artwork stats charts",
-  "Art invoice PDF generation",
-  "Email purchase confirmation",
-  "Dark mode"
-],
+    "Stripe custom prints payment",
+    "Interactive artwork stats charts (using Chart.js)",
+    "Art invoice PDF generation (using PDF-Kit)",
+    "Email purchase confirmation",
+    "Dark mode"
+  ],
   submissionChecklist: [
     "GitHub Repository",
     "Frontend URL",
@@ -142,4 +144,5 @@ export const fp32Data = {
     "Presentation"
   ]
 };
+
 export default fp32Data;
